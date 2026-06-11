@@ -2,7 +2,7 @@
   "name": "@revenexx/sdk",
   "homepage": "https://revenexx.com",
   "description": "Revenexx Web SDK for browsers and SSR frameworks.",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "files": [
     "dist",
@@ -22,7 +22,7 @@
   "types": "types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/revenexx/sdk-for-web"
+    "url": "https://github.com/revenexx-sdks/web"
   },
   "scripts": {
     "prepublishOnly": "npm run build",
@@ -50,6 +50,7 @@
   "jsdelivr": "dist/iife/sdk.js",
   "unpkg": "dist/iife/sdk.js",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   }
 }

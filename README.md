@@ -2,7 +2,7 @@
 
 # Revenexx Web SDK
 
-![License](https://img.shields.io/github/license/revenexx/sdk-for-web.svg?style=flat-square)
+![License](https://img.shields.io/github/license/revenexx-sdks/web.svg?style=flat-square)
 ![Version](https://img.shields.io/badge/api%20version-1.0.0-blue.svg?style=flat-square)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/revenexx/sdk-generator/tests.yml?style=flat-square)](https://github.com/revenexx/sdk-generator/actions)
 [![Twitter Account](https://img.shields.io/twitter/follow/revenexx?color=00acee&label=twitter&style=flat-square)](https://twitter.com/revenexx)
@@ -15,13 +15,7 @@ Revenexx is a backend platform for building scalable web and mobile applications
 
 ### NPM
 
-This package is hosted on [GitHub Packages](https://github.com/orgs/revenexx/packages). First, configure your project to use the Revenexx registry for the `@revenexx` scope by adding a `.npmrc` file in your project root:
-
-```
-@revenexx:registry=https://npm.pkg.github.com
-```
-
-Then install the package:
+Install the package from the [npm registry](https://www.npmjs.com/package/@revenexx/sdk):
 
 ```bash
 npm install @revenexx/sdk --save

@@ -3,7 +3,7 @@
  *
  * This SDK is compatible with server version 1.0.x.
  * For older versions, please check
- * [previous releases](https://github.com/revenexx/sdk-for-web/releases).
+ * [previous releases](https://github.com/revenexx-sdks/web/releases).
  */
 export { Client, Query, RevenexxException } from './client';
 export { Apps } from './services/apps';
