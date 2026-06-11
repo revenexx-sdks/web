@@ -1,0 +1,18 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: revenexx-web
+  title: Revenexx Web
+  description: "Revenexx is a backend platform for building scalable web and mobile applications. This SDK gives you direct access to the Revenexx APIs from your browser or server."
+  annotations:
+    github.com/project-slug: revenexx-sdks/web
+    backstage.io/techdocs-ref: url:https://github.com/revenexx-sdks/web/tree/main/
+  links:
+    - url: https://github.com/revenexx-sdks/web
+      title: GitHub Repository
+      icon: github
+spec:
+  type: library
+  lifecycle: production
+  owner: group:default/developer-experience
+  system: revenue-cloud

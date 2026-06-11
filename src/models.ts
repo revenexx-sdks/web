@@ -839,6 +839,52 @@ export namespace Models {
     }
 
     /**
+     * 
+     */
+    export type EligiblePaymentMethod = {
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        description?: string | null;
+        /**
+         * 
+         */
+        fee?: number;
+        /**
+         * 
+         */
+        fee_type?: string;
+        /**
+         * 
+         */
+        kind?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        provider?: string | null;
+    }
+
+    /**
      * Uniform gateway error response.
      */
     export type Error = {
@@ -1265,6 +1311,228 @@ export namespace Models {
     /**
      * 
      */
+    export type Payment = {
+        /**
+         * 
+         */
+        amount?: number;
+        /**
+         * 
+         */
+        authorized_at?: string | null;
+        /**
+         * 
+         */
+        captured_at?: string | null;
+        /**
+         * 
+         */
+        cart_id?: string | null;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        error_message?: string | null;
+        /**
+         * 
+         */
+        failed_at?: string | null;
+        /**
+         * 
+         */
+        fee_amount?: number;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        idempotency_key?: string | null;
+        /**
+         * 
+         */
+        kind?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        method_code?: string;
+        /**
+         * 
+         */
+        next_action?: object | null;
+        /**
+         * 
+         */
+        order_ref?: string | null;
+        /**
+         * 
+         */
+        provider?: string | null;
+        /**
+         * 
+         */
+        psp_payment_id?: string | null;
+        /**
+         * 
+         */
+        refunded_at?: string | null;
+        /**
+         * 
+         */
+        status?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PaymentMethod = {
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        countries?: object | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        description?: string | null;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        fee_amount?: number;
+        /**
+         * 
+         */
+        fee_currency?: string;
+        /**
+         * 
+         */
+        fee_type?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        kind?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        max_order_value?: number | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        min_order_value?: number | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        provider?: string | null;
+        /**
+         * 
+         */
+        provider_method?: string | null;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PaymentProvider = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        credentials?: object | null;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        options?: object | null;
+        /**
+         * 
+         */
+        provider?: string;
+        /**
+         * 
+         */
+        test_mode?: boolean;
+        /**
+         * 
+         */
+        updated_at?: string;
+        /**
+         * 
+         */
+        webhook_secret?: string | null;
+    }
+
+    /**
+     * 
+     */
     export type ProductAssociations = {
         /**
          * 
@@ -1438,6 +1706,180 @@ export namespace Models {
          * 
          */
         reference_entity_id?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ShippingMethod = {
+        /**
+         * 
+         */
+        carrier?: string | null;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        countries?: object | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        description?: string | null;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        eta_days_max?: number | null;
+        /**
+         * 
+         */
+        eta_days_min?: number | null;
+        /**
+         * 
+         */
+        free_above?: number | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        matrix_attribute?: string | null;
+        /**
+         * 
+         */
+        matrix_basis?: string | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        price?: number;
+        /**
+         * 
+         */
+        pricing_type?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ShippingRate = {
+        /**
+         * 
+         */
+        carrier?: string | null;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        description?: string | null;
+        /**
+         * 
+         */
+        eta_days_max?: number | null;
+        /**
+         * 
+         */
+        eta_days_min?: number | null;
+        /**
+         * 
+         */
+        free_reason?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        price?: number;
+        /**
+         * 
+         */
+        pricing_type?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ShippingRateTier = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        from_value?: number;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        method_id?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        price?: number;
         /**
          * 
          */
