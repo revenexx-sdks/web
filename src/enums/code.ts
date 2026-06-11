@@ -1,0 +1,16 @@
+export enum Code {
+    Aa = 'aa',
+    An = 'an',
+    Ch = 'ch',
+    Ci = 'ci',
+    Cm = 'cm',
+    Cr = 'cr',
+    Ff = 'ff',
+    Sf = 'sf',
+    Mf = 'mf',
+    Ps = 'ps',
+    Oi = 'oi',
+    Om = 'om',
+    Op = 'op',
+    On = 'on',
+}

@@ -1,0 +1,6 @@
+node_modules/
+package-lock.json
+.DS_Store
+types/
+dist/**/sdk.js
+dist/**/sdk.js.map
