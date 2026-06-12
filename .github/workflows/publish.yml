@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  packages: write
+  id-token: write
   contents: read
 
 jobs:
@@ -21,6 +21,9 @@ jobs:
       with:
         node-version: '22'
         registry-url: 'https://registry.npmjs.org'
+
+    - name: Update npm to latest version for OIDC support
+      run: npm install -g npm@latest
 
     - name: Determine release tag
       id: release_tag
@@ -37,6 +40,4 @@ jobs:
         npm run build
 
     - name: Publish
-      run: npm publish --tag ${{ steps.release_tag.outputs.tag }}
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: npm publish --provenance --access public --tag ${{ steps.release_tag.outputs.tag }}
