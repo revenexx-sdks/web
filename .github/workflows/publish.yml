@@ -31,11 +31,6 @@ jobs:
           echo "tag=latest" >> "$GITHUB_OUTPUT"
         fi
 
-    - name: Set version from tag
-      run: |
-        VERSION="${GITHUB_REF_NAME#v}"
-        npm version "$VERSION" --no-git-tag-version
-
     - name: Install dependencies and build
       run: |
         npm install
