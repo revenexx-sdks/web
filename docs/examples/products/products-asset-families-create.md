@@ -9,7 +9,11 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsAssetFamiliesCreate();
+const result = await products.productsAssetFamiliesCreate({
+    code: '',
+    labels: {}, // optional
+    namingConvention: {} // optional
+});
 
 console.log(result);
 ```

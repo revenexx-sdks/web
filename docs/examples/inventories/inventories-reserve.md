@@ -9,7 +9,11 @@ const client = new Client()
 
 const inventories = new Inventories(client);
 
-const result = await inventories.inventoriesReserve();
+const result = await inventories.inventoriesReserve({
+    items: [],
+    orderRef: '',
+    expiresAt: '' // optional
+});
 
 console.log(result);
 ```

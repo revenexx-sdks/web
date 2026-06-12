@@ -10,7 +10,10 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsProductCategoriesUpdate({
-    id: ''
+    id: '',
+    categoryId: '', // optional
+    position: null, // optional
+    productId: '' // optional
 });
 
 console.log(result);

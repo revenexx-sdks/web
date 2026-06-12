@@ -10,7 +10,14 @@ const client = new Client()
 const inventories = new Inventories(client);
 
 const result = await inventories.inventoriesStockUpdate({
-    id: ''
+    id: '',
+    locationId: '', // optional
+    metadata: {}, // optional
+    onHand: null, // optional
+    productId: '', // optional
+    reorderPoint: null, // optional
+    reserved: null, // optional
+    sku: '' // optional
 });
 
 console.log(result);

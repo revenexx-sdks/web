@@ -9,7 +9,15 @@ const client = new Client()
 
 const payments = new Payments(client);
 
-const result = await payments.paymentsProvidersCreate();
+const result = await payments.paymentsProvidersCreate({
+    provider: '',
+    credentials: {}, // optional
+    enabled: null, // optional
+    name: '', // optional
+    options: {}, // optional
+    testMode: null, // optional
+    webhookSecret: '' // optional
+});
 
 console.log(result);
 ```

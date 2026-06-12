@@ -9,7 +9,16 @@ const client = new Client()
 
 const carts = new Carts(client);
 
-const result = await carts.cartsCreate();
+const result = await carts.cartsCreate({
+    channelId: '', // optional
+    contactId: '', // optional
+    currency: '', // optional
+    isCurrent: null, // optional
+    marketId: '', // optional
+    metadata: {}, // optional
+    name: '', // optional
+    sessionKey: '' // optional
+});
 
 console.log(result);
 ```

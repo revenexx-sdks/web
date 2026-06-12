@@ -18,7 +18,7 @@ export class Greetings {
     greetingsDigest(): Promise<{}> {
 
         const apiPath = '/v1/digest';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -28,7 +28,7 @@ export class Greetings {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -40,7 +40,7 @@ export class Greetings {
     greetingsList(): Promise<{}> {
 
         const apiPath = '/v1/greetings';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -50,7 +50,7 @@ export class Greetings {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -94,12 +94,12 @@ export class Greetings {
         }
 
         const apiPath = '/v1/greetings';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof locale !== 'undefined') {
-            payload['locale'] = locale;
+            apiPayload['locale'] = locale;
         }
         if (typeof name !== 'undefined') {
-            payload['name'] = name;
+            apiPayload['name'] = name;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -111,7 +111,7 @@ export class Greetings {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -150,7 +150,7 @@ export class Greetings {
         }
 
         const apiPath = '/v1/greetings/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -160,7 +160,7 @@ export class Greetings {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -199,7 +199,7 @@ export class Greetings {
         }
 
         const apiPath = '/v1/greetings/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -209,7 +209,7 @@ export class Greetings {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -265,18 +265,18 @@ export class Greetings {
         }
 
         const apiPath = '/v1/greetings/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof locale !== 'undefined') {
-            payload['locale'] = locale;
+            apiPayload['locale'] = locale;
         }
         if (typeof message !== 'undefined') {
-            payload['message'] = message;
+            apiPayload['message'] = message;
         }
         if (typeof metadata !== 'undefined') {
-            payload['metadata'] = metadata;
+            apiPayload['metadata'] = metadata;
         }
         if (typeof name !== 'undefined') {
-            payload['name'] = name;
+            apiPayload['name'] = name;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -288,7 +288,7 @@ export class Greetings {
             'put',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 }

@@ -9,7 +9,12 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsAssociationTypesCreate();
+const result = await products.productsAssociationTypesCreate({
+    code: '',
+    isQuantified: null, // optional
+    isTwoWay: null, // optional
+    labels: {} // optional
+});
 
 console.log(result);
 ```

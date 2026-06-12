@@ -9,7 +9,9 @@ const client = new Client()
 
 const inventories = new Inventories(client);
 
-const result = await inventories.inventoriesRelease();
+const result = await inventories.inventoriesRelease({
+    orderRef: ''
+});
 
 console.log(result);
 ```

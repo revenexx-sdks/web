@@ -10,7 +10,10 @@ const client = new Client()
 const orders = new Orders(client);
 
 const result = await orders.ordersReturn({
-    id: ''
+    id: '',
+    positions: [],
+    metadata: {}, // optional
+    reason: '' // optional
 });
 
 console.log(result);

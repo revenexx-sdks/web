@@ -10,7 +10,11 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsMeasurementFamiliesUpdate({
-    id: ''
+    id: '',
+    code: '', // optional
+    labels: {}, // optional
+    standardUnit: '', // optional
+    units: {} // optional
 });
 
 console.log(result);

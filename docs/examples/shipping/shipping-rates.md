@@ -9,7 +9,14 @@ const client = new Client()
 
 const shipping = new Shipping(client);
 
-const result = await shipping.shippingRates();
+const result = await shipping.shippingRates({
+    attributes: {}, // optional
+    country: '', // optional
+    currency: '', // optional
+    orderValue: null, // optional
+    quantity: null, // optional
+    weight: null // optional
+});
 
 console.log(result);
 ```

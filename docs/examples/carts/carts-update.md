@@ -10,7 +10,12 @@ const client = new Client()
 const carts = new Carts(client);
 
 const result = await carts.cartsUpdate({
-    id: ''
+    id: '',
+    channelId: '', // optional
+    currency: '', // optional
+    marketId: '', // optional
+    metadata: {}, // optional
+    name: '' // optional
 });
 
 console.log(result);

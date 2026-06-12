@@ -10,7 +10,10 @@ const client = new Client()
 const shipping = new Shipping(client);
 
 const result = await shipping.shippingTiersCreate({
-    methodId: ''
+    methodId: '',
+    fromValue: null, // optional
+    position: null, // optional
+    price: null // optional
 });
 
 console.log(result);

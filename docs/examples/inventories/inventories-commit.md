@@ -9,7 +9,9 @@ const client = new Client()
 
 const inventories = new Inventories(client);
 
-const result = await inventories.inventoriesCommit();
+const result = await inventories.inventoriesCommit({
+    orderRef: ''
+});
 
 console.log(result);
 ```

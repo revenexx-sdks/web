@@ -9,7 +9,9 @@ const client = new Client()
 
 const customers = new Customers(client);
 
-const result = await customers.customersAuthMe();
+const result = await customers.customersAuthMe({
+    userId: ''
+});
 
 console.log(result);
 ```

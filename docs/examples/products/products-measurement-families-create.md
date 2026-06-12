@@ -9,7 +9,12 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsMeasurementFamiliesCreate();
+const result = await products.productsMeasurementFamiliesCreate({
+    code: '',
+    standardUnit: '',
+    labels: {}, // optional
+    units: {} // optional
+});
 
 console.log(result);
 ```

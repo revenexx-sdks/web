@@ -20,7 +20,7 @@ export class Search {
     searchListCollections(): Promise<{}> {
 
         const apiPath = '/v1/search/collections';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -30,7 +30,7 @@ export class Search {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -96,24 +96,24 @@ export class Search {
         }
 
         const apiPath = '/v1/search/collections/{collection}/documents/search'.replace('{collection}', collection);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof q !== 'undefined') {
-            payload['q'] = q;
+            apiPayload['q'] = q;
         }
         if (typeof queryBy !== 'undefined') {
-            payload['query_by'] = queryBy;
+            apiPayload['query_by'] = queryBy;
         }
         if (typeof filterBy !== 'undefined') {
-            payload['filter_by'] = filterBy;
+            apiPayload['filter_by'] = filterBy;
         }
         if (typeof sortBy !== 'undefined') {
-            payload['sort_by'] = sortBy;
+            apiPayload['sort_by'] = sortBy;
         }
         if (typeof page !== 'undefined') {
-            payload['page'] = page;
+            apiPayload['page'] = page;
         }
         if (typeof perPage !== 'undefined') {
-            payload['per_page'] = perPage;
+            apiPayload['per_page'] = perPage;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -124,7 +124,7 @@ export class Search {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -194,27 +194,27 @@ export class Search {
         }
 
         const apiPath = '/v1/search/collections/{collection}/documents/search'.replace('{collection}', collection);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof facetBy !== 'undefined') {
-            payload['facet_by'] = facetBy;
+            apiPayload['facet_by'] = facetBy;
         }
         if (typeof filterBy !== 'undefined') {
-            payload['filter_by'] = filterBy;
+            apiPayload['filter_by'] = filterBy;
         }
         if (typeof page !== 'undefined') {
-            payload['page'] = page;
+            apiPayload['page'] = page;
         }
         if (typeof perPage !== 'undefined') {
-            payload['per_page'] = perPage;
+            apiPayload['per_page'] = perPage;
         }
         if (typeof q !== 'undefined') {
-            payload['q'] = q;
+            apiPayload['q'] = q;
         }
         if (typeof queryBy !== 'undefined') {
-            payload['query_by'] = queryBy;
+            apiPayload['query_by'] = queryBy;
         }
         if (typeof sortBy !== 'undefined') {
-            payload['sort_by'] = sortBy;
+            apiPayload['sort_by'] = sortBy;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -226,7 +226,7 @@ export class Search {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -275,7 +275,7 @@ export class Search {
         }
 
         const apiPath = '/v1/search/collections/{collection}/documents/{documentId}'.replace('{collection}', collection).replace('{documentId}', documentId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -285,7 +285,7 @@ export class Search {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -326,9 +326,9 @@ export class Search {
         }
 
         const apiPath = '/v1/search/multi_search';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof searches !== 'undefined') {
-            payload['searches'] = searches;
+            apiPayload['searches'] = searches;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -340,7 +340,7 @@ export class Search {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 }

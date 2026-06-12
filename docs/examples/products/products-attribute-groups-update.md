@@ -10,7 +10,10 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsAttributeGroupsUpdate({
-    id: ''
+    id: '',
+    code: '', // optional
+    labels: {}, // optional
+    position: null // optional
 });
 
 console.log(result);

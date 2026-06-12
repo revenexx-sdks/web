@@ -9,7 +9,12 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsFamilyVariantsCreate();
+const result = await products.productsFamilyVariantsCreate({
+    code: '',
+    familyId: '',
+    axes: {}, // optional
+    labels: {} // optional
+});
 
 console.log(result);
 ```

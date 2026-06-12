@@ -10,7 +10,11 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsAssetsUpdate({
-    id: ''
+    id: '',
+    assetFamilyId: '', // optional
+    attributeValues: {}, // optional
+    code: '', // optional
+    mediaUuid: '' // optional
 });
 
 console.log(result);

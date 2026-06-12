@@ -10,7 +10,10 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsAssetFamiliesUpdate({
-    id: ''
+    id: '',
+    code: '', // optional
+    labels: {}, // optional
+    namingConvention: {} // optional
 });
 
 console.log(result);

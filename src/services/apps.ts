@@ -60,15 +60,15 @@ export class Apps {
 
 
         const apiPath = '/v1/apps';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
-            payload['queries'] = queries;
+            apiPayload['queries'] = queries;
         }
         if (typeof search !== 'undefined') {
-            payload['search'] = search;
+            apiPayload['search'] = search;
         }
         if (typeof total !== 'undefined') {
-            payload['total'] = total;
+            apiPayload['total'] = total;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -79,7 +79,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -199,60 +199,60 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof commands !== 'undefined') {
-            payload['commands'] = commands;
+            apiPayload['commands'] = commands;
         }
         if (typeof enabled !== 'undefined') {
-            payload['enabled'] = enabled;
+            apiPayload['enabled'] = enabled;
         }
         if (typeof entrypoint !== 'undefined') {
-            payload['entrypoint'] = entrypoint;
+            apiPayload['entrypoint'] = entrypoint;
         }
         if (typeof events !== 'undefined') {
-            payload['events'] = events;
+            apiPayload['events'] = events;
         }
         if (typeof execute !== 'undefined') {
-            payload['execute'] = execute;
+            apiPayload['execute'] = execute;
         }
         if (typeof functionId !== 'undefined') {
-            payload['functionId'] = functionId;
+            apiPayload['functionId'] = functionId;
         }
         if (typeof installationId !== 'undefined') {
-            payload['installationId'] = installationId;
+            apiPayload['installationId'] = installationId;
         }
         if (typeof logging !== 'undefined') {
-            payload['logging'] = logging;
+            apiPayload['logging'] = logging;
         }
         if (typeof name !== 'undefined') {
-            payload['name'] = name;
+            apiPayload['name'] = name;
         }
         if (typeof providerBranch !== 'undefined') {
-            payload['providerBranch'] = providerBranch;
+            apiPayload['providerBranch'] = providerBranch;
         }
         if (typeof providerRepositoryId !== 'undefined') {
-            payload['providerRepositoryId'] = providerRepositoryId;
+            apiPayload['providerRepositoryId'] = providerRepositoryId;
         }
         if (typeof providerRootDirectory !== 'undefined') {
-            payload['providerRootDirectory'] = providerRootDirectory;
+            apiPayload['providerRootDirectory'] = providerRootDirectory;
         }
         if (typeof providerSilentMode !== 'undefined') {
-            payload['providerSilentMode'] = providerSilentMode;
+            apiPayload['providerSilentMode'] = providerSilentMode;
         }
         if (typeof runtime !== 'undefined') {
-            payload['runtime'] = runtime;
+            apiPayload['runtime'] = runtime;
         }
         if (typeof schedule !== 'undefined') {
-            payload['schedule'] = schedule;
+            apiPayload['schedule'] = schedule;
         }
         if (typeof scopes !== 'undefined') {
-            payload['scopes'] = scopes;
+            apiPayload['scopes'] = scopes;
         }
         if (typeof specification !== 'undefined') {
-            payload['specification'] = specification;
+            apiPayload['specification'] = specification;
         }
         if (typeof timeout !== 'undefined') {
-            payload['timeout'] = timeout;
+            apiPayload['timeout'] = timeout;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -264,7 +264,7 @@ export class Apps {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -311,15 +311,15 @@ export class Apps {
 
 
         const apiPath = '/v1/apps/marketplace';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof search !== 'undefined') {
-            payload['search'] = search;
+            apiPayload['search'] = search;
         }
         if (typeof perPage !== 'undefined') {
-            payload['per_page'] = perPage;
+            apiPayload['per_page'] = perPage;
         }
         if (typeof page !== 'undefined') {
-            payload['page'] = page;
+            apiPayload['page'] = page;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -330,7 +330,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -379,12 +379,12 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/marketplace/install';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof name !== 'undefined') {
-            payload['name'] = name;
+            apiPayload['name'] = name;
         }
         if (typeof owner !== 'undefined') {
-            payload['owner'] = owner;
+            apiPayload['owner'] = owner;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -396,7 +396,7 @@ export class Apps {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -409,7 +409,7 @@ export class Apps {
     appsListRuntimes(): Promise<Models.RuntimeList> {
 
         const apiPath = '/v1/apps/runtimes';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -419,7 +419,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -432,7 +432,7 @@ export class Apps {
     appsListSpecifications(): Promise<Models.SpecificationList> {
 
         const apiPath = '/v1/apps/specifications';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -442,7 +442,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -497,21 +497,21 @@ export class Apps {
 
 
         const apiPath = '/v1/apps/templates';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof runtimes !== 'undefined') {
-            payload['runtimes'] = runtimes;
+            apiPayload['runtimes'] = runtimes;
         }
         if (typeof useCases !== 'undefined') {
-            payload['useCases'] = useCases;
+            apiPayload['useCases'] = useCases;
         }
         if (typeof limit !== 'undefined') {
-            payload['limit'] = limit;
+            apiPayload['limit'] = limit;
         }
         if (typeof offset !== 'undefined') {
-            payload['offset'] = offset;
+            apiPayload['offset'] = offset;
         }
         if (typeof total !== 'undefined') {
-            payload['total'] = total;
+            apiPayload['total'] = total;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -522,7 +522,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -563,7 +563,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/templates/{templateId}'.replace('{templateId}', templateId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -573,7 +573,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -611,9 +611,9 @@ export class Apps {
 
 
         const apiPath = '/v1/apps/usage';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof range !== 'undefined') {
-            payload['range'] = range;
+            apiPayload['range'] = range;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -624,7 +624,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -665,7 +665,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -675,7 +675,7 @@ export class Apps {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -716,7 +716,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -726,7 +726,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -839,57 +839,57 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof commands !== 'undefined') {
-            payload['commands'] = commands;
+            apiPayload['commands'] = commands;
         }
         if (typeof enabled !== 'undefined') {
-            payload['enabled'] = enabled;
+            apiPayload['enabled'] = enabled;
         }
         if (typeof entrypoint !== 'undefined') {
-            payload['entrypoint'] = entrypoint;
+            apiPayload['entrypoint'] = entrypoint;
         }
         if (typeof events !== 'undefined') {
-            payload['events'] = events;
+            apiPayload['events'] = events;
         }
         if (typeof execute !== 'undefined') {
-            payload['execute'] = execute;
+            apiPayload['execute'] = execute;
         }
         if (typeof installationId !== 'undefined') {
-            payload['installationId'] = installationId;
+            apiPayload['installationId'] = installationId;
         }
         if (typeof logging !== 'undefined') {
-            payload['logging'] = logging;
+            apiPayload['logging'] = logging;
         }
         if (typeof name !== 'undefined') {
-            payload['name'] = name;
+            apiPayload['name'] = name;
         }
         if (typeof providerBranch !== 'undefined') {
-            payload['providerBranch'] = providerBranch;
+            apiPayload['providerBranch'] = providerBranch;
         }
         if (typeof providerRepositoryId !== 'undefined') {
-            payload['providerRepositoryId'] = providerRepositoryId;
+            apiPayload['providerRepositoryId'] = providerRepositoryId;
         }
         if (typeof providerRootDirectory !== 'undefined') {
-            payload['providerRootDirectory'] = providerRootDirectory;
+            apiPayload['providerRootDirectory'] = providerRootDirectory;
         }
         if (typeof providerSilentMode !== 'undefined') {
-            payload['providerSilentMode'] = providerSilentMode;
+            apiPayload['providerSilentMode'] = providerSilentMode;
         }
         if (typeof runtime !== 'undefined') {
-            payload['runtime'] = runtime;
+            apiPayload['runtime'] = runtime;
         }
         if (typeof schedule !== 'undefined') {
-            payload['schedule'] = schedule;
+            apiPayload['schedule'] = schedule;
         }
         if (typeof scopes !== 'undefined') {
-            payload['scopes'] = scopes;
+            apiPayload['scopes'] = scopes;
         }
         if (typeof specification !== 'undefined') {
-            payload['specification'] = specification;
+            apiPayload['specification'] = specification;
         }
         if (typeof timeout !== 'undefined') {
-            payload['timeout'] = timeout;
+            apiPayload['timeout'] = timeout;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -901,7 +901,7 @@ export class Apps {
             'put',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -950,9 +950,9 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/deployment'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof deploymentId !== 'undefined') {
-            payload['deploymentId'] = deploymentId;
+            apiPayload['deploymentId'] = deploymentId;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -964,7 +964,7 @@ export class Apps {
             'patch',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1018,15 +1018,15 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/deployments'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
-            payload['queries'] = queries;
+            apiPayload['queries'] = queries;
         }
         if (typeof search !== 'undefined') {
-            payload['search'] = search;
+            apiPayload['search'] = search;
         }
         if (typeof total !== 'undefined') {
-            payload['total'] = total;
+            apiPayload['total'] = total;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1037,7 +1037,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1110,18 +1110,18 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/deployments'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof activate !== 'undefined') {
-            payload['activate'] = activate;
+            apiPayload['activate'] = activate;
         }
         if (typeof code !== 'undefined') {
-            payload['code'] = code;
+            apiPayload['code'] = code;
         }
         if (typeof commands !== 'undefined') {
-            payload['commands'] = commands;
+            apiPayload['commands'] = commands;
         }
         if (typeof entrypoint !== 'undefined') {
-            payload['entrypoint'] = entrypoint;
+            apiPayload['entrypoint'] = entrypoint;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1133,7 +1133,7 @@ export class Apps {
             'post',
             uri,
             apiHeaders,
-            payload,
+            apiPayload,
             onProgress
         );
     }
@@ -1187,12 +1187,12 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/deployments/duplicate'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof buildId !== 'undefined') {
-            payload['buildId'] = buildId;
+            apiPayload['buildId'] = buildId;
         }
         if (typeof deploymentId !== 'undefined') {
-            payload['deploymentId'] = deploymentId;
+            apiPayload['deploymentId'] = deploymentId;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1204,7 +1204,7 @@ export class Apps {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1285,24 +1285,24 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/deployments/template'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof activate !== 'undefined') {
-            payload['activate'] = activate;
+            apiPayload['activate'] = activate;
         }
         if (typeof owner !== 'undefined') {
-            payload['owner'] = owner;
+            apiPayload['owner'] = owner;
         }
         if (typeof reference !== 'undefined') {
-            payload['reference'] = reference;
+            apiPayload['reference'] = reference;
         }
         if (typeof repository !== 'undefined') {
-            payload['repository'] = repository;
+            apiPayload['repository'] = repository;
         }
         if (typeof rootDirectory !== 'undefined') {
-            payload['rootDirectory'] = rootDirectory;
+            apiPayload['rootDirectory'] = rootDirectory;
         }
         if (typeof type !== 'undefined') {
-            payload['type'] = type;
+            apiPayload['type'] = type;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1314,7 +1314,7 @@ export class Apps {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1374,15 +1374,15 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/deployments/vcs'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof activate !== 'undefined') {
-            payload['activate'] = activate;
+            apiPayload['activate'] = activate;
         }
         if (typeof reference !== 'undefined') {
-            payload['reference'] = reference;
+            apiPayload['reference'] = reference;
         }
         if (typeof type !== 'undefined') {
-            payload['type'] = type;
+            apiPayload['type'] = type;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1394,7 +1394,7 @@ export class Apps {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1443,7 +1443,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/deployments/{deploymentId}'.replace('{functionId}', functionId).replace('{deploymentId}', deploymentId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1453,7 +1453,7 @@ export class Apps {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1502,7 +1502,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/deployments/{deploymentId}'.replace('{functionId}', functionId).replace('{deploymentId}', deploymentId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1512,7 +1512,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1565,9 +1565,9 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/deployments/{deploymentId}/download'.replace('{functionId}', functionId).replace('{deploymentId}', deploymentId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof type !== 'undefined') {
-            payload['type'] = type;
+            apiPayload['type'] = type;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1578,7 +1578,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1627,7 +1627,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/deployments/{deploymentId}/status'.replace('{functionId}', functionId).replace('{deploymentId}', deploymentId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1637,7 +1637,7 @@ export class Apps {
             'patch',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1687,12 +1687,12 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/executions'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
-            payload['queries'] = queries;
+            apiPayload['queries'] = queries;
         }
         if (typeof total !== 'undefined') {
-            payload['total'] = total;
+            apiPayload['total'] = total;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1703,7 +1703,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1769,24 +1769,24 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/executions'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof async !== 'undefined') {
-            payload['async'] = async;
+            apiPayload['async'] = async;
         }
         if (typeof body !== 'undefined') {
-            payload['body'] = body;
+            apiPayload['body'] = body;
         }
         if (typeof headers !== 'undefined') {
-            payload['headers'] = headers;
+            apiPayload['headers'] = headers;
         }
         if (typeof method !== 'undefined') {
-            payload['method'] = method;
+            apiPayload['method'] = method;
         }
         if (typeof xpath !== 'undefined') {
-            payload['path'] = xpath;
+            apiPayload['path'] = xpath;
         }
         if (typeof scheduledAt !== 'undefined') {
-            payload['scheduledAt'] = scheduledAt;
+            apiPayload['scheduledAt'] = scheduledAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1798,7 +1798,7 @@ export class Apps {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1847,7 +1847,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/executions/{executionId}'.replace('{functionId}', functionId).replace('{executionId}', executionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1857,7 +1857,7 @@ export class Apps {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1906,7 +1906,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/executions/{executionId}'.replace('{functionId}', functionId).replace('{executionId}', executionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1916,7 +1916,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1957,7 +1957,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/marketplace-status'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1967,7 +1967,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -2008,7 +2008,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/publish'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -2018,7 +2018,7 @@ export class Apps {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -2065,7 +2065,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/publish'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -2075,7 +2075,7 @@ export class Apps {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -2121,9 +2121,9 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/usage'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof range !== 'undefined') {
-            payload['range'] = range;
+            apiPayload['range'] = range;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -2134,7 +2134,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -2175,7 +2175,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/variables'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -2185,7 +2185,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -2245,15 +2245,15 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/variables'.replace('{functionId}', functionId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof key !== 'undefined') {
-            payload['key'] = key;
+            apiPayload['key'] = key;
         }
         if (typeof secret !== 'undefined') {
-            payload['secret'] = secret;
+            apiPayload['secret'] = secret;
         }
         if (typeof value !== 'undefined') {
-            payload['value'] = value;
+            apiPayload['value'] = value;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -2265,7 +2265,7 @@ export class Apps {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -2314,7 +2314,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/variables/{variableId}'.replace('{functionId}', functionId).replace('{variableId}', variableId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -2324,7 +2324,7 @@ export class Apps {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -2373,7 +2373,7 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/variables/{variableId}'.replace('{functionId}', functionId).replace('{variableId}', variableId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -2383,7 +2383,7 @@ export class Apps {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -2447,15 +2447,15 @@ export class Apps {
         }
 
         const apiPath = '/v1/apps/{functionId}/variables/{variableId}'.replace('{functionId}', functionId).replace('{variableId}', variableId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof key !== 'undefined') {
-            payload['key'] = key;
+            apiPayload['key'] = key;
         }
         if (typeof secret !== 'undefined') {
-            payload['secret'] = secret;
+            apiPayload['secret'] = secret;
         }
         if (typeof value !== 'undefined') {
-            payload['value'] = value;
+            apiPayload['value'] = value;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -2467,7 +2467,7 @@ export class Apps {
             'put',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 }

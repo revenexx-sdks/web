@@ -10,7 +10,13 @@ const client = new Client()
 const markets = new Markets(client);
 
 const result = await markets.marketsTaxClassesCreate({
-    marketId: ''
+    marketId: '',
+    code: '',
+    name: '',
+    isDefault: null, // optional
+    labels: {}, // optional
+    position: null, // optional
+    rate: null // optional
 });
 
 console.log(result);

@@ -10,7 +10,10 @@ const client = new Client()
 const pages = new Pages(client);
 
 const result = await pages.pagesLibraryUpdate({
-    id: ''
+    id: '',
+    bundle: '', // optional
+    label: '', // optional
+    tree: {} // optional
 });
 
 console.log(result);

@@ -10,7 +10,8 @@ const client = new Client()
 const prices = new Prices(client);
 
 const result = await prices.pricesEntriesReplace({
-    listId: ''
+    listId: '',
+    entries: []
 });
 
 console.log(result);

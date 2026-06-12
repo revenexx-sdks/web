@@ -9,7 +9,11 @@ const client = new Client()
 
 const inventories = new Inventories(client);
 
-const result = await inventories.inventoriesAdjust();
+const result = await inventories.inventoriesAdjust({
+    items: [],
+    reason: '',
+    locationCode: '' // optional
+});
 
 console.log(result);
 ```

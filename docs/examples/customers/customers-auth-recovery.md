@@ -9,7 +9,10 @@ const client = new Client()
 
 const customers = new Customers(client);
 
-const result = await customers.customersAuthRecovery();
+const result = await customers.customersAuthRecovery({
+    email: '',
+    url: ''
+});
 
 console.log(result);
 ```

@@ -10,7 +10,13 @@ const client = new Client()
 const pages = new Pages(client);
 
 const result = await pages.pagesTemplatesUpdate({
-    id: ''
+    id: '',
+    description: '', // optional
+    fieldName: '', // optional
+    isDefault: null, // optional
+    label: '', // optional
+    pageBundle: '', // optional
+    tree: [] // optional
 });
 
 console.log(result);

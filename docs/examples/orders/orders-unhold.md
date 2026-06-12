@@ -10,7 +10,8 @@ const client = new Client()
 const orders = new Orders(client);
 
 const result = await orders.ordersUnhold({
-    id: ''
+    id: '',
+    data: {}
 });
 
 console.log(result);

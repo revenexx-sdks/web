@@ -9,7 +9,11 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsProductCategoriesCreate();
+const result = await products.productsProductCategoriesCreate({
+    categoryId: '',
+    productId: '',
+    position: null // optional
+});
 
 console.log(result);
 ```

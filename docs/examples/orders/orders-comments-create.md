@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Orders } from "@revenexx/sdk";
+import { Client, Orders, OrderCommentVisibility } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,7 +10,10 @@ const client = new Client()
 const orders = new Orders(client);
 
 const result = await orders.ordersCommentsCreate({
-    id: ''
+    id: '',
+    body: '',
+    author: '', // optional
+    visibility: OrderCommentVisibility.Internal // optional
 });
 
 console.log(result);

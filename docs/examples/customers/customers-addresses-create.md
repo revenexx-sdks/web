@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Customers } from "@revenexx/sdk";
+import { Client, Customers, AddressType } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -9,7 +9,21 @@ const client = new Client()
 
 const customers = new Customers(client);
 
-const result = await customers.customersAddressesCreate();
+const result = await customers.customersAddressesCreate({
+    city: '',
+    country: '',
+    street: '',
+    zip: '',
+    company: '', // optional
+    contactId: '', // optional
+    isDefault: null, // optional
+    name: '', // optional
+    organizationId: '', // optional
+    phone: '', // optional
+    region: '', // optional
+    street2: '', // optional
+    type: AddressType.Billing // optional
+});
 
 console.log(result);
 ```

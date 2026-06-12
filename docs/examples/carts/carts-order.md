@@ -10,7 +10,8 @@ const client = new Client()
 const carts = new Carts(client);
 
 const result = await carts.cartsOrder({
-    id: ''
+    id: '',
+    orderRef: '' // optional
 });
 
 console.log(result);

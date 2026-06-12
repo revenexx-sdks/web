@@ -63,12 +63,12 @@ export class Tokens {
         }
 
         const apiPath = '/v1/tokens/buckets/{bucketId}/files/{fileId}'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof queries !== 'undefined') {
-            payload['queries'] = queries;
+            apiPayload['queries'] = queries;
         }
         if (typeof total !== 'undefined') {
-            payload['total'] = total;
+            apiPayload['total'] = total;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -79,7 +79,7 @@ export class Tokens {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -132,9 +132,9 @@ export class Tokens {
         }
 
         const apiPath = '/v1/tokens/buckets/{bucketId}/files/{fileId}'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof expire !== 'undefined') {
-            payload['expire'] = expire;
+            apiPayload['expire'] = expire;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -146,7 +146,7 @@ export class Tokens {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -187,7 +187,7 @@ export class Tokens {
         }
 
         const apiPath = '/v1/tokens/{tokenId}'.replace('{tokenId}', tokenId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -197,7 +197,7 @@ export class Tokens {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -238,7 +238,7 @@ export class Tokens {
         }
 
         const apiPath = '/v1/tokens/{tokenId}'.replace('{tokenId}', tokenId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -248,7 +248,7 @@ export class Tokens {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -294,9 +294,9 @@ export class Tokens {
         }
 
         const apiPath = '/v1/tokens/{tokenId}'.replace('{tokenId}', tokenId);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof expire !== 'undefined') {
-            payload['expire'] = expire;
+            apiPayload['expire'] = expire;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -308,7 +308,7 @@ export class Tokens {
             'patch',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 }

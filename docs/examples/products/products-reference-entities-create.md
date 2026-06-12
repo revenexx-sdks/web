@@ -9,7 +9,11 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsReferenceEntitiesCreate();
+const result = await products.productsReferenceEntitiesCreate({
+    code: '',
+    image: '', // optional
+    labels: {} // optional
+});
 
 console.log(result);
 ```

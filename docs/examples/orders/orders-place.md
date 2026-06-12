@@ -9,7 +9,25 @@ const client = new Client()
 
 const orders = new Orders(client);
 
-const result = await orders.ordersPlace();
+const result = await orders.ordersPlace({
+    items: [],
+    billingAddress: {}, // optional
+    buyer: {}, // optional
+    cartId: '', // optional
+    channelId: '', // optional
+    contactId: '', // optional
+    currency: '', // optional
+    customerOrderNumber: '', // optional
+    grandTotal: null, // optional
+    marketId: '', // optional
+    metadata: {}, // optional
+    organizationId: '', // optional
+    payment: {}, // optional
+    shipping: {}, // optional
+    shippingAddress: {}, // optional
+    shippingTotal: null, // optional
+    userData: {} // optional
+});
 
 console.log(result);
 ```

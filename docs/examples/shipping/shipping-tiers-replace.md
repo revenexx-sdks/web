@@ -10,7 +10,8 @@ const client = new Client()
 const shipping = new Shipping(client);
 
 const result = await shipping.shippingTiersReplace({
-    methodId: ''
+    methodId: '',
+    tiers: []
 });
 
 console.log(result);

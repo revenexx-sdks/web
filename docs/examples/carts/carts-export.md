@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Carts } from "@revenexx/sdk";
+import { Client, Carts, CartExportFormat } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,7 +10,9 @@ const client = new Client()
 const carts = new Carts(client);
 
 const result = await carts.cartsExport({
-    id: ''
+    id: '',
+    format: CartExportFormat.Json, // optional
+    profileId: '' // optional
 });
 
 console.log(result);

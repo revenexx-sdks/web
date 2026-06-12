@@ -9,7 +9,10 @@ const client = new Client()
 
 const customers = new Customers(client);
 
-const result = await customers.customersAuthLogout();
+const result = await customers.customersAuthLogout({
+    sessionId: '',
+    userId: ''
+});
 
 console.log(result);
 ```

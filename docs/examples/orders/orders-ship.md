@@ -10,7 +10,14 @@ const client = new Client()
 const orders = new Orders(client);
 
 const result = await orders.ordersShip({
-    id: ''
+    id: '',
+    carrier: '', // optional
+    metadata: {}, // optional
+    number: '', // optional
+    positions: [], // optional
+    shippedAt: '', // optional
+    trackingCode: '', // optional
+    trackingUrl: '' // optional
 });
 
 console.log(result);

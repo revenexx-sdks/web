@@ -9,7 +9,12 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsReferenceEntityRecordsCreate();
+const result = await products.productsReferenceEntityRecordsCreate({
+    code: '',
+    referenceEntityId: '',
+    attributeValues: {}, // optional
+    labels: {} // optional
+});
 
 console.log(result);
 ```

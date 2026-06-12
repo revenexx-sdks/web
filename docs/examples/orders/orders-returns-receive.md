@@ -11,7 +11,8 @@ const orders = new Orders(client);
 
 const result = await orders.ordersReturnsReceive({
     id: '',
-    rid: ''
+    rid: '',
+    data: {}
 });
 
 console.log(result);

@@ -9,7 +9,11 @@ const client = new Client()
 
 const carts = new Carts(client);
 
-const result = await carts.cartsClaim();
+const result = await carts.cartsClaim({
+    contactId: '',
+    sessionKey: '',
+    targetCartId: '' // optional
+});
 
 console.log(result);
 ```

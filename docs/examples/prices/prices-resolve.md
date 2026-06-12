@@ -9,7 +9,15 @@ const client = new Client()
 
 const prices = new Prices(client);
 
-const result = await prices.pricesResolve();
+const result = await prices.pricesResolve({
+    items: [],
+    at: '', // optional
+    channelId: '', // optional
+    contactId: '', // optional
+    currency: '', // optional
+    marketId: '', // optional
+    organizationId: '' // optional
+});
 
 console.log(result);
 ```

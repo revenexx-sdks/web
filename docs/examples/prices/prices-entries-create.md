@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Prices } from "@revenexx/sdk";
+import { Client, Prices, PriceEntryType } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,7 +10,16 @@ const client = new Client()
 const prices = new Prices(client);
 
 const result = await prices.pricesEntriesCreate({
-    listId: ''
+    listId: '',
+    metadata: {}, // optional
+    priceType: PriceEntryType.Standard, // optional
+    productId: '', // optional
+    quantityMin: null, // optional
+    sku: '', // optional
+    unit: '', // optional
+    unitPrice: null, // optional
+    validFrom: '', // optional
+    validUntil: '' // optional
 });
 
 console.log(result);

@@ -2,6 +2,7 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+import { PageStatus } from '../enums/page-status';
 
 export class Pages {
     client: Client;
@@ -18,7 +19,7 @@ export class Pages {
     pagesDeliveryPage(): Promise<Models.DeliveryPage> {
 
         const apiPath = '/v1/pages/delivery/page';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -28,7 +29,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -40,7 +41,7 @@ export class Pages {
     pagesDeliveryPages(): Promise<{}> {
 
         const apiPath = '/v1/pages/delivery/pages';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -50,7 +51,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -89,7 +90,7 @@ export class Pages {
         }
 
         const apiPath = '/v1/pages/delivery/preview/{token}'.replace('{token}', token);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -99,7 +100,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -111,7 +112,7 @@ export class Pages {
     pagesEditorEditStates(): Promise<{}> {
 
         const apiPath = '/v1/pages/editor/edit-states';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -121,7 +122,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -133,7 +134,7 @@ export class Pages {
     pagesEditorNotificationsList(): Promise<{}> {
 
         const apiPath = '/v1/pages/editor/notifications';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -143,7 +144,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -155,7 +156,7 @@ export class Pages {
     pagesEditorNotificationsMarkAllRead(): Promise<{}> {
 
         const apiPath = '/v1/pages/editor/notifications/mark-all-read';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -165,7 +166,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -177,7 +178,7 @@ export class Pages {
     pagesEditorNotificationsUnreadCount(): Promise<{}> {
 
         const apiPath = '/v1/pages/editor/notifications/unread-count';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -187,7 +188,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -223,9 +224,9 @@ export class Pages {
 
 
         const apiPath = '/v1/pages/editor/translate';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof items !== 'undefined') {
-            payload['items'] = items;
+            apiPayload['items'] = items;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -237,7 +238,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -249,7 +250,7 @@ export class Pages {
     pagesEditorUserSettingsGet(): Promise<{}> {
 
         const apiPath = '/v1/pages/editor/user-settings';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -259,7 +260,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -295,9 +296,9 @@ export class Pages {
 
 
         const apiPath = '/v1/pages/editor/user-settings';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof settings !== 'undefined') {
-            payload['settings'] = settings;
+            apiPayload['settings'] = settings;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -309,7 +310,7 @@ export class Pages {
             'put',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -321,7 +322,7 @@ export class Pages {
     pagesEditorUsers(): Promise<{}> {
 
         const apiPath = '/v1/pages/editor/users';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -331,7 +332,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -369,8 +370,8 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "pageId"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/comments'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/comments'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -380,7 +381,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -434,16 +435,16 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "body"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/comments'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/comments'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         if (typeof blockUuids !== 'undefined') {
-            payload['blockUuids'] = blockUuids;
+            apiPayload['blockUuids'] = blockUuids;
         }
         if (typeof body !== 'undefined') {
-            payload['body'] = body;
+            apiPayload['body'] = body;
         }
         if (typeof parentUuid !== 'undefined') {
-            payload['parentUuid'] = parentUuid;
+            apiPayload['parentUuid'] = parentUuid;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -455,7 +456,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -501,8 +502,8 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "uuid"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/comments/{uuid}'.replace('{pageId}', pageId).replace('{uuid}', uuid);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/comments/{uuid}'.replace('{page_id}', pageId).replace('{uuid}', uuid);
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -512,7 +513,7 @@ export class Pages {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -565,10 +566,10 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "body"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/comments/{uuid}'.replace('{pageId}', pageId).replace('{uuid}', uuid);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/comments/{uuid}'.replace('{page_id}', pageId).replace('{uuid}', uuid);
+        const apiPayload: Payload = {};
         if (typeof body !== 'undefined') {
-            payload['body'] = body;
+            apiPayload['body'] = body;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -580,7 +581,7 @@ export class Pages {
             'put',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -626,8 +627,8 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "uuid"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/comments/{uuid}/resolve'.replace('{pageId}', pageId).replace('{uuid}', uuid);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/comments/{uuid}/resolve'.replace('{page_id}', pageId).replace('{uuid}', uuid);
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -637,7 +638,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -690,10 +691,10 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "taskIndex"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/comments/{uuid}/toggle-task'.replace('{pageId}', pageId).replace('{uuid}', uuid);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/comments/{uuid}/toggle-task'.replace('{page_id}', pageId).replace('{uuid}', uuid);
+        const apiPayload: Payload = {};
         if (typeof taskIndex !== 'undefined') {
-            payload['taskIndex'] = taskIndex;
+            apiPayload['taskIndex'] = taskIndex;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -705,7 +706,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -751,8 +752,8 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "uuid"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/comments/{uuid}/unresolve'.replace('{pageId}', pageId).replace('{uuid}', uuid);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/comments/{uuid}/unresolve'.replace('{page_id}', pageId).replace('{uuid}', uuid);
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -762,7 +763,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -812,13 +813,13 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "index"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/history'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/history'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         if (typeof index !== 'undefined') {
-            payload['index'] = index;
+            apiPayload['index'] = index;
         }
         if (typeof langcode !== 'undefined') {
-            payload['langcode'] = langcode;
+            apiPayload['langcode'] = langcode;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -830,7 +831,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -868,8 +869,8 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "pageId"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/last-changed'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/last-changed'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -879,7 +880,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -936,16 +937,16 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "index"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/mutation-status'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/mutation-status'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         if (typeof enabled !== 'undefined') {
-            payload['enabled'] = enabled;
+            apiPayload['enabled'] = enabled;
         }
         if (typeof index !== 'undefined') {
-            payload['index'] = index;
+            apiPayload['index'] = index;
         }
         if (typeof langcode !== 'undefined') {
-            payload['langcode'] = langcode;
+            apiPayload['langcode'] = langcode;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -957,46 +958,71 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
     /**
      *
      * @param {string} params.pageId - 
+     * @param {string} params.plugin - Mutation plugin id (add, move, delete, duplicate, update_field_value, ...).
+     * @param {string} params.langcode - 
+     * @param {object} params.payload - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.MutationResponse>}
      */
-    pagesEditorMutate(params: { pageId: string }): Promise<Models.MutationResponse>;
+    pagesEditorMutate(params: { pageId: string, plugin: string, langcode?: string, payload?: object }): Promise<Models.MutationResponse>;
     /**
      *
      * @param {string} pageId - 
+     * @param {string} plugin - Mutation plugin id (add, move, delete, duplicate, update_field_value, ...).
+     * @param {string} langcode - 
+     * @param {object} payload - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.MutationResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesEditorMutate(pageId: string): Promise<Models.MutationResponse>;
+    pagesEditorMutate(pageId: string, plugin: string, langcode?: string, payload?: object): Promise<Models.MutationResponse>;
     pagesEditorMutate(
-        paramsOrFirst: { pageId: string } | string    
+        paramsOrFirst: { pageId: string, plugin: string, langcode?: string, payload?: object } | string,
+        ...rest: [(string)?, (string)?, (object)?]    
     ): Promise<Models.MutationResponse> {
-        let params: { pageId: string };
+        let params: { pageId: string, plugin: string, langcode?: string, payload?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { pageId: string };
+            params = (paramsOrFirst || {}) as { pageId: string, plugin: string, langcode?: string, payload?: object };
         } else {
             params = {
-                pageId: paramsOrFirst as string            
+                pageId: paramsOrFirst as string,
+                plugin: rest[0] as string,
+                langcode: rest[1] as string,
+                payload: rest[2] as object            
             };
         }
         
         const pageId = params.pageId;
+        const plugin = params.plugin;
+        const langcode = params.langcode;
+        const payload = params.payload;
 
         if (typeof pageId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "pageId"');
         }
+        if (typeof plugin === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "plugin"');
+        }
 
-        const apiPath = '/v1/pages/editor/{page_id}/mutations'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/mutations'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
+        if (typeof langcode !== 'undefined') {
+            apiPayload['langcode'] = langcode;
+        }
+        if (typeof payload !== 'undefined') {
+            apiPayload['payload'] = payload;
+        }
+        if (typeof plugin !== 'undefined') {
+            apiPayload['plugin'] = plugin;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1007,7 +1033,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1050,10 +1076,10 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "pageId"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/preview-grant'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/preview-grant'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         if (typeof ttlHours !== 'undefined') {
-            payload['ttlHours'] = ttlHours;
+            apiPayload['ttlHours'] = ttlHours;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1065,7 +1091,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1112,13 +1138,13 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "pageId"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/publish'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/publish'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         if (typeof force !== 'undefined') {
-            payload['force'] = force;
+            apiPayload['force'] = force;
         }
         if (typeof label !== 'undefined') {
-            payload['label'] = label;
+            apiPayload['label'] = label;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1130,7 +1156,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1168,8 +1194,8 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "pageId"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/revert'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/revert'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1179,7 +1205,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1225,10 +1251,10 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "scheduledAt"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/schedule'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/schedule'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         if (typeof scheduledAt !== 'undefined') {
-            payload['scheduledAt'] = scheduledAt;
+            apiPayload['scheduledAt'] = scheduledAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1240,7 +1266,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1278,8 +1304,8 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "pageId"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/state'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/state'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1289,7 +1315,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1327,8 +1353,8 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "pageId"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/take-ownership'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/take-ownership'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1338,7 +1364,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1407,25 +1433,25 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "uuids"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/templates'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/templates'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         if (typeof description !== 'undefined') {
-            payload['description'] = description;
+            apiPayload['description'] = description;
         }
         if (typeof fieldName !== 'undefined') {
-            payload['fieldName'] = fieldName;
+            apiPayload['fieldName'] = fieldName;
         }
         if (typeof isDefault !== 'undefined') {
-            payload['isDefault'] = isDefault;
+            apiPayload['isDefault'] = isDefault;
         }
         if (typeof label !== 'undefined') {
-            payload['label'] = label;
+            apiPayload['label'] = label;
         }
         if (typeof pageBundle !== 'undefined') {
-            payload['pageBundle'] = pageBundle;
+            apiPayload['pageBundle'] = pageBundle;
         }
         if (typeof uuids !== 'undefined') {
-            payload['uuids'] = uuids;
+            apiPayload['uuids'] = uuids;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1437,7 +1463,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1475,8 +1501,8 @@ export class Pages {
             throw new RevenexxException('Missing required parameter: "pageId"');
         }
 
-        const apiPath = '/v1/pages/editor/{page_id}/unschedule'.replace('{pageId}', pageId);
-        const payload: Payload = {};
+        const apiPath = '/v1/pages/editor/{page_id}/unschedule'.replace('{page_id}', pageId);
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1486,7 +1512,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1498,7 +1524,7 @@ export class Pages {
     pagesLibraryList(): Promise<{}> {
 
         const apiPath = '/v1/pages/library';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1508,7 +1534,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1547,7 +1573,7 @@ export class Pages {
         }
 
         const apiPath = '/v1/pages/library/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1557,7 +1583,7 @@ export class Pages {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1596,7 +1622,7 @@ export class Pages {
         }
 
         const apiPath = '/v1/pages/library/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1606,46 +1632,68 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
     /**
      *
      * @param {string} params.id - 
+     * @param {string} params.bundle - 
+     * @param {string} params.label - 
+     * @param {object} params.tree - Serialized block tree ({ bundle, props, props_i18n, options, children }).
      * @throws {RevenexxException}
      * @returns {Promise<Models.LibraryItem>}
      */
-    pagesLibraryUpdate(params: { id: string }): Promise<Models.LibraryItem>;
+    pagesLibraryUpdate(params: { id: string, bundle?: string, label?: string, tree?: object }): Promise<Models.LibraryItem>;
     /**
      *
      * @param {string} id - 
+     * @param {string} bundle - 
+     * @param {string} label - 
+     * @param {object} tree - Serialized block tree ({ bundle, props, props_i18n, options, children }).
      * @throws {RevenexxException}
      * @returns {Promise<Models.LibraryItem>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesLibraryUpdate(id: string): Promise<Models.LibraryItem>;
+    pagesLibraryUpdate(id: string, bundle?: string, label?: string, tree?: object): Promise<Models.LibraryItem>;
     pagesLibraryUpdate(
-        paramsOrFirst: { id: string } | string    
+        paramsOrFirst: { id: string, bundle?: string, label?: string, tree?: object } | string,
+        ...rest: [(string)?, (string)?, (object)?]    
     ): Promise<Models.LibraryItem> {
-        let params: { id: string };
+        let params: { id: string, bundle?: string, label?: string, tree?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string };
+            params = (paramsOrFirst || {}) as { id: string, bundle?: string, label?: string, tree?: object };
         } else {
             params = {
-                id: paramsOrFirst as string            
+                id: paramsOrFirst as string,
+                bundle: rest[0] as string,
+                label: rest[1] as string,
+                tree: rest[2] as object            
             };
         }
         
         const id = params.id;
+        const bundle = params.bundle;
+        const label = params.label;
+        const tree = params.tree;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
         }
 
         const apiPath = '/v1/pages/library/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
+        if (typeof bundle !== 'undefined') {
+            apiPayload['bundle'] = bundle;
+        }
+        if (typeof label !== 'undefined') {
+            apiPayload['label'] = label;
+        }
+        if (typeof tree !== 'undefined') {
+            apiPayload['tree'] = tree;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1656,7 +1704,7 @@ export class Pages {
             'put',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1668,7 +1716,7 @@ export class Pages {
     pagesPagesList(): Promise<{}> {
 
         const apiPath = '/v1/pages/pages';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1678,19 +1726,85 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
     /**
      *
+     * @param {string} params.title - 
+     * @param {string} params.bundle - 
+     * @param {object} params.hostOptions - 
+     * @param {object} params.meta - 
+     * @param {string} params.slug - 
+     * @param {string} params.sourceLanguage - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.Page>}
      */
-    pagesPagesCreate(): Promise<Models.Page> {
+    pagesPagesCreate(params: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string }): Promise<Models.Page>;
+    /**
+     *
+     * @param {string} title - 
+     * @param {string} bundle - 
+     * @param {object} hostOptions - 
+     * @param {object} meta - 
+     * @param {string} slug - 
+     * @param {string} sourceLanguage - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Page>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesPagesCreate(title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string): Promise<Models.Page>;
+    pagesPagesCreate(
+        paramsOrFirst: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string } | string,
+        ...rest: [(string)?, (object)?, (object)?, (string)?, (string)?]    
+    ): Promise<Models.Page> {
+        let params: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string };
+        } else {
+            params = {
+                title: paramsOrFirst as string,
+                bundle: rest[0] as string,
+                hostOptions: rest[1] as object,
+                meta: rest[2] as object,
+                slug: rest[3] as string,
+                sourceLanguage: rest[4] as string            
+            };
+        }
+        
+        const title = params.title;
+        const bundle = params.bundle;
+        const hostOptions = params.hostOptions;
+        const meta = params.meta;
+        const slug = params.slug;
+        const sourceLanguage = params.sourceLanguage;
+
+        if (typeof title === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "title"');
+        }
 
         const apiPath = '/v1/pages/pages';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
+        if (typeof bundle !== 'undefined') {
+            apiPayload['bundle'] = bundle;
+        }
+        if (typeof hostOptions !== 'undefined') {
+            apiPayload['hostOptions'] = hostOptions;
+        }
+        if (typeof meta !== 'undefined') {
+            apiPayload['meta'] = meta;
+        }
+        if (typeof slug !== 'undefined') {
+            apiPayload['slug'] = slug;
+        }
+        if (typeof sourceLanguage !== 'undefined') {
+            apiPayload['sourceLanguage'] = sourceLanguage;
+        }
+        if (typeof title !== 'undefined') {
+            apiPayload['title'] = title;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1701,7 +1815,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1740,7 +1854,7 @@ export class Pages {
         }
 
         const apiPath = '/v1/pages/pages/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1750,7 +1864,7 @@ export class Pages {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1789,7 +1903,7 @@ export class Pages {
         }
 
         const apiPath = '/v1/pages/pages/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1799,46 +1913,82 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
     /**
      *
      * @param {string} params.id - 
+     * @param {string} params.bundle - 
+     * @param {object} params.meta - 
+     * @param {string} params.slug - 
+     * @param {PageStatus} params.status - 
+     * @param {string} params.title - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.Page>}
      */
-    pagesPagesUpdate(params: { id: string }): Promise<Models.Page>;
+    pagesPagesUpdate(params: { id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string }): Promise<Models.Page>;
     /**
      *
      * @param {string} id - 
+     * @param {string} bundle - 
+     * @param {object} meta - 
+     * @param {string} slug - 
+     * @param {PageStatus} status - 
+     * @param {string} title - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.Page>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesPagesUpdate(id: string): Promise<Models.Page>;
+    pagesPagesUpdate(id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string): Promise<Models.Page>;
     pagesPagesUpdate(
-        paramsOrFirst: { id: string } | string    
+        paramsOrFirst: { id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string } | string,
+        ...rest: [(string)?, (object)?, (string)?, (PageStatus)?, (string)?]    
     ): Promise<Models.Page> {
-        let params: { id: string };
+        let params: { id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string };
+            params = (paramsOrFirst || {}) as { id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string };
         } else {
             params = {
-                id: paramsOrFirst as string            
+                id: paramsOrFirst as string,
+                bundle: rest[0] as string,
+                meta: rest[1] as object,
+                slug: rest[2] as string,
+                status: rest[3] as PageStatus,
+                title: rest[4] as string            
             };
         }
         
         const id = params.id;
+        const bundle = params.bundle;
+        const meta = params.meta;
+        const slug = params.slug;
+        const status = params.status;
+        const title = params.title;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
         }
 
         const apiPath = '/v1/pages/pages/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
+        if (typeof bundle !== 'undefined') {
+            apiPayload['bundle'] = bundle;
+        }
+        if (typeof meta !== 'undefined') {
+            apiPayload['meta'] = meta;
+        }
+        if (typeof slug !== 'undefined') {
+            apiPayload['slug'] = slug;
+        }
+        if (typeof status !== 'undefined') {
+            apiPayload['status'] = status;
+        }
+        if (typeof title !== 'undefined') {
+            apiPayload['title'] = title;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1849,7 +1999,7 @@ export class Pages {
             'put',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1888,7 +2038,7 @@ export class Pages {
         }
 
         const apiPath = '/v1/pages/pages/{id}/revisions'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1898,19 +2048,46 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
     /**
      *
+     * @param {object[]} params.pages - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    pagesSeed(): Promise<{}> {
+    pagesSeed(params?: { pages?: object[] }): Promise<{}>;
+    /**
+     *
+     * @param {object[]} pages - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesSeed(pages?: object[]): Promise<{}>;
+    pagesSeed(
+        paramsOrFirst?: { pages?: object[] } | object[]    
+    ): Promise<{}> {
+        let params: { pages?: object[] };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('pages' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { pages?: object[] };
+        } else {
+            params = {
+                pages: paramsOrFirst as object[]            
+            };
+        }
+        
+        const pages = params.pages;
+
 
         const apiPath = '/v1/pages/seed';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
+        if (typeof pages !== 'undefined') {
+            apiPayload['pages'] = pages;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1921,7 +2098,7 @@ export class Pages {
             'post',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1933,7 +2110,7 @@ export class Pages {
     pagesTemplatesList(): Promise<{}> {
 
         const apiPath = '/v1/pages/templates';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1943,7 +2120,7 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -1982,7 +2159,7 @@ export class Pages {
         }
 
         const apiPath = '/v1/pages/templates/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1992,7 +2169,7 @@ export class Pages {
             'delete',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -2031,7 +2208,7 @@ export class Pages {
         }
 
         const apiPath = '/v1/pages/templates/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -2041,46 +2218,89 @@ export class Pages {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
     /**
      *
      * @param {string} params.id - 
+     * @param {string} params.description - 
+     * @param {string} params.fieldName - 
+     * @param {boolean} params.isDefault - 
+     * @param {string} params.label - 
+     * @param {string} params.pageBundle - 
+     * @param {object[]} params.tree - Serialized block trees ({ bundle, props, props_i18n, options, children }).
      * @throws {RevenexxException}
      * @returns {Promise<Models.Template>}
      */
-    pagesTemplatesUpdate(params: { id: string }): Promise<Models.Template>;
+    pagesTemplatesUpdate(params: { id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: object[] }): Promise<Models.Template>;
     /**
      *
      * @param {string} id - 
+     * @param {string} description - 
+     * @param {string} fieldName - 
+     * @param {boolean} isDefault - 
+     * @param {string} label - 
+     * @param {string} pageBundle - 
+     * @param {object[]} tree - Serialized block trees ({ bundle, props, props_i18n, options, children }).
      * @throws {RevenexxException}
      * @returns {Promise<Models.Template>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesTemplatesUpdate(id: string): Promise<Models.Template>;
+    pagesTemplatesUpdate(id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: object[]): Promise<Models.Template>;
     pagesTemplatesUpdate(
-        paramsOrFirst: { id: string } | string    
+        paramsOrFirst: { id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: object[] } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (string)?, (string)?, (object[])?]    
     ): Promise<Models.Template> {
-        let params: { id: string };
+        let params: { id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: object[] };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string };
+            params = (paramsOrFirst || {}) as { id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: object[] };
         } else {
             params = {
-                id: paramsOrFirst as string            
+                id: paramsOrFirst as string,
+                description: rest[0] as string,
+                fieldName: rest[1] as string,
+                isDefault: rest[2] as boolean,
+                label: rest[3] as string,
+                pageBundle: rest[4] as string,
+                tree: rest[5] as object[]            
             };
         }
         
         const id = params.id;
+        const description = params.description;
+        const fieldName = params.fieldName;
+        const isDefault = params.isDefault;
+        const label = params.label;
+        const pageBundle = params.pageBundle;
+        const tree = params.tree;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
         }
 
         const apiPath = '/v1/pages/templates/{id}'.replace('{id}', id);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
+        if (typeof description !== 'undefined') {
+            apiPayload['description'] = description;
+        }
+        if (typeof fieldName !== 'undefined') {
+            apiPayload['field_name'] = fieldName;
+        }
+        if (typeof isDefault !== 'undefined') {
+            apiPayload['is_default'] = isDefault;
+        }
+        if (typeof label !== 'undefined') {
+            apiPayload['label'] = label;
+        }
+        if (typeof pageBundle !== 'undefined') {
+            apiPayload['page_bundle'] = pageBundle;
+        }
+        if (typeof tree !== 'undefined') {
+            apiPayload['tree'] = tree;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -2091,7 +2311,7 @@ export class Pages {
             'put',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 }

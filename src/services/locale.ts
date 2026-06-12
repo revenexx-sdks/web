@@ -21,7 +21,7 @@ export class Locale {
     localeGet(): Promise<Models.Locale> {
 
         const apiPath = '/v1/locale';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -31,7 +31,7 @@ export class Locale {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -44,7 +44,7 @@ export class Locale {
     localeListCodes(): Promise<Models.LocaleCodeList> {
 
         const apiPath = '/v1/locale/codes';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -54,7 +54,7 @@ export class Locale {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -67,7 +67,7 @@ export class Locale {
     localeListContinents(): Promise<Models.ContinentList> {
 
         const apiPath = '/v1/locale/continents';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -77,7 +77,7 @@ export class Locale {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -90,7 +90,7 @@ export class Locale {
     localeListCountries(): Promise<Models.CountryList> {
 
         const apiPath = '/v1/locale/countries';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -100,7 +100,7 @@ export class Locale {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -113,7 +113,7 @@ export class Locale {
     localeListCountriesEU(): Promise<Models.CountryList> {
 
         const apiPath = '/v1/locale/countries/eu';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -123,7 +123,7 @@ export class Locale {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -136,7 +136,7 @@ export class Locale {
     localeListCountriesPhones(): Promise<Models.PhoneList> {
 
         const apiPath = '/v1/locale/countries/phones';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -146,7 +146,7 @@ export class Locale {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -159,7 +159,7 @@ export class Locale {
     localeListCurrencies(): Promise<Models.CurrencyList> {
 
         const apiPath = '/v1/locale/currencies';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -169,7 +169,7 @@ export class Locale {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -182,7 +182,7 @@ export class Locale {
     localeListLanguages(): Promise<Models.LanguageList> {
 
         const apiPath = '/v1/locale/languages';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -192,7 +192,7 @@ export class Locale {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 }

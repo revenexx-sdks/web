@@ -10,7 +10,10 @@ const client = new Client()
 const orders = new Orders(client);
 
 const result = await orders.ordersItemsCancel({
-    id: ''
+    id: '',
+    positions: [],
+    cancelledBy: '', // optional
+    reason: '' // optional
 });
 
 console.log(result);

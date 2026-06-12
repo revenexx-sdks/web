@@ -10,7 +10,11 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsReferenceEntityRecordsUpdate({
-    id: ''
+    id: '',
+    attributeValues: {}, // optional
+    code: '', // optional
+    labels: {}, // optional
+    referenceEntityId: '' // optional
 });
 
 console.log(result);

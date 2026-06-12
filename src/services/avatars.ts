@@ -69,15 +69,15 @@ export class Avatars {
         }
 
         const apiPath = '/v1/avatars/browsers/{code}'.replace('{code}', code);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            payload['quality'] = quality;
+            apiPayload['quality'] = quality;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -88,7 +88,7 @@ export class Avatars {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -148,15 +148,15 @@ export class Avatars {
         }
 
         const apiPath = '/v1/avatars/credit-cards/{code}'.replace('{code}', code);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            payload['quality'] = quality;
+            apiPayload['quality'] = quality;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -167,7 +167,7 @@ export class Avatars {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -212,9 +212,9 @@ export class Avatars {
         }
 
         const apiPath = '/v1/avatars/favicon';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof url !== 'undefined') {
-            payload['url'] = url;
+            apiPayload['url'] = url;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -225,7 +225,7 @@ export class Avatars {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -285,15 +285,15 @@ export class Avatars {
         }
 
         const apiPath = '/v1/avatars/flags/{code}'.replace('{code}', code);
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            payload['quality'] = quality;
+            apiPayload['quality'] = quality;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -304,7 +304,7 @@ export class Avatars {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -362,15 +362,15 @@ export class Avatars {
         }
 
         const apiPath = '/v1/avatars/image';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof url !== 'undefined') {
-            payload['url'] = url;
+            apiPayload['url'] = url;
         }
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -381,7 +381,7 @@ export class Avatars {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -442,18 +442,18 @@ export class Avatars {
 
 
         const apiPath = '/v1/avatars/initials';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof name !== 'undefined') {
-            payload['name'] = name;
+            apiPayload['name'] = name;
         }
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof background !== 'undefined') {
-            payload['background'] = background;
+            apiPayload['background'] = background;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -464,7 +464,7 @@ export class Avatars {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -520,18 +520,18 @@ export class Avatars {
         }
 
         const apiPath = '/v1/avatars/qr';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof text !== 'undefined') {
-            payload['text'] = text;
+            apiPayload['text'] = text;
         }
         if (typeof size !== 'undefined') {
-            payload['size'] = size;
+            apiPayload['size'] = size;
         }
         if (typeof margin !== 'undefined') {
-            payload['margin'] = margin;
+            apiPayload['margin'] = margin;
         }
         if (typeof download !== 'undefined') {
-            payload['download'] = download;
+            apiPayload['download'] = download;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -542,7 +542,7 @@ export class Avatars {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 
@@ -668,66 +668,66 @@ export class Avatars {
         }
 
         const apiPath = '/v1/avatars/screenshots';
-        const payload: Payload = {};
+        const apiPayload: Payload = {};
         if (typeof url !== 'undefined') {
-            payload['url'] = url;
+            apiPayload['url'] = url;
         }
         if (typeof headers !== 'undefined') {
-            payload['headers'] = headers;
+            apiPayload['headers'] = headers;
         }
         if (typeof viewportWidth !== 'undefined') {
-            payload['viewportWidth'] = viewportWidth;
+            apiPayload['viewportWidth'] = viewportWidth;
         }
         if (typeof viewportHeight !== 'undefined') {
-            payload['viewportHeight'] = viewportHeight;
+            apiPayload['viewportHeight'] = viewportHeight;
         }
         if (typeof scale !== 'undefined') {
-            payload['scale'] = scale;
+            apiPayload['scale'] = scale;
         }
         if (typeof theme !== 'undefined') {
-            payload['theme'] = theme;
+            apiPayload['theme'] = theme;
         }
         if (typeof userAgent !== 'undefined') {
-            payload['userAgent'] = userAgent;
+            apiPayload['userAgent'] = userAgent;
         }
         if (typeof fullpage !== 'undefined') {
-            payload['fullpage'] = fullpage;
+            apiPayload['fullpage'] = fullpage;
         }
         if (typeof locale !== 'undefined') {
-            payload['locale'] = locale;
+            apiPayload['locale'] = locale;
         }
         if (typeof timezone !== 'undefined') {
-            payload['timezone'] = timezone;
+            apiPayload['timezone'] = timezone;
         }
         if (typeof latitude !== 'undefined') {
-            payload['latitude'] = latitude;
+            apiPayload['latitude'] = latitude;
         }
         if (typeof longitude !== 'undefined') {
-            payload['longitude'] = longitude;
+            apiPayload['longitude'] = longitude;
         }
         if (typeof accuracy !== 'undefined') {
-            payload['accuracy'] = accuracy;
+            apiPayload['accuracy'] = accuracy;
         }
         if (typeof touch !== 'undefined') {
-            payload['touch'] = touch;
+            apiPayload['touch'] = touch;
         }
         if (typeof permissions !== 'undefined') {
-            payload['permissions'] = permissions;
+            apiPayload['permissions'] = permissions;
         }
         if (typeof sleep !== 'undefined') {
-            payload['sleep'] = sleep;
+            apiPayload['sleep'] = sleep;
         }
         if (typeof width !== 'undefined') {
-            payload['width'] = width;
+            apiPayload['width'] = width;
         }
         if (typeof height !== 'undefined') {
-            payload['height'] = height;
+            apiPayload['height'] = height;
         }
         if (typeof quality !== 'undefined') {
-            payload['quality'] = quality;
+            apiPayload['quality'] = quality;
         }
         if (typeof output !== 'undefined') {
-            payload['output'] = output;
+            apiPayload['output'] = output;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -738,7 +738,7 @@ export class Avatars {
             'get',
             uri,
             apiHeaders,
-            payload
+            apiPayload
         );
     }
 }

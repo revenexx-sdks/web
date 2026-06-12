@@ -11,7 +11,8 @@ const orders = new Orders(client);
 
 const result = await orders.ordersReturnsComplete({
     id: '',
-    rid: ''
+    rid: '',
+    resolution: '' // optional
 });
 
 console.log(result);

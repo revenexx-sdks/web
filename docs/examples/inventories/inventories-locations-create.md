@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Inventories } from "@revenexx/sdk";
+import { Client, Inventories, LocationType } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -9,7 +9,16 @@ const client = new Client()
 
 const inventories = new Inventories(client);
 
-const result = await inventories.inventoriesLocationsCreate();
+const result = await inventories.inventoriesLocationsCreate({
+    code: '',
+    name: '',
+    address: {}, // optional
+    enabled: null, // optional
+    labels: {}, // optional
+    metadata: {}, // optional
+    priority: null, // optional
+    type: LocationType.Warehouse // optional
+});
 
 console.log(result);
 ```

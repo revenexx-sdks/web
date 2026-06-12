@@ -9,7 +9,13 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsAttributeOptionsCreate();
+const result = await products.productsAttributeOptionsCreate({
+    attributeId: '',
+    code: '',
+    labels: {}, // optional
+    position: null, // optional
+    swatch: {} // optional
+});
 
 console.log(result);
 ```

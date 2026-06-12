@@ -9,7 +9,22 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsAttributesCreate();
+const result = await products.productsAttributesCreate({
+    code: '',
+    type: '',
+    config: {}, // optional
+    entityRef: '', // optional
+    entityType: '', // optional
+    groupId: '', // optional
+    isFilterable: null, // optional
+    isUnique: null, // optional
+    labels: {}, // optional
+    localizable: null, // optional
+    position: null, // optional
+    scopable: null, // optional
+    usableInGrid: null, // optional
+    validation: {} // optional
+});
 
 console.log(result);
 ```

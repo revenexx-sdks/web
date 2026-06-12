@@ -9,7 +9,12 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsFamiliesCreate();
+const result = await products.productsFamiliesCreate({
+    code: '',
+    imageAttribute: '', // optional
+    labelAttribute: '', // optional
+    labels: {} // optional
+});
 
 console.log(result);
 ```

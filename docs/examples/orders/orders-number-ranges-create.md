@@ -9,7 +9,17 @@ const client = new Client()
 
 const orders = new Orders(client);
 
-const result = await orders.ordersNumberRangesCreate();
+const result = await orders.ordersNumberRangesCreate({
+    code: '',
+    channelId: '', // optional
+    counter: null, // optional
+    metadata: {}, // optional
+    padding: null, // optional
+    positionStep: null, // optional
+    prefix: '', // optional
+    step: null, // optional
+    suffix: '' // optional
+});
 
 console.log(result);
 ```

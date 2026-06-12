@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Payments } from "@revenexx/sdk";
+import { Client, Payments, PaymentFeeType, PaymentMethodKind } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,7 +10,23 @@ const client = new Client()
 const payments = new Payments(client);
 
 const result = await payments.paymentsMethodsUpdate({
-    id: ''
+    id: '',
+    code: '', // optional
+    countries: [], // optional
+    description: '', // optional
+    enabled: null, // optional
+    feeAmount: null, // optional
+    feeCurrency: '', // optional
+    feeType: PaymentFeeType.None, // optional
+    kind: PaymentMethodKind.SelfManaged, // optional
+    labels: {}, // optional
+    maxOrderValue: null, // optional
+    metadata: {}, // optional
+    minOrderValue: null, // optional
+    name: '', // optional
+    position: null, // optional
+    provider: '', // optional
+    providerMethod: '' // optional
 });
 
 console.log(result);

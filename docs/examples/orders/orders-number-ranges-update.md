@@ -10,7 +10,16 @@ const client = new Client()
 const orders = new Orders(client);
 
 const result = await orders.ordersNumberRangesUpdate({
-    id: ''
+    id: '',
+    channelId: '', // optional
+    code: '', // optional
+    counter: null, // optional
+    metadata: {}, // optional
+    padding: null, // optional
+    positionStep: null, // optional
+    prefix: '', // optional
+    step: null, // optional
+    suffix: '' // optional
 });
 
 console.log(result);

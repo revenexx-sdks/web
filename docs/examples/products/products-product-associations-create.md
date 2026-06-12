@@ -9,7 +9,13 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsProductAssociationsCreate();
+const result = await products.productsProductAssociationsCreate({
+    associationTypeId: '',
+    productId: '',
+    targetProductId: '',
+    position: null, // optional
+    quantity: null // optional
+});
 
 console.log(result);
 ```

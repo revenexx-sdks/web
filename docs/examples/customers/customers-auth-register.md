@@ -9,7 +9,15 @@ const client = new Client()
 
 const customers = new Customers(client);
 
-const result = await customers.customersAuthRegister();
+const result = await customers.customersAuthRegister({
+    email: '',
+    password: '',
+    firstName: '', // optional
+    lastName: '', // optional
+    locale: '', // optional
+    organizationId: '', // optional
+    organizationName: '' // optional
+});
 
 console.log(result);
 ```

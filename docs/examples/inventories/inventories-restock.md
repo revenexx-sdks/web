@@ -9,7 +9,12 @@ const client = new Client()
 
 const inventories = new Inventories(client);
 
-const result = await inventories.inventoriesRestock();
+const result = await inventories.inventoriesRestock({
+    items: [],
+    locationCode: '', // optional
+    orderRef: '', // optional
+    reason: '' // optional
+});
 
 console.log(result);
 ```

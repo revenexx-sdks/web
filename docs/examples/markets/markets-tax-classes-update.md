@@ -11,7 +11,13 @@ const markets = new Markets(client);
 
 const result = await markets.marketsTaxClassesUpdate({
     marketId: '',
-    id: ''
+    id: '',
+    code: '', // optional
+    isDefault: null, // optional
+    labels: {}, // optional
+    name: '', // optional
+    position: null, // optional
+    rate: null // optional
 });
 
 console.log(result);

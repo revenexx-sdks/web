@@ -9,7 +9,10 @@ const client = new Client()
 
 const carts = new Carts(client);
 
-const result = await carts.cartsMerge();
+const result = await carts.cartsMerge({
+    sourceCartId: '',
+    targetCartId: ''
+});
 
 console.log(result);
 ```

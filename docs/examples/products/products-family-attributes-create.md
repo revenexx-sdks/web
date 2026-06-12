@@ -9,7 +9,13 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsFamilyAttributesCreate();
+const result = await products.productsFamilyAttributesCreate({
+    attributeId: '',
+    familyId: '',
+    isRequired: null, // optional
+    position: null, // optional
+    requiredChannels: {} // optional
+});
 
 console.log(result);
 ```

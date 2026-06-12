@@ -9,7 +9,14 @@ const client = new Client()
 
 const pages = new Pages(client);
 
-const result = await pages.pagesPagesCreate();
+const result = await pages.pagesPagesCreate({
+    title: '',
+    bundle: '', // optional
+    hostOptions: {}, // optional
+    meta: {}, // optional
+    slug: '', // optional
+    sourceLanguage: '' // optional
+});
 
 console.log(result);
 ```

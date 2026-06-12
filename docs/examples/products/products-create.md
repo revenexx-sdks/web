@@ -9,7 +9,18 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsCreate();
+const result = await products.productsCreate({
+    sku: '',
+    attributeValues: {}, // optional
+    completeness: {}, // optional
+    deletedAt: '', // optional
+    enabled: null, // optional
+    familyId: '', // optional
+    familyVariantId: '', // optional
+    kind: '', // optional
+    parentId: '', // optional
+    quantifiedAssociations: {} // optional
+});
 
 console.log(result);
 ```

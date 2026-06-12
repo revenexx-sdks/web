@@ -9,7 +9,15 @@ const client = new Client()
 
 const carts = new Carts(client);
 
-const result = await carts.cartsImport();
+const result = await carts.cartsImport({
+    contactId: '', // optional
+    csv: '', // optional
+    name: '', // optional
+    payload: {}, // optional
+    profileId: '', // optional
+    sessionKey: '', // optional
+    targetCartId: '' // optional
+});
 
 console.log(result);
 ```

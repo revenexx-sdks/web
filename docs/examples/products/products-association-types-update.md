@@ -10,7 +10,11 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsAssociationTypesUpdate({
-    id: ''
+    id: '',
+    code: '', // optional
+    isQuantified: null, // optional
+    isTwoWay: null, // optional
+    labels: {} // optional
 });
 
 console.log(result);

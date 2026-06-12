@@ -1,3 +1,27 @@
+import { AddressType } from "./enums/address-type"
+import { CartExportFormat } from "./enums/cart-export-format"
+import { CartItemType } from "./enums/cart-item-type"
+import { ChannelStatus } from "./enums/channel-status"
+import { ChannelType } from "./enums/channel-type"
+import { ContactRole } from "./enums/contact-role"
+import { ContactStatus } from "./enums/contact-status"
+import { CartIoApplyMode } from "./enums/cart-io-apply-mode"
+import { CartIoDirection } from "./enums/cart-io-direction"
+import { CartIoEntity } from "./enums/cart-io-entity"
+import { CartIoFormat } from "./enums/cart-io-format"
+import { LocationType } from "./enums/location-type"
+import { MarketStatus } from "./enums/market-status"
+import { OrderCommentVisibility } from "./enums/order-comment-visibility"
+import { OrderItemType } from "./enums/order-item-type"
+import { OrderPaymentStatus } from "./enums/order-payment-status"
+import { OrganizationStatus } from "./enums/organization-status"
+import { PageStatus } from "./enums/page-status"
+import { PaymentFeeType } from "./enums/payment-fee-type"
+import { PaymentMethodKind } from "./enums/payment-method-kind"
+import { PriceEntryType } from "./enums/price-entry-type"
+import { PriceListStatus } from "./enums/price-list-status"
+import { ShippingMethodMatrixBasis } from "./enums/shipping-method-matrix-basis"
+import { ShippingMethodPricingType } from "./enums/shipping-method-pricing-type"
 import { AttributeBooleanStatus } from "./enums/attribute-boolean-status"
 import { AttributeDatetimeStatus } from "./enums/attribute-datetime-status"
 import { AttributeEmailStatus } from "./enums/attribute-email-status"
@@ -119,6 +143,122 @@ export namespace Models {
     }
 
     /**
+     * An address needs an owner: &#039;organization_id&#039; or &#039;contact_id&#039;.
+     */
+    export type AddressCreateRequest = {
+        /**
+         * 
+         */
+        city: string;
+        /**
+         * 
+         */
+        company?: string | null;
+        /**
+         * Owning contact (personal address).
+         */
+        contact_id?: string | null;
+        /**
+         * ISO 3166-1 alpha-2 code.
+         */
+        country: string;
+        /**
+         * The default address of its owner and type.
+         */
+        is_default?: boolean;
+        /**
+         * Recipient name.
+         */
+        name?: string | null;
+        /**
+         * Owning organization (company address).
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        phone?: string | null;
+        /**
+         * 
+         */
+        region?: string | null;
+        /**
+         * 
+         */
+        street: string;
+        /**
+         * 
+         */
+        street2?: string | null;
+        /**
+         * Default 'shipping'.
+         */
+        type?: AddressType;
+        /**
+         * 
+         */
+        zip: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type AddressUpdateRequest = {
+        /**
+         * 
+         */
+        city?: string;
+        /**
+         * 
+         */
+        company?: string | null;
+        /**
+         * Owning contact (personal address).
+         */
+        contact_id?: string | null;
+        /**
+         * ISO 3166-1 alpha-2 code.
+         */
+        country?: string;
+        /**
+         * The default address of its owner and type.
+         */
+        is_default?: boolean;
+        /**
+         * Recipient name.
+         */
+        name?: string | null;
+        /**
+         * Owning organization (company address).
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        phone?: string | null;
+        /**
+         * 
+         */
+        region?: string | null;
+        /**
+         * 
+         */
+        street?: string;
+        /**
+         * 
+         */
+        street2?: string | null;
+        /**
+         * Default 'shipping'.
+         */
+        type?: AddressType;
+        /**
+         * 
+         */
+        zip?: string;
+    }
+
+    /**
      * 
      */
     export type AssetFamilies = {
@@ -146,6 +286,42 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type AssetFamiliesCreateRequest = {
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        naming_convention?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type AssetFamiliesUpdateRequest = {
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        naming_convention?: object | null;
     }
 
     /**
@@ -185,6 +361,50 @@ export namespace Models {
     /**
      * 
      */
+    export type AssetsCreateRequest = {
+        /**
+         * 
+         */
+        asset_family_id: string;
+        /**
+         * 
+         */
+        attribute_values?: object;
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        media_uuid?: string | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type AssetsUpdateRequest = {
+        /**
+         * 
+         */
+        asset_family_id?: string;
+        /**
+         * 
+         */
+        attribute_values?: object;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        media_uuid?: string | null;
+    }
+
+    /**
+     * 
+     */
     export type AssociationTypes = {
         /**
          * 
@@ -198,6 +418,50 @@ export namespace Models {
          * 
          */
         id?: string;
+        /**
+         * 
+         */
+        is_quantified?: boolean;
+        /**
+         * 
+         */
+        is_two_way?: boolean;
+        /**
+         * 
+         */
+        labels?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type AssociationTypesCreateRequest = {
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        is_quantified?: boolean;
+        /**
+         * 
+         */
+        is_two_way?: boolean;
+        /**
+         * 
+         */
+        labels?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type AssociationTypesUpdateRequest = {
+        /**
+         * 
+         */
+        code?: string;
         /**
          * 
          */
@@ -245,6 +509,42 @@ export namespace Models {
     /**
      * 
      */
+    export type AttributeGroupsCreateRequest = {
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        position?: number;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type AttributeGroupsUpdateRequest = {
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        position?: number;
+    }
+
+    /**
+     * 
+     */
     export type AttributeOptions = {
         /**
          * 
@@ -262,6 +562,58 @@ export namespace Models {
          * 
          */
         id?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        swatch?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type AttributeOptionsCreateRequest = {
+        /**
+         * 
+         */
+        attribute_id: string;
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        swatch?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type AttributeOptionsUpdateRequest = {
+        /**
+         * 
+         */
+        attribute_id?: string;
+        /**
+         * 
+         */
+        code?: string;
         /**
          * 
          */
@@ -340,6 +692,130 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+        /**
+         * 
+         */
+        usable_in_grid?: boolean;
+        /**
+         * 
+         */
+        validation?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type AttributesCreateRequest = {
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        config?: object | null;
+        /**
+         * 
+         */
+        entity_ref?: string | null;
+        /**
+         * 
+         */
+        entity_type?: string;
+        /**
+         * 
+         */
+        group_id?: string | null;
+        /**
+         * 
+         */
+        is_filterable?: boolean;
+        /**
+         * 
+         */
+        is_unique?: boolean;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        localizable?: boolean;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        scopable?: boolean;
+        /**
+         * 
+         */
+        type: string;
+        /**
+         * 
+         */
+        usable_in_grid?: boolean;
+        /**
+         * 
+         */
+        validation?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type AttributesUpdateRequest = {
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        config?: object | null;
+        /**
+         * 
+         */
+        entity_ref?: string | null;
+        /**
+         * 
+         */
+        entity_type?: string;
+        /**
+         * 
+         */
+        group_id?: string | null;
+        /**
+         * 
+         */
+        is_filterable?: boolean;
+        /**
+         * 
+         */
+        is_unique?: boolean;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        localizable?: boolean;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        scopable?: boolean;
+        /**
+         * 
+         */
+        type?: string;
         /**
          * 
          */
@@ -603,6 +1079,110 @@ export namespace Models {
     /**
      * 
      */
+    export type CartClaimRequest = {
+        /**
+         * Contact taking ownership.
+         */
+        contact_id: string;
+        /**
+         * Guest session whose active carts are handed over.
+         */
+        session_key: string;
+        /**
+         * Merge the session carts into this cart instead of adopting them.
+         */
+        target_cart_id?: string;
+    }
+
+    /**
+     * A cart needs an owner: &#039;contact_id&#039; (customer) or &#039;session_key&#039; (guest).
+     */
+    export type CartCreateRequest = {
+        /**
+         * 
+         */
+        channel_id?: string;
+        /**
+         * Owning customer contact.
+         */
+        contact_id?: string;
+        /**
+         * ISO 4217 code (default EUR).
+         */
+        currency?: string;
+        /**
+         * Make this THE current cart of its owner.
+         */
+        is_current?: boolean;
+        /**
+         * 
+         */
+        market_id?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Display name (default 'Cart').
+         */
+        name?: string;
+        /**
+         * Owning guest session.
+         */
+        session_key?: string;
+    }
+
+    /**
+     * 
+     */
+    export type CartExportRequest = {
+        /**
+         * Ad-hoc export format (only without profile_id).
+         */
+        format?: CartExportFormat;
+        /**
+         * Export profile to run; ad-hoc JSON/CSV export when omitted.
+         */
+        profile_id?: string;
+    }
+
+    /**
+     * Import into an existing cart (&#039;target_cart_id&#039;) or a new cart (owner &#039;contact_id&#039;/&#039;session_key&#039; required).
+     */
+    export type CartImportRequest = {
+        /**
+         * Owner of a newly created cart.
+         */
+        contact_id?: string;
+        /**
+         * Raw CSV content (alternative to payload for csv profiles).
+         */
+        csv?: string;
+        /**
+         * Name for a newly created cart.
+         */
+        name?: string;
+        /**
+         * The import payload: '{cart, items}' object, or a raw JSON/CSV string in the profile's format.
+         */
+        payload?: object;
+        /**
+         * Import profile to run; ad-hoc import when omitted.
+         */
+        profile_id?: string;
+        /**
+         * Guest owner of a newly created cart.
+         */
+        session_key?: string;
+        /**
+         * Existing active cart to import into.
+         */
+        target_cart_id?: string;
+    }
+
+    /**
+     * 
+     */
     export type CartItem = {
         /**
          * 
@@ -679,6 +1259,182 @@ export namespace Models {
     }
 
     /**
+     * An item needs an identity: &#039;name&#039; or &#039;sku&#039;.
+     */
+    export type CartItemCreateRequest = {
+        /**
+         * Free-form configuration — configured lines never merge.
+         */
+        configuration?: object;
+        /**
+         * Defaults to the cart's currency.
+         */
+        currency?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Falls back to 'sku' when omitted.
+         */
+        name?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        product_id?: string;
+        /**
+         * Default 1.
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        sku?: string;
+        /**
+         * Loose product snapshot at add-time (price, name, image, …).
+         */
+        snapshot?: object;
+        /**
+         * 
+         */
+        tax_rate?: number;
+        /**
+         * Line type (default 'product'). Plain product lines merge by product+price; configurations always stand alone.
+         */
+        type?: CartItemType;
+        /**
+         * 
+         */
+        unit?: string;
+        /**
+         * Per-unit net price — line_total is always derived.
+         */
+        unit_price?: number;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type CartItemUpdateRequest = {
+        /**
+         * Free-form configuration — configured lines never merge.
+         */
+        configuration?: object;
+        /**
+         * Defaults to the cart's currency.
+         */
+        currency?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Falls back to 'sku' when omitted.
+         */
+        name?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        product_id?: string;
+        /**
+         * Default 1.
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        sku?: string;
+        /**
+         * Loose product snapshot at add-time (price, name, image, …).
+         */
+        snapshot?: object;
+        /**
+         * 
+         */
+        tax_rate?: number;
+        /**
+         * Line type (default 'product'). Plain product lines merge by product+price; configurations always stand alone.
+         */
+        type?: CartItemType;
+        /**
+         * 
+         */
+        unit?: string;
+        /**
+         * Per-unit net price — line_total is always derived.
+         */
+        unit_price?: number;
+    }
+
+    /**
+     * 
+     */
+    export type CartItemsReplaceRequest = {
+        /**
+         * The complete new item set (set semantics).
+         */
+        items: CartItemCreateRequest[];
+    }
+
+    /**
+     * 
+     */
+    export type CartMergeRequest = {
+        /**
+         * Cart whose lines move into the target (becomes status merged).
+         */
+        source_cart_id: string;
+        /**
+         * Receiving cart (must be active).
+         */
+        target_cart_id: string;
+    }
+
+    /**
+     * 
+     */
+    export type CartOrderRequest = {
+        /**
+         * External order reference from order management.
+         */
+        order_ref?: string;
+    }
+
+    /**
+     * Only safe columns are updatable — status moves through the lifecycle routes.
+     */
+    export type CartUpdateRequest = {
+        /**
+         * 
+         */
+        channel_id?: string;
+        /**
+         * ISO 4217 code.
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        market_id?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * 
+         */
+        name?: string;
+    }
+
+    /**
      * 
      */
     export type Categories = {
@@ -714,6 +1470,66 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+        /**
+         * 
+         */
+        values?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type CategoriesCreateRequest = {
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        parent_id?: string | null;
+        /**
+         * 
+         */
+        path?: string | null;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        values?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type CategoriesUpdateRequest = {
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        parent_id?: string | null;
+        /**
+         * 
+         */
+        path?: string | null;
+        /**
+         * 
+         */
+        position?: number;
         /**
          * 
          */
@@ -769,6 +1585,40 @@ export namespace Models {
     /**
      * 
      */
+    export type ChannelCreateRequest = {
+        /**
+         * Stable channel code, unique per tenant (e.g. shop, punchout-acme).
+         */
+        code: string;
+        /**
+         * Mark as the default channel (default false).
+         */
+        is_default?: boolean;
+        /**
+         * Localized display names keyed by locale.
+         */
+        labels?: object;
+        /**
+         * Display name.
+         */
+        name: string;
+        /**
+         * Sort position (default 0).
+         */
+        position?: number;
+        /**
+         * Lifecycle status (default 'active').
+         */
+        status?: ChannelStatus;
+        /**
+         * Where business happens (default 'storefront').
+         */
+        type?: ChannelType;
+    }
+
+    /**
+     * 
+     */
     export type ChannelDefaults = {
         /**
          * Channel codes created by this call.
@@ -778,6 +1628,40 @@ export namespace Models {
          * Default channel codes that already existed.
          */
         existing?: string[];
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type ChannelUpdateRequest = {
+        /**
+         * Stable channel code, unique per tenant (e.g. shop, punchout-acme).
+         */
+        code?: string;
+        /**
+         * Mark as the default channel (default false).
+         */
+        is_default?: boolean;
+        /**
+         * Localized display names keyed by locale.
+         */
+        labels?: object;
+        /**
+         * Display name.
+         */
+        name?: string;
+        /**
+         * Sort position (default 0).
+         */
+        position?: number;
+        /**
+         * Lifecycle status (default 'active').
+         */
+        status?: ChannelStatus;
+        /**
+         * Where business happens (default 'storefront').
+         */
+        type?: ChannelType;
     }
 
     /**
@@ -882,6 +1766,90 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+    }
+
+    /**
+     * Creates the contact (system of record) and mirrors it as a platform user (status defaults to invited).
+     */
+    export type ContactCreateRequest = {
+        /**
+         * 
+         */
+        email: string;
+        /**
+         * 
+         */
+        first_name?: string | null;
+        /**
+         * The primary contact of its organization.
+         */
+        is_primary?: boolean;
+        /**
+         * 
+         */
+        last_name?: string | null;
+        /**
+         * BCP 47, e.g. de-DE
+         */
+        locale?: string | null;
+        /**
+         * Owning organization — membership is mirrored to the platform team.
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        phone?: string | null;
+        /**
+         * Default 'buyer' — also the team role on the platform mirror.
+         */
+        role?: ContactRole;
+        /**
+         * Default 'invited' on create.
+         */
+        status?: ContactStatus;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value; external_user_id is mirror-managed and ignored.
+     */
+    export type ContactUpdateRequest = {
+        /**
+         * 
+         */
+        email?: string;
+        /**
+         * 
+         */
+        first_name?: string | null;
+        /**
+         * The primary contact of its organization.
+         */
+        is_primary?: boolean;
+        /**
+         * 
+         */
+        last_name?: string | null;
+        /**
+         * BCP 47, e.g. de-DE
+         */
+        locale?: string | null;
+        /**
+         * Owning organization — membership is mirrored to the platform team.
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        phone?: string | null;
+        /**
+         * Default 'buyer' — also the team role on the platform mirror.
+         */
+        role?: ContactRole;
+        /**
+         * Default 'invited' on create.
+         */
+        status?: ContactStatus;
     }
 
     /**
@@ -1057,6 +2025,50 @@ export namespace Models {
     /**
      * 
      */
+    export type FamiliesCreateRequest = {
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        image_attribute?: string | null;
+        /**
+         * 
+         */
+        label_attribute?: string | null;
+        /**
+         * 
+         */
+        labels?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type FamiliesUpdateRequest = {
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        image_attribute?: string | null;
+        /**
+         * 
+         */
+        label_attribute?: string | null;
+        /**
+         * 
+         */
+        labels?: object | null;
+    }
+
+    /**
+     * 
+     */
     export type FamilyAttributes = {
         /**
          * 
@@ -1074,6 +2086,58 @@ export namespace Models {
          * 
          */
         id?: string;
+        /**
+         * 
+         */
+        is_required?: boolean;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        required_channels?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type FamilyAttributesCreateRequest = {
+        /**
+         * 
+         */
+        attribute_id: string;
+        /**
+         * 
+         */
+        family_id: string;
+        /**
+         * 
+         */
+        is_required?: boolean;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        required_channels?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type FamilyAttributesUpdateRequest = {
+        /**
+         * 
+         */
+        attribute_id?: string;
+        /**
+         * 
+         */
+        family_id?: string;
         /**
          * 
          */
@@ -1125,6 +2189,50 @@ export namespace Models {
     /**
      * 
      */
+    export type FamilyVariantsCreateRequest = {
+        /**
+         * 
+         */
+        axes?: object | null;
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        family_id: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type FamilyVariantsUpdateRequest = {
+        /**
+         * 
+         */
+        axes?: object | null;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        family_id?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+    }
+
+    /**
+     * 
+     */
     export type Greeting = {
         /**
          * 
@@ -1158,6 +2266,170 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+    }
+
+    /**
+     * An item and its SIGNED correction: &#039;product_id&#039; or &#039;sku&#039;.
+     */
+    export type InventoryAdjustItem = {
+        /**
+         * 
+         */
+        product_id?: string;
+        /**
+         * Signed delta (±on_hand) — must be non-zero.
+         */
+        quantity: number;
+        /**
+         * 
+         */
+        sku?: string;
+    }
+
+    /**
+     * 
+     */
+    export type InventoryAdjustRequest = {
+        /**
+         * The corrections — quantities are SIGNED deltas (at most 200).
+         */
+        items: InventoryAdjustItem[];
+        /**
+         * Adjusted location (default 'main').
+         */
+        location_code?: string;
+        /**
+         * Mandatory audit reason — every adjustment is a ledger row.
+         */
+        reason: string;
+    }
+
+    /**
+     * An item to check: &#039;product_id&#039; or &#039;sku&#039;.
+     */
+    export type InventoryAvailabilityItem = {
+        /**
+         * 
+         */
+        product_id?: string;
+        /**
+         * Requested quantity for the orderable check (default 1).
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        sku?: string;
+    }
+
+    /**
+     * 
+     */
+    export type InventoryAvailabilityRequest = {
+        /**
+         * The items to check (batch, at most 200).
+         */
+        items: InventoryAvailabilityItem[];
+        /**
+         * Restrict the check to one location (default: all enabled locations).
+         */
+        location_code?: string;
+    }
+
+    /**
+     * 
+     */
+    export type InventoryCommitRequest = {
+        /**
+         * The order whose active reservations are committed (shipment).
+         */
+        order_ref: string;
+    }
+
+    /**
+     * 
+     */
+    export type InventoryReceiveRequest = {
+        /**
+         * The inbound items (at most 200).
+         */
+        items: InventoryStockItem[];
+        /**
+         * Receiving location (default 'main').
+         */
+        location_code?: string;
+        /**
+         * Ledger note (e.g. delivery note number).
+         */
+        reason?: string;
+    }
+
+    /**
+     * 
+     */
+    export type InventoryReleaseRequest = {
+        /**
+         * The order whose active reservations are released.
+         */
+        order_ref: string;
+    }
+
+    /**
+     * 
+     */
+    export type InventoryReserveRequest = {
+        /**
+         * Optional reservation expiry.
+         */
+        expires_at?: string;
+        /**
+         * The items to reserve — all-or-nothing (at most 200).
+         */
+        items: InventoryStockItem[];
+        /**
+         * The order this reservation belongs to.
+         */
+        order_ref: string;
+    }
+
+    /**
+     * 
+     */
+    export type InventoryRestockRequest = {
+        /**
+         * The returned items (at most 200).
+         */
+        items: InventoryStockItem[];
+        /**
+         * Restocking location (default 'main').
+         */
+        location_code?: string;
+        /**
+         * Originating order (ledger reference).
+         */
+        order_ref?: string;
+        /**
+         * Ledger note (e.g. return reason).
+         */
+        reason?: string;
+    }
+
+    /**
+     * An item and its quantity: &#039;product_id&#039; or &#039;sku&#039;.
+     */
+    export type InventoryStockItem = {
+        /**
+         * 
+         */
+        product_id?: string;
+        /**
+         * 
+         */
+        quantity: number;
+        /**
+         * 
+         */
+        sku?: string;
     }
 
     /**
@@ -1208,6 +2480,82 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type IoProfileCreateRequest = {
+        /**
+         * Default 'insert'.
+         */
+        apply_mode?: CartIoApplyMode;
+        /**
+         * 
+         */
+        direction: CartIoDirection;
+        /**
+         * Default 'carts'.
+         */
+        entity?: CartIoEntity;
+        /**
+         * Default 'json'.
+         */
+        format?: CartIoFormat;
+        /**
+         * 
+         */
+        is_template?: boolean;
+        /**
+         * Column mapping (Baseline-IO-compatible).
+         */
+        mapping?: object;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * 
+         */
+        options?: object;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type IoProfileUpdateRequest = {
+        /**
+         * Default 'insert'.
+         */
+        apply_mode?: CartIoApplyMode;
+        /**
+         * 
+         */
+        direction?: CartIoDirection;
+        /**
+         * Default 'carts'.
+         */
+        entity?: CartIoEntity;
+        /**
+         * Default 'json'.
+         */
+        format?: CartIoFormat;
+        /**
+         * 
+         */
+        is_template?: boolean;
+        /**
+         * Column mapping (Baseline-IO-compatible).
+         */
+        mapping?: object;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        options?: object;
     }
 
     /**
@@ -1343,6 +2691,82 @@ export namespace Models {
     /**
      * 
      */
+    export type LocationCreateRequest = {
+        /**
+         * 
+         */
+        address?: object;
+        /**
+         * Unique location code (per tenant).
+         */
+        code: string;
+        /**
+         * Disabled locations are skipped by availability and reserve (default true).
+         */
+        enabled?: boolean;
+        /**
+         * Localised display names ({de, en, …}).
+         */
+        labels?: object;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * Sourcing order — lower wins (default 0).
+         */
+        priority?: number;
+        /**
+         * Default 'warehouse'.
+         */
+        type?: LocationType;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type LocationUpdateRequest = {
+        /**
+         * 
+         */
+        address?: object;
+        /**
+         * Unique location code (per tenant).
+         */
+        code?: string;
+        /**
+         * Disabled locations are skipped by availability and reserve (default true).
+         */
+        enabled?: boolean;
+        /**
+         * Localised display names ({de, en, …}).
+         */
+        labels?: object;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * Sourcing order — lower wins (default 0).
+         */
+        priority?: number;
+        /**
+         * Default 'warehouse'.
+         */
+        type?: LocationType;
+    }
+
+    /**
+     * 
+     */
     export type Market = {
         /**
          * 
@@ -1405,6 +2829,40 @@ export namespace Models {
     }
 
     /**
+     * A market needs a &#039;code&#039; and a &#039;name&#039; — currency defaults to EUR, status to active.
+     */
+    export type MarketCreateRequest = {
+        /**
+         * Market code (unique per tenant).
+         */
+        code: string;
+        /**
+         * ISO 4217 code (default 'EUR').
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * Localized display names ({locale: label}).
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * Sort position (default 0).
+         */
+        position?: number;
+        /**
+         * Default 'active'.
+         */
+        status?: MarketStatus;
+    }
+
+    /**
      * 
      */
     export type MarketLocale = {
@@ -1438,6 +2896,58 @@ export namespace Models {
         market_id?: string;
         /**
          * 
+         */
+        position?: number;
+    }
+
+    /**
+     * The owning market comes from the route path (&#039;market_id&#039;).
+     */
+    export type MarketLocaleCreateRequest = {
+        /**
+         * Locale code, e.g. 'de-DE' (unique per market).
+         */
+        code: string;
+        /**
+         * ISO 3166-1 alpha-2 country code.
+         */
+        country: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * ISO 639-1 language code.
+         */
+        language: string;
+        /**
+         * Sort position (default 0).
+         */
+        position?: number;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type MarketLocaleUpdateRequest = {
+        /**
+         * Locale code, e.g. 'de-DE' (unique per market).
+         */
+        code?: string;
+        /**
+         * ISO 3166-1 alpha-2 country code.
+         */
+        country?: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * ISO 639-1 language code.
+         */
+        language?: string;
+        /**
+         * Sort position (default 0).
          */
         position?: number;
     }
@@ -1489,6 +2999,100 @@ export namespace Models {
     }
 
     /**
+     * The owning market comes from the route path (&#039;market_id&#039;).
+     */
+    export type MarketTaxClassCreateRequest = {
+        /**
+         * Tax class code (unique per market).
+         */
+        code: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * Localized display names ({locale: label}).
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * Sort position (default 0).
+         */
+        position?: number;
+        /**
+         * Tax rate in percent, 0–100 (default 0).
+         */
+        rate?: number;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type MarketTaxClassUpdateRequest = {
+        /**
+         * Tax class code (unique per market).
+         */
+        code?: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * Localized display names ({locale: label}).
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * Sort position (default 0).
+         */
+        position?: number;
+        /**
+         * Tax rate in percent, 0–100 (default 0).
+         */
+        rate?: number;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type MarketUpdateRequest = {
+        /**
+         * Market code (unique per tenant).
+         */
+        code?: string;
+        /**
+         * ISO 4217 code (default 'EUR').
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * Localized display names ({locale: label}).
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * Sort position (default 0).
+         */
+        position?: number;
+        /**
+         * Default 'active'.
+         */
+        status?: MarketStatus;
+    }
+
+    /**
      * 
      */
     export type MeasurementFamilies = {
@@ -1520,6 +3124,50 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type MeasurementFamiliesCreateRequest = {
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        standard_unit: string;
+        /**
+         * 
+         */
+        units?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type MeasurementFamiliesUpdateRequest = {
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        standard_unit?: string;
+        /**
+         * 
+         */
+        units?: object | null;
     }
 
     /**
@@ -1753,6 +3401,44 @@ export namespace Models {
     /**
      * 
      */
+    export type OrderAcknowledgeRequest = {
+        /**
+         * The fulfilling system's order reference (e.g. the ERP order number).
+         */
+        external_ref?: string;
+    }
+
+    /**
+     * A position quantity to cancel — guarded against the open (unshipped, uncancelled) quantity.
+     */
+    export type OrderCancelPosition = {
+        /**
+         * The order item (position) to act on.
+         */
+        order_item_id: string;
+        /**
+         * Defaults to the full remaining quantity of the position.
+         */
+        quantity?: number;
+    }
+
+    /**
+     * 
+     */
+    export type OrderCancelRequest = {
+        /**
+         * Acting user/system.
+         */
+        cancelled_by?: string;
+        /**
+         * 
+         */
+        reason?: string;
+    }
+
+    /**
+     * 
+     */
     export type OrderCancellation = {
         /**
          * 
@@ -1812,6 +3498,24 @@ export namespace Models {
          * 
          */
         visibility?: string;
+    }
+
+    /**
+     * 
+     */
+    export type OrderCommentCreateRequest = {
+        /**
+         * 
+         */
+        author?: string;
+        /**
+         * 
+         */
+        body: string;
+        /**
+         * Default 'internal'.
+         */
+        visibility?: OrderCommentVisibility;
     }
 
     /**
@@ -2001,6 +3705,16 @@ export namespace Models {
     /**
      * 
      */
+    export type OrderHoldRequest = {
+        /**
+         * Why the order is blocked (shown on the shipping guard).
+         */
+        reason?: string;
+    }
+
+    /**
+     * 
+     */
     export type OrderItem = {
         /**
          * 
@@ -2101,6 +3815,270 @@ export namespace Models {
     }
 
     /**
+     * A position of the placed order — needs an identity: &#039;name&#039; or &#039;sku&#039;. Items are SNAPSHOTS: carry the product copy, prices are frozen at place-time.
+     */
+    export type OrderItemCreateRequest = {
+        /**
+         * Free-form configuration of configured lines.
+         */
+        configuration?: object;
+        /**
+         * 
+         */
+        cost_center?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Falls back to 'sku' when omitted.
+         */
+        name?: string;
+        /**
+         * Explicit position number; otherwise numbered in steps of the order range's position_step.
+         */
+        position?: number;
+        /**
+         * 
+         */
+        position_text?: string;
+        /**
+         * Frozen product snapshot at place-time ('snapshot' is accepted as an alias).
+         */
+        product?: object;
+        /**
+         * 
+         */
+        product_id?: string;
+        /**
+         * Default 1.
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        sku?: string;
+        /**
+         * Alias for 'product'.
+         */
+        snapshot?: object;
+        /**
+         * Derived from line_total and tax_rate when omitted.
+         */
+        tax_amount?: number;
+        /**
+         * Percent (default 0).
+         */
+        tax_rate?: number;
+        /**
+         * Line type (default 'product').
+         */
+        type?: OrderItemType;
+        /**
+         * 
+         */
+        unit?: string;
+        /**
+         * Per-unit net price — line_total is always derived.
+         */
+        unit_price?: number;
+        /**
+         * Free-form user data.
+         */
+        user_data?: object;
+    }
+
+    /**
+     * 
+     */
+    export type OrderItemsCancelRequest = {
+        /**
+         * Acting user/system.
+         */
+        cancelled_by?: string;
+        /**
+         * 
+         */
+        positions: OrderCancelPosition[];
+        /**
+         * 
+         */
+        reason?: string;
+    }
+
+    /**
+     * Number pattern: &#039;{prefix}{counter padded to padding}{suffix}&#039;.
+     */
+    export type OrderNumberRangeCreateRequest = {
+        /**
+         * 
+         */
+        channel_id?: string;
+        /**
+         * Range key drawn by the app ('order', 'delivery', 'return') — unique per tenant.
+         */
+        code: string;
+        /**
+         * Current counter value (default 0) — the next number draws counter+step.
+         */
+        counter?: number;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Zero-padding width of the counter (default 6).
+         */
+        padding?: number;
+        /**
+         * Position numbering increment for order items (default 10).
+         */
+        position_step?: number;
+        /**
+         * Default ''.
+         */
+        prefix?: string;
+        /**
+         * Counter increment per drawn number (default 1).
+         */
+        step?: number;
+        /**
+         * Default ''.
+         */
+        suffix?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type OrderNumberRangeUpdateRequest = {
+        /**
+         * 
+         */
+        channel_id?: string;
+        /**
+         * Range key drawn by the app ('order', 'delivery', 'return') — unique per tenant.
+         */
+        code?: string;
+        /**
+         * Current counter value (default 0) — the next number draws counter+step.
+         */
+        counter?: number;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Zero-padding width of the counter (default 6).
+         */
+        padding?: number;
+        /**
+         * Position numbering increment for order items (default 10).
+         */
+        position_step?: number;
+        /**
+         * Default ''.
+         */
+        prefix?: string;
+        /**
+         * Counter increment per drawn number (default 1).
+         */
+        step?: number;
+        /**
+         * Default ''.
+         */
+        suffix?: string;
+    }
+
+    /**
+     * 
+     */
+    export type OrderPaymentStatusUpdateRequest = {
+        /**
+         * Reference into the payment system — merged into the order's payment snapshot.
+         */
+        payment_id?: string;
+        /**
+         * The new payment dimension value.
+         */
+        status: OrderPaymentStatus;
+    }
+
+    /**
+     * The snapshot payload: items plus frozen buyer/addresses/payment/shipping. The order number is drawn from the order range, totals are computed from the items.
+     */
+    export type OrderPlaceRequest = {
+        /**
+         * Frozen billing address.
+         */
+        billing_address?: object;
+        /**
+         * Frozen buyer snapshot (name, email, …).
+         */
+        buyer?: object;
+        /**
+         * Source cart (the carts.order hand-over).
+         */
+        cart_id?: string;
+        /**
+         * 
+         */
+        channel_id?: string;
+        /**
+         * Ordering customer contact.
+         */
+        contact_id?: string;
+        /**
+         * ISO 4217 code (default EUR).
+         */
+        currency?: string;
+        /**
+         * The buyer's own order/PO number.
+         */
+        customer_order_number?: string;
+        /**
+         * Override — computed as subtotal + shipping + tax when omitted.
+         */
+        grand_total?: number;
+        /**
+         * The order positions (at most 500).
+         */
+        items: OrderItemCreateRequest[];
+        /**
+         * 
+         */
+        market_id?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * B2B organization.
+         */
+        organization_id?: string;
+        /**
+         * Frozen payment snapshot — a known 'payment.status' seeds payment_status (otherwise 'open').
+         */
+        payment?: object;
+        /**
+         * Frozen shipping snapshot — 'shipping.price' seeds shipping_total.
+         */
+        shipping?: object;
+        /**
+         * Frozen shipping address.
+         */
+        shipping_address?: object;
+        /**
+         * Shipping total (fallback when 'shipping.price' is absent).
+         */
+        shipping_total?: number;
+        /**
+         * Free-form user data.
+         */
+        user_data?: object;
+    }
+
+    /**
      * 
      */
     export type OrderReturn = {
@@ -2165,6 +4143,72 @@ export namespace Models {
     /**
      * 
      */
+    export type OrderReturnCompleteRequest = {
+        /**
+         * How the return was settled (refund, replacement, …).
+         */
+        resolution?: string;
+    }
+
+    /**
+     * Register a return against the shipped quantities — the return number is drawn from the &#039;return&#039; range.
+     */
+    export type OrderReturnCreateRequest = {
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * 
+         */
+        positions: OrderReturnPosition[];
+        /**
+         * 
+         */
+        reason?: string;
+    }
+
+    /**
+     * A position quantity to return — guarded against the shipped (not yet returned) quantity.
+     */
+    export type OrderReturnPosition = {
+        /**
+         * The order item (position) to act on.
+         */
+        order_item_id: string;
+        /**
+         * Defaults to the full remaining quantity of the position.
+         */
+        quantity?: number;
+        /**
+         * Report this position for restocking when the return completes (the explicit inventories.restock call stays with the orchestrator).
+         */
+        restock?: boolean;
+    }
+
+    /**
+     * No payload — receiving is a pure state transition (registered → received).
+     */
+    export type OrderReturnReceiveRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type OrderReturnRejectRequest = {
+        /**
+         * Fallback for 'resolution'.
+         */
+        reason?: string;
+        /**
+         * Why the return was rejected.
+         */
+        resolution?: string;
+    }
+
+    /**
+     * 
+     */
     export type OrderShipment = {
         /**
          * 
@@ -2205,6 +4249,90 @@ export namespace Models {
     }
 
     /**
+     * Create a shipment. Omitted positions = ship everything still open.
+     */
+    export type OrderShipmentCreateRequest = {
+        /**
+         * 
+         */
+        carrier?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Delivery note number — drawn from the 'delivery' range when omitted.
+         */
+        number?: string;
+        /**
+         * Omitted = every position with open quantity, in full.
+         */
+        positions?: OrderShipmentPosition[];
+        /**
+         * Defaults to now.
+         */
+        shipped_at?: string;
+        /**
+         * 
+         */
+        tracking_code?: string;
+        /**
+         * 
+         */
+        tracking_url?: string;
+    }
+
+    /**
+     * A position quantity to ship — guarded against the open quantity.
+     */
+    export type OrderShipmentPosition = {
+        /**
+         * The order item (position) to act on.
+         */
+        order_item_id: string;
+        /**
+         * Defaults to the full remaining quantity of the position.
+         */
+        quantity?: number;
+    }
+
+    /**
+     * No payload — releasing the hold is a pure state transition.
+     */
+    export type OrderUnholdRequest = {
+    }
+
+    /**
+     * Narrow modification — only these columns are touchable, and only until the order is acknowledged. Status moves through the action routes.
+     */
+    export type OrderUpdateRequest = {
+        /**
+         * 
+         */
+        billing_address?: object;
+        /**
+         * 
+         */
+        buyer?: object;
+        /**
+         * 
+         */
+        customer_order_number?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * 
+         */
+        shipping_address?: object;
+        /**
+         * Free-form user data.
+         */
+        user_data?: object;
+    }
+
+    /**
      * 
      */
     export type Organization = {
@@ -2236,6 +4364,50 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+        /**
+         * 
+         */
+        vat_id?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type OrganizationCreateRequest = {
+        /**
+         * Company name — mirrored to the platform team.
+         */
+        name: string;
+        /**
+         * Free-form organization settings.
+         */
+        settings?: object | null;
+        /**
+         * Default 'active'.
+         */
+        status?: OrganizationStatus;
+        /**
+         * 
+         */
+        vat_id?: string | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value; external_team_id is mirror-managed and ignored.
+     */
+    export type OrganizationUpdateRequest = {
+        /**
+         * Company name — mirrored to the platform team.
+         */
+        name?: string;
+        /**
+         * Free-form organization settings.
+         */
+        settings?: object | null;
+        /**
+         * Default 'active'.
+         */
+        status?: OrganizationStatus;
         /**
          * 
          */
@@ -2339,6 +4511,80 @@ export namespace Models {
     }
 
     /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type PageLibraryItemUpdateRequest = {
+        /**
+         * 
+         */
+        bundle?: string;
+        /**
+         * 
+         */
+        label?: string;
+        /**
+         * Serialized block tree ({ bundle, props, props_i18n, options, children }).
+         */
+        tree?: object;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type PageTemplateUpdateRequest = {
+        /**
+         * 
+         */
+        description?: string | null;
+        /**
+         * 
+         */
+        field_name?: string | null;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * 
+         */
+        label?: string;
+        /**
+         * 
+         */
+        page_bundle?: string | null;
+        /**
+         * Serialized block trees ({ bundle, props, props_i18n, options, children }).
+         */
+        tree?: object[];
+    }
+
+    /**
+     * Partial update — only title, slug, status, meta and bundle are applied; other keys are ignored.
+     */
+    export type PageUpdateRequest = {
+        /**
+         * 
+         */
+        bundle?: string;
+        /**
+         * 
+         */
+        meta?: object;
+        /**
+         * 
+         */
+        slug?: string | null;
+        /**
+         * 
+         */
+        status?: PageStatus;
+        /**
+         * 
+         */
+        title?: string;
+    }
+
+    /**
      * 
      */
     export type Payment = {
@@ -2433,6 +4679,70 @@ export namespace Models {
     }
 
     /**
+     * Creates AND authorizes: self-managed methods authorize immediately, PSP methods may answer next_action (redirect). Eligibility is re-checked server-side.
+     */
+    export type PaymentCreateRequest = {
+        /**
+         * Order amount — 0 is legal (free orders), negative is not.
+         */
+        amount: number;
+        /**
+         * The cart this payment pays for.
+         */
+        cart_id?: string;
+        /**
+         * Paying customer contact.
+         */
+        contact_id?: string;
+        /**
+         * Buyer ISO country code for the eligibility check.
+         */
+        country?: string;
+        /**
+         * ISO 4217 code (default EUR).
+         */
+        currency?: string;
+        /**
+         * Same key answers the same payment instead of a duplicate.
+         */
+        idempotency_key?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Code of a configured payment method.
+         */
+        method_code: string;
+        /**
+         * External order reference — also the webhook fallback key.
+         */
+        order_ref?: string;
+        /**
+         * Where the PSP redirect flow returns the buyer to.
+         */
+        return_url?: string;
+    }
+
+    /**
+     * The buyer context — restriction dimensions are ANDed, entries within a dimension ORed, empty = unrestricted.
+     */
+    export type PaymentEligibilityRequest = {
+        /**
+         * Order amount the fees are computed against (default 0).
+         */
+        amount?: number;
+        /**
+         * Buyer ISO country code — methods with country restrictions need it.
+         */
+        country?: string;
+        /**
+         * ISO 4217 code (default EUR).
+         */
+        currency?: string;
+    }
+
+    /**
      * 
      */
     export type PaymentMethod = {
@@ -2515,6 +4825,146 @@ export namespace Models {
     }
 
     /**
+     * A method needs its identity: code + name.
+     */
+    export type PaymentMethodCreateRequest = {
+        /**
+         * Stable method code (unique per tenant, e.g. 'invoice', 'card').
+         */
+        code: string;
+        /**
+         * Allowed ISO country codes — empty/omitted = unrestricted.
+         */
+        countries?: string[];
+        /**
+         * 
+         */
+        description?: string;
+        /**
+         * Disabled methods are never eligible (default false).
+         */
+        enabled?: boolean;
+        /**
+         * Fixed amount or percent value, per fee_type (default 0).
+         */
+        fee_amount?: number;
+        /**
+         * ISO 4217 code (default EUR).
+         */
+        fee_currency?: string;
+        /**
+         * How 'fee_amount' applies (default 'none').
+         */
+        fee_type?: PaymentFeeType;
+        /**
+         * Self-managed (merchant fulfils, default) or PSP-backed ('provider' required to transact).
+         */
+        kind?: PaymentMethodKind;
+        /**
+         * Localized display names ({ de, en, … }).
+         */
+        labels?: object;
+        /**
+         * Maximum order amount — omitted = no upper bound.
+         */
+        max_order_value?: number;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Minimum order amount — omitted = no lower bound.
+         */
+        min_order_value?: number;
+        /**
+         * Display name.
+         */
+        name: string;
+        /**
+         * Sort position in the checkout (default 0).
+         */
+        position?: number;
+        /**
+         * PSP code from the catalog — only for kind 'psp'.
+         */
+        provider?: string;
+        /**
+         * The provider's payment method id (e.g. 'card', 'paypal').
+         */
+        provider_method?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type PaymentMethodUpdateRequest = {
+        /**
+         * Stable method code (unique per tenant, e.g. 'invoice', 'card').
+         */
+        code?: string;
+        /**
+         * Allowed ISO country codes — empty/omitted = unrestricted.
+         */
+        countries?: string[];
+        /**
+         * 
+         */
+        description?: string;
+        /**
+         * Disabled methods are never eligible (default false).
+         */
+        enabled?: boolean;
+        /**
+         * Fixed amount or percent value, per fee_type (default 0).
+         */
+        fee_amount?: number;
+        /**
+         * ISO 4217 code (default EUR).
+         */
+        fee_currency?: string;
+        /**
+         * How 'fee_amount' applies (default 'none').
+         */
+        fee_type?: PaymentFeeType;
+        /**
+         * Self-managed (merchant fulfils, default) or PSP-backed ('provider' required to transact).
+         */
+        kind?: PaymentMethodKind;
+        /**
+         * Localized display names ({ de, en, … }).
+         */
+        labels?: object;
+        /**
+         * Maximum order amount — omitted = no upper bound.
+         */
+        max_order_value?: number;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Minimum order amount — omitted = no lower bound.
+         */
+        min_order_value?: number;
+        /**
+         * Display name.
+         */
+        name?: string;
+        /**
+         * Sort position in the checkout (default 0).
+         */
+        position?: number;
+        /**
+         * PSP code from the catalog — only for kind 'psp'.
+         */
+        provider?: string;
+        /**
+         * The provider's payment method id (e.g. 'card', 'paypal').
+         */
+        provider_method?: string;
+    }
+
+    /**
      * 
      */
     export type PaymentProvider = {
@@ -2558,6 +5008,90 @@ export namespace Models {
          * 
          */
         webhook_secret?: string | null;
+    }
+
+    /**
+     * Activates a catalog PSP for this tenant — providers are configuration, not code.
+     */
+    export type PaymentProviderCreateRequest = {
+        /**
+         * PSP credentials — the catalog's credential_fields say which keys the auth scheme expects.
+         */
+        credentials?: object;
+        /**
+         * Only enabled providers transact (default false).
+         */
+        enabled?: boolean;
+        /**
+         * Display name — defaults to the catalog label.
+         */
+        name?: string;
+        /**
+         * Free-form provider options.
+         */
+        options?: object;
+        /**
+         * Provider code — must exist in the catalog (GET /payments/providers/catalog).
+         */
+        provider: string;
+        /**
+         * Sandbox/test credentials (default true).
+         */
+        test_mode?: boolean;
+        /**
+         * Shared secret for PSP callback verification.
+         */
+        webhook_secret?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type PaymentProviderUpdateRequest = {
+        /**
+         * PSP credentials — the catalog's credential_fields say which keys the auth scheme expects.
+         */
+        credentials?: object;
+        /**
+         * Only enabled providers transact (default false).
+         */
+        enabled?: boolean;
+        /**
+         * Display name — defaults to the catalog label.
+         */
+        name?: string;
+        /**
+         * Free-form provider options.
+         */
+        options?: object;
+        /**
+         * Provider code — must exist in the catalog (GET /payments/providers/catalog).
+         */
+        provider?: string;
+        /**
+         * Sandbox/test credentials (default true).
+         */
+        test_mode?: boolean;
+        /**
+         * Shared secret for PSP callback verification.
+         */
+        webhook_secret?: string;
+    }
+
+    /**
+     * The dispatch envelope from webhooks.revenexx.com — request.body carries the raw, vendor-shaped PSP callback (stripe payment intents or the generic {event, psp_payment_id?, order_ref?, error?} shape). Intentionally unconstrained so no PSP notification is ever rejected at the gate.
+     */
+    export type PaymentWebhookIngestRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type PriceEntriesReplaceRequest = {
+        /**
+         * The complete new entry set (set semantics).
+         */
+        entries: PriceEntryCreateRequest[];
     }
 
     /**
@@ -2616,6 +5150,90 @@ export namespace Models {
          * 
          */
         valid_until?: string | null;
+    }
+
+    /**
+     * An entry needs an identity: &#039;product_id&#039; or &#039;sku&#039;.
+     */
+    export type PriceEntryCreateRequest = {
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Default 'standard'; 'on_request' is the explicit no-price marker — it stops resolution and answers "price on request".
+         */
+        price_type?: PriceEntryType;
+        /**
+         * Priced product.
+         */
+        product_id?: string;
+        /**
+         * Tier threshold (Staffelpreis): this price applies from this quantity (default 1).
+         */
+        quantity_min?: number;
+        /**
+         * Priced SKU (alternative to product_id).
+         */
+        sku?: string;
+        /**
+         * 
+         */
+        unit?: string;
+        /**
+         * Per-unit price (default 0).
+         */
+        unit_price?: number;
+        /**
+         * Per-entry validity start (promo prices).
+         */
+        valid_from?: string;
+        /**
+         * Per-entry validity end.
+         */
+        valid_until?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type PriceEntryUpdateRequest = {
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Default 'standard'; 'on_request' is the explicit no-price marker — it stops resolution and answers "price on request".
+         */
+        price_type?: PriceEntryType;
+        /**
+         * Priced product.
+         */
+        product_id?: string;
+        /**
+         * Tier threshold (Staffelpreis): this price applies from this quantity (default 1).
+         */
+        quantity_min?: number;
+        /**
+         * Priced SKU (alternative to product_id).
+         */
+        sku?: string;
+        /**
+         * 
+         */
+        unit?: string;
+        /**
+         * Per-unit price (default 0).
+         */
+        unit_price?: number;
+        /**
+         * Per-entry validity start (promo prices).
+         */
+        valid_from?: string;
+        /**
+         * Per-entry validity end.
+         */
+        valid_until?: string;
     }
 
     /**
@@ -2703,6 +5321,198 @@ export namespace Models {
     /**
      * 
      */
+    export type PriceListCreateRequest = {
+        /**
+         * Scope: only this channel.
+         */
+        channel_id?: string;
+        /**
+         * Unique list code per tenant.
+         */
+        code: string;
+        /**
+         * Scope: only this contact — beats every other scope.
+         */
+        contact_id?: string;
+        /**
+         * ISO 4217 code (default EUR) — resolution only considers lists matching the requested currency.
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        description?: string;
+        /**
+         * Default lists resolve last within their group.
+         */
+        is_default?: boolean;
+        /**
+         * Localised names ({de, en, …}).
+         */
+        labels?: object;
+        /**
+         * Scope: only this market.
+         */
+        market_id?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * Scope: only this organization.
+         */
+        organization_id?: string;
+        /**
+         * Tie-breaker within a specificity group (higher wins, default 0).
+         */
+        priority?: number;
+        /**
+         * Default 'active' — only active lists resolve.
+         */
+        status?: PriceListStatus;
+        /**
+         * Gross (true) or net (false, default) prices.
+         */
+        tax_included?: boolean;
+        /**
+         * Validity window start.
+         */
+        valid_from?: string;
+        /**
+         * Validity window end.
+         */
+        valid_until?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type PriceListUpdateRequest = {
+        /**
+         * Scope: only this channel.
+         */
+        channel_id?: string;
+        /**
+         * Unique list code per tenant.
+         */
+        code?: string;
+        /**
+         * Scope: only this contact — beats every other scope.
+         */
+        contact_id?: string;
+        /**
+         * ISO 4217 code (default EUR) — resolution only considers lists matching the requested currency.
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        description?: string;
+        /**
+         * Default lists resolve last within their group.
+         */
+        is_default?: boolean;
+        /**
+         * Localised names ({de, en, …}).
+         */
+        labels?: object;
+        /**
+         * Scope: only this market.
+         */
+        market_id?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * Scope: only this organization.
+         */
+        organization_id?: string;
+        /**
+         * Tie-breaker within a specificity group (higher wins, default 0).
+         */
+        priority?: number;
+        /**
+         * Default 'active' — only active lists resolve.
+         */
+        status?: PriceListStatus;
+        /**
+         * Gross (true) or net (false, default) prices.
+         */
+        tax_included?: boolean;
+        /**
+         * Validity window start.
+         */
+        valid_from?: string;
+        /**
+         * Validity window end.
+         */
+        valid_until?: string;
+    }
+
+    /**
+     * Identify by &#039;product_id&#039; or &#039;sku&#039; — an item without identity resolves to on_request with a per-item error.
+     */
+    export type PriceResolveItem = {
+        /**
+         * Product to price.
+         */
+        product_id?: string;
+        /**
+         * Requested quantity for tier selection and line_total (default 1; non-positive values fall back to 1).
+         */
+        quantity?: number;
+        /**
+         * SKU to price (alternative to product_id).
+         */
+        sku?: string;
+    }
+
+    /**
+     * Buyer context + items. Unpriceable items come back as on_request — a missing price is a first-class state, never 0.
+     */
+    export type PriceResolveRequest = {
+        /**
+         * Point in time for validity windows (ISO 8601 timestamp, default now).
+         */
+        at?: string;
+        /**
+         * Buyer context: channel.
+         */
+        channel_id?: string;
+        /**
+         * Buyer context: contact — most specific scope.
+         */
+        contact_id?: string;
+        /**
+         * ISO 4217 code (default EUR) — only lists in this currency resolve.
+         */
+        currency?: string;
+        /**
+         * Items to price (at most 200 per call).
+         */
+        items: PriceResolveItem[];
+        /**
+         * Buyer context: market.
+         */
+        market_id?: string;
+        /**
+         * Buyer context: organization.
+         */
+        organization_id?: string;
+    }
+
+    /**
+     * 
+     */
     export type ProductAssociations = {
         /**
          * 
@@ -2737,6 +5547,58 @@ export namespace Models {
     /**
      * 
      */
+    export type ProductAssociationsCreateRequest = {
+        /**
+         * 
+         */
+        association_type_id: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        product_id: string;
+        /**
+         * 
+         */
+        quantity?: number | null;
+        /**
+         * 
+         */
+        target_product_id: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type ProductAssociationsUpdateRequest = {
+        /**
+         * 
+         */
+        association_type_id?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        product_id?: string;
+        /**
+         * 
+         */
+        quantity?: number | null;
+        /**
+         * 
+         */
+        target_product_id?: string;
+    }
+
+    /**
+     * 
+     */
     export type ProductCategories = {
         /**
          * 
@@ -2750,6 +5612,42 @@ export namespace Models {
          * 
          */
         id?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        product_id?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ProductCategoriesCreateRequest = {
+        /**
+         * 
+         */
+        category_id: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        product_id: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type ProductCategoriesUpdateRequest = {
+        /**
+         * 
+         */
+        category_id?: string;
         /**
          * 
          */
@@ -2821,6 +5719,98 @@ export namespace Models {
     /**
      * 
      */
+    export type ProductsCreateRequest = {
+        /**
+         * 
+         */
+        attribute_values?: object;
+        /**
+         * 
+         */
+        completeness?: object | null;
+        /**
+         * 
+         */
+        deleted_at?: string | null;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        family_id?: string | null;
+        /**
+         * 
+         */
+        family_variant_id?: string | null;
+        /**
+         * 
+         */
+        kind?: string;
+        /**
+         * 
+         */
+        parent_id?: string | null;
+        /**
+         * 
+         */
+        quantified_associations?: object | null;
+        /**
+         * 
+         */
+        sku: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type ProductsUpdateRequest = {
+        /**
+         * 
+         */
+        attribute_values?: object;
+        /**
+         * 
+         */
+        completeness?: object | null;
+        /**
+         * 
+         */
+        deleted_at?: string | null;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        family_id?: string | null;
+        /**
+         * 
+         */
+        family_variant_id?: string | null;
+        /**
+         * 
+         */
+        kind?: string;
+        /**
+         * 
+         */
+        parent_id?: string | null;
+        /**
+         * 
+         */
+        quantified_associations?: object | null;
+        /**
+         * 
+         */
+        sku?: string;
+    }
+
+    /**
+     * 
+     */
     export type ReferenceEntities = {
         /**
          * 
@@ -2846,6 +5836,42 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ReferenceEntitiesCreateRequest = {
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        image?: string | null;
+        /**
+         * 
+         */
+        labels?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type ReferenceEntitiesUpdateRequest = {
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        image?: string | null;
+        /**
+         * 
+         */
+        labels?: object | null;
     }
 
     /**
@@ -2880,6 +5906,50 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ReferenceEntityRecordsCreateRequest = {
+        /**
+         * 
+         */
+        attribute_values?: object;
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        reference_entity_id: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type ReferenceEntityRecordsUpdateRequest = {
+        /**
+         * 
+         */
+        attribute_values?: object;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        reference_entity_id?: string;
     }
 
     /**
@@ -3075,6 +6145,154 @@ export namespace Models {
     }
 
     /**
+     * A new shipping method — fixed, free or matrix pricing.
+     */
+    export type ShippingMethodCreateRequest = {
+        /**
+         * Carrier anchor for the upcoming carrier connect (dynamic rates, tracking links).
+         */
+        carrier?: string | null;
+        /**
+         * Stable method code, unique per tenant (e.g. standard, express).
+         */
+        code: string;
+        /**
+         * Allowed ISO 3166-1 alpha-2 codes; null or empty = worldwide.
+         */
+        countries?: string[] | null;
+        /**
+         * ISO 4217 code (default EUR).
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        description?: string | null;
+        /**
+         * Only enabled methods appear in rate responses (default false).
+         */
+        enabled?: boolean;
+        /**
+         * Delivery-time estimate for the checkout (days, upper bound).
+         */
+        eta_days_max?: number | null;
+        /**
+         * Delivery-time estimate for the checkout (days, lower bound).
+         */
+        eta_days_min?: number | null;
+        /**
+         * Free shipping at or above this order value — wins over every pricing model.
+         */
+        free_above?: number | null;
+        /**
+         * Localized display names keyed by locale (e.g. {de, en}).
+         */
+        labels?: object | null;
+        /**
+         * Attribute name for matrix_basis 'attribute'.
+         */
+        matrix_attribute?: string | null;
+        /**
+         * The measure a matrix method prices over; 'attribute' reads matrix_attribute from the rate request.
+         */
+        matrix_basis?: ShippingMethodMatrixBasis;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object | null;
+        /**
+         * Display name.
+         */
+        name: string;
+        /**
+         * Sort order in the checkout (default 0).
+         */
+        position?: number;
+        /**
+         * The fixed price (default 0) — ignored for 'free' and 'matrix'.
+         */
+        price?: number;
+        /**
+         * Pricing model (default 'fixed'): one price, no price, or tiered over a measure.
+         */
+        pricing_type?: ShippingMethodPricingType;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type ShippingMethodUpdateRequest = {
+        /**
+         * Carrier anchor for the upcoming carrier connect (dynamic rates, tracking links).
+         */
+        carrier?: string | null;
+        /**
+         * Stable method code, unique per tenant (e.g. standard, express).
+         */
+        code?: string;
+        /**
+         * Allowed ISO 3166-1 alpha-2 codes; null or empty = worldwide.
+         */
+        countries?: string[] | null;
+        /**
+         * ISO 4217 code (default EUR).
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        description?: string | null;
+        /**
+         * Only enabled methods appear in rate responses (default false).
+         */
+        enabled?: boolean;
+        /**
+         * Delivery-time estimate for the checkout (days, upper bound).
+         */
+        eta_days_max?: number | null;
+        /**
+         * Delivery-time estimate for the checkout (days, lower bound).
+         */
+        eta_days_min?: number | null;
+        /**
+         * Free shipping at or above this order value — wins over every pricing model.
+         */
+        free_above?: number | null;
+        /**
+         * Localized display names keyed by locale (e.g. {de, en}).
+         */
+        labels?: object | null;
+        /**
+         * Attribute name for matrix_basis 'attribute'.
+         */
+        matrix_attribute?: string | null;
+        /**
+         * The measure a matrix method prices over; 'attribute' reads matrix_attribute from the rate request.
+         */
+        matrix_basis?: ShippingMethodMatrixBasis;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object | null;
+        /**
+         * Display name.
+         */
+        name?: string;
+        /**
+         * Sort order in the checkout (default 0).
+         */
+        position?: number;
+        /**
+         * The fixed price (default 0) — ignored for 'free' and 'matrix'.
+         */
+        price?: number;
+        /**
+         * Pricing model (default 'fixed'): one price, no price, or tiered over a measure.
+         */
+        pricing_type?: ShippingMethodPricingType;
+    }
+
+    /**
      * 
      */
     export type ShippingRate = {
@@ -3163,6 +6381,82 @@ export namespace Models {
     }
 
     /**
+     * A new matrix tier (from_value → price) of the method in the path.
+     */
+    export type ShippingRateTierCreateRequest = {
+        /**
+         * Tier threshold (default 0) — the tier with the highest from_value at or below the measured value wins.
+         */
+        from_value?: number;
+        /**
+         * Sort order (default 0; bulk replace derives it from the array index).
+         */
+        position?: number;
+        /**
+         * Price of this tier (default 0).
+         */
+        price?: number;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type ShippingRateTierUpdateRequest = {
+        /**
+         * Tier threshold (default 0) — the tier with the highest from_value at or below the measured value wins.
+         */
+        from_value?: number;
+        /**
+         * Sort order (default 0; bulk replace derives it from the array index).
+         */
+        position?: number;
+        /**
+         * Price of this tier (default 0).
+         */
+        price?: number;
+    }
+
+    /**
+     * 
+     */
+    export type ShippingRateTiersReplaceRequest = {
+        /**
+         * The complete new tier set (set semantics) — positions are derived from the array order.
+         */
+        tiers: ShippingRateTierCreateRequest[];
+    }
+
+    /**
+     * The buyer context the checkout resolves rates for — matrix methods need their measure (weight, quantity, order value or attribute) to apply.
+     */
+    export type ShippingRatesRequest = {
+        /**
+         * Measure values for attribute matrices, keyed by attribute name.
+         */
+        attributes?: object;
+        /**
+         * Destination ISO 3166-1 alpha-2 code — checked against method country restrictions.
+         */
+        country?: string;
+        /**
+         * Echoed into the rates (default 'EUR').
+         */
+        currency?: string;
+        /**
+         * Order value (default 0) — drives free-above thresholds and order_value matrices.
+         */
+        order_value?: number;
+        /**
+         * Total quantity — measure for quantity matrices.
+         */
+        quantity?: number;
+        /**
+         * Total weight — measure for weight matrices.
+         */
+        weight?: number;
+    }
+
+    /**
      * 
      */
     export type StockLevel = {
@@ -3206,6 +6500,74 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+    }
+
+    /**
+     * A stock row tracks an item: &#039;product_id&#039; or &#039;sku&#039;.
+     */
+    export type StockLevelCreateRequest = {
+        /**
+         * Owning location.
+         */
+        location_id: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Physical stock (default 0).
+         */
+        on_hand?: number;
+        /**
+         * Tracked product.
+         */
+        product_id?: string;
+        /**
+         * 
+         */
+        reorder_point?: number | null;
+        /**
+         * Reserved stock (default 0) — normally managed by reserve/release/commit.
+         */
+        reserved?: number;
+        /**
+         * Tracked SKU (alternative to product_id).
+         */
+        sku?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type StockLevelUpdateRequest = {
+        /**
+         * Owning location.
+         */
+        location_id?: string;
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object;
+        /**
+         * Physical stock (default 0).
+         */
+        on_hand?: number;
+        /**
+         * Tracked product.
+         */
+        product_id?: string;
+        /**
+         * 
+         */
+        reorder_point?: number | null;
+        /**
+         * Reserved stock (default 0) — normally managed by reserve/release/commit.
+         */
+        reserved?: number;
+        /**
+         * Tracked SKU (alternative to product_id).
+         */
+        sku?: string;
     }
 
     /**

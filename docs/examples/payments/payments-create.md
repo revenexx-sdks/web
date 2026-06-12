@@ -9,7 +9,18 @@ const client = new Client()
 
 const payments = new Payments(client);
 
-const result = await payments.paymentsCreate();
+const result = await payments.paymentsCreate({
+    amount: null,
+    methodCode: '',
+    cartId: '', // optional
+    contactId: '', // optional
+    country: '', // optional
+    currency: '', // optional
+    idempotencyKey: '', // optional
+    metadata: {}, // optional
+    orderRef: '', // optional
+    returnUrl: '' // optional
+});
 
 console.log(result);
 ```

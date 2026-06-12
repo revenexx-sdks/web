@@ -9,7 +9,10 @@ const client = new Client()
 
 const customers = new Customers(client);
 
-const result = await customers.customersAuthLogin();
+const result = await customers.customersAuthLogin({
+    email: '',
+    password: ''
+});
 
 console.log(result);
 ```

@@ -10,7 +10,10 @@ const client = new Client()
 const pages = new Pages(client);
 
 const result = await pages.pagesEditorMutate({
-    pageId: ''
+    pageId: '',
+    plugin: '',
+    langcode: '', // optional
+    payload: {} // optional
 });
 
 console.log(result);

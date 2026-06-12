@@ -9,7 +9,10 @@ const client = new Client()
 
 const inventories = new Inventories(client);
 
-const result = await inventories.inventoriesAvailability();
+const result = await inventories.inventoriesAvailability({
+    items: [],
+    locationCode: '' // optional
+});
 
 console.log(result);
 ```

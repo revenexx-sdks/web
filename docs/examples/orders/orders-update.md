@@ -10,7 +10,13 @@ const client = new Client()
 const orders = new Orders(client);
 
 const result = await orders.ordersUpdate({
-    id: ''
+    id: '',
+    billingAddress: {}, // optional
+    buyer: {}, // optional
+    customerOrderNumber: '', // optional
+    metadata: {}, // optional
+    shippingAddress: {}, // optional
+    userData: {} // optional
 });
 
 console.log(result);

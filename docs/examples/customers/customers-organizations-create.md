@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Customers } from "@revenexx/sdk";
+import { Client, Customers, OrganizationStatus } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -9,7 +9,12 @@ const client = new Client()
 
 const customers = new Customers(client);
 
-const result = await customers.customersOrganizationsCreate();
+const result = await customers.customersOrganizationsCreate({
+    name: '',
+    settings: {}, // optional
+    status: OrganizationStatus.Active, // optional
+    vatId: '' // optional
+});
 
 console.log(result);
 ```

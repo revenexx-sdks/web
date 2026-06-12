@@ -9,7 +9,11 @@ const client = new Client()
 
 const inventories = new Inventories(client);
 
-const result = await inventories.inventoriesReceive();
+const result = await inventories.inventoriesReceive({
+    items: [],
+    locationCode: '', // optional
+    reason: '' // optional
+});
 
 console.log(result);
 ```

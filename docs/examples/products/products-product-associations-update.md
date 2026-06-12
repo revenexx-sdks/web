@@ -10,7 +10,12 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsProductAssociationsUpdate({
-    id: ''
+    id: '',
+    associationTypeId: '', // optional
+    position: null, // optional
+    productId: '', // optional
+    quantity: null, // optional
+    targetProductId: '' // optional
 });
 
 console.log(result);

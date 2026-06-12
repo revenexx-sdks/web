@@ -11,7 +11,12 @@ const markets = new Markets(client);
 
 const result = await markets.marketsLocalesUpdate({
     marketId: '',
-    id: ''
+    id: '',
+    code: '', // optional
+    country: '', // optional
+    isDefault: null, // optional
+    language: '', // optional
+    position: null // optional
 });
 
 console.log(result);

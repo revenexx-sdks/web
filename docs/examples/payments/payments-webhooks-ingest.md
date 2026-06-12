@@ -10,7 +10,8 @@ const client = new Client()
 const payments = new Payments(client);
 
 const result = await payments.paymentsWebhooksIngest({
-    provider: ''
+    provider: '',
+    data: {}
 });
 
 console.log(result);

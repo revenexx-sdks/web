@@ -9,7 +9,11 @@ const client = new Client()
 
 const customers = new Customers(client);
 
-const result = await customers.customersAuthRecoveryConfirm();
+const result = await customers.customersAuthRecoveryConfirm({
+    password: '',
+    secret: '',
+    userId: ''
+});
 
 console.log(result);
 ```

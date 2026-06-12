@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Markets } from "@revenexx/sdk";
+import { Client, Markets, MarketStatus } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -9,7 +9,15 @@ const client = new Client()
 
 const markets = new Markets(client);
 
-const result = await markets.marketsCreate();
+const result = await markets.marketsCreate({
+    code: '',
+    name: '',
+    currency: '', // optional
+    isDefault: null, // optional
+    labels: {}, // optional
+    position: null, // optional
+    status: MarketStatus.Active // optional
+});
 
 console.log(result);
 ```

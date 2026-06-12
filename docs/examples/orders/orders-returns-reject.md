@@ -11,7 +11,9 @@ const orders = new Orders(client);
 
 const result = await orders.ordersReturnsReject({
     id: '',
-    rid: ''
+    rid: '',
+    reason: '', // optional
+    resolution: '' // optional
 });
 
 console.log(result);

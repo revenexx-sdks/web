@@ -10,7 +10,12 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsAttributeOptionsUpdate({
-    id: ''
+    id: '',
+    attributeId: '', // optional
+    code: '', // optional
+    labels: {}, // optional
+    position: null, // optional
+    swatch: {} // optional
 });
 
 console.log(result);

@@ -9,7 +9,11 @@ const client = new Client()
 
 const payments = new Payments(client);
 
-const result = await payments.paymentsMethodsEligible();
+const result = await payments.paymentsMethodsEligible({
+    amount: null, // optional
+    country: '', // optional
+    currency: '' // optional
+});
 
 console.log(result);
 ```

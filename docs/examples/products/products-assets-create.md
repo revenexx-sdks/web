@@ -9,7 +9,12 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsAssetsCreate();
+const result = await products.productsAssetsCreate({
+    assetFamilyId: '',
+    code: '',
+    attributeValues: {}, // optional
+    mediaUuid: '' // optional
+});
 
 console.log(result);
 ```

@@ -10,7 +10,12 @@ const client = new Client()
 const markets = new Markets(client);
 
 const result = await markets.marketsLocalesCreate({
-    marketId: ''
+    marketId: '',
+    code: '',
+    country: '',
+    language: '',
+    isDefault: null, // optional
+    position: null // optional
 });
 
 console.log(result);

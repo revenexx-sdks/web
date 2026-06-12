@@ -11,7 +11,10 @@ const shipping = new Shipping(client);
 
 const result = await shipping.shippingTiersUpdate({
     methodId: '',
-    id: ''
+    id: '',
+    fromValue: null, // optional
+    position: null, // optional
+    price: null // optional
 });
 
 console.log(result);

@@ -10,7 +10,14 @@ const client = new Client()
 const payments = new Payments(client);
 
 const result = await payments.paymentsProvidersUpdate({
-    id: ''
+    id: '',
+    credentials: {}, // optional
+    enabled: null, // optional
+    name: '', // optional
+    options: {}, // optional
+    provider: '', // optional
+    testMode: null, // optional
+    webhookSecret: '' // optional
 });
 
 console.log(result);
