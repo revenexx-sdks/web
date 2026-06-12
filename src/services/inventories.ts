@@ -3,7 +3,7 @@ import { RevenexxException, Client, type Payload, UploadProgress } from '../clie
 import type { Models } from '../models';
 
 
-export class Payments {
+export class Inventories {
     client: Client;
 
     constructor(client: Client) {
@@ -15,9 +15,78 @@ export class Payments {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    paymentsList(): Promise<{}> {
+    inventoriesAdjust(): Promise<{}> {
 
-        const apiPath = '/v1/payments';
+        const apiPath = '/v1/inventories/adjust';
+        const payload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    inventoriesAvailability(): Promise<{}> {
+
+        const apiPath = '/v1/inventories/availability';
+        const payload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    inventoriesCommit(): Promise<{}> {
+
+        const apiPath = '/v1/inventories/commit';
+        const payload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    inventoriesLocationsList(): Promise<{}> {
+
+        const apiPath = '/v1/inventories/locations';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -35,11 +104,11 @@ export class Payments {
     /**
      *
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
+     * @returns {Promise<Models.Location>}
      */
-    paymentsCreate(): Promise<Models.Payment> {
+    inventoriesLocationsCreate(): Promise<Models.Location> {
 
-        const apiPath = '/v1/payments';
+        const apiPath = '/v1/inventories/locations';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -60,81 +129,13 @@ export class Payments {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    paymentsMethodsList(): Promise<{}> {
+    inventoriesLocationsDefaults(): Promise<{}> {
 
-        const apiPath = '/v1/payments/methods';
+        const apiPath = '/v1/inventories/locations/defaults';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
-        }
-
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-
-    /**
-     *
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.PaymentMethod>}
-     */
-    paymentsMethodsCreate(): Promise<Models.PaymentMethod> {
-
-        const apiPath = '/v1/payments/methods';
-        const payload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
-        }
-
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-
-    /**
-     *
-     * @throws {RevenexxException}
-     * @returns {Promise<{}>}
-     */
-    paymentsMethodsDefaults(): Promise<{}> {
-
-        const apiPath = '/v1/payments/methods/defaults';
-        const payload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-        }
-
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-
-    /**
-     *
-     * @throws {RevenexxException}
-     * @returns {Promise<{}>}
-     */
-    paymentsMethodsEligible(): Promise<{}> {
-
-        const apiPath = '/v1/payments/methods/eligible';
-        const payload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
         }
 
         return this.client.call(
@@ -151,7 +152,7 @@ export class Payments {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    paymentsMethodsDelete(params: { id: string }): Promise<{}>;
+    inventoriesLocationsDelete(params: { id: string }): Promise<{}>;
     /**
      *
      * @param {string} id - 
@@ -159,8 +160,8 @@ export class Payments {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsMethodsDelete(id: string): Promise<{}>;
-    paymentsMethodsDelete(
+    inventoriesLocationsDelete(id: string): Promise<{}>;
+    inventoriesLocationsDelete(
         paramsOrFirst: { id: string } | string    
     ): Promise<{}> {
         let params: { id: string };
@@ -179,7 +180,7 @@ export class Payments {
             throw new RevenexxException('Missing required parameter: "id"');
         }
 
-        const apiPath = '/v1/payments/methods/{id}'.replace('{id}', id);
+        const apiPath = '/v1/inventories/locations/{id}'.replace('{id}', id);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -198,20 +199,20 @@ export class Payments {
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PaymentMethod>}
+     * @returns {Promise<Models.Location>}
      */
-    paymentsMethodsGet(params: { id: string }): Promise<Models.PaymentMethod>;
+    inventoriesLocationsGet(params: { id: string }): Promise<Models.Location>;
     /**
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PaymentMethod>}
+     * @returns {Promise<Models.Location>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsMethodsGet(id: string): Promise<Models.PaymentMethod>;
-    paymentsMethodsGet(
+    inventoriesLocationsGet(id: string): Promise<Models.Location>;
+    inventoriesLocationsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.PaymentMethod> {
+    ): Promise<Models.Location> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -228,7 +229,7 @@ export class Payments {
             throw new RevenexxException('Missing required parameter: "id"');
         }
 
-        const apiPath = '/v1/payments/methods/{id}'.replace('{id}', id);
+        const apiPath = '/v1/inventories/locations/{id}'.replace('{id}', id);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -247,20 +248,20 @@ export class Payments {
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PaymentMethod>}
+     * @returns {Promise<Models.Location>}
      */
-    paymentsMethodsUpdate(params: { id: string }): Promise<Models.PaymentMethod>;
+    inventoriesLocationsUpdate(params: { id: string }): Promise<Models.Location>;
     /**
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PaymentMethod>}
+     * @returns {Promise<Models.Location>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsMethodsUpdate(id: string): Promise<Models.PaymentMethod>;
-    paymentsMethodsUpdate(
+    inventoriesLocationsUpdate(id: string): Promise<Models.Location>;
+    inventoriesLocationsUpdate(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.PaymentMethod> {
+    ): Promise<Models.Location> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -277,7 +278,7 @@ export class Payments {
             throw new RevenexxException('Missing required parameter: "id"');
         }
 
-        const apiPath = '/v1/payments/methods/{id}'.replace('{id}', id);
+        const apiPath = '/v1/inventories/locations/{id}'.replace('{id}', id);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -298,9 +299,58 @@ export class Payments {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    paymentsProvidersList(): Promise<{}> {
+    inventoriesMovementsList(): Promise<{}> {
 
-        const apiPath = '/v1/payments/providers';
+        const apiPath = '/v1/inventories/movements';
+        const payload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.StockMovement>}
+     */
+    inventoriesMovementsGet(params: { id: string }): Promise<Models.StockMovement>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.StockMovement>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    inventoriesMovementsGet(id: string): Promise<Models.StockMovement>;
+    inventoriesMovementsGet(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.StockMovement> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/inventories/movements/{id}'.replace('{id}', id);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -318,11 +368,11 @@ export class Payments {
     /**
      *
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PaymentProvider>}
+     * @returns {Promise<{}>}
      */
-    paymentsProvidersCreate(): Promise<Models.PaymentProvider> {
+    inventoriesReceive(): Promise<{}> {
 
-        const apiPath = '/v1/payments/providers';
+        const apiPath = '/v1/inventories/receive';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -343,9 +393,32 @@ export class Payments {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    paymentsProvidersCatalog(): Promise<{}> {
+    inventoriesRelease(): Promise<{}> {
 
-        const apiPath = '/v1/payments/providers/catalog';
+        const apiPath = '/v1/inventories/release';
+        const payload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    inventoriesReservationsList(): Promise<{}> {
+
+        const apiPath = '/v1/inventories/reservations';
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -364,9 +437,149 @@ export class Payments {
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
+     * @returns {Promise<Models.Reservation>}
+     */
+    inventoriesReservationsGet(params: { id: string }): Promise<Models.Reservation>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Reservation>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    inventoriesReservationsGet(id: string): Promise<Models.Reservation>;
+    inventoriesReservationsGet(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.Reservation> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/inventories/reservations/{id}'.replace('{id}', id);
+        const payload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    paymentsProvidersDelete(params: { id: string }): Promise<{}>;
+    inventoriesReserve(): Promise<{}> {
+
+        const apiPath = '/v1/inventories/reserve';
+        const payload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    inventoriesRestock(): Promise<{}> {
+
+        const apiPath = '/v1/inventories/restock';
+        const payload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    inventoriesStockList(): Promise<{}> {
+
+        const apiPath = '/v1/inventories/stock';
+        const payload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.StockLevel>}
+     */
+    inventoriesStockCreate(): Promise<Models.StockLevel> {
+
+        const apiPath = '/v1/inventories/stock';
+        const payload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            payload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    inventoriesStockDelete(params: { id: string }): Promise<{}>;
     /**
      *
      * @param {string} id - 
@@ -374,8 +587,8 @@ export class Payments {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsProvidersDelete(id: string): Promise<{}>;
-    paymentsProvidersDelete(
+    inventoriesStockDelete(id: string): Promise<{}>;
+    inventoriesStockDelete(
         paramsOrFirst: { id: string } | string    
     ): Promise<{}> {
         let params: { id: string };
@@ -394,7 +607,7 @@ export class Payments {
             throw new RevenexxException('Missing required parameter: "id"');
         }
 
-        const apiPath = '/v1/payments/providers/{id}'.replace('{id}', id);
+        const apiPath = '/v1/inventories/stock/{id}'.replace('{id}', id);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -413,20 +626,20 @@ export class Payments {
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PaymentProvider>}
+     * @returns {Promise<Models.StockLevel>}
      */
-    paymentsProvidersGet(params: { id: string }): Promise<Models.PaymentProvider>;
+    inventoriesStockGet(params: { id: string }): Promise<Models.StockLevel>;
     /**
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PaymentProvider>}
+     * @returns {Promise<Models.StockLevel>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsProvidersGet(id: string): Promise<Models.PaymentProvider>;
-    paymentsProvidersGet(
+    inventoriesStockGet(id: string): Promise<Models.StockLevel>;
+    inventoriesStockGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.PaymentProvider> {
+    ): Promise<Models.StockLevel> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -443,7 +656,7 @@ export class Payments {
             throw new RevenexxException('Missing required parameter: "id"');
         }
 
-        const apiPath = '/v1/payments/providers/{id}'.replace('{id}', id);
+        const apiPath = '/v1/inventories/stock/{id}'.replace('{id}', id);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -462,20 +675,20 @@ export class Payments {
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PaymentProvider>}
+     * @returns {Promise<Models.StockLevel>}
      */
-    paymentsProvidersUpdate(params: { id: string }): Promise<Models.PaymentProvider>;
+    inventoriesStockUpdate(params: { id: string }): Promise<Models.StockLevel>;
     /**
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PaymentProvider>}
+     * @returns {Promise<Models.StockLevel>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsProvidersUpdate(id: string): Promise<Models.PaymentProvider>;
-    paymentsProvidersUpdate(
+    inventoriesStockUpdate(id: string): Promise<Models.StockLevel>;
+    inventoriesStockUpdate(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.PaymentProvider> {
+    ): Promise<Models.StockLevel> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -492,7 +705,7 @@ export class Payments {
             throw new RevenexxException('Missing required parameter: "id"');
         }
 
-        const apiPath = '/v1/payments/providers/{id}'.replace('{id}', id);
+        const apiPath = '/v1/inventories/stock/{id}'.replace('{id}', id);
         const payload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -502,303 +715,6 @@ export class Payments {
 
         return this.client.call(
             'put',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-
-    /**
-     * Consumes the dispatch envelope from webhooks.revenexx.com: normalizes the provider callback (stripe payment intents + a generic shape), resolves the payment by psp_payment_id or order_ref and moves the ledger. Facts only move forward — provider retries and redeliveries are idempotent no-ops; unverified envelopes are refused.
-     *
-     * @param {string} params.provider - 
-     * @throws {RevenexxException}
-     * @returns {Promise<{}>}
-     */
-    paymentsWebhooksIngest(params: { provider: string }): Promise<{}>;
-    /**
-     * Consumes the dispatch envelope from webhooks.revenexx.com: normalizes the provider callback (stripe payment intents + a generic shape), resolves the payment by psp_payment_id or order_ref and moves the ledger. Facts only move forward — provider retries and redeliveries are idempotent no-ops; unverified envelopes are refused.
-     *
-     * @param {string} provider - 
-     * @throws {RevenexxException}
-     * @returns {Promise<{}>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    paymentsWebhooksIngest(provider: string): Promise<{}>;
-    paymentsWebhooksIngest(
-        paramsOrFirst: { provider: string } | string    
-    ): Promise<{}> {
-        let params: { provider: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { provider: string };
-        } else {
-            params = {
-                provider: paramsOrFirst as string            
-            };
-        }
-        
-        const provider = params.provider;
-
-        if (typeof provider === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "provider"');
-        }
-
-        const apiPath = '/v1/payments/webhooks/{provider}'.replace('{provider}', provider);
-        const payload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
-        }
-
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-
-    /**
-     *
-     * @param {string} params.id - 
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
-     */
-    paymentsGet(params: { id: string }): Promise<Models.Payment>;
-    /**
-     *
-     * @param {string} id - 
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    paymentsGet(id: string): Promise<Models.Payment>;
-    paymentsGet(
-        paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Payment> {
-        let params: { id: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string };
-        } else {
-            params = {
-                id: paramsOrFirst as string            
-            };
-        }
-        
-        const id = params.id;
-
-        if (typeof id === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "id"');
-        }
-
-        const apiPath = '/v1/payments/{id}'.replace('{id}', id);
-        const payload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-        }
-
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-
-    /**
-     *
-     * @param {string} params.id - 
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
-     */
-    paymentsCancel(params: { id: string }): Promise<Models.Payment>;
-    /**
-     *
-     * @param {string} id - 
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    paymentsCancel(id: string): Promise<Models.Payment>;
-    paymentsCancel(
-        paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Payment> {
-        let params: { id: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string };
-        } else {
-            params = {
-                id: paramsOrFirst as string            
-            };
-        }
-        
-        const id = params.id;
-
-        if (typeof id === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "id"');
-        }
-
-        const apiPath = '/v1/payments/{id}/cancel'.replace('{id}', id);
-        const payload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-        }
-
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-
-    /**
-     *
-     * @param {string} params.id - 
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
-     */
-    paymentsCapture(params: { id: string }): Promise<Models.Payment>;
-    /**
-     *
-     * @param {string} id - 
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    paymentsCapture(id: string): Promise<Models.Payment>;
-    paymentsCapture(
-        paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Payment> {
-        let params: { id: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string };
-        } else {
-            params = {
-                id: paramsOrFirst as string            
-            };
-        }
-        
-        const id = params.id;
-
-        if (typeof id === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "id"');
-        }
-
-        const apiPath = '/v1/payments/{id}/capture'.replace('{id}', id);
-        const payload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-        }
-
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-
-    /**
-     *
-     * @param {string} params.id - 
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
-     */
-    paymentsConfirm(params: { id: string }): Promise<Models.Payment>;
-    /**
-     *
-     * @param {string} id - 
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    paymentsConfirm(id: string): Promise<Models.Payment>;
-    paymentsConfirm(
-        paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Payment> {
-        let params: { id: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string };
-        } else {
-            params = {
-                id: paramsOrFirst as string            
-            };
-        }
-        
-        const id = params.id;
-
-        if (typeof id === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "id"');
-        }
-
-        const apiPath = '/v1/payments/{id}/confirm'.replace('{id}', id);
-        const payload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-        }
-
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            payload
-        );
-    }
-
-    /**
-     *
-     * @param {string} params.id - 
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
-     */
-    paymentsRefund(params: { id: string }): Promise<Models.Payment>;
-    /**
-     *
-     * @param {string} id - 
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Payment>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    paymentsRefund(id: string): Promise<Models.Payment>;
-    paymentsRefund(
-        paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Payment> {
-        let params: { id: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string };
-        } else {
-            params = {
-                id: paramsOrFirst as string            
-            };
-        }
-        
-        const id = params.id;
-
-        if (typeof id === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "id"');
-        }
-
-        const apiPath = '/v1/payments/{id}/refund'.replace('{id}', id);
-        const payload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-        }
-
-        return this.client.call(
-            'post',
             uri,
             apiHeaders,
             payload

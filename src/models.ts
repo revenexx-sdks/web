@@ -783,6 +783,52 @@ export namespace Models {
     /**
      * 
      */
+    export type Comment = {
+        /**
+         * 
+         */
+        author_id?: string | null;
+        /**
+         * 
+         */
+        author_name?: string | null;
+        /**
+         * 
+         */
+        block_uuids?: object;
+        /**
+         * 
+         */
+        body?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        page_id?: string;
+        /**
+         * 
+         */
+        parent_id?: string | null;
+        /**
+         * 
+         */
+        resolved?: boolean;
+        /**
+         * 
+         */
+        updated_at?: string | null;
+    }
+
+    /**
+     * 
+     */
     export type Contact = {
         /**
          * 
@@ -836,6 +882,82 @@ export namespace Models {
          * 
          */
         updated_at?: string;
+    }
+
+    /**
+     * Published page resolved for one language: nested block tree with i18n fallback applied and scheduled blocks filtered.
+     */
+    export type DeliveryPage = {
+        /**
+         * Field name → ordered block list ({ uuid, bundle, props, options, children }).
+         */
+        fields?: object;
+        /**
+         * 
+         */
+        page?: object;
+    }
+
+    /**
+     * The blökkli adapter state: page, translations, edit state + mutation log, materialized field lists, mutated options/entity values, text field values, droppable field values and violations.
+     */
+    export type EditorState = {
+        /**
+         * 
+         */
+        currentUserIsOwner?: boolean;
+        /**
+         * 
+         */
+        droppableFieldValues?: object[];
+        /**
+         * 
+         */
+        editState?: object | null;
+        /**
+         * 
+         */
+        fields?: object[];
+        /**
+         * 
+         */
+        ignoredAnalyzeIdentifiers?: string[];
+        /**
+         * 
+         */
+        langcode?: string;
+        /**
+         * 
+         */
+        mutatedEntity?: object;
+        /**
+         * 
+         */
+        mutatedHostOptions?: object;
+        /**
+         * 
+         */
+        mutatedOptions?: object;
+        /**
+         * 
+         */
+        mutations?: object[];
+        /**
+         * 
+         */
+        page?: object;
+        /**
+         * 
+         */
+        textFieldValues?: object[];
+        /**
+         * 
+         */
+        translations?: object[];
+        /**
+         * 
+         */
+        violations?: object[];
     }
 
     /**
@@ -1091,6 +1213,136 @@ export namespace Models {
     /**
      * 
      */
+    export type ItemAvailability = {
+        /**
+         * 
+         */
+        available?: number;
+        /**
+         * 
+         */
+        locations?: object[];
+        /**
+         * 
+         */
+        on_hand?: number;
+        /**
+         * 
+         */
+        orderable?: boolean;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        requested?: number;
+        /**
+         * 
+         */
+        reserved?: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * false = unknown to inventory; the storefront decides whether untracked items sell freely.
+         */
+        tracked?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type LibraryItem = {
+        /**
+         * 
+         */
+        bundle?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        created_by?: string | null;
+        /**
+         * 
+         */
+        deleted_at?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        label?: string;
+        /**
+         * 
+         */
+        tree?: object;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type Location = {
+        /**
+         * 
+         */
+        address?: object | null;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        priority?: number;
+        /**
+         * 
+         */
+        type?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
     export type Market = {
         /**
          * 
@@ -1273,6 +1525,688 @@ export namespace Models {
     /**
      * 
      */
+    export type MutationRequest = {
+        /**
+         * 
+         */
+        langcode?: string;
+        /**
+         * 
+         */
+        payload?: object;
+        /**
+         * Mutation plugin id (add, move, delete, duplicate, update_field_value, ...).
+         */
+        plugin: string;
+    }
+
+    /**
+     * blökkli MutationResponseLike: success flag plus the full re-materialized editor state.
+     */
+    export type MutationResponse = {
+        /**
+         * Full editor state (see pages.editor.state).
+         */
+        state?: object;
+        /**
+         * 
+         */
+        success?: boolean;
+        /**
+         * 
+         */
+        violations?: object[];
+    }
+
+    /**
+     * 
+     */
+    export type NumberRange = {
+        /**
+         * 
+         */
+        channel_id?: string | null;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        counter?: number;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        padding?: number;
+        /**
+         * 
+         */
+        position_step?: number;
+        /**
+         * 
+         */
+        prefix?: string;
+        /**
+         * 
+         */
+        step?: number;
+        /**
+         * 
+         */
+        suffix?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type Order = {
+        /**
+         * 
+         */
+        acknowledged_at?: string | null;
+        /**
+         * 
+         */
+        billing_address?: object | null;
+        /**
+         * 
+         */
+        buyer?: object | null;
+        /**
+         * 
+         */
+        cancelled_at?: string | null;
+        /**
+         * 
+         */
+        cart_id?: string | null;
+        /**
+         * 
+         */
+        channel_id?: string | null;
+        /**
+         * 
+         */
+        completed_at?: string | null;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        customer_order_number?: string | null;
+        /**
+         * 
+         */
+        external_ref?: string | null;
+        /**
+         * 
+         */
+        fulfillment_status?: string;
+        /**
+         * 
+         */
+        grand_total?: number;
+        /**
+         * 
+         */
+        hold_reason?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        item_count?: number;
+        /**
+         * 
+         */
+        market_id?: string | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        number?: string;
+        /**
+         * 
+         */
+        on_hold?: boolean;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        payment?: object | null;
+        /**
+         * 
+         */
+        payment_status?: string;
+        /**
+         * 
+         */
+        placed_at?: string | null;
+        /**
+         * 
+         */
+        shipping?: object | null;
+        /**
+         * 
+         */
+        shipping_address?: object | null;
+        /**
+         * 
+         */
+        shipping_total?: number;
+        /**
+         * 
+         */
+        status?: string;
+        /**
+         * 
+         */
+        subtotal?: number;
+        /**
+         * 
+         */
+        tax_total?: number;
+        /**
+         * 
+         */
+        updated_at?: string;
+        /**
+         * 
+         */
+        user_data?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type OrderCancellation = {
+        /**
+         * 
+         */
+        cancelled_by?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        order_id?: string;
+        /**
+         * 
+         */
+        positions?: object | null;
+        /**
+         * 
+         */
+        reason?: string | null;
+        /**
+         * 
+         */
+        scope?: string;
+    }
+
+    /**
+     * 
+     */
+    export type OrderComment = {
+        /**
+         * 
+         */
+        author?: string | null;
+        /**
+         * 
+         */
+        body?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        order_id?: string;
+        /**
+         * 
+         */
+        visibility?: string;
+    }
+
+    /**
+     * The order aggregate: every column of the order plus its items, shipments (with positions), returns and cancellations.
+     */
+    export type OrderDetail = {
+        /**
+         * 
+         */
+        acknowledged_at?: string | null;
+        /**
+         * 
+         */
+        billing_address?: object | null;
+        /**
+         * 
+         */
+        buyer?: object | null;
+        /**
+         * 
+         */
+        cancellations?: OrderCancellation[];
+        /**
+         * 
+         */
+        cancelled_at?: string | null;
+        /**
+         * 
+         */
+        cart_id?: string | null;
+        /**
+         * 
+         */
+        channel_id?: string | null;
+        /**
+         * 
+         */
+        completed_at?: string | null;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        customer_order_number?: string | null;
+        /**
+         * 
+         */
+        external_ref?: string | null;
+        /**
+         * 
+         */
+        fulfillment_status?: string;
+        /**
+         * 
+         */
+        grand_total?: number;
+        /**
+         * 
+         */
+        hold_reason?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        item_count?: number;
+        /**
+         * 
+         */
+        items?: OrderItem[];
+        /**
+         * 
+         */
+        market_id?: string | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        number?: string;
+        /**
+         * 
+         */
+        on_hold?: boolean;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        payment?: object | null;
+        /**
+         * 
+         */
+        payment_status?: string;
+        /**
+         * 
+         */
+        placed_at?: string | null;
+        /**
+         * 
+         */
+        returns?: OrderReturn[];
+        /**
+         * 
+         */
+        shipments?: OrderShipment[];
+        /**
+         * 
+         */
+        shipping?: object | null;
+        /**
+         * 
+         */
+        shipping_address?: object | null;
+        /**
+         * 
+         */
+        shipping_total?: number;
+        /**
+         * 
+         */
+        status?: string;
+        /**
+         * 
+         */
+        subtotal?: number;
+        /**
+         * 
+         */
+        tax_total?: number;
+        /**
+         * 
+         */
+        updated_at?: string;
+        /**
+         * 
+         */
+        user_data?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type OrderEvent = {
+        /**
+         * 
+         */
+        actor?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        order_id?: string;
+        /**
+         * 
+         */
+        payload?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type OrderItem = {
+        /**
+         * 
+         */
+        configuration?: object | null;
+        /**
+         * 
+         */
+        cost_center?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        line_total?: number;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        order_id?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        position_text?: string | null;
+        /**
+         * 
+         */
+        product?: object | null;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        quantity_cancelled?: number;
+        /**
+         * 
+         */
+        quantity_returned?: number;
+        /**
+         * 
+         */
+        quantity_shipped?: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        tax_amount?: number;
+        /**
+         * 
+         */
+        tax_rate?: number;
+        /**
+         * 
+         */
+        type?: string;
+        /**
+         * 
+         */
+        unit?: string | null;
+        /**
+         * 
+         */
+        unit_price?: number;
+        /**
+         * 
+         */
+        updated_at?: string;
+        /**
+         * 
+         */
+        user_data?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type OrderReturn = {
+        /**
+         * 
+         */
+        completed_at?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        number?: string;
+        /**
+         * 
+         */
+        order_id?: string;
+        /**
+         * 
+         */
+        positions?: object;
+        /**
+         * 
+         */
+        reason?: string | null;
+        /**
+         * 
+         */
+        received_at?: string | null;
+        /**
+         * 
+         */
+        registered_at?: string;
+        /**
+         * 
+         */
+        rejected_at?: string | null;
+        /**
+         * 
+         */
+        resolution?: string | null;
+        /**
+         * 
+         */
+        status?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type OrderShipment = {
+        /**
+         * 
+         */
+        carrier?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        number?: string;
+        /**
+         * 
+         */
+        order_id?: string;
+        /**
+         * 
+         */
+        shipped_at?: string;
+        /**
+         * 
+         */
+        tracking_code?: string | null;
+        /**
+         * 
+         */
+        tracking_url?: string | null;
+    }
+
+    /**
+     * 
+     */
     export type Organization = {
         /**
          * 
@@ -1306,6 +2240,102 @@ export namespace Models {
          * 
          */
         vat_id?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type Page = {
+        /**
+         * 
+         */
+        analyze_ignored?: object;
+        /**
+         * 
+         */
+        bundle?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        created_by?: string | null;
+        /**
+         * 
+         */
+        deleted_at?: string | null;
+        /**
+         * 
+         */
+        host_options?: object;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        meta?: object;
+        /**
+         * 
+         */
+        published_revision_id?: string | null;
+        /**
+         * 
+         */
+        slug?: string | null;
+        /**
+         * 
+         */
+        source_language?: string;
+        /**
+         * 
+         */
+        status?: string;
+        /**
+         * 
+         */
+        title?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+        /**
+         * 
+         */
+        updated_by?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type PageCreateRequest = {
+        /**
+         * 
+         */
+        bundle?: string;
+        /**
+         * 
+         */
+        hostOptions?: object;
+        /**
+         * 
+         */
+        meta?: object;
+        /**
+         * 
+         */
+        slug?: string;
+        /**
+         * 
+         */
+        sourceLanguage?: string;
+        /**
+         * 
+         */
+        title: string;
     }
 
     /**
@@ -1533,6 +2563,146 @@ export namespace Models {
     /**
      * 
      */
+    export type PriceEntry = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        price_list_id?: string;
+        /**
+         * 
+         */
+        price_type?: string;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        quantity_min?: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        unit?: string | null;
+        /**
+         * 
+         */
+        unit_price?: number;
+        /**
+         * 
+         */
+        updated_at?: string;
+        /**
+         * 
+         */
+        valid_from?: string | null;
+        /**
+         * 
+         */
+        valid_until?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type PriceList = {
+        /**
+         * 
+         */
+        channel_id?: string | null;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        description?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * 
+         */
+        labels?: object | null;
+        /**
+         * 
+         */
+        market_id?: string | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        priority?: number;
+        /**
+         * 
+         */
+        status?: string;
+        /**
+         * 
+         */
+        tax_included?: boolean;
+        /**
+         * 
+         */
+        updated_at?: string;
+        /**
+         * 
+         */
+        valid_from?: string | null;
+        /**
+         * 
+         */
+        valid_until?: string | null;
+    }
+
+    /**
+     * 
+     */
     export type ProductAssociations = {
         /**
          * 
@@ -1715,6 +2885,112 @@ export namespace Models {
     /**
      * 
      */
+    export type Reservation = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        expires_at?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        location_id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        order_ref?: string;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        status?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ResolvedPrice = {
+        /**
+         * 
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        line_total?: number | null;
+        /**
+         * true = no price for this buyer context — show "price on request", never 0.
+         */
+        on_request?: boolean;
+        /**
+         * 
+         */
+        price_list?: object | null;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        tax_included?: boolean | null;
+        /**
+         * 
+         */
+        tiers?: object[];
+        /**
+         * 
+         */
+        unit_price?: number | null;
+    }
+
+    /**
+     * 
+     */
+    export type SeedRequest = {
+        /**
+         * 
+         */
+        pages?: object[];
+    }
+
+    /**
+     * 
+     */
     export type ShippingMethod = {
         /**
          * 
@@ -1880,6 +3156,144 @@ export namespace Models {
          * 
          */
         price?: number;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type StockLevel = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        location_id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        on_hand?: number;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        reorder_point?: number | null;
+        /**
+         * 
+         */
+        reserved?: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type StockMovement = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        location_id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        order_ref?: string | null;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        reason?: string | null;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        type?: string;
+    }
+
+    /**
+     * 
+     */
+    export type Template = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        created_by?: string | null;
+        /**
+         * 
+         */
+        description?: string | null;
+        /**
+         * 
+         */
+        field_name?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * 
+         */
+        label?: string;
+        /**
+         * 
+         */
+        page_bundle?: string | null;
+        /**
+         * 
+         */
+        tree?: object;
         /**
          * 
          */
