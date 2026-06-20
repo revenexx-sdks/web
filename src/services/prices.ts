@@ -645,32 +645,32 @@ export class Prices {
     /**
      *
      * @param {string} params.listId - 
-     * @param {Models.PriceEntryCreateRequest[]} params.entries - The complete new entry set (set semantics).
+     * @param {Models.PriceEntryReplaceItem[]} params.entries - The complete new entry set (set semantics).
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    pricesEntriesReplace(params: { listId: string, entries: Models.PriceEntryCreateRequest[] }): Promise<{}>;
+    pricesEntriesReplace(params: { listId: string, entries: Models.PriceEntryReplaceItem[] }): Promise<{}>;
     /**
      *
      * @param {string} listId - 
-     * @param {Models.PriceEntryCreateRequest[]} entries - The complete new entry set (set semantics).
+     * @param {Models.PriceEntryReplaceItem[]} entries - The complete new entry set (set semantics).
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesReplace(listId: string, entries: Models.PriceEntryCreateRequest[]): Promise<{}>;
+    pricesEntriesReplace(listId: string, entries: Models.PriceEntryReplaceItem[]): Promise<{}>;
     pricesEntriesReplace(
-        paramsOrFirst: { listId: string, entries: Models.PriceEntryCreateRequest[] } | string,
-        ...rest: [(Models.PriceEntryCreateRequest[])?]    
+        paramsOrFirst: { listId: string, entries: Models.PriceEntryReplaceItem[] } | string,
+        ...rest: [(Models.PriceEntryReplaceItem[])?]    
     ): Promise<{}> {
-        let params: { listId: string, entries: Models.PriceEntryCreateRequest[] };
+        let params: { listId: string, entries: Models.PriceEntryReplaceItem[] };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { listId: string, entries: Models.PriceEntryCreateRequest[] };
+            params = (paramsOrFirst || {}) as { listId: string, entries: Models.PriceEntryReplaceItem[] };
         } else {
             params = {
                 listId: paramsOrFirst as string,
-                entries: rest[0] as Models.PriceEntryCreateRequest[]            
+                entries: rest[0] as Models.PriceEntryReplaceItem[]            
             };
         }
         
@@ -697,6 +697,67 @@ export class Prices {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.listId - 
+     * @param {Models.PriceEntryReplaceItem[]} params.entries - The complete new entry set (set semantics).
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    pricesEntriesBulk(params: { listId: string, entries: Models.PriceEntryReplaceItem[] }): Promise<{}>;
+    /**
+     *
+     * @param {string} listId - 
+     * @param {Models.PriceEntryReplaceItem[]} entries - The complete new entry set (set semantics).
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pricesEntriesBulk(listId: string, entries: Models.PriceEntryReplaceItem[]): Promise<{}>;
+    pricesEntriesBulk(
+        paramsOrFirst: { listId: string, entries: Models.PriceEntryReplaceItem[] } | string,
+        ...rest: [(Models.PriceEntryReplaceItem[])?]    
+    ): Promise<{}> {
+        let params: { listId: string, entries: Models.PriceEntryReplaceItem[] };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { listId: string, entries: Models.PriceEntryReplaceItem[] };
+        } else {
+            params = {
+                listId: paramsOrFirst as string,
+                entries: rest[0] as Models.PriceEntryReplaceItem[]            
+            };
+        }
+        
+        const listId = params.listId;
+        const entries = params.entries;
+
+        if (typeof listId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "listId"');
+        }
+        if (typeof entries === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "entries"');
+        }
+
+        const apiPath = '/v1/prices/lists/{list_id}/entries/bulk'.replace('{list_id}', listId);
+        const apiPayload: Payload = {};
+        if (typeof entries !== 'undefined') {
+            apiPayload['entries'] = entries;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload

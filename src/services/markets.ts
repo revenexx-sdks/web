@@ -385,6 +385,323 @@ export class Markets {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
+    marketsCurrenciesList(params: { marketId: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} marketId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    marketsCurrenciesList(marketId: string): Promise<{}>;
+    marketsCurrenciesList(
+        paramsOrFirst: { marketId: string } | string    
+    ): Promise<{}> {
+        let params: { marketId: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { marketId: string };
+        } else {
+            params = {
+                marketId: paramsOrFirst as string            
+            };
+        }
+        
+        const marketId = params.marketId;
+
+        if (typeof marketId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "marketId"');
+        }
+
+        const apiPath = '/v1/markets/{market_id}/currencies'.replace('{market_id}', marketId);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.marketId - 
+     * @param {string} params.code - ISO 4217 code, e.g. EUR (unique per market).
+     * @param {boolean} params.isDefault - 
+     * @param {number} params.position - Sort position (default 0).
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.MarketCurrency>}
+     */
+    marketsCurrenciesCreate(params: { marketId: string, code: string, isDefault?: boolean, position?: number }): Promise<Models.MarketCurrency>;
+    /**
+     *
+     * @param {string} marketId - 
+     * @param {string} code - ISO 4217 code, e.g. EUR (unique per market).
+     * @param {boolean} isDefault - 
+     * @param {number} position - Sort position (default 0).
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.MarketCurrency>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    marketsCurrenciesCreate(marketId: string, code: string, isDefault?: boolean, position?: number): Promise<Models.MarketCurrency>;
+    marketsCurrenciesCreate(
+        paramsOrFirst: { marketId: string, code: string, isDefault?: boolean, position?: number } | string,
+        ...rest: [(string)?, (boolean)?, (number)?]    
+    ): Promise<Models.MarketCurrency> {
+        let params: { marketId: string, code: string, isDefault?: boolean, position?: number };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { marketId: string, code: string, isDefault?: boolean, position?: number };
+        } else {
+            params = {
+                marketId: paramsOrFirst as string,
+                code: rest[0] as string,
+                isDefault: rest[1] as boolean,
+                position: rest[2] as number            
+            };
+        }
+        
+        const marketId = params.marketId;
+        const code = params.code;
+        const isDefault = params.isDefault;
+        const position = params.position;
+
+        if (typeof marketId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "marketId"');
+        }
+        if (typeof code === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "code"');
+        }
+
+        const apiPath = '/v1/markets/{market_id}/currencies'.replace('{market_id}', marketId);
+        const apiPayload: Payload = {};
+        if (typeof code !== 'undefined') {
+            apiPayload['code'] = code;
+        }
+        if (typeof isDefault !== 'undefined') {
+            apiPayload['is_default'] = isDefault;
+        }
+        if (typeof position !== 'undefined') {
+            apiPayload['position'] = position;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.marketId - 
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    marketsCurrenciesDelete(params: { marketId: string, id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} marketId - 
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    marketsCurrenciesDelete(marketId: string, id: string): Promise<{}>;
+    marketsCurrenciesDelete(
+        paramsOrFirst: { marketId: string, id: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<{}> {
+        let params: { marketId: string, id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { marketId: string, id: string };
+        } else {
+            params = {
+                marketId: paramsOrFirst as string,
+                id: rest[0] as string            
+            };
+        }
+        
+        const marketId = params.marketId;
+        const id = params.id;
+
+        if (typeof marketId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "marketId"');
+        }
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/markets/{market_id}/currencies/{id}'.replace('{market_id}', marketId).replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'delete',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.marketId - 
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.MarketCurrency>}
+     */
+    marketsCurrenciesGet(params: { marketId: string, id: string }): Promise<Models.MarketCurrency>;
+    /**
+     *
+     * @param {string} marketId - 
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.MarketCurrency>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    marketsCurrenciesGet(marketId: string, id: string): Promise<Models.MarketCurrency>;
+    marketsCurrenciesGet(
+        paramsOrFirst: { marketId: string, id: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.MarketCurrency> {
+        let params: { marketId: string, id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { marketId: string, id: string };
+        } else {
+            params = {
+                marketId: paramsOrFirst as string,
+                id: rest[0] as string            
+            };
+        }
+        
+        const marketId = params.marketId;
+        const id = params.id;
+
+        if (typeof marketId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "marketId"');
+        }
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/markets/{market_id}/currencies/{id}'.replace('{market_id}', marketId).replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.marketId - 
+     * @param {string} params.id - 
+     * @param {string} params.code - ISO 4217 code, e.g. EUR (unique per market).
+     * @param {boolean} params.isDefault - 
+     * @param {number} params.position - Sort position (default 0).
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.MarketCurrency>}
+     */
+    marketsCurrenciesUpdate(params: { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number }): Promise<Models.MarketCurrency>;
+    /**
+     *
+     * @param {string} marketId - 
+     * @param {string} id - 
+     * @param {string} code - ISO 4217 code, e.g. EUR (unique per market).
+     * @param {boolean} isDefault - 
+     * @param {number} position - Sort position (default 0).
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.MarketCurrency>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    marketsCurrenciesUpdate(marketId: string, id: string, code?: string, isDefault?: boolean, position?: number): Promise<Models.MarketCurrency>;
+    marketsCurrenciesUpdate(
+        paramsOrFirst: { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (number)?]    
+    ): Promise<Models.MarketCurrency> {
+        let params: { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number };
+        } else {
+            params = {
+                marketId: paramsOrFirst as string,
+                id: rest[0] as string,
+                code: rest[1] as string,
+                isDefault: rest[2] as boolean,
+                position: rest[3] as number            
+            };
+        }
+        
+        const marketId = params.marketId;
+        const id = params.id;
+        const code = params.code;
+        const isDefault = params.isDefault;
+        const position = params.position;
+
+        if (typeof marketId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "marketId"');
+        }
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/markets/{market_id}/currencies/{id}'.replace('{market_id}', marketId).replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof code !== 'undefined') {
+            apiPayload['code'] = code;
+        }
+        if (typeof isDefault !== 'undefined') {
+            apiPayload['is_default'] = isDefault;
+        }
+        if (typeof position !== 'undefined') {
+            apiPayload['position'] = position;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.marketId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
     marketsLocalesList(params: { marketId: string }): Promise<{}>;
     /**
      *

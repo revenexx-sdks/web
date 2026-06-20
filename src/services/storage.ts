@@ -2,9 +2,7 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
-import { Compression } from '../enums/compression';
-import { Gravity } from '../enums/gravity';
-import { Output } from '../enums/output';
+import { Visibility } from '../enums/visibility';
 
 export class Storage {
     client: Client;
@@ -14,57 +12,40 @@ export class Storage {
     }
 
     /**
-     * Get a list of all the storage buckets. You can use the query params to filter your results.
      *
-     * @param {string[]} params.queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations
-     * @param {string} params.search - Search term to filter your list results. Max length: 256 chars.
-     * @param {boolean} params.total - When set to false, the total count returned will be 0 and will not be calculated.
+     * @param {string} params.search - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.BucketList>}
+     * @returns {Promise<{}>}
      */
-    storageListBuckets(params?: { queries?: string[], search?: string, total?: boolean }): Promise<Models.BucketList>;
+    assetIndex(params?: { search?: string }): Promise<{}>;
     /**
-     * Get a list of all the storage buckets. You can use the query params to filter your results.
      *
-     * @param {string[]} queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: enabled, name, fileSecurity, maximumFileSize, encryption, antivirus, transformations
-     * @param {string} search - Search term to filter your list results. Max length: 256 chars.
-     * @param {boolean} total - When set to false, the total count returned will be 0 and will not be calculated.
+     * @param {string} search - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.BucketList>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    storageListBuckets(queries?: string[], search?: string, total?: boolean): Promise<Models.BucketList>;
-    storageListBuckets(
-        paramsOrFirst?: { queries?: string[], search?: string, total?: boolean } | string[],
-        ...rest: [(string)?, (boolean)?]    
-    ): Promise<Models.BucketList> {
-        let params: { queries?: string[], search?: string, total?: boolean };
+    assetIndex(search?: string): Promise<{}>;
+    assetIndex(
+        paramsOrFirst?: { search?: string } | string    
+    ): Promise<{}> {
+        let params: { search?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { queries?: string[], search?: string, total?: boolean };
+            params = (paramsOrFirst || {}) as { search?: string };
         } else {
             params = {
-                queries: paramsOrFirst as string[],
-                search: rest[0] as string,
-                total: rest[1] as boolean            
+                search: paramsOrFirst as string            
             };
         }
         
-        const queries = params.queries;
         const search = params.search;
-        const total = params.total;
 
 
-        const apiPath = '/v1/storage/buckets';
+        const apiPath = '/v1/storage/assets';
         const apiPayload: Payload = {};
-        if (typeof queries !== 'undefined') {
-            apiPayload['queries'] = queries;
-        }
         if (typeof search !== 'undefined') {
             apiPayload['search'] = search;
-        }
-        if (typeof total !== 'undefined') {
-            apiPayload['total'] = total;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -80,517 +61,103 @@ export class Storage {
     }
 
     /**
-     * Create a new storage bucket.
      *
-     * @param {string} params.bucketId - Unique Id. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.
-     * @param {string} params.name - Bucket name
-     * @param {string[]} params.allowedFileExtensions - Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.
-     * @param {boolean} params.antivirus - Is virus scanning enabled? For file size above 20MB AntiVirus scanning is skipped even if it's enabled
-     * @param {Compression} params.compression - Compression algorithm chosen for compression. Can be one of none,  [gzip](https://en.wikipedia.org/wiki/Gzip), or [zstd](https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled
-     * @param {boolean} params.enabled - Is bucket enabled? When set to 'disabled', users cannot access the files in this bucket but Server SDKs with and API key can still access the bucket. No files are lost when this is toggled.
-     * @param {boolean} params.encryption - Is encryption enabled? For file size above 20MB encryption is skipped even if it's enabled
-     * @param {boolean} params.fileSecurity - Enables configuring permissions for individual file. A user needs one of file or bucket level permissions to access a file. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {number} params.maximumFileSize - Maximum file size allowed in bytes. Maximum allowed value is 30MB.
-     * @param {string[]} params.permissions - An array of permission strings. By default, no user is granted with any permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {boolean} params.transformations - Are image transformations enabled?
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Bucket>}
-     */
-    storageCreateBucket(params: { bucketId: string, name: string, allowedFileExtensions?: string[], antivirus?: boolean, compression?: Compression, enabled?: boolean, encryption?: boolean, fileSecurity?: boolean, maximumFileSize?: number, permissions?: string[], transformations?: boolean }): Promise<Models.Bucket>;
-    /**
-     * Create a new storage bucket.
-     *
-     * @param {string} bucketId - Unique Id. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.
-     * @param {string} name - Bucket name
-     * @param {string[]} allowedFileExtensions - Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.
-     * @param {boolean} antivirus - Is virus scanning enabled? For file size above 20MB AntiVirus scanning is skipped even if it's enabled
-     * @param {Compression} compression - Compression algorithm chosen for compression. Can be one of none,  [gzip](https://en.wikipedia.org/wiki/Gzip), or [zstd](https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled
-     * @param {boolean} enabled - Is bucket enabled? When set to 'disabled', users cannot access the files in this bucket but Server SDKs with and API key can still access the bucket. No files are lost when this is toggled.
-     * @param {boolean} encryption - Is encryption enabled? For file size above 20MB encryption is skipped even if it's enabled
-     * @param {boolean} fileSecurity - Enables configuring permissions for individual file. A user needs one of file or bucket level permissions to access a file. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {number} maximumFileSize - Maximum file size allowed in bytes. Maximum allowed value is 30MB.
-     * @param {string[]} permissions - An array of permission strings. By default, no user is granted with any permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {boolean} transformations - Are image transformations enabled?
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Bucket>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    storageCreateBucket(bucketId: string, name: string, allowedFileExtensions?: string[], antivirus?: boolean, compression?: Compression, enabled?: boolean, encryption?: boolean, fileSecurity?: boolean, maximumFileSize?: number, permissions?: string[], transformations?: boolean): Promise<Models.Bucket>;
-    storageCreateBucket(
-        paramsOrFirst: { bucketId: string, name: string, allowedFileExtensions?: string[], antivirus?: boolean, compression?: Compression, enabled?: boolean, encryption?: boolean, fileSecurity?: boolean, maximumFileSize?: number, permissions?: string[], transformations?: boolean } | string,
-        ...rest: [(string)?, (string[])?, (boolean)?, (Compression)?, (boolean)?, (boolean)?, (boolean)?, (number)?, (string[])?, (boolean)?]    
-    ): Promise<Models.Bucket> {
-        let params: { bucketId: string, name: string, allowedFileExtensions?: string[], antivirus?: boolean, compression?: Compression, enabled?: boolean, encryption?: boolean, fileSecurity?: boolean, maximumFileSize?: number, permissions?: string[], transformations?: boolean };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string, name: string, allowedFileExtensions?: string[], antivirus?: boolean, compression?: Compression, enabled?: boolean, encryption?: boolean, fileSecurity?: boolean, maximumFileSize?: number, permissions?: string[], transformations?: boolean };
-        } else {
-            params = {
-                bucketId: paramsOrFirst as string,
-                name: rest[0] as string,
-                allowedFileExtensions: rest[1] as string[],
-                antivirus: rest[2] as boolean,
-                compression: rest[3] as Compression,
-                enabled: rest[4] as boolean,
-                encryption: rest[5] as boolean,
-                fileSecurity: rest[6] as boolean,
-                maximumFileSize: rest[7] as number,
-                permissions: rest[8] as string[],
-                transformations: rest[9] as boolean            
-            };
-        }
-        
-        const bucketId = params.bucketId;
-        const name = params.name;
-        const allowedFileExtensions = params.allowedFileExtensions;
-        const antivirus = params.antivirus;
-        const compression = params.compression;
-        const enabled = params.enabled;
-        const encryption = params.encryption;
-        const fileSecurity = params.fileSecurity;
-        const maximumFileSize = params.maximumFileSize;
-        const permissions = params.permissions;
-        const transformations = params.transformations;
-
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
-        if (typeof name === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "name"');
-        }
-
-        const apiPath = '/v1/storage/buckets';
-        const apiPayload: Payload = {};
-        if (typeof allowedFileExtensions !== 'undefined') {
-            apiPayload['allowedFileExtensions'] = allowedFileExtensions;
-        }
-        if (typeof antivirus !== 'undefined') {
-            apiPayload['antivirus'] = antivirus;
-        }
-        if (typeof bucketId !== 'undefined') {
-            apiPayload['bucketId'] = bucketId;
-        }
-        if (typeof compression !== 'undefined') {
-            apiPayload['compression'] = compression;
-        }
-        if (typeof enabled !== 'undefined') {
-            apiPayload['enabled'] = enabled;
-        }
-        if (typeof encryption !== 'undefined') {
-            apiPayload['encryption'] = encryption;
-        }
-        if (typeof fileSecurity !== 'undefined') {
-            apiPayload['fileSecurity'] = fileSecurity;
-        }
-        if (typeof maximumFileSize !== 'undefined') {
-            apiPayload['maximumFileSize'] = maximumFileSize;
-        }
-        if (typeof name !== 'undefined') {
-            apiPayload['name'] = name;
-        }
-        if (typeof permissions !== 'undefined') {
-            apiPayload['permissions'] = permissions;
-        }
-        if (typeof transformations !== 'undefined') {
-            apiPayload['transformations'] = transformations;
-        }
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
-        }
-
-        return this.client.call(
-            'post',
-            uri,
-            apiHeaders,
-            apiPayload
-        );
-    }
-
-    /**
-     * Delete a storage bucket by its unique ID.
-     *
-     * @param {string} params.bucketId - Bucket unique ID.
+     * @param {string} params.file - 
+     * @param {string} params.altText - 
+     * @param {string} params.description - 
+     * @param {string} params.displayName - 
+     * @param {string} params.folderId - 
+     * @param {boolean} params.keepArchive - 
+     * @param {string[]} params.tags - 
+     * @param {boolean} params.unpack - Archives only: unpack the members after upload (see AssetController).
+     * @param {Visibility} params.visibility - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    storageDeleteBucket(params: { bucketId: string }): Promise<{}>;
+    assetStore(params: { file: string, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: Visibility, onProgress?: (progress: UploadProgress) => void }): Promise<{}>;
     /**
-     * Delete a storage bucket by its unique ID.
      *
-     * @param {string} bucketId - Bucket unique ID.
+     * @param {string} file - 
+     * @param {string} altText - 
+     * @param {string} description - 
+     * @param {string} displayName - 
+     * @param {string} folderId - 
+     * @param {boolean} keepArchive - 
+     * @param {string[]} tags - 
+     * @param {boolean} unpack - Archives only: unpack the members after upload (see AssetController).
+     * @param {Visibility} visibility - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    storageDeleteBucket(bucketId: string): Promise<{}>;
-    storageDeleteBucket(
-        paramsOrFirst: { bucketId: string } | string    
+    assetStore(file: string, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: Visibility, onProgress?: (progress: UploadProgress) => void): Promise<{}>;
+    assetStore(
+        paramsOrFirst: { file: string, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: Visibility, onProgress?: (progress: UploadProgress) => void } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (boolean)?, (string[])?, (boolean)?, (Visibility)?,((progress: UploadProgress) => void)?]    
     ): Promise<{}> {
-        let params: { bucketId: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string };
-        } else {
-            params = {
-                bucketId: paramsOrFirst as string            
-            };
-        }
-        
-        const bucketId = params.bucketId;
-
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
-
-        const apiPath = '/v1/storage/buckets/{bucketId}'.replace('{bucketId}', bucketId);
-        const apiPayload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-        }
-
-        return this.client.call(
-            'delete',
-            uri,
-            apiHeaders,
-            apiPayload
-        );
-    }
-
-    /**
-     * Get a storage bucket by its unique ID. This endpoint response returns a JSON object with the storage bucket metadata.
-     *
-     * @param {string} params.bucketId - Bucket unique ID.
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Bucket>}
-     */
-    storageGetBucket(params: { bucketId: string }): Promise<Models.Bucket>;
-    /**
-     * Get a storage bucket by its unique ID. This endpoint response returns a JSON object with the storage bucket metadata.
-     *
-     * @param {string} bucketId - Bucket unique ID.
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Bucket>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    storageGetBucket(bucketId: string): Promise<Models.Bucket>;
-    storageGetBucket(
-        paramsOrFirst: { bucketId: string } | string    
-    ): Promise<Models.Bucket> {
-        let params: { bucketId: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string };
-        } else {
-            params = {
-                bucketId: paramsOrFirst as string            
-            };
-        }
-        
-        const bucketId = params.bucketId;
-
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
-
-        const apiPath = '/v1/storage/buckets/{bucketId}'.replace('{bucketId}', bucketId);
-        const apiPayload: Payload = {};
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-        }
-
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            apiPayload
-        );
-    }
-
-    /**
-     * Update a storage bucket by its unique ID.
-     *
-     * @param {string} params.bucketId - Bucket unique ID.
-     * @param {string} params.name - Bucket name
-     * @param {string[]} params.allowedFileExtensions - Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.
-     * @param {boolean} params.antivirus - Is virus scanning enabled? For file size above 20MB AntiVirus scanning is skipped even if it's enabled
-     * @param {Compression} params.compression - Compression algorithm chosen for compression. Can be one of none, [gzip](https://en.wikipedia.org/wiki/Gzip), or [zstd](https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled
-     * @param {boolean} params.enabled - Is bucket enabled? When set to 'disabled', users cannot access the files in this bucket but Server SDKs with and API key can still access the bucket. No files are lost when this is toggled.
-     * @param {boolean} params.encryption - Is encryption enabled? For file size above 20MB encryption is skipped even if it's enabled
-     * @param {boolean} params.fileSecurity - Enables configuring permissions for individual file. A user needs one of file or bucket level permissions to access a file. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {number} params.maximumFileSize - Maximum file size allowed in bytes. Maximum allowed value is 30MB.
-     * @param {string[]} params.permissions - An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {boolean} params.transformations - Are image transformations enabled?
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Bucket>}
-     */
-    storageUpdateBucket(params: { bucketId: string, name: string, allowedFileExtensions?: string[], antivirus?: boolean, compression?: Compression, enabled?: boolean, encryption?: boolean, fileSecurity?: boolean, maximumFileSize?: number, permissions?: string[], transformations?: boolean }): Promise<Models.Bucket>;
-    /**
-     * Update a storage bucket by its unique ID.
-     *
-     * @param {string} bucketId - Bucket unique ID.
-     * @param {string} name - Bucket name
-     * @param {string[]} allowedFileExtensions - Allowed file extensions. Maximum of 100 extensions are allowed, each 64 characters long.
-     * @param {boolean} antivirus - Is virus scanning enabled? For file size above 20MB AntiVirus scanning is skipped even if it's enabled
-     * @param {Compression} compression - Compression algorithm chosen for compression. Can be one of none, [gzip](https://en.wikipedia.org/wiki/Gzip), or [zstd](https://en.wikipedia.org/wiki/Zstd), For file size above 20MB compression is skipped even if it's enabled
-     * @param {boolean} enabled - Is bucket enabled? When set to 'disabled', users cannot access the files in this bucket but Server SDKs with and API key can still access the bucket. No files are lost when this is toggled.
-     * @param {boolean} encryption - Is encryption enabled? For file size above 20MB encryption is skipped even if it's enabled
-     * @param {boolean} fileSecurity - Enables configuring permissions for individual file. A user needs one of file or bucket level permissions to access a file. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {number} maximumFileSize - Maximum file size allowed in bytes. Maximum allowed value is 30MB.
-     * @param {string[]} permissions - An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @param {boolean} transformations - Are image transformations enabled?
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.Bucket>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    storageUpdateBucket(bucketId: string, name: string, allowedFileExtensions?: string[], antivirus?: boolean, compression?: Compression, enabled?: boolean, encryption?: boolean, fileSecurity?: boolean, maximumFileSize?: number, permissions?: string[], transformations?: boolean): Promise<Models.Bucket>;
-    storageUpdateBucket(
-        paramsOrFirst: { bucketId: string, name: string, allowedFileExtensions?: string[], antivirus?: boolean, compression?: Compression, enabled?: boolean, encryption?: boolean, fileSecurity?: boolean, maximumFileSize?: number, permissions?: string[], transformations?: boolean } | string,
-        ...rest: [(string)?, (string[])?, (boolean)?, (Compression)?, (boolean)?, (boolean)?, (boolean)?, (number)?, (string[])?, (boolean)?]    
-    ): Promise<Models.Bucket> {
-        let params: { bucketId: string, name: string, allowedFileExtensions?: string[], antivirus?: boolean, compression?: Compression, enabled?: boolean, encryption?: boolean, fileSecurity?: boolean, maximumFileSize?: number, permissions?: string[], transformations?: boolean };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string, name: string, allowedFileExtensions?: string[], antivirus?: boolean, compression?: Compression, enabled?: boolean, encryption?: boolean, fileSecurity?: boolean, maximumFileSize?: number, permissions?: string[], transformations?: boolean };
-        } else {
-            params = {
-                bucketId: paramsOrFirst as string,
-                name: rest[0] as string,
-                allowedFileExtensions: rest[1] as string[],
-                antivirus: rest[2] as boolean,
-                compression: rest[3] as Compression,
-                enabled: rest[4] as boolean,
-                encryption: rest[5] as boolean,
-                fileSecurity: rest[6] as boolean,
-                maximumFileSize: rest[7] as number,
-                permissions: rest[8] as string[],
-                transformations: rest[9] as boolean            
-            };
-        }
-        
-        const bucketId = params.bucketId;
-        const name = params.name;
-        const allowedFileExtensions = params.allowedFileExtensions;
-        const antivirus = params.antivirus;
-        const compression = params.compression;
-        const enabled = params.enabled;
-        const encryption = params.encryption;
-        const fileSecurity = params.fileSecurity;
-        const maximumFileSize = params.maximumFileSize;
-        const permissions = params.permissions;
-        const transformations = params.transformations;
-
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
-        if (typeof name === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "name"');
-        }
-
-        const apiPath = '/v1/storage/buckets/{bucketId}'.replace('{bucketId}', bucketId);
-        const apiPayload: Payload = {};
-        if (typeof allowedFileExtensions !== 'undefined') {
-            apiPayload['allowedFileExtensions'] = allowedFileExtensions;
-        }
-        if (typeof antivirus !== 'undefined') {
-            apiPayload['antivirus'] = antivirus;
-        }
-        if (typeof compression !== 'undefined') {
-            apiPayload['compression'] = compression;
-        }
-        if (typeof enabled !== 'undefined') {
-            apiPayload['enabled'] = enabled;
-        }
-        if (typeof encryption !== 'undefined') {
-            apiPayload['encryption'] = encryption;
-        }
-        if (typeof fileSecurity !== 'undefined') {
-            apiPayload['fileSecurity'] = fileSecurity;
-        }
-        if (typeof maximumFileSize !== 'undefined') {
-            apiPayload['maximumFileSize'] = maximumFileSize;
-        }
-        if (typeof name !== 'undefined') {
-            apiPayload['name'] = name;
-        }
-        if (typeof permissions !== 'undefined') {
-            apiPayload['permissions'] = permissions;
-        }
-        if (typeof transformations !== 'undefined') {
-            apiPayload['transformations'] = transformations;
-        }
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-            'content-type': 'application/json',
-        }
-
-        return this.client.call(
-            'put',
-            uri,
-            apiHeaders,
-            apiPayload
-        );
-    }
-
-    /**
-     * Get a list of all the user files. You can use the query params to filter your results.
-     *
-     * @param {string} params.bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string[]} params.queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, signature, mimeType, sizeOriginal, chunksTotal, chunksUploaded
-     * @param {string} params.search - Search term to filter your list results. Max length: 256 chars.
-     * @param {boolean} params.total - When set to false, the total count returned will be 0 and will not be calculated.
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.FileList>}
-     */
-    storageListFiles(params: { bucketId: string, queries?: string[], search?: string, total?: boolean }): Promise<Models.FileList>;
-    /**
-     * Get a list of all the user files. You can use the query params to filter your results.
-     *
-     * @param {string} bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string[]} queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, signature, mimeType, sizeOriginal, chunksTotal, chunksUploaded
-     * @param {string} search - Search term to filter your list results. Max length: 256 chars.
-     * @param {boolean} total - When set to false, the total count returned will be 0 and will not be calculated.
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.FileList>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    storageListFiles(bucketId: string, queries?: string[], search?: string, total?: boolean): Promise<Models.FileList>;
-    storageListFiles(
-        paramsOrFirst: { bucketId: string, queries?: string[], search?: string, total?: boolean } | string,
-        ...rest: [(string[])?, (string)?, (boolean)?]    
-    ): Promise<Models.FileList> {
-        let params: { bucketId: string, queries?: string[], search?: string, total?: boolean };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string, queries?: string[], search?: string, total?: boolean };
-        } else {
-            params = {
-                bucketId: paramsOrFirst as string,
-                queries: rest[0] as string[],
-                search: rest[1] as string,
-                total: rest[2] as boolean            
-            };
-        }
-        
-        const bucketId = params.bucketId;
-        const queries = params.queries;
-        const search = params.search;
-        const total = params.total;
-
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
-
-        const apiPath = '/v1/storage/buckets/{bucketId}/files'.replace('{bucketId}', bucketId);
-        const apiPayload: Payload = {};
-        if (typeof queries !== 'undefined') {
-            apiPayload['queries'] = queries;
-        }
-        if (typeof search !== 'undefined') {
-            apiPayload['search'] = search;
-        }
-        if (typeof total !== 'undefined') {
-            apiPayload['total'] = total;
-        }
-        const uri = new URL(this.client.config.endpoint + apiPath);
-
-        const apiHeaders: { [header: string]: string } = {
-        }
-
-        return this.client.call(
-            'get',
-            uri,
-            apiHeaders,
-            apiPayload
-        );
-    }
-
-    /**
-     * Create a new file. Before using this route, you should create a new bucket resource using either a [server integration](https://app.revenexx.com/docs/server/storage#storageCreateBucket) API or directly from your Revenexx console.
-     * 
-     * Larger files should be uploaded using multiple requests with the [content-range](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range) header to send a partial request with a maximum supported chunk of `5MB`. The `content-range` header values should always be in bytes.
-     * 
-     * When the first request is sent, the server will return the **File** object, and the subsequent part request must include the file's **id** in `x-revenexx-id` header to allow the server to know that the partial upload is for the existing file and not for a new one.
-     * 
-     * If you're creating a new file using one of the Revenexx SDKs, all the chunking logic will be managed by the SDK internally.
-     * 
-     *
-     * @param {string} params.bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} params.file - Binary file. Appwrite SDKs provide helpers to handle file input. [Learn about file input](https://appwrite.io/docs/products/storage/upload-download#input-file).
-     * @param {string} params.fileId - File ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.
-     * @param {string[]} params.permissions - An array of permission strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.File>}
-     */
-    storageCreateFile(params: { bucketId: string, file: string, fileId: string, permissions?: string[], onProgress?: (progress: UploadProgress) => void }): Promise<Models.File>;
-    /**
-     * Create a new file. Before using this route, you should create a new bucket resource using either a [server integration](https://app.revenexx.com/docs/server/storage#storageCreateBucket) API or directly from your Revenexx console.
-     * 
-     * Larger files should be uploaded using multiple requests with the [content-range](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range) header to send a partial request with a maximum supported chunk of `5MB`. The `content-range` header values should always be in bytes.
-     * 
-     * When the first request is sent, the server will return the **File** object, and the subsequent part request must include the file's **id** in `x-revenexx-id` header to allow the server to know that the partial upload is for the existing file and not for a new one.
-     * 
-     * If you're creating a new file using one of the Revenexx SDKs, all the chunking logic will be managed by the SDK internally.
-     * 
-     *
-     * @param {string} bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} file - Binary file. Appwrite SDKs provide helpers to handle file input. [Learn about file input](https://appwrite.io/docs/products/storage/upload-download#input-file).
-     * @param {string} fileId - File ID. Choose a custom ID or generate a random ID with `ID.unique()`. Valid chars are a-z, A-Z, 0-9, period, hyphen, and underscore. Can't start with a special char. Max length is 36 chars.
-     * @param {string[]} permissions - An array of permission strings. By default, only the current user is granted all permissions. [Learn more about permissions](https://appwrite.io/docs/permissions).
-     * @throws {RevenexxException}
-     * @returns {Promise<Models.File>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    storageCreateFile(bucketId: string, file: string, fileId: string, permissions?: string[], onProgress?: (progress: UploadProgress) => void): Promise<Models.File>;
-    storageCreateFile(
-        paramsOrFirst: { bucketId: string, file: string, fileId: string, permissions?: string[], onProgress?: (progress: UploadProgress) => void } | string,
-        ...rest: [(string)?, (string)?, (string[])?,((progress: UploadProgress) => void)?]    
-    ): Promise<Models.File> {
-        let params: { bucketId: string, file: string, fileId: string, permissions?: string[] };
+        let params: { file: string, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: Visibility };
         let onProgress: ((progress: UploadProgress) => void);
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string, file: string, fileId: string, permissions?: string[] };
+            params = (paramsOrFirst || {}) as { file: string, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: Visibility };
             onProgress = paramsOrFirst?.onProgress as ((progress: UploadProgress) => void);
         } else {
             params = {
-                bucketId: paramsOrFirst as string,
-                file: rest[0] as string,
-                fileId: rest[1] as string,
-                permissions: rest[2] as string[]            
+                file: paramsOrFirst as string,
+                altText: rest[0] as string,
+                description: rest[1] as string,
+                displayName: rest[2] as string,
+                folderId: rest[3] as string,
+                keepArchive: rest[4] as boolean,
+                tags: rest[5] as string[],
+                unpack: rest[6] as boolean,
+                visibility: rest[7] as Visibility            
             };
-            onProgress = rest[3] as ((progress: UploadProgress) => void);
+            onProgress = rest[8] as ((progress: UploadProgress) => void);
         }
         
-        const bucketId = params.bucketId;
         const file = params.file;
-        const fileId = params.fileId;
-        const permissions = params.permissions;
+        const altText = params.altText;
+        const description = params.description;
+        const displayName = params.displayName;
+        const folderId = params.folderId;
+        const keepArchive = params.keepArchive;
+        const tags = params.tags;
+        const unpack = params.unpack;
+        const visibility = params.visibility;
 
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
         if (typeof file === 'undefined') {
             throw new RevenexxException('Missing required parameter: "file"');
         }
-        if (typeof fileId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "fileId"');
-        }
 
-        const apiPath = '/v1/storage/buckets/{bucketId}/files'.replace('{bucketId}', bucketId);
+        const apiPath = '/v1/storage/assets';
         const apiPayload: Payload = {};
+        if (typeof altText !== 'undefined') {
+            apiPayload['alt_text'] = altText;
+        }
+        if (typeof description !== 'undefined') {
+            apiPayload['description'] = description;
+        }
+        if (typeof displayName !== 'undefined') {
+            apiPayload['display_name'] = displayName;
+        }
         if (typeof file !== 'undefined') {
             apiPayload['file'] = file;
         }
-        if (typeof fileId !== 'undefined') {
-            apiPayload['fileId'] = fileId;
+        if (typeof folderId !== 'undefined') {
+            apiPayload['folder_id'] = folderId;
         }
-        if (typeof permissions !== 'undefined') {
-            apiPayload['permissions'] = permissions;
+        if (typeof keepArchive !== 'undefined') {
+            apiPayload['keep_archive'] = keepArchive;
+        }
+        if (typeof tags !== 'undefined') {
+            apiPayload['tags'] = tags;
+        }
+        if (typeof unpack !== 'undefined') {
+            apiPayload['unpack'] = unpack;
+        }
+        if (typeof visibility !== 'undefined') {
+            apiPayload['visibility'] = visibility;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -608,50 +175,98 @@ export class Storage {
     }
 
     /**
-     * Delete a file by its unique ID. Only users with write permissions have access to delete this resource.
      *
-     * @param {string} params.bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} params.fileId - File ID.
+     * @param {string} params.folderId - 
+     * @param {string} params.visibility - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    storageDeleteFile(params: { bucketId: string, fileId: string }): Promise<{}>;
+    assetBulk(params?: { folderId?: string, visibility?: string }): Promise<{}>;
     /**
-     * Delete a file by its unique ID. Only users with write permissions have access to delete this resource.
      *
-     * @param {string} bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} fileId - File ID.
+     * @param {string} folderId - 
+     * @param {string} visibility - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    storageDeleteFile(bucketId: string, fileId: string): Promise<{}>;
-    storageDeleteFile(
-        paramsOrFirst: { bucketId: string, fileId: string } | string,
+    assetBulk(folderId?: string, visibility?: string): Promise<{}>;
+    assetBulk(
+        paramsOrFirst?: { folderId?: string, visibility?: string } | string,
         ...rest: [(string)?]    
     ): Promise<{}> {
-        let params: { bucketId: string, fileId: string };
+        let params: { folderId?: string, visibility?: string };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string, fileId: string };
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { folderId?: string, visibility?: string };
         } else {
             params = {
-                bucketId: paramsOrFirst as string,
-                fileId: rest[0] as string            
+                folderId: paramsOrFirst as string,
+                visibility: rest[0] as string            
             };
         }
         
-        const bucketId = params.bucketId;
-        const fileId = params.fileId;
+        const folderId = params.folderId;
+        const visibility = params.visibility;
 
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
+
+        const apiPath = '/v1/storage/assets/bulk';
+        const apiPayload: Payload = {};
+        if (typeof folderId !== 'undefined') {
+            apiPayload['folder_id'] = folderId;
         }
-        if (typeof fileId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "fileId"');
+        if (typeof visibility !== 'undefined') {
+            apiPayload['visibility'] = visibility;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
         }
 
-        const apiPath = '/v1/storage/buckets/{bucketId}/files/{fileId}'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    assetDestroy(params: { id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    assetDestroy(id: string): Promise<{}>;
+    assetDestroy(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/assets/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -667,50 +282,40 @@ export class Storage {
     }
 
     /**
-     * Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.
      *
-     * @param {string} params.bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} params.fileId - File ID.
+     * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.File>}
+     * @returns {Promise<{}>}
      */
-    storageGetFile(params: { bucketId: string, fileId: string }): Promise<Models.File>;
+    assetShow(params: { id: string }): Promise<{}>;
     /**
-     * Get a file by its unique ID. This endpoint response returns a JSON object with the file metadata.
      *
-     * @param {string} bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} fileId - File ID.
+     * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.File>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    storageGetFile(bucketId: string, fileId: string): Promise<Models.File>;
-    storageGetFile(
-        paramsOrFirst: { bucketId: string, fileId: string } | string,
-        ...rest: [(string)?]    
-    ): Promise<Models.File> {
-        let params: { bucketId: string, fileId: string };
+    assetShow(id: string): Promise<{}>;
+    assetShow(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string, fileId: string };
+            params = (paramsOrFirst || {}) as { id: string };
         } else {
             params = {
-                bucketId: paramsOrFirst as string,
-                fileId: rest[0] as string            
+                id: paramsOrFirst as string            
             };
         }
         
-        const bucketId = params.bucketId;
-        const fileId = params.fileId;
+        const id = params.id;
 
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
-        if (typeof fileId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "fileId"');
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
         }
 
-        const apiPath = '/v1/storage/buckets/{bucketId}/files/{fileId}'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
+        const apiPath = '/v1/storage/assets/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -726,64 +331,90 @@ export class Storage {
     }
 
     /**
-     * Update a file by its unique ID. Only users with write permissions have access to update this resource.
      *
-     * @param {string} params.bucketId - Bucket unique ID.
-     * @param {string} params.fileId - File ID.
-     * @param {string} params.name - File name.
-     * @param {string[]} params.permissions - An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
+     * @param {string} params.id - 
+     * @param {string} params.altText - 
+     * @param {string} params.description - 
+     * @param {string} params.displayName - 
+     * @param {string} params.folderId - 
+     * @param {string} params.name - 
+     * @param {string[]} params.tags - 
+     * @param {Visibility} params.visibility - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.File>}
+     * @returns {Promise<{}>}
      */
-    storageUpdateFile(params: { bucketId: string, fileId: string, name?: string, permissions?: string[] }): Promise<Models.File>;
+    assetUpdate(params: { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: Visibility }): Promise<{}>;
     /**
-     * Update a file by its unique ID. Only users with write permissions have access to update this resource.
      *
-     * @param {string} bucketId - Bucket unique ID.
-     * @param {string} fileId - File ID.
-     * @param {string} name - File name.
-     * @param {string[]} permissions - An array of permission strings. By default, the current permissions are inherited. [Learn more about permissions](https://appwrite.io/docs/permissions).
+     * @param {string} id - 
+     * @param {string} altText - 
+     * @param {string} description - 
+     * @param {string} displayName - 
+     * @param {string} folderId - 
+     * @param {string} name - 
+     * @param {string[]} tags - 
+     * @param {Visibility} visibility - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.File>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    storageUpdateFile(bucketId: string, fileId: string, name?: string, permissions?: string[]): Promise<Models.File>;
-    storageUpdateFile(
-        paramsOrFirst: { bucketId: string, fileId: string, name?: string, permissions?: string[] } | string,
-        ...rest: [(string)?, (string)?, (string[])?]    
-    ): Promise<Models.File> {
-        let params: { bucketId: string, fileId: string, name?: string, permissions?: string[] };
+    assetUpdate(id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: Visibility): Promise<{}>;
+    assetUpdate(
+        paramsOrFirst: { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: Visibility } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string[])?, (Visibility)?]    
+    ): Promise<{}> {
+        let params: { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: Visibility };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string, fileId: string, name?: string, permissions?: string[] };
+            params = (paramsOrFirst || {}) as { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: Visibility };
         } else {
             params = {
-                bucketId: paramsOrFirst as string,
-                fileId: rest[0] as string,
-                name: rest[1] as string,
-                permissions: rest[2] as string[]            
+                id: paramsOrFirst as string,
+                altText: rest[0] as string,
+                description: rest[1] as string,
+                displayName: rest[2] as string,
+                folderId: rest[3] as string,
+                name: rest[4] as string,
+                tags: rest[5] as string[],
+                visibility: rest[6] as Visibility            
             };
         }
         
-        const bucketId = params.bucketId;
-        const fileId = params.fileId;
+        const id = params.id;
+        const altText = params.altText;
+        const description = params.description;
+        const displayName = params.displayName;
+        const folderId = params.folderId;
         const name = params.name;
-        const permissions = params.permissions;
+        const tags = params.tags;
+        const visibility = params.visibility;
 
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
-        if (typeof fileId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "fileId"');
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
         }
 
-        const apiPath = '/v1/storage/buckets/{bucketId}/files/{fileId}'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
+        const apiPath = '/v1/storage/assets/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof altText !== 'undefined') {
+            apiPayload['alt_text'] = altText;
+        }
+        if (typeof description !== 'undefined') {
+            apiPayload['description'] = description;
+        }
+        if (typeof displayName !== 'undefined') {
+            apiPayload['display_name'] = displayName;
+        }
+        if (typeof folderId !== 'undefined') {
+            apiPayload['folder_id'] = folderId;
+        }
         if (typeof name !== 'undefined') {
             apiPayload['name'] = name;
         }
-        if (typeof permissions !== 'undefined') {
-            apiPayload['permissions'] = permissions;
+        if (typeof tags !== 'undefined') {
+            apiPayload['tags'] = tags;
+        }
+        if (typeof visibility !== 'undefined') {
+            apiPayload['visibility'] = visibility;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -792,7 +423,7 @@ export class Storage {
         }
 
         return this.client.call(
-            'put',
+            'patch',
             uri,
             apiHeaders,
             apiPayload
@@ -800,57 +431,925 @@ export class Storage {
     }
 
     /**
-     * Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.
      *
-     * @param {string} params.bucketId - Storage bucket ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} params.fileId - File ID.
-     * @param {string} params.token - File token for accessing this file.
+     * @param {string} params.id - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    storageGetFileDownload(params: { bucketId: string, fileId: string, token?: string }): Promise<{}>;
+    assetDownload(params: { id: string }): Promise<{}>;
     /**
-     * Get a file content by its unique ID. The endpoint response return with a 'Content-Disposition: attachment' header that tells the browser to start downloading the file to user downloads directory.
      *
-     * @param {string} bucketId - Storage bucket ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} fileId - File ID.
-     * @param {string} token - File token for accessing this file.
+     * @param {string} id - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    storageGetFileDownload(bucketId: string, fileId: string, token?: string): Promise<{}>;
-    storageGetFileDownload(
-        paramsOrFirst: { bucketId: string, fileId: string, token?: string } | string,
-        ...rest: [(string)?, (string)?]    
+    assetDownload(id: string): Promise<{}>;
+    assetDownload(
+        paramsOrFirst: { id: string } | string    
     ): Promise<{}> {
-        let params: { bucketId: string, fileId: string, token?: string };
+        let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string, fileId: string, token?: string };
+            params = (paramsOrFirst || {}) as { id: string };
         } else {
             params = {
-                bucketId: paramsOrFirst as string,
-                fileId: rest[0] as string,
-                token: rest[1] as string            
+                id: paramsOrFirst as string            
             };
         }
         
-        const bucketId = params.bucketId;
-        const fileId = params.fileId;
-        const token = params.token;
+        const id = params.id;
 
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
-        if (typeof fileId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "fileId"');
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
         }
 
-        const apiPath = '/v1/storage/buckets/{bucketId}/files/{fileId}/download'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
+        const apiPath = '/v1/storage/assets/{id}/download'.replace('{id}', id);
         const apiPayload: Payload = {};
-        if (typeof token !== 'undefined') {
-            apiPayload['token'] = token;
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    assetPermanent(params: { id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    assetPermanent(id: string): Promise<{}>;
+    assetPermanent(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/assets/{id}/permanent'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'delete',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    assetReprocess(params: { id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    assetReprocess(id: string): Promise<{}>;
+    assetReprocess(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/assets/{id}/reprocess'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    assetRestore(params: { id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    assetRestore(id: string): Promise<{}>;
+    assetRestore(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/assets/{id}/restore'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @param {number} params.ttlSeconds - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    assetSign(params: { id: string, ttlSeconds?: number }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @param {number} ttlSeconds - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    assetSign(id: string, ttlSeconds?: number): Promise<{}>;
+    assetSign(
+        paramsOrFirst: { id: string, ttlSeconds?: number } | string,
+        ...rest: [(number)?]    
+    ): Promise<{}> {
+        let params: { id: string, ttlSeconds?: number };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, ttlSeconds?: number };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                ttlSeconds: rest[0] as number            
+            };
+        }
+        
+        const id = params.id;
+        const ttlSeconds = params.ttlSeconds;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/assets/{id}/sign'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof ttlSeconds !== 'undefined') {
+            apiPayload['ttl_seconds'] = ttlSeconds;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @param {boolean} params.keepArchive - 
+     * @param {string} params.targetFolderId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    assetUnpack(params: { id: string, keepArchive?: boolean, targetFolderId?: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @param {boolean} keepArchive - 
+     * @param {string} targetFolderId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    assetUnpack(id: string, keepArchive?: boolean, targetFolderId?: string): Promise<{}>;
+    assetUnpack(
+        paramsOrFirst: { id: string, keepArchive?: boolean, targetFolderId?: string } | string,
+        ...rest: [(boolean)?, (string)?]    
+    ): Promise<{}> {
+        let params: { id: string, keepArchive?: boolean, targetFolderId?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, keepArchive?: boolean, targetFolderId?: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                keepArchive: rest[0] as boolean,
+                targetFolderId: rest[1] as string            
+            };
+        }
+        
+        const id = params.id;
+        const keepArchive = params.keepArchive;
+        const targetFolderId = params.targetFolderId;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/assets/{id}/unpack'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof keepArchive !== 'undefined') {
+            apiPayload['keep_archive'] = keepArchive;
+        }
+        if (typeof targetFolderId !== 'undefined') {
+            apiPayload['target_folder_id'] = targetFolderId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    folderIndex(): Promise<{}> {
+
+        const apiPath = '/v1/storage/folders';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.name - 
+     * @param {string} params.parentId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    folderStore(params: { name: string, parentId?: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} name - 
+     * @param {string} parentId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    folderStore(name: string, parentId?: string): Promise<{}>;
+    folderStore(
+        paramsOrFirst: { name: string, parentId?: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<{}> {
+        let params: { name: string, parentId?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { name: string, parentId?: string };
+        } else {
+            params = {
+                name: paramsOrFirst as string,
+                parentId: rest[0] as string            
+            };
+        }
+        
+        const name = params.name;
+        const parentId = params.parentId;
+
+        if (typeof name === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "name"');
+        }
+
+        const apiPath = '/v1/storage/folders';
+        const apiPayload: Payload = {};
+        if (typeof name !== 'undefined') {
+            apiPayload['name'] = name;
+        }
+        if (typeof parentId !== 'undefined') {
+            apiPayload['parent_id'] = parentId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @param {boolean} params.recursive - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    folderDestroy(params: { id: string, recursive?: boolean }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @param {boolean} recursive - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    folderDestroy(id: string, recursive?: boolean): Promise<{}>;
+    folderDestroy(
+        paramsOrFirst: { id: string, recursive?: boolean } | string,
+        ...rest: [(boolean)?]    
+    ): Promise<{}> {
+        let params: { id: string, recursive?: boolean };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, recursive?: boolean };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                recursive: rest[0] as boolean            
+            };
+        }
+        
+        const id = params.id;
+        const recursive = params.recursive;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/folders/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof recursive !== 'undefined') {
+            apiPayload['recursive'] = recursive;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'delete',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    folderShow(params: { id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    folderShow(id: string): Promise<{}>;
+    folderShow(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/folders/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @param {string} params.name - 
+     * @param {string} params.parentId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    folderUpdate(params: { id: string, name?: string, parentId?: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @param {string} name - 
+     * @param {string} parentId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    folderUpdate(id: string, name?: string, parentId?: string): Promise<{}>;
+    folderUpdate(
+        paramsOrFirst: { id: string, name?: string, parentId?: string } | string,
+        ...rest: [(string)?, (string)?]    
+    ): Promise<{}> {
+        let params: { id: string, name?: string, parentId?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, name?: string, parentId?: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                name: rest[0] as string,
+                parentId: rest[1] as string            
+            };
+        }
+        
+        const id = params.id;
+        const name = params.name;
+        const parentId = params.parentId;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/folders/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof name !== 'undefined') {
+            apiPayload['name'] = name;
+        }
+        if (typeof parentId !== 'undefined') {
+            apiPayload['parent_id'] = parentId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'patch',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    syncRuleIndex(): Promise<{}> {
+
+        const apiPath = '/v1/storage/sftp/rules';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    syncRuleStore(): Promise<{}> {
+
+        const apiPath = '/v1/storage/sftp/rules';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    syncRuleDestroy(params: { id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    syncRuleDestroy(id: string): Promise<{}>;
+    syncRuleDestroy(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/sftp/rules/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'delete',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    syncRuleShow(params: { id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    syncRuleShow(id: string): Promise<{}>;
+    syncRuleShow(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/sftp/rules/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    syncRuleUpdate(params: { id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    syncRuleUpdate(id: string): Promise<{}>;
+    syncRuleUpdate(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/sftp/rules/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'patch',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    syncRuleRun(params: { id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    syncRuleRun(id: string): Promise<{}>;
+    syncRuleRun(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/storage/sftp/rules/{id}/run'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @param {string} params.runId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    syncRuleRunProtocol(params: { id: string, runId: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @param {string} runId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    syncRuleRunProtocol(id: string, runId: string): Promise<{}>;
+    syncRuleRunProtocol(
+        paramsOrFirst: { id: string, runId: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<{}> {
+        let params: { id: string, runId: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, runId: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                runId: rest[0] as string            
+            };
+        }
+        
+        const id = params.id;
+        const runId = params.runId;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof runId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "runId"');
+        }
+
+        const apiPath = '/v1/storage/sftp/rules/{id}/runs/{runId}'.replace('{id}', id).replace('{runId}', runId);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.ruleId - 
+     * @param {string} params.from - 
+     * @param {string} params.to - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    syncRuleHistory(params?: { ruleId?: string, from?: string, to?: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} ruleId - 
+     * @param {string} from - 
+     * @param {string} to - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    syncRuleHistory(ruleId?: string, from?: string, to?: string): Promise<{}>;
+    syncRuleHistory(
+        paramsOrFirst?: { ruleId?: string, from?: string, to?: string } | string,
+        ...rest: [(string)?, (string)?]    
+    ): Promise<{}> {
+        let params: { ruleId?: string, from?: string, to?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { ruleId?: string, from?: string, to?: string };
+        } else {
+            params = {
+                ruleId: paramsOrFirst as string,
+                from: rest[0] as string,
+                to: rest[1] as string            
+            };
+        }
+        
+        const ruleId = params.ruleId;
+        const from = params.from;
+        const to = params.to;
+
+
+        const apiPath = '/v1/storage/sftp/sync-history';
+        const apiPayload: Payload = {};
+        if (typeof ruleId !== 'undefined') {
+            apiPayload['rule_id'] = ruleId;
+        }
+        if (typeof from !== 'undefined') {
+            apiPayload['from'] = from;
+        }
+        if (typeof to !== 'undefined') {
+            apiPayload['to'] = to;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -866,135 +1365,14 @@ export class Storage {
     }
 
     /**
-     * Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.
      *
-     * @param {string} params.bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} params.fileId - File ID
-     * @param {number} params.width - Resize preview image width, Pass an integer between 0 to 4000.
-     * @param {number} params.height - Resize preview image height, Pass an integer between 0 to 4000.
-     * @param {Gravity} params.gravity - Image crop gravity. Can be one of center,top-left,top,top-right,left,right,bottom-left,bottom,bottom-right
-     * @param {number} params.quality - Preview image quality. Pass an integer between 0 to 100. Defaults to keep existing image quality.
-     * @param {number} params.borderWidth - Preview image border in pixels. Pass an integer between 0 to 100. Defaults to 0.
-     * @param {string} params.borderColor - Preview image border color. Use a valid HEX color, no # is needed for prefix.
-     * @param {number} params.borderRadius - Preview image border radius in pixels. Pass an integer between 0 to 4000.
-     * @param {number} params.opacity - Preview image opacity. Only works with images having an alpha channel (like png). Pass a number between 0 to 1.
-     * @param {number} params.rotation - Preview image rotation in degrees. Pass an integer between -360 and 360.
-     * @param {string} params.background - Preview image background color. Only works with transparent images (png). Use a valid HEX color, no # is needed for prefix.
-     * @param {Output} params.output - Output format type (jpeg, jpg, png, gif and webp).
-     * @param {string} params.token - File token for accessing this file.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    storageGetFilePreview(params: { bucketId: string, fileId: string, width?: number, height?: number, gravity?: Gravity, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: Output, token?: string }): Promise<{}>;
-    /**
-     * Get a file preview image. Currently, this method supports preview for image files (jpg, png, and gif), other supported formats, like pdf, docs, slides, and spreadsheets, will return the file icon image. You can also pass query string arguments for cutting and resizing your preview image. Preview is supported only for image files smaller than 10MB.
-     *
-     * @param {string} bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} fileId - File ID
-     * @param {number} width - Resize preview image width, Pass an integer between 0 to 4000.
-     * @param {number} height - Resize preview image height, Pass an integer between 0 to 4000.
-     * @param {Gravity} gravity - Image crop gravity. Can be one of center,top-left,top,top-right,left,right,bottom-left,bottom,bottom-right
-     * @param {number} quality - Preview image quality. Pass an integer between 0 to 100. Defaults to keep existing image quality.
-     * @param {number} borderWidth - Preview image border in pixels. Pass an integer between 0 to 100. Defaults to 0.
-     * @param {string} borderColor - Preview image border color. Use a valid HEX color, no # is needed for prefix.
-     * @param {number} borderRadius - Preview image border radius in pixels. Pass an integer between 0 to 4000.
-     * @param {number} opacity - Preview image opacity. Only works with images having an alpha channel (like png). Pass a number between 0 to 1.
-     * @param {number} rotation - Preview image rotation in degrees. Pass an integer between -360 and 360.
-     * @param {string} background - Preview image background color. Only works with transparent images (png). Use a valid HEX color, no # is needed for prefix.
-     * @param {Output} output - Output format type (jpeg, jpg, png, gif and webp).
-     * @param {string} token - File token for accessing this file.
-     * @throws {RevenexxException}
-     * @returns {Promise<{}>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    storageGetFilePreview(bucketId: string, fileId: string, width?: number, height?: number, gravity?: Gravity, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: Output, token?: string): Promise<{}>;
-    storageGetFilePreview(
-        paramsOrFirst: { bucketId: string, fileId: string, width?: number, height?: number, gravity?: Gravity, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: Output, token?: string } | string,
-        ...rest: [(string)?, (number)?, (number)?, (Gravity)?, (number)?, (number)?, (string)?, (number)?, (number)?, (number)?, (string)?, (Output)?, (string)?]    
-    ): Promise<{}> {
-        let params: { bucketId: string, fileId: string, width?: number, height?: number, gravity?: Gravity, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: Output, token?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string, fileId: string, width?: number, height?: number, gravity?: Gravity, quality?: number, borderWidth?: number, borderColor?: string, borderRadius?: number, opacity?: number, rotation?: number, background?: string, output?: Output, token?: string };
-        } else {
-            params = {
-                bucketId: paramsOrFirst as string,
-                fileId: rest[0] as string,
-                width: rest[1] as number,
-                height: rest[2] as number,
-                gravity: rest[3] as Gravity,
-                quality: rest[4] as number,
-                borderWidth: rest[5] as number,
-                borderColor: rest[6] as string,
-                borderRadius: rest[7] as number,
-                opacity: rest[8] as number,
-                rotation: rest[9] as number,
-                background: rest[10] as string,
-                output: rest[11] as Output,
-                token: rest[12] as string            
-            };
-        }
-        
-        const bucketId = params.bucketId;
-        const fileId = params.fileId;
-        const width = params.width;
-        const height = params.height;
-        const gravity = params.gravity;
-        const quality = params.quality;
-        const borderWidth = params.borderWidth;
-        const borderColor = params.borderColor;
-        const borderRadius = params.borderRadius;
-        const opacity = params.opacity;
-        const rotation = params.rotation;
-        const background = params.background;
-        const output = params.output;
-        const token = params.token;
+    tenantStats(): Promise<{}> {
 
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
-        if (typeof fileId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "fileId"');
-        }
-
-        const apiPath = '/v1/storage/buckets/{bucketId}/files/{fileId}/preview'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
+        const apiPath = '/v1/storage/tenant/stats';
         const apiPayload: Payload = {};
-        if (typeof width !== 'undefined') {
-            apiPayload['width'] = width;
-        }
-        if (typeof height !== 'undefined') {
-            apiPayload['height'] = height;
-        }
-        if (typeof gravity !== 'undefined') {
-            apiPayload['gravity'] = gravity;
-        }
-        if (typeof quality !== 'undefined') {
-            apiPayload['quality'] = quality;
-        }
-        if (typeof borderWidth !== 'undefined') {
-            apiPayload['borderWidth'] = borderWidth;
-        }
-        if (typeof borderColor !== 'undefined') {
-            apiPayload['borderColor'] = borderColor;
-        }
-        if (typeof borderRadius !== 'undefined') {
-            apiPayload['borderRadius'] = borderRadius;
-        }
-        if (typeof opacity !== 'undefined') {
-            apiPayload['opacity'] = opacity;
-        }
-        if (typeof rotation !== 'undefined') {
-            apiPayload['rotation'] = rotation;
-        }
-        if (typeof background !== 'undefined') {
-            apiPayload['background'] = background;
-        }
-        if (typeof output !== 'undefined') {
-            apiPayload['output'] = output;
-        }
-        if (typeof token !== 'undefined') {
-            apiPayload['token'] = token;
-        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1009,58 +1387,14 @@ export class Storage {
     }
 
     /**
-     * Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.
      *
-     * @param {string} params.bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} params.fileId - File ID.
-     * @param {string} params.token - File token for accessing this file.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    storageGetFileView(params: { bucketId: string, fileId: string, token?: string }): Promise<{}>;
-    /**
-     * Get a file content by its unique ID. This endpoint is similar to the download method but returns with no  'Content-Disposition: attachment' header.
-     *
-     * @param {string} bucketId - Storage bucket unique ID. You can create a new storage bucket using the Storage service [server integration](https://appwrite.io/docs/server/storage#createBucket).
-     * @param {string} fileId - File ID.
-     * @param {string} token - File token for accessing this file.
-     * @throws {RevenexxException}
-     * @returns {Promise<{}>}
-     * @deprecated Use the object parameter style method for a better developer experience.
-     */
-    storageGetFileView(bucketId: string, fileId: string, token?: string): Promise<{}>;
-    storageGetFileView(
-        paramsOrFirst: { bucketId: string, fileId: string, token?: string } | string,
-        ...rest: [(string)?, (string)?]    
-    ): Promise<{}> {
-        let params: { bucketId: string, fileId: string, token?: string };
-        
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { bucketId: string, fileId: string, token?: string };
-        } else {
-            params = {
-                bucketId: paramsOrFirst as string,
-                fileId: rest[0] as string,
-                token: rest[1] as string            
-            };
-        }
-        
-        const bucketId = params.bucketId;
-        const fileId = params.fileId;
-        const token = params.token;
+    tenantUsage(): Promise<{}> {
 
-        if (typeof bucketId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "bucketId"');
-        }
-        if (typeof fileId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "fileId"');
-        }
-
-        const apiPath = '/v1/storage/buckets/{bucketId}/files/{fileId}/view'.replace('{bucketId}', bucketId).replace('{fileId}', fileId);
+        const apiPath = '/v1/storage/tenant/usage';
         const apiPayload: Payload = {};
-        if (typeof token !== 'undefined') {
-            apiPayload['token'] = token;
-        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {

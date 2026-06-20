@@ -19,7 +19,8 @@ const result = await products.productsCreate({
     familyVariantId: '', // optional
     kind: '', // optional
     parentId: '', // optional
-    quantifiedAssociations: {} // optional
+    quantifiedAssociations: {}, // optional
+    taxClass: '' // optional
 });
 
 console.log(result);

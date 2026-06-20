@@ -9,9 +9,10 @@ const client = new Client()
 
 const pages = new Pages(client);
 
-const result = await pages.pagesSeed({
-    menus: [], // optional
-    pages: [] // optional
+const result = await pages.pagesMenusUpsert({
+    label: '',
+    menuKey: '',
+    items: [] // optional
 });
 
 console.log(result);

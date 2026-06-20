@@ -617,32 +617,32 @@ export class Shipping {
     /**
      *
      * @param {string} params.methodId - 
-     * @param {Models.ShippingRateTierCreateRequest[]} params.tiers - The complete new tier set (set semantics) — positions are derived from the array order.
+     * @param {Models.ShippingRateTierReplaceItem[]} params.tiers - The complete new tier set (set semantics) — positions are derived from the array order.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    shippingTiersReplace(params: { methodId: string, tiers: Models.ShippingRateTierCreateRequest[] }): Promise<{}>;
+    shippingTiersReplace(params: { methodId: string, tiers: Models.ShippingRateTierReplaceItem[] }): Promise<{}>;
     /**
      *
      * @param {string} methodId - 
-     * @param {Models.ShippingRateTierCreateRequest[]} tiers - The complete new tier set (set semantics) — positions are derived from the array order.
+     * @param {Models.ShippingRateTierReplaceItem[]} tiers - The complete new tier set (set semantics) — positions are derived from the array order.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingTiersReplace(methodId: string, tiers: Models.ShippingRateTierCreateRequest[]): Promise<{}>;
+    shippingTiersReplace(methodId: string, tiers: Models.ShippingRateTierReplaceItem[]): Promise<{}>;
     shippingTiersReplace(
-        paramsOrFirst: { methodId: string, tiers: Models.ShippingRateTierCreateRequest[] } | string,
-        ...rest: [(Models.ShippingRateTierCreateRequest[])?]    
+        paramsOrFirst: { methodId: string, tiers: Models.ShippingRateTierReplaceItem[] } | string,
+        ...rest: [(Models.ShippingRateTierReplaceItem[])?]    
     ): Promise<{}> {
-        let params: { methodId: string, tiers: Models.ShippingRateTierCreateRequest[] };
+        let params: { methodId: string, tiers: Models.ShippingRateTierReplaceItem[] };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { methodId: string, tiers: Models.ShippingRateTierCreateRequest[] };
+            params = (paramsOrFirst || {}) as { methodId: string, tiers: Models.ShippingRateTierReplaceItem[] };
         } else {
             params = {
                 methodId: paramsOrFirst as string,
-                tiers: rest[0] as Models.ShippingRateTierCreateRequest[]            
+                tiers: rest[0] as Models.ShippingRateTierReplaceItem[]            
             };
         }
         
@@ -873,18 +873,20 @@ export class Shipping {
      * @param {object} params.attributes - Measure values for attribute matrices, keyed by attribute name.
      * @param {string} params.country - Destination ISO 3166-1 alpha-2 code — checked against method country restrictions.
      * @param {string} params.currency - Echoed into the rates (default 'EUR').
+     * @param {string} params.marketId - Buyer market for tax resolution (else inferred from country, else first market).
      * @param {number} params.orderValue - Order value (default 0) — drives free-above thresholds and order_value matrices.
      * @param {number} params.quantity - Total quantity — measure for quantity matrices.
      * @param {number} params.weight - Total weight — measure for weight matrices.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    shippingRates(params?: { attributes?: object, country?: string, currency?: string, orderValue?: number, quantity?: number, weight?: number }): Promise<{}>;
+    shippingRates(params?: { attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, quantity?: number, weight?: number }): Promise<{}>;
     /**
      *
      * @param {object} attributes - Measure values for attribute matrices, keyed by attribute name.
      * @param {string} country - Destination ISO 3166-1 alpha-2 code — checked against method country restrictions.
      * @param {string} currency - Echoed into the rates (default 'EUR').
+     * @param {string} marketId - Buyer market for tax resolution (else inferred from country, else first market).
      * @param {number} orderValue - Order value (default 0) — drives free-above thresholds and order_value matrices.
      * @param {number} quantity - Total quantity — measure for quantity matrices.
      * @param {number} weight - Total weight — measure for weight matrices.
@@ -892,29 +894,31 @@ export class Shipping {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingRates(attributes?: object, country?: string, currency?: string, orderValue?: number, quantity?: number, weight?: number): Promise<{}>;
+    shippingRates(attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, quantity?: number, weight?: number): Promise<{}>;
     shippingRates(
-        paramsOrFirst?: { attributes?: object, country?: string, currency?: string, orderValue?: number, quantity?: number, weight?: number } | object,
-        ...rest: [(string)?, (string)?, (number)?, (number)?, (number)?]    
+        paramsOrFirst?: { attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, quantity?: number, weight?: number } | object,
+        ...rest: [(string)?, (string)?, (string)?, (number)?, (number)?, (number)?]    
     ): Promise<{}> {
-        let params: { attributes?: object, country?: string, currency?: string, orderValue?: number, quantity?: number, weight?: number };
+        let params: { attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, quantity?: number, weight?: number };
         
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('attributes' in paramsOrFirst || 'country' in paramsOrFirst || 'currency' in paramsOrFirst || 'orderValue' in paramsOrFirst || 'quantity' in paramsOrFirst || 'weight' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { attributes?: object, country?: string, currency?: string, orderValue?: number, quantity?: number, weight?: number };
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('attributes' in paramsOrFirst || 'country' in paramsOrFirst || 'currency' in paramsOrFirst || 'marketId' in paramsOrFirst || 'orderValue' in paramsOrFirst || 'quantity' in paramsOrFirst || 'weight' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, quantity?: number, weight?: number };
         } else {
             params = {
                 attributes: paramsOrFirst as object,
                 country: rest[0] as string,
                 currency: rest[1] as string,
-                orderValue: rest[2] as number,
-                quantity: rest[3] as number,
-                weight: rest[4] as number            
+                marketId: rest[2] as string,
+                orderValue: rest[3] as number,
+                quantity: rest[4] as number,
+                weight: rest[5] as number            
             };
         }
         
         const attributes = params.attributes;
         const country = params.country;
         const currency = params.currency;
+        const marketId = params.marketId;
         const orderValue = params.orderValue;
         const quantity = params.quantity;
         const weight = params.weight;
@@ -930,6 +934,9 @@ export class Shipping {
         }
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
+        }
+        if (typeof marketId !== 'undefined') {
+            apiPayload['market_id'] = marketId;
         }
         if (typeof orderValue !== 'undefined') {
             apiPayload['order_value'] = orderValue;

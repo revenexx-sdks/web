@@ -14,6 +14,28 @@ export class Pages {
     /**
      *
      * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    pagesDeliveryMenus(): Promise<{}> {
+
+        const apiPath = '/v1/pages/delivery/menus';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
      * @returns {Promise<Models.DeliveryPage>}
      */
     pagesDeliveryPage(): Promise<Models.DeliveryPage> {
@@ -1713,6 +1735,262 @@ export class Pages {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
+    pagesMenusList(): Promise<{}> {
+
+        const apiPath = '/v1/pages/menus';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.label - 
+     * @param {string} params.menuKey - Stable menu identifier, e.g. "main", "footer", "account".
+     * @param {object[]} params.items - Ordered menu entries ({ label, to?, items? }).
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Menu>}
+     */
+    pagesMenusUpsert(params: { label: string, menuKey: string, items?: object[] }): Promise<Models.Menu>;
+    /**
+     *
+     * @param {string} label - 
+     * @param {string} menuKey - Stable menu identifier, e.g. "main", "footer", "account".
+     * @param {object[]} items - Ordered menu entries ({ label, to?, items? }).
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Menu>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesMenusUpsert(label: string, menuKey: string, items?: object[]): Promise<Models.Menu>;
+    pagesMenusUpsert(
+        paramsOrFirst: { label: string, menuKey: string, items?: object[] } | string,
+        ...rest: [(string)?, (object[])?]    
+    ): Promise<Models.Menu> {
+        let params: { label: string, menuKey: string, items?: object[] };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { label: string, menuKey: string, items?: object[] };
+        } else {
+            params = {
+                label: paramsOrFirst as string,
+                menuKey: rest[0] as string,
+                items: rest[1] as object[]            
+            };
+        }
+        
+        const label = params.label;
+        const menuKey = params.menuKey;
+        const items = params.items;
+
+        if (typeof label === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "label"');
+        }
+        if (typeof menuKey === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "menuKey"');
+        }
+
+        const apiPath = '/v1/pages/menus';
+        const apiPayload: Payload = {};
+        if (typeof items !== 'undefined') {
+            apiPayload['items'] = items;
+        }
+        if (typeof label !== 'undefined') {
+            apiPayload['label'] = label;
+        }
+        if (typeof menuKey !== 'undefined') {
+            apiPayload['menuKey'] = menuKey;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    pagesMenusDelete(params: { id: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesMenusDelete(id: string): Promise<{}>;
+    pagesMenusDelete(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/pages/menus/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'delete',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Menu>}
+     */
+    pagesMenusGet(params: { id: string }): Promise<Models.Menu>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Menu>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesMenusGet(id: string): Promise<Models.Menu>;
+    pagesMenusGet(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.Menu> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/pages/menus/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @param {object[]} params.items - 
+     * @param {string} params.label - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Menu>}
+     */
+    pagesMenusUpdate(params: { id: string, items?: object[], label?: string }): Promise<Models.Menu>;
+    /**
+     *
+     * @param {string} id - 
+     * @param {object[]} items - 
+     * @param {string} label - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Menu>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesMenusUpdate(id: string, items?: object[], label?: string): Promise<Models.Menu>;
+    pagesMenusUpdate(
+        paramsOrFirst: { id: string, items?: object[], label?: string } | string,
+        ...rest: [(object[])?, (string)?]    
+    ): Promise<Models.Menu> {
+        let params: { id: string, items?: object[], label?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, items?: object[], label?: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                items: rest[0] as object[],
+                label: rest[1] as string            
+            };
+        }
+        
+        const id = params.id;
+        const items = params.items;
+        const label = params.label;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/pages/menus/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof items !== 'undefined') {
+            apiPayload['items'] = items;
+        }
+        if (typeof label !== 'undefined') {
+            apiPayload['label'] = label;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
     pagesPagesList(): Promise<{}> {
 
         const apiPath = '/v1/pages/pages';
@@ -2054,37 +2332,45 @@ export class Pages {
 
     /**
      *
+     * @param {object[]} params.menus - 
      * @param {object[]} params.pages - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    pagesSeed(params?: { pages?: object[] }): Promise<{}>;
+    pagesSeed(params?: { menus?: object[], pages?: object[] }): Promise<{}>;
     /**
      *
+     * @param {object[]} menus - 
      * @param {object[]} pages - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesSeed(pages?: object[]): Promise<{}>;
+    pagesSeed(menus?: object[], pages?: object[]): Promise<{}>;
     pagesSeed(
-        paramsOrFirst?: { pages?: object[] } | object[]    
+        paramsOrFirst?: { menus?: object[], pages?: object[] } | object[],
+        ...rest: [(object[])?]    
     ): Promise<{}> {
-        let params: { pages?: object[] };
+        let params: { menus?: object[], pages?: object[] };
         
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('pages' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { pages?: object[] };
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('menus' in paramsOrFirst || 'pages' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { menus?: object[], pages?: object[] };
         } else {
             params = {
-                pages: paramsOrFirst as object[]            
+                menus: paramsOrFirst as object[],
+                pages: rest[0] as object[]            
             };
         }
         
+        const menus = params.menus;
         const pages = params.pages;
 
 
         const apiPath = '/v1/pages/seed';
         const apiPayload: Payload = {};
+        if (typeof menus !== 'undefined') {
+            apiPayload['menus'] = menus;
+        }
         if (typeof pages !== 'undefined') {
             apiPayload['pages'] = pages;
         }

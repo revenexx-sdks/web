@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Pages } from "@revenexx/sdk";
+import { Client, Storage } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -7,11 +7,10 @@ const client = new Client()
     .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
 ;
 
-const pages = new Pages(client);
+const storage = new Storage(client);
 
-const result = await pages.pagesSeed({
-    menus: [], // optional
-    pages: [] // optional
+const result = await storage.assetShow({
+    id: ''
 });
 
 console.log(result);

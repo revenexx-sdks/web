@@ -9,9 +9,8 @@ const client = new Client()
 
 const pages = new Pages(client);
 
-const result = await pages.pagesSeed({
-    menus: [], // optional
-    pages: [] // optional
+const result = await pages.pagesMenusGet({
+    id: ''
 });
 
 console.log(result);

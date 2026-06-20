@@ -554,32 +554,37 @@ export class Customers {
     /**
      *
      * @param {string} params.userId - 
+     * @param {string} params.sessionId - Optional session to verify — answers 401 when the session is expired or revoked.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AuthMeResponse>}
      */
-    customersAuthMe(params: { userId: string }): Promise<Models.AuthMeResponse>;
+    customersAuthMe(params: { userId: string, sessionId?: string }): Promise<Models.AuthMeResponse>;
     /**
      *
      * @param {string} userId - 
+     * @param {string} sessionId - Optional session to verify — answers 401 when the session is expired or revoked.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AuthMeResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthMe(userId: string): Promise<Models.AuthMeResponse>;
+    customersAuthMe(userId: string, sessionId?: string): Promise<Models.AuthMeResponse>;
     customersAuthMe(
-        paramsOrFirst: { userId: string } | string    
+        paramsOrFirst: { userId: string, sessionId?: string } | string,
+        ...rest: [(string)?]    
     ): Promise<Models.AuthMeResponse> {
-        let params: { userId: string };
+        let params: { userId: string, sessionId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { userId: string };
+            params = (paramsOrFirst || {}) as { userId: string, sessionId?: string };
         } else {
             params = {
-                userId: paramsOrFirst as string            
+                userId: paramsOrFirst as string,
+                sessionId: rest[0] as string            
             };
         }
         
         const userId = params.userId;
+        const sessionId = params.sessionId;
 
         if (typeof userId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "userId"');
@@ -587,6 +592,9 @@ export class Customers {
 
         const apiPath = '/v1/customers/auth/me';
         const apiPayload: Payload = {};
+        if (typeof sessionId !== 'undefined') {
+            apiPayload['session_id'] = sessionId;
+        }
         if (typeof userId !== 'undefined') {
             apiPayload['user_id'] = userId;
         }

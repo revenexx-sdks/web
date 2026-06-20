@@ -13,6 +13,7 @@ import { LocationType } from "./enums/location-type"
 import { MarketStatus } from "./enums/market-status"
 import { OrderCommentVisibility } from "./enums/order-comment-visibility"
 import { OrderItemType } from "./enums/order-item-type"
+import { OrderListKind } from "./enums/order-list-kind"
 import { OrderPaymentStatus } from "./enums/order-payment-status"
 import { OrganizationStatus } from "./enums/organization-status"
 import { PageStatus } from "./enums/page-status"
@@ -22,6 +23,7 @@ import { PriceEntryType } from "./enums/price-entry-type"
 import { PriceListStatus } from "./enums/price-list-status"
 import { ShippingMethodMatrixBasis } from "./enums/shipping-method-matrix-basis"
 import { ShippingMethodPricingType } from "./enums/shipping-method-pricing-type"
+import { StoreAssetRequestVisibility } from "./enums/store-asset-request-visibility"
 import { AttributeBooleanStatus } from "./enums/attribute-boolean-status"
 import { AttributeDatetimeStatus } from "./enums/attribute-datetime-status"
 import { AttributeEmailStatus } from "./enums/attribute-email-status"
@@ -322,6 +324,116 @@ export namespace Models {
          * 
          */
         naming_convention?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type AssetResource = {
+        /**
+         * 
+         */
+        alt_text: string | null;
+        /**
+         * 
+         */
+        content_hash: string | null;
+        /**
+         * 
+         */
+        created_at: string;
+        /**
+         * 
+         */
+        deleted_at: string;
+        /**
+         * 
+         */
+        description: string | null;
+        /**
+         * 
+         */
+        display_name: string | null;
+        /**
+         * 
+         */
+        dominant_color: string | null;
+        /**
+         * 
+         */
+        duration_ms: number | null;
+        /**
+         * 
+         */
+        folder_id: string | null;
+        /**
+         * 
+         */
+        height: number | null;
+        /**
+         * 
+         */
+        id: string;
+        /**
+         * 
+         */
+        kind: string;
+        /**
+         * 
+         */
+        metadata: any[];
+        /**
+         * 
+         */
+        mime_type: string;
+        /**
+         * 
+         */
+        original_name: string;
+        /**
+         * 
+         */
+        page_count: number | null;
+        /**
+         * 
+         */
+        path_name: string;
+        /**
+         * 
+         */
+        processed_at: string;
+        /**
+         * 
+         */
+        size_bytes: number;
+        /**
+         * 
+         */
+        status: string;
+        /**
+         * 
+         */
+        tags: any[];
+        /**
+         * 
+         */
+        tenant_id: string;
+        /**
+         * 
+         */
+        updated_at: string;
+        /**
+         * 
+         */
+        url: string;
+        /**
+         * 
+         */
+        visibility: string;
+        /**
+         * 
+         */
+        width: number | null;
     }
 
     /**
@@ -873,6 +985,10 @@ export namespace Models {
      */
     export type AuthMeRequest = {
         /**
+         * Optional session to verify — answers 401 when the session is expired or revoked.
+         */
+        session_id?: string | null;
+        /**
          * 
          */
         user_id: string;
@@ -935,23 +1051,23 @@ export namespace Models {
         /**
          * 
          */
-        first_name?: string;
+        first_name?: string | null;
         /**
          * 
          */
-        last_name?: string;
+        last_name?: string | null;
         /**
          * BCP 47, e.g. de-DE
          */
-        locale?: string;
+        locale?: string | null;
         /**
          * Join an existing organization.
          */
-        organization_id?: string;
+        organization_id?: string | null;
         /**
          * Found a new organization; the contact becomes its admin.
          */
-        organization_name?: string;
+        organization_name?: string | null;
         /**
          * 
          */
@@ -1091,7 +1207,7 @@ export namespace Models {
         /**
          * Merge the session carts into this cart instead of adopting them.
          */
-        target_cart_id?: string;
+        target_cart_id?: string | null;
     }
 
     /**
@@ -1101,35 +1217,35 @@ export namespace Models {
         /**
          * 
          */
-        channel_id?: string;
+        channel_id?: string | null;
         /**
          * Owning customer contact.
          */
-        contact_id?: string;
+        contact_id?: string | null;
         /**
          * ISO 4217 code (default EUR).
          */
-        currency?: string;
+        currency?: string | null;
         /**
          * Make this THE current cart of its owner.
          */
-        is_current?: boolean;
+        is_current?: boolean | null;
         /**
          * 
          */
-        market_id?: string;
+        market_id?: string | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Display name (default 'Cart').
          */
-        name?: string;
+        name?: string | null;
         /**
          * Owning guest session.
          */
-        session_key?: string;
+        session_key?: string | null;
     }
 
     /**
@@ -1143,7 +1259,7 @@ export namespace Models {
         /**
          * Export profile to run; ad-hoc JSON/CSV export when omitted.
          */
-        profile_id?: string;
+        profile_id?: string | null;
     }
 
     /**
@@ -1153,7 +1269,7 @@ export namespace Models {
         /**
          * Owner of a newly created cart.
          */
-        contact_id?: string;
+        contact_id?: string | null;
         /**
          * Raw CSV content (alternative to payload for csv profiles).
          */
@@ -1169,7 +1285,7 @@ export namespace Models {
         /**
          * Import profile to run; ad-hoc import when omitted.
          */
-        profile_id?: string;
+        profile_id?: string | null;
         /**
          * Guest owner of a newly created cart.
          */
@@ -1177,7 +1293,7 @@ export namespace Models {
         /**
          * Existing active cart to import into.
          */
-        target_cart_id?: string;
+        target_cart_id?: string | null;
     }
 
     /**
@@ -1265,43 +1381,43 @@ export namespace Models {
         /**
          * Free-form configuration — configured lines never merge.
          */
-        configuration?: object;
+        configuration?: object | null;
         /**
          * Defaults to the cart's currency.
          */
-        currency?: string;
+        currency?: string | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Falls back to 'sku' when omitted.
          */
-        name?: string;
+        name?: string | null;
         /**
          * 
          */
-        position?: number;
+        position?: number | null;
         /**
          * 
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * Default 1.
          */
-        quantity?: number;
+        quantity?: number | null;
         /**
          * 
          */
-        sku?: string;
+        sku?: string | null;
         /**
          * Loose product snapshot at add-time (price, name, image, …).
          */
-        snapshot?: object;
+        snapshot?: object | null;
         /**
          * 
          */
-        tax_rate?: number;
+        tax_rate?: number | null;
         /**
          * Line type (default 'product'). Plain product lines merge by product+price; configurations always stand alone.
          */
@@ -1309,11 +1425,11 @@ export namespace Models {
         /**
          * 
          */
-        unit?: string;
+        unit?: string | null;
         /**
          * Per-unit net price — line_total is always derived.
          */
-        unit_price?: number;
+        unit_price?: number | null;
     }
 
     /**
@@ -1323,43 +1439,43 @@ export namespace Models {
         /**
          * Free-form configuration — configured lines never merge.
          */
-        configuration?: object;
+        configuration?: object | null;
         /**
          * Defaults to the cart's currency.
          */
-        currency?: string;
+        currency?: string | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Falls back to 'sku' when omitted.
          */
-        name?: string;
+        name?: string | null;
         /**
          * 
          */
-        position?: number;
+        position?: number | null;
         /**
          * 
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * Default 1.
          */
-        quantity?: number;
+        quantity?: number | null;
         /**
          * 
          */
-        sku?: string;
+        sku?: string | null;
         /**
          * Loose product snapshot at add-time (price, name, image, …).
          */
-        snapshot?: object;
+        snapshot?: object | null;
         /**
          * 
          */
-        tax_rate?: number;
+        tax_rate?: number | null;
         /**
          * Line type (default 'product'). Plain product lines merge by product+price; configurations always stand alone.
          */
@@ -1367,11 +1483,11 @@ export namespace Models {
         /**
          * 
          */
-        unit?: string;
+        unit?: string | null;
         /**
          * Per-unit net price — line_total is always derived.
          */
-        unit_price?: number;
+        unit_price?: number | null;
     }
 
     /**
@@ -1405,7 +1521,7 @@ export namespace Models {
         /**
          * External order reference from order management.
          */
-        order_ref?: string;
+        order_ref?: string | null;
     }
 
     /**
@@ -1415,23 +1531,23 @@ export namespace Models {
         /**
          * 
          */
-        channel_id?: string;
+        channel_id?: string | null;
         /**
          * ISO 4217 code.
          */
-        currency?: string;
+        currency?: string | null;
         /**
          * 
          */
-        market_id?: string;
+        market_id?: string | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * 
          */
-        name?: string;
+        name?: string | null;
     }
 
     /**
@@ -1597,7 +1713,7 @@ export namespace Models {
         /**
          * Localized display names keyed by locale.
          */
-        labels?: object;
+        labels?: object | null;
         /**
          * Display name.
          */
@@ -1645,7 +1761,7 @@ export namespace Models {
         /**
          * Localized display names keyed by locale.
          */
-        labels?: object;
+        labels?: object | null;
         /**
          * Display name.
          */
@@ -1939,7 +2055,7 @@ export namespace Models {
         /**
          * 
          */
-        currency?: string;
+        currency?: string | null;
         /**
          * 
          */
@@ -2233,6 +2349,44 @@ export namespace Models {
     /**
      * 
      */
+    export type FolderResource = {
+        /**
+         * 
+         */
+        created_at: string;
+        /**
+         * 
+         */
+        id: string;
+        /**
+         * 
+         */
+        is_system: boolean;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * 
+         */
+        parent_id: string | null;
+        /**
+         * 
+         */
+        path: string;
+        /**
+         * 
+         */
+        tenant_id: string;
+        /**
+         * 
+         */
+        updated_at: string;
+    }
+
+    /**
+     * 
+     */
     export type Greeting = {
         /**
          * 
@@ -2275,7 +2429,7 @@ export namespace Models {
         /**
          * 
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * Signed delta (±on_hand) — must be non-zero.
          */
@@ -2283,7 +2437,7 @@ export namespace Models {
         /**
          * 
          */
-        sku?: string;
+        sku?: string | null;
     }
 
     /**
@@ -2297,7 +2451,7 @@ export namespace Models {
         /**
          * Adjusted location (default 'main').
          */
-        location_code?: string;
+        location_code?: string | null;
         /**
          * Mandatory audit reason — every adjustment is a ledger row.
          */
@@ -2311,15 +2465,15 @@ export namespace Models {
         /**
          * 
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * Requested quantity for the orderable check (default 1).
          */
-        quantity?: number;
+        quantity?: number | null;
         /**
          * 
          */
-        sku?: string;
+        sku?: string | null;
     }
 
     /**
@@ -2333,7 +2487,7 @@ export namespace Models {
         /**
          * Restrict the check to one location (default: all enabled locations).
          */
-        location_code?: string;
+        location_code?: string | null;
     }
 
     /**
@@ -2357,11 +2511,11 @@ export namespace Models {
         /**
          * Receiving location (default 'main').
          */
-        location_code?: string;
+        location_code?: string | null;
         /**
          * Ledger note (e.g. delivery note number).
          */
-        reason?: string;
+        reason?: string | null;
     }
 
     /**
@@ -2381,7 +2535,7 @@ export namespace Models {
         /**
          * Optional reservation expiry.
          */
-        expires_at?: string;
+        expires_at?: string | null;
         /**
          * The items to reserve — all-or-nothing (at most 200).
          */
@@ -2403,15 +2557,15 @@ export namespace Models {
         /**
          * Restocking location (default 'main').
          */
-        location_code?: string;
+        location_code?: string | null;
         /**
          * Originating order (ledger reference).
          */
-        order_ref?: string;
+        order_ref?: string | null;
         /**
          * Ledger note (e.g. return reason).
          */
-        reason?: string;
+        reason?: string | null;
     }
 
     /**
@@ -2421,7 +2575,7 @@ export namespace Models {
         /**
          * 
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * 
          */
@@ -2429,7 +2583,7 @@ export namespace Models {
         /**
          * 
          */
-        sku?: string;
+        sku?: string | null;
     }
 
     /**
@@ -2695,7 +2849,7 @@ export namespace Models {
         /**
          * 
          */
-        address?: object;
+        address?: object | null;
         /**
          * Unique location code (per tenant).
          */
@@ -2707,11 +2861,11 @@ export namespace Models {
         /**
          * Localised display names ({de, en, …}).
          */
-        labels?: object;
+        labels?: object | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * 
          */
@@ -2733,7 +2887,7 @@ export namespace Models {
         /**
          * 
          */
-        address?: object;
+        address?: object | null;
         /**
          * Unique location code (per tenant).
          */
@@ -2745,11 +2899,11 @@ export namespace Models {
         /**
          * Localised display names ({de, en, …}).
          */
-        labels?: object;
+        labels?: object | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * 
          */
@@ -2817,6 +2971,10 @@ export namespace Models {
         /**
          * 
          */
+        currencies?: MarketCurrency[];
+        /**
+         * 
+         */
         locales?: MarketLocale[];
         /**
          * 
@@ -2860,6 +3018,72 @@ export namespace Models {
          * Default 'active'.
          */
         status?: MarketStatus;
+    }
+
+    /**
+     * 
+     */
+    export type MarketCurrency = {
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * 
+         */
+        market_id?: string;
+        /**
+         * 
+         */
+        position?: number;
+    }
+
+    /**
+     * The owning market comes from the route path (&#039;market_id&#039;).
+     */
+    export type MarketCurrencyCreateRequest = {
+        /**
+         * ISO 4217 code, e.g. EUR (unique per market).
+         */
+        code: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * Sort position (default 0).
+         */
+        position?: number;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type MarketCurrencyUpdateRequest = {
+        /**
+         * ISO 4217 code, e.g. EUR (unique per market).
+         */
+        code?: string;
+        /**
+         * 
+         */
+        is_default?: boolean;
+        /**
+         * Sort position (default 0).
+         */
+        position?: number;
     }
 
     /**
@@ -3173,15 +3397,85 @@ export namespace Models {
     /**
      * 
      */
+    export type Menu = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        created_by?: string | null;
+        /**
+         * 
+         */
+        deleted_at?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        items?: object;
+        /**
+         * 
+         */
+        label?: string;
+        /**
+         * 
+         */
+        menu_key?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type MenuUpdateRequest = {
+        /**
+         * 
+         */
+        items?: object[];
+        /**
+         * 
+         */
+        label?: string;
+    }
+
+    /**
+     * Create or update the menu identified by menuKey (idempotent per tenant). `items` is the ordered nav tree ([{ label, to, items? }]).
+     */
+    export type MenuUpsertRequest = {
+        /**
+         * Ordered menu entries ({ label, to?, items? }).
+         */
+        items?: object[];
+        /**
+         * 
+         */
+        label: string;
+        /**
+         * Stable menu identifier, e.g. "main", "footer", "account".
+         */
+        menuKey: string;
+    }
+
+    /**
+     * 
+     */
     export type MutationRequest = {
         /**
          * 
          */
-        langcode?: string;
+        langcode?: string | null;
         /**
          * 
          */
-        payload?: object;
+        payload?: object | null;
         /**
          * Mutation plugin id (add, move, delete, duplicate, update_field_value, ...).
          */
@@ -3821,55 +4115,55 @@ export namespace Models {
         /**
          * Free-form configuration of configured lines.
          */
-        configuration?: object;
+        configuration?: object | null;
         /**
          * 
          */
-        cost_center?: string;
+        cost_center?: string | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Falls back to 'sku' when omitted.
          */
-        name?: string;
+        name?: string | null;
         /**
          * Explicit position number; otherwise numbered in steps of the order range's position_step.
          */
-        position?: number;
+        position?: number | null;
         /**
          * 
          */
-        position_text?: string;
+        position_text?: string | null;
         /**
          * Frozen product snapshot at place-time ('snapshot' is accepted as an alias).
          */
-        product?: object;
+        product?: object | null;
         /**
          * 
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * Default 1.
          */
-        quantity?: number;
+        quantity?: number | null;
         /**
          * 
          */
-        sku?: string;
+        sku?: string | null;
         /**
          * Alias for 'product'.
          */
-        snapshot?: object;
+        snapshot?: object | null;
         /**
          * Derived from line_total and tax_rate when omitted.
          */
-        tax_amount?: number;
+        tax_amount?: number | null;
         /**
          * Percent (default 0).
          */
-        tax_rate?: number;
+        tax_rate?: number | null;
         /**
          * Line type (default 'product').
          */
@@ -3877,15 +4171,15 @@ export namespace Models {
         /**
          * 
          */
-        unit?: string;
+        unit?: string | null;
         /**
          * Per-unit net price — line_total is always derived.
          */
-        unit_price?: number;
+        unit_price?: number | null;
         /**
          * Free-form user data.
          */
-        user_data?: object;
+        user_data?: object | null;
     }
 
     /**
@@ -3904,6 +4198,386 @@ export namespace Models {
          * 
          */
         reason?: string;
+    }
+
+    /**
+     * 
+     */
+    export type OrderList = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        kind?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        owner_id?: string;
+        /**
+         * 
+         */
+        owner_name?: string;
+        /**
+         * 
+         */
+        public?: boolean;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type OrderListCreateRequest = {
+        /**
+         * Optional initial positions.
+         */
+        items?: OrderListItemInput[];
+        /**
+         * List kind (default 'shopping').
+         */
+        kind?: OrderListKind;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * Owning organization (scopes public sharing).
+         */
+        organization_id?: string | null;
+        /**
+         * Owning contact.
+         */
+        owner_id: string;
+        /**
+         * Owner display name (snapshot).
+         */
+        owner_name: string;
+        /**
+         * Shared read-only across the organization (default false).
+         */
+        public?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type OrderListItem = {
+        /**
+         * 
+         */
+        category_slug?: string | null;
+        /**
+         * 
+         */
+        cost_center_id?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        custom_sku?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        image?: string | null;
+        /**
+         * 
+         */
+        list_id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        position_texts?: object | null;
+        /**
+         * 
+         */
+        price?: number | null;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        subcategory_slug?: string | null;
+        /**
+         * 
+         */
+        tax_rate?: number | null;
+        /**
+         * 
+         */
+        unit?: string | null;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type OrderListItemInput = {
+        /**
+         * 
+         */
+        category_slug?: string | null;
+        /**
+         * Cost center reference (free-text).
+         */
+        cost_center_id?: string | null;
+        /**
+         * Customer's own article number.
+         */
+        custom_sku?: string | null;
+        /**
+         * 
+         */
+        image?: string | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * Display name (snapshot).
+         */
+        name: string;
+        /**
+         * Sort order (assigned automatically when omitted).
+         */
+        position?: number;
+        /**
+         * Per-position notes.
+         */
+        position_texts?: string[] | null;
+        /**
+         * Unit price snapshot.
+         */
+        price?: number | null;
+        /**
+         * Catalog product (alternative to sku).
+         */
+        product_id?: string | null;
+        /**
+         * Default 1.
+         */
+        quantity?: number;
+        /**
+         * Article SKU (alternative to product_id).
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        subcategory_slug?: string | null;
+        /**
+         * 
+         */
+        tax_rate?: number | null;
+        /**
+         * 
+         */
+        unit?: string | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type OrderListItemUpdateRequest = {
+        /**
+         * 
+         */
+        category_slug?: string | null;
+        /**
+         * Cost center reference (free-text).
+         */
+        cost_center_id?: string | null;
+        /**
+         * Customer's own article number.
+         */
+        custom_sku?: string | null;
+        /**
+         * 
+         */
+        image?: string | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * Display name (snapshot).
+         */
+        name?: string;
+        /**
+         * Sort order (assigned automatically when omitted).
+         */
+        position?: number;
+        /**
+         * Per-position notes.
+         */
+        position_texts?: string[] | null;
+        /**
+         * Unit price snapshot.
+         */
+        price?: number | null;
+        /**
+         * Catalog product (alternative to sku).
+         */
+        product_id?: string | null;
+        /**
+         * Default 1.
+         */
+        quantity?: number;
+        /**
+         * Article SKU (alternative to product_id).
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        subcategory_slug?: string | null;
+        /**
+         * 
+         */
+        tax_rate?: number | null;
+        /**
+         * 
+         */
+        unit?: string | null;
+    }
+
+    /**
+     * Replace ALL positions of the list (set semantics).
+     */
+    export type OrderListItemsReplaceRequest = {
+        /**
+         * The new full set of positions.
+         */
+        items: OrderListItemInput[];
+    }
+
+    /**
+     * Partial update — rename, visibility or kind. Positions go through the items routes.
+     */
+    export type OrderListUpdateRequest = {
+        /**
+         * List kind (default 'shopping').
+         */
+        kind?: OrderListKind;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        public?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type OrderListWithItems = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        items?: OrderListItem[];
+        /**
+         * 
+         */
+        kind?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        owner_id?: string;
+        /**
+         * 
+         */
+        owner_name?: string;
+        /**
+         * 
+         */
+        public?: boolean;
+        /**
+         * 
+         */
+        updated_at?: string;
     }
 
     /**
@@ -4011,35 +4685,35 @@ export namespace Models {
         /**
          * Frozen billing address.
          */
-        billing_address?: object;
+        billing_address?: object | null;
         /**
          * Frozen buyer snapshot (name, email, …).
          */
-        buyer?: object;
+        buyer?: object | null;
         /**
          * Source cart (the carts.order hand-over).
          */
-        cart_id?: string;
+        cart_id?: string | null;
         /**
          * 
          */
-        channel_id?: string;
+        channel_id?: string | null;
         /**
          * Ordering customer contact.
          */
-        contact_id?: string;
+        contact_id?: string | null;
         /**
          * ISO 4217 code (default EUR).
          */
-        currency?: string;
+        currency?: string | null;
         /**
          * The buyer's own order/PO number.
          */
-        customer_order_number?: string;
+        customer_order_number?: string | null;
         /**
          * Override — computed as subtotal + shipping + tax when omitted.
          */
-        grand_total?: number;
+        grand_total?: number | null;
         /**
          * The order positions (at most 500).
          */
@@ -4047,35 +4721,35 @@ export namespace Models {
         /**
          * 
          */
-        market_id?: string;
+        market_id?: string | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * B2B organization.
          */
-        organization_id?: string;
+        organization_id?: string | null;
         /**
          * Frozen payment snapshot — a known 'payment.status' seeds payment_status (otherwise 'open').
          */
-        payment?: object;
+        payment?: object | null;
         /**
          * Frozen shipping snapshot — 'shipping.price' seeds shipping_total.
          */
-        shipping?: object;
+        shipping?: object | null;
         /**
          * Frozen shipping address.
          */
-        shipping_address?: object;
+        shipping_address?: object | null;
         /**
          * Shipping total (fallback when 'shipping.price' is absent).
          */
-        shipping_total?: number;
+        shipping_total?: number | null;
         /**
          * Free-form user data.
          */
-        user_data?: object;
+        user_data?: object | null;
     }
 
     /**
@@ -4487,23 +5161,23 @@ export namespace Models {
         /**
          * 
          */
-        bundle?: string;
+        bundle?: string | null;
         /**
          * 
          */
-        hostOptions?: object;
+        hostOptions?: object | null;
         /**
          * 
          */
-        meta?: object;
+        meta?: object | null;
         /**
          * 
          */
-        slug?: string;
+        slug?: string | null;
         /**
          * 
          */
-        sourceLanguage?: string;
+        sourceLanguage?: string | null;
         /**
          * 
          */
@@ -4689,15 +5363,15 @@ export namespace Models {
         /**
          * The cart this payment pays for.
          */
-        cart_id?: string;
+        cart_id?: string | null;
         /**
          * Paying customer contact.
          */
-        contact_id?: string;
+        contact_id?: string | null;
         /**
          * Buyer ISO country code for the eligibility check.
          */
-        country?: string;
+        country?: string | null;
         /**
          * ISO 4217 code (default EUR).
          */
@@ -4705,11 +5379,11 @@ export namespace Models {
         /**
          * Same key answers the same payment instead of a duplicate.
          */
-        idempotency_key?: string;
+        idempotency_key?: string | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Code of a configured payment method.
          */
@@ -4717,11 +5391,11 @@ export namespace Models {
         /**
          * External order reference — also the webhook fallback key.
          */
-        order_ref?: string;
+        order_ref?: string | null;
         /**
          * Where the PSP redirect flow returns the buyer to.
          */
-        return_url?: string;
+        return_url?: string | null;
     }
 
     /**
@@ -4731,15 +5405,15 @@ export namespace Models {
         /**
          * Order amount the fees are computed against (default 0).
          */
-        amount?: number;
+        amount?: number | null;
         /**
          * Buyer ISO country code — methods with country restrictions need it.
          */
-        country?: string;
+        country?: string | null;
         /**
          * ISO 4217 code (default EUR).
          */
-        currency?: string;
+        currency?: string | null;
     }
 
     /**
@@ -4835,11 +5509,11 @@ export namespace Models {
         /**
          * Allowed ISO country codes — empty/omitted = unrestricted.
          */
-        countries?: string[];
+        countries?: string[] | null;
         /**
          * 
          */
-        description?: string;
+        description?: string | null;
         /**
          * Disabled methods are never eligible (default false).
          */
@@ -4863,19 +5537,19 @@ export namespace Models {
         /**
          * Localized display names ({ de, en, … }).
          */
-        labels?: object;
+        labels?: object | null;
         /**
          * Maximum order amount — omitted = no upper bound.
          */
-        max_order_value?: number;
+        max_order_value?: number | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Minimum order amount — omitted = no lower bound.
          */
-        min_order_value?: number;
+        min_order_value?: number | null;
         /**
          * Display name.
          */
@@ -4887,11 +5561,11 @@ export namespace Models {
         /**
          * PSP code from the catalog — only for kind 'psp'.
          */
-        provider?: string;
+        provider?: string | null;
         /**
          * The provider's payment method id (e.g. 'card', 'paypal').
          */
-        provider_method?: string;
+        provider_method?: string | null;
     }
 
     /**
@@ -4905,11 +5579,11 @@ export namespace Models {
         /**
          * Allowed ISO country codes — empty/omitted = unrestricted.
          */
-        countries?: string[];
+        countries?: string[] | null;
         /**
          * 
          */
-        description?: string;
+        description?: string | null;
         /**
          * Disabled methods are never eligible (default false).
          */
@@ -4933,19 +5607,19 @@ export namespace Models {
         /**
          * Localized display names ({ de, en, … }).
          */
-        labels?: object;
+        labels?: object | null;
         /**
          * Maximum order amount — omitted = no upper bound.
          */
-        max_order_value?: number;
+        max_order_value?: number | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Minimum order amount — omitted = no lower bound.
          */
-        min_order_value?: number;
+        min_order_value?: number | null;
         /**
          * Display name.
          */
@@ -4957,11 +5631,11 @@ export namespace Models {
         /**
          * PSP code from the catalog — only for kind 'psp'.
          */
-        provider?: string;
+        provider?: string | null;
         /**
          * The provider's payment method id (e.g. 'card', 'paypal').
          */
-        provider_method?: string;
+        provider_method?: string | null;
     }
 
     /**
@@ -5017,19 +5691,19 @@ export namespace Models {
         /**
          * PSP credentials — the catalog's credential_fields say which keys the auth scheme expects.
          */
-        credentials?: object;
+        credentials?: object | null;
         /**
          * Only enabled providers transact (default false).
          */
-        enabled?: boolean;
+        enabled?: boolean | null;
         /**
          * Display name — defaults to the catalog label.
          */
-        name?: string;
+        name?: string | null;
         /**
          * Free-form provider options.
          */
-        options?: object;
+        options?: object | null;
         /**
          * Provider code — must exist in the catalog (GET /payments/providers/catalog).
          */
@@ -5037,11 +5711,11 @@ export namespace Models {
         /**
          * Sandbox/test credentials (default true).
          */
-        test_mode?: boolean;
+        test_mode?: boolean | null;
         /**
          * Shared secret for PSP callback verification.
          */
-        webhook_secret?: string;
+        webhook_secret?: string | null;
     }
 
     /**
@@ -5051,7 +5725,7 @@ export namespace Models {
         /**
          * PSP credentials — the catalog's credential_fields say which keys the auth scheme expects.
          */
-        credentials?: object;
+        credentials?: object | null;
         /**
          * Only enabled providers transact (default false).
          */
@@ -5063,7 +5737,7 @@ export namespace Models {
         /**
          * Free-form provider options.
          */
-        options?: object;
+        options?: object | null;
         /**
          * Provider code — must exist in the catalog (GET /payments/providers/catalog).
          */
@@ -5075,7 +5749,7 @@ export namespace Models {
         /**
          * Shared secret for PSP callback verification.
          */
-        webhook_secret?: string;
+        webhook_secret?: string | null;
     }
 
     /**
@@ -5091,7 +5765,7 @@ export namespace Models {
         /**
          * The complete new entry set (set semantics).
          */
-        entries: PriceEntryCreateRequest[];
+        entries: PriceEntryReplaceItem[];
     }
 
     /**
@@ -5159,7 +5833,7 @@ export namespace Models {
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Default 'standard'; 'on_request' is the explicit no-price marker — it stops resolution and answers "price on request".
          */
@@ -5167,7 +5841,7 @@ export namespace Models {
         /**
          * Priced product.
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * Tier threshold (Staffelpreis): this price applies from this quantity (default 1).
          */
@@ -5175,11 +5849,11 @@ export namespace Models {
         /**
          * Priced SKU (alternative to product_id).
          */
-        sku?: string;
+        sku?: string | null;
         /**
          * 
          */
-        unit?: string;
+        unit?: string | null;
         /**
          * Per-unit price (default 0).
          */
@@ -5187,11 +5861,53 @@ export namespace Models {
         /**
          * Per-entry validity start (promo prices).
          */
-        valid_from?: string;
+        valid_from?: string | null;
         /**
          * Per-entry validity end.
          */
-        valid_until?: string;
+        valid_until?: string | null;
+    }
+
+    /**
+     * An entry needs an identity: &#039;product_id&#039; or &#039;sku&#039; — every other field is normalized to its default when null/omitted.
+     */
+    export type PriceEntryReplaceItem = {
+        /**
+         * Free-form metadata.
+         */
+        metadata?: object | null;
+        /**
+         * Default 'standard'; 'on_request' is the explicit no-price marker — it stops resolution and answers "price on request".
+         */
+        price_type?: PriceEntryType;
+        /**
+         * Priced product.
+         */
+        product_id?: string | null;
+        /**
+         * Tier threshold (Staffelpreis): this price applies from this quantity (default 1).
+         */
+        quantity_min?: number | null;
+        /**
+         * Priced SKU (alternative to product_id).
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        unit?: string | null;
+        /**
+         * Per-unit price (default 0).
+         */
+        unit_price?: number | null;
+        /**
+         * Per-entry validity start (promo prices).
+         */
+        valid_from?: string | null;
+        /**
+         * Per-entry validity end.
+         */
+        valid_until?: string | null;
     }
 
     /**
@@ -5201,7 +5917,7 @@ export namespace Models {
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Default 'standard'; 'on_request' is the explicit no-price marker — it stops resolution and answers "price on request".
          */
@@ -5209,7 +5925,7 @@ export namespace Models {
         /**
          * Priced product.
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * Tier threshold (Staffelpreis): this price applies from this quantity (default 1).
          */
@@ -5217,11 +5933,11 @@ export namespace Models {
         /**
          * Priced SKU (alternative to product_id).
          */
-        sku?: string;
+        sku?: string | null;
         /**
          * 
          */
-        unit?: string;
+        unit?: string | null;
         /**
          * Per-unit price (default 0).
          */
@@ -5229,11 +5945,11 @@ export namespace Models {
         /**
          * Per-entry validity start (promo prices).
          */
-        valid_from?: string;
+        valid_from?: string | null;
         /**
          * Per-entry validity end.
          */
-        valid_until?: string;
+        valid_until?: string | null;
     }
 
     /**
@@ -5325,7 +6041,7 @@ export namespace Models {
         /**
          * Scope: only this channel.
          */
-        channel_id?: string;
+        channel_id?: string | null;
         /**
          * Unique list code per tenant.
          */
@@ -5333,7 +6049,7 @@ export namespace Models {
         /**
          * Scope: only this contact — beats every other scope.
          */
-        contact_id?: string;
+        contact_id?: string | null;
         /**
          * ISO 4217 code (default EUR) — resolution only considers lists matching the requested currency.
          */
@@ -5341,7 +6057,7 @@ export namespace Models {
         /**
          * 
          */
-        description?: string;
+        description?: string | null;
         /**
          * Default lists resolve last within their group.
          */
@@ -5349,15 +6065,15 @@ export namespace Models {
         /**
          * Localised names ({de, en, …}).
          */
-        labels?: object;
+        labels?: object | null;
         /**
          * Scope: only this market.
          */
-        market_id?: string;
+        market_id?: string | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * 
          */
@@ -5365,7 +6081,7 @@ export namespace Models {
         /**
          * Scope: only this organization.
          */
-        organization_id?: string;
+        organization_id?: string | null;
         /**
          * Tie-breaker within a specificity group (higher wins, default 0).
          */
@@ -5381,11 +6097,11 @@ export namespace Models {
         /**
          * Validity window start.
          */
-        valid_from?: string;
+        valid_from?: string | null;
         /**
          * Validity window end.
          */
-        valid_until?: string;
+        valid_until?: string | null;
     }
 
     /**
@@ -5395,7 +6111,7 @@ export namespace Models {
         /**
          * Scope: only this channel.
          */
-        channel_id?: string;
+        channel_id?: string | null;
         /**
          * Unique list code per tenant.
          */
@@ -5403,7 +6119,7 @@ export namespace Models {
         /**
          * Scope: only this contact — beats every other scope.
          */
-        contact_id?: string;
+        contact_id?: string | null;
         /**
          * ISO 4217 code (default EUR) — resolution only considers lists matching the requested currency.
          */
@@ -5411,7 +6127,7 @@ export namespace Models {
         /**
          * 
          */
-        description?: string;
+        description?: string | null;
         /**
          * Default lists resolve last within their group.
          */
@@ -5419,15 +6135,15 @@ export namespace Models {
         /**
          * Localised names ({de, en, …}).
          */
-        labels?: object;
+        labels?: object | null;
         /**
          * Scope: only this market.
          */
-        market_id?: string;
+        market_id?: string | null;
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * 
          */
@@ -5435,7 +6151,7 @@ export namespace Models {
         /**
          * Scope: only this organization.
          */
-        organization_id?: string;
+        organization_id?: string | null;
         /**
          * Tie-breaker within a specificity group (higher wins, default 0).
          */
@@ -5451,11 +6167,11 @@ export namespace Models {
         /**
          * Validity window start.
          */
-        valid_from?: string;
+        valid_from?: string | null;
         /**
          * Validity window end.
          */
-        valid_until?: string;
+        valid_until?: string | null;
     }
 
     /**
@@ -5465,15 +6181,15 @@ export namespace Models {
         /**
          * Product to price.
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * Requested quantity for tier selection and line_total (default 1; non-positive values fall back to 1).
          */
-        quantity?: number;
+        quantity?: number | null;
         /**
          * SKU to price (alternative to product_id).
          */
-        sku?: string;
+        sku?: string | null;
     }
 
     /**
@@ -5483,19 +6199,19 @@ export namespace Models {
         /**
          * Point in time for validity windows (ISO 8601 timestamp, default now).
          */
-        at?: string;
+        at?: string | null;
         /**
          * Buyer context: channel.
          */
-        channel_id?: string;
+        channel_id?: string | null;
         /**
          * Buyer context: contact — most specific scope.
          */
-        contact_id?: string;
+        contact_id?: string | null;
         /**
          * ISO 4217 code (default EUR) — only lists in this currency resolve.
          */
-        currency?: string;
+        currency?: string | null;
         /**
          * Items to price (at most 200 per call).
          */
@@ -5503,11 +6219,11 @@ export namespace Models {
         /**
          * Buyer context: market.
          */
-        market_id?: string;
+        market_id?: string | null;
         /**
          * Buyer context: organization.
          */
-        organization_id?: string;
+        organization_id?: string | null;
     }
 
     /**
@@ -5661,6 +6377,24 @@ export namespace Models {
     /**
      * 
      */
+    export type ProductTaxRef = {
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        sku?: string;
+        /**
+         * 
+         */
+        tax_class?: string | null;
+    }
+
+    /**
+     * 
+     */
     export type Products = {
         /**
          * 
@@ -5713,7 +6447,25 @@ export namespace Models {
         /**
          * 
          */
+        tax_class?: string | null;
+        /**
+         * 
+         */
         updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ProductsBatchRequest = {
+        /**
+         * 
+         */
+        ids?: string[];
+        /**
+         * 
+         */
+        skus?: string[];
     }
 
     /**
@@ -5760,6 +6512,10 @@ export namespace Models {
          * 
          */
         sku: string;
+        /**
+         * 
+         */
+        tax_class?: string | null;
     }
 
     /**
@@ -5806,6 +6562,10 @@ export namespace Models {
          * 
          */
         sku?: string;
+        /**
+         * 
+         */
+        tax_class?: string | null;
     }
 
     /**
@@ -6035,17 +6795,33 @@ export namespace Models {
          */
         sku?: string | null;
         /**
+         * Resolved tax class code (from the product, or the market default).
+         */
+        tax_class?: string | null;
+        /**
          * 
          */
         tax_included?: boolean | null;
+        /**
+         * Tax rate % from markets.tax_classes for this market + tax_class.
+         */
+        tax_rate?: number | null;
         /**
          * 
          */
         tiers?: object[];
         /**
-         * 
+         * Stored price as-is (net or gross per tax_included). Prefer unit_price_net/unit_price_gross.
          */
         unit_price?: number | null;
+        /**
+         * Gross unit price (incl. tax).
+         */
+        unit_price_gross?: number | null;
+        /**
+         * Net unit price (excl. tax).
+         */
+        unit_price_net?: number | null;
     }
 
     /**
@@ -6055,7 +6831,11 @@ export namespace Models {
         /**
          * 
          */
-        pages?: object[];
+        menus?: object[] | null;
+        /**
+         * 
+         */
+        pages?: object[] | null;
     }
 
     /**
@@ -6138,6 +6918,10 @@ export namespace Models {
          * 
          */
         pricing_type?: string;
+        /**
+         * 
+         */
+        tax_class?: string | null;
         /**
          * 
          */
@@ -6344,6 +7128,14 @@ export namespace Models {
          * 
          */
         pricing_type?: string;
+        /**
+         * Shipping method tax class (or market default).
+         */
+        tax_class?: string | null;
+        /**
+         * Tax rate % from markets.tax_classes for this market + tax_class.
+         */
+        tax_rate?: number | null;
     }
 
     /**
@@ -6399,6 +7191,24 @@ export namespace Models {
     }
 
     /**
+     * A matrix tier of the new set (from_value → price) — null falls back to 0, position derives from the array order.
+     */
+    export type ShippingRateTierReplaceItem = {
+        /**
+         * Tier threshold (default 0) — the tier with the highest from_value at or below the measured value wins.
+         */
+        from_value?: number | null;
+        /**
+         * Ignored — derived from the array index.
+         */
+        position?: number | null;
+        /**
+         * Price of this tier (default 0).
+         */
+        price?: number | null;
+    }
+
+    /**
      * Partial update — omitted fields keep their current value.
      */
     export type ShippingRateTierUpdateRequest = {
@@ -6423,7 +7233,7 @@ export namespace Models {
         /**
          * The complete new tier set (set semantics) — positions are derived from the array order.
          */
-        tiers: ShippingRateTierCreateRequest[];
+        tiers: ShippingRateTierReplaceItem[];
     }
 
     /**
@@ -6433,27 +7243,31 @@ export namespace Models {
         /**
          * Measure values for attribute matrices, keyed by attribute name.
          */
-        attributes?: object;
+        attributes?: object | null;
         /**
          * Destination ISO 3166-1 alpha-2 code — checked against method country restrictions.
          */
-        country?: string;
+        country?: string | null;
         /**
          * Echoed into the rates (default 'EUR').
          */
-        currency?: string;
+        currency?: string | null;
+        /**
+         * Buyer market for tax resolution (else inferred from country, else first market).
+         */
+        market_id?: string | null;
         /**
          * Order value (default 0) — drives free-above thresholds and order_value matrices.
          */
-        order_value?: number;
+        order_value?: number | null;
         /**
          * Total quantity — measure for quantity matrices.
          */
-        quantity?: number;
+        quantity?: number | null;
         /**
          * Total weight — measure for weight matrices.
          */
-        weight?: number;
+        weight?: number | null;
     }
 
     /**
@@ -6513,7 +7327,7 @@ export namespace Models {
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Physical stock (default 0).
          */
@@ -6521,7 +7335,7 @@ export namespace Models {
         /**
          * Tracked product.
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * 
          */
@@ -6533,7 +7347,7 @@ export namespace Models {
         /**
          * Tracked SKU (alternative to product_id).
          */
-        sku?: string;
+        sku?: string | null;
     }
 
     /**
@@ -6547,7 +7361,7 @@ export namespace Models {
         /**
          * Free-form metadata.
          */
-        metadata?: object;
+        metadata?: object | null;
         /**
          * Physical stock (default 0).
          */
@@ -6555,7 +7369,7 @@ export namespace Models {
         /**
          * Tracked product.
          */
-        product_id?: string;
+        product_id?: string | null;
         /**
          * 
          */
@@ -6567,7 +7381,7 @@ export namespace Models {
         /**
          * Tracked SKU (alternative to product_id).
          */
-        sku?: string;
+        sku?: string | null;
     }
 
     /**
@@ -6614,6 +7428,144 @@ export namespace Models {
          * 
          */
         type?: string;
+    }
+
+    /**
+     * 
+     */
+    export type StoreAssetRequest = {
+        /**
+         * 
+         */
+        alt_text?: string | null;
+        /**
+         * 
+         */
+        description?: string | null;
+        /**
+         * 
+         */
+        display_name?: string | null;
+        /**
+         * 
+         */
+        file: string;
+        /**
+         * 
+         */
+        folder_id?: string | null;
+        /**
+         * 
+         */
+        keep_archive?: boolean | null;
+        /**
+         * 
+         */
+        tags?: string[] | null;
+        /**
+         * Archives only: unpack the members after upload (see AssetController).
+         */
+        unpack?: boolean | null;
+        /**
+         * 
+         */
+        visibility?: StoreAssetRequestVisibility;
+    }
+
+    /**
+     * 
+     */
+    export type SyncHistory = {
+        /**
+         * 
+         */
+        bytes_synced: number | null;
+        /**
+         * 
+         */
+        created_at: string | null;
+        /**
+         * 
+         */
+        duration_ms: number | null;
+        /**
+         * 
+         */
+        error: string | null;
+        /**
+         * 
+         */
+        id: number;
+        /**
+         * 
+         */
+        rule_id: string;
+        /**
+         * 
+         */
+        run_id: string;
+        /**
+         * 
+         */
+        source_path: string;
+        /**
+         * 
+         */
+        status: string;
+        /**
+         * 
+         */
+        target_asset_id: string | null;
+        /**
+         * 
+         */
+        tenant_id: string;
+    }
+
+    /**
+     * 
+     */
+    export type SyncRuleResource = {
+        /**
+         * 
+         */
+        created_at: string;
+        /**
+         * 
+         */
+        enabled: boolean;
+        /**
+         * 
+         */
+        id: string;
+        /**
+         * 
+         */
+        last_run_at: string;
+        /**
+         * 
+         */
+        options: any[];
+        /**
+         * 
+         */
+        schedule: string;
+        /**
+         * 
+         */
+        sftp_account_id: string;
+        /**
+         * 
+         */
+        source_path: string;
+        /**
+         * 
+         */
+        target_folder_id: string | null;
+        /**
+         * 
+         */
+        tenant_id: string;
     }
 
     /**
@@ -7568,20 +8520,6 @@ export namespace Models {
          * Image transformations are enabled.
          */
         transformations: boolean;
-    }
-
-    /**
-     * Buckets List
-     */
-    export type BucketList = {
-        /**
-         * List of buckets.
-         */
-        buckets: Bucket[];
-        /**
-         * Total number of buckets that matched your query.
-         */
-        total: number;
     }
 
     /**

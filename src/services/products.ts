@@ -44,10 +44,11 @@ export class Products {
      * @param {string} params.kind - 
      * @param {string} params.parentId - 
      * @param {object} params.quantifiedAssociations - 
+     * @param {string} params.taxClass - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.Products>}
      */
-    productsCreate(params: { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object }): Promise<Models.Products>;
+    productsCreate(params: { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, taxClass?: string }): Promise<Models.Products>;
     /**
      *
      * @param {string} sku - 
@@ -60,19 +61,20 @@ export class Products {
      * @param {string} kind - 
      * @param {string} parentId - 
      * @param {object} quantifiedAssociations - 
+     * @param {string} taxClass - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.Products>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCreate(sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object): Promise<Models.Products>;
+    productsCreate(sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, taxClass?: string): Promise<Models.Products>;
     productsCreate(
-        paramsOrFirst: { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object } | string,
-        ...rest: [(object)?, (object)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (object)?]    
+        paramsOrFirst: { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, taxClass?: string } | string,
+        ...rest: [(object)?, (object)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?]    
     ): Promise<Models.Products> {
-        let params: { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object };
+        let params: { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, taxClass?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object };
+            params = (paramsOrFirst || {}) as { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, taxClass?: string };
         } else {
             params = {
                 sku: paramsOrFirst as string,
@@ -84,7 +86,8 @@ export class Products {
                 familyVariantId: rest[5] as string,
                 kind: rest[6] as string,
                 parentId: rest[7] as string,
-                quantifiedAssociations: rest[8] as object            
+                quantifiedAssociations: rest[8] as object,
+                taxClass: rest[9] as string            
             };
         }
         
@@ -98,6 +101,7 @@ export class Products {
         const kind = params.kind;
         const parentId = params.parentId;
         const quantifiedAssociations = params.quantifiedAssociations;
+        const taxClass = params.taxClass;
 
         if (typeof sku === 'undefined') {
             throw new RevenexxException('Missing required parameter: "sku"');
@@ -134,6 +138,9 @@ export class Products {
         }
         if (typeof sku !== 'undefined') {
             apiPayload['sku'] = sku;
+        }
+        if (typeof taxClass !== 'undefined') {
+            apiPayload['tax_class'] = taxClass;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1922,6 +1929,64 @@ export class Products {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string[]} params.ids - 
+     * @param {string[]} params.skus - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    productsBatch(params?: { ids?: string[], skus?: string[] }): Promise<{}>;
+    /**
+     *
+     * @param {string[]} ids - 
+     * @param {string[]} skus - 
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsBatch(ids?: string[], skus?: string[]): Promise<{}>;
+    productsBatch(
+        paramsOrFirst?: { ids?: string[], skus?: string[] } | string[],
+        ...rest: [(string[])?]    
+    ): Promise<{}> {
+        let params: { ids?: string[], skus?: string[] };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { ids?: string[], skus?: string[] };
+        } else {
+            params = {
+                ids: paramsOrFirst as string[],
+                skus: rest[0] as string[]            
+            };
+        }
+        
+        const ids = params.ids;
+        const skus = params.skus;
+
+
+        const apiPath = '/v1/products/batch';
+        const apiPayload: Payload = {};
+        if (typeof ids !== 'undefined') {
+            apiPayload['ids'] = ids;
+        }
+        if (typeof skus !== 'undefined') {
+            apiPayload['skus'] = skus;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload
@@ -4554,10 +4619,11 @@ export class Products {
      * @param {string} params.parentId - 
      * @param {object} params.quantifiedAssociations - 
      * @param {string} params.sku - 
+     * @param {string} params.taxClass - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.Products>}
      */
-    productsUpdate(params: { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, sku?: string }): Promise<Models.Products>;
+    productsUpdate(params: { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string }): Promise<Models.Products>;
     /**
      *
      * @param {string} id - 
@@ -4571,19 +4637,20 @@ export class Products {
      * @param {string} parentId - 
      * @param {object} quantifiedAssociations - 
      * @param {string} sku - 
+     * @param {string} taxClass - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.Products>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsUpdate(id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, sku?: string): Promise<Models.Products>;
+    productsUpdate(id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string): Promise<Models.Products>;
     productsUpdate(
-        paramsOrFirst: { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, sku?: string } | string,
-        ...rest: [(object)?, (object)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?]    
+        paramsOrFirst: { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string } | string,
+        ...rest: [(object)?, (object)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (string)?]    
     ): Promise<Models.Products> {
-        let params: { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, sku?: string };
+        let params: { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, sku?: string };
+            params = (paramsOrFirst || {}) as { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: string, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -4596,7 +4663,8 @@ export class Products {
                 kind: rest[6] as string,
                 parentId: rest[7] as string,
                 quantifiedAssociations: rest[8] as object,
-                sku: rest[9] as string            
+                sku: rest[9] as string,
+                taxClass: rest[10] as string            
             };
         }
         
@@ -4611,6 +4679,7 @@ export class Products {
         const parentId = params.parentId;
         const quantifiedAssociations = params.quantifiedAssociations;
         const sku = params.sku;
+        const taxClass = params.taxClass;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
@@ -4647,6 +4716,9 @@ export class Products {
         }
         if (typeof sku !== 'undefined') {
             apiPayload['sku'] = sku;
+        }
+        if (typeof taxClass !== 'undefined') {
+            apiPayload['tax_class'] = taxClass;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
