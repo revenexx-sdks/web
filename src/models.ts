@@ -4239,7 +4239,7 @@ export namespace Models {
         /**
          * 
          */
-        public?: boolean;
+        shared?: boolean;
         /**
          * 
          */
@@ -4281,7 +4281,7 @@ export namespace Models {
         /**
          * Shared read-only across the organization (default false).
          */
-        public?: boolean;
+        shared?: boolean;
     }
 
     /**
@@ -4527,7 +4527,7 @@ export namespace Models {
         /**
          * 
          */
-        public?: boolean;
+        shared?: boolean;
     }
 
     /**
@@ -4573,7 +4573,7 @@ export namespace Models {
         /**
          * 
          */
-        public?: boolean;
+        shared?: boolean;
         /**
          * 
          */

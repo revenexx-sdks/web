@@ -42,11 +42,11 @@ export class Orderlists {
      * @param {OrderListKind} params.kind - List kind (default 'shopping').
      * @param {object} params.metadata - 
      * @param {string} params.organizationId - Owning organization (scopes public sharing).
-     * @param {boolean} params.xpublic - Shared read-only across the organization (default false).
+     * @param {boolean} params.shared - Shared read-only across the organization (default false).
      * @throws {RevenexxException}
      * @returns {Promise<Models.OrderListWithItems>}
      */
-    orderlistsCreate(params: { name: string, ownerId: string, ownerName: string, items?: Models.OrderListItemInput[], kind?: OrderListKind, metadata?: object, organizationId?: string, xpublic?: boolean }): Promise<Models.OrderListWithItems>;
+    orderlistsCreate(params: { name: string, ownerId: string, ownerName: string, items?: Models.OrderListItemInput[], kind?: OrderListKind, metadata?: object, organizationId?: string, shared?: boolean }): Promise<Models.OrderListWithItems>;
     /**
      *
      * @param {string} name - 
@@ -56,20 +56,20 @@ export class Orderlists {
      * @param {OrderListKind} kind - List kind (default 'shopping').
      * @param {object} metadata - 
      * @param {string} organizationId - Owning organization (scopes public sharing).
-     * @param {boolean} xpublic - Shared read-only across the organization (default false).
+     * @param {boolean} shared - Shared read-only across the organization (default false).
      * @throws {RevenexxException}
      * @returns {Promise<Models.OrderListWithItems>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    orderlistsCreate(name: string, ownerId: string, ownerName: string, items?: Models.OrderListItemInput[], kind?: OrderListKind, metadata?: object, organizationId?: string, xpublic?: boolean): Promise<Models.OrderListWithItems>;
+    orderlistsCreate(name: string, ownerId: string, ownerName: string, items?: Models.OrderListItemInput[], kind?: OrderListKind, metadata?: object, organizationId?: string, shared?: boolean): Promise<Models.OrderListWithItems>;
     orderlistsCreate(
-        paramsOrFirst: { name: string, ownerId: string, ownerName: string, items?: Models.OrderListItemInput[], kind?: OrderListKind, metadata?: object, organizationId?: string, xpublic?: boolean } | string,
+        paramsOrFirst: { name: string, ownerId: string, ownerName: string, items?: Models.OrderListItemInput[], kind?: OrderListKind, metadata?: object, organizationId?: string, shared?: boolean } | string,
         ...rest: [(string)?, (string)?, (Models.OrderListItemInput[])?, (OrderListKind)?, (object)?, (string)?, (boolean)?]    
     ): Promise<Models.OrderListWithItems> {
-        let params: { name: string, ownerId: string, ownerName: string, items?: Models.OrderListItemInput[], kind?: OrderListKind, metadata?: object, organizationId?: string, xpublic?: boolean };
+        let params: { name: string, ownerId: string, ownerName: string, items?: Models.OrderListItemInput[], kind?: OrderListKind, metadata?: object, organizationId?: string, shared?: boolean };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { name: string, ownerId: string, ownerName: string, items?: Models.OrderListItemInput[], kind?: OrderListKind, metadata?: object, organizationId?: string, xpublic?: boolean };
+            params = (paramsOrFirst || {}) as { name: string, ownerId: string, ownerName: string, items?: Models.OrderListItemInput[], kind?: OrderListKind, metadata?: object, organizationId?: string, shared?: boolean };
         } else {
             params = {
                 name: paramsOrFirst as string,
@@ -79,7 +79,7 @@ export class Orderlists {
                 kind: rest[3] as OrderListKind,
                 metadata: rest[4] as object,
                 organizationId: rest[5] as string,
-                xpublic: rest[6] as boolean            
+                shared: rest[6] as boolean            
             };
         }
         
@@ -90,7 +90,7 @@ export class Orderlists {
         const kind = params.kind;
         const metadata = params.metadata;
         const organizationId = params.organizationId;
-        const xpublic = params.xpublic;
+        const shared = params.shared;
 
         if (typeof name === 'undefined') {
             throw new RevenexxException('Missing required parameter: "name"');
@@ -125,8 +125,8 @@ export class Orderlists {
         if (typeof ownerName !== 'undefined') {
             apiPayload['owner_name'] = ownerName;
         }
-        if (typeof xpublic !== 'undefined') {
-            apiPayload['public'] = xpublic;
+        if (typeof shared !== 'undefined') {
+            apiPayload['shared'] = shared;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -268,38 +268,38 @@ export class Orderlists {
      * @param {OrderListKind} params.kind - List kind (default 'shopping').
      * @param {object} params.metadata - 
      * @param {string} params.name - 
-     * @param {boolean} params.xpublic - 
+     * @param {boolean} params.shared - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.OrderListWithItems>}
      */
-    orderlistsUpdate(params: { id: string, kind?: OrderListKind, metadata?: object, name?: string, xpublic?: boolean }): Promise<Models.OrderListWithItems>;
+    orderlistsUpdate(params: { id: string, kind?: OrderListKind, metadata?: object, name?: string, shared?: boolean }): Promise<Models.OrderListWithItems>;
     /**
      *
      * @param {string} id - 
      * @param {OrderListKind} kind - List kind (default 'shopping').
      * @param {object} metadata - 
      * @param {string} name - 
-     * @param {boolean} xpublic - 
+     * @param {boolean} shared - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.OrderListWithItems>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    orderlistsUpdate(id: string, kind?: OrderListKind, metadata?: object, name?: string, xpublic?: boolean): Promise<Models.OrderListWithItems>;
+    orderlistsUpdate(id: string, kind?: OrderListKind, metadata?: object, name?: string, shared?: boolean): Promise<Models.OrderListWithItems>;
     orderlistsUpdate(
-        paramsOrFirst: { id: string, kind?: OrderListKind, metadata?: object, name?: string, xpublic?: boolean } | string,
+        paramsOrFirst: { id: string, kind?: OrderListKind, metadata?: object, name?: string, shared?: boolean } | string,
         ...rest: [(OrderListKind)?, (object)?, (string)?, (boolean)?]    
     ): Promise<Models.OrderListWithItems> {
-        let params: { id: string, kind?: OrderListKind, metadata?: object, name?: string, xpublic?: boolean };
+        let params: { id: string, kind?: OrderListKind, metadata?: object, name?: string, shared?: boolean };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, kind?: OrderListKind, metadata?: object, name?: string, xpublic?: boolean };
+            params = (paramsOrFirst || {}) as { id: string, kind?: OrderListKind, metadata?: object, name?: string, shared?: boolean };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 kind: rest[0] as OrderListKind,
                 metadata: rest[1] as object,
                 name: rest[2] as string,
-                xpublic: rest[3] as boolean            
+                shared: rest[3] as boolean            
             };
         }
         
@@ -307,7 +307,7 @@ export class Orderlists {
         const kind = params.kind;
         const metadata = params.metadata;
         const name = params.name;
-        const xpublic = params.xpublic;
+        const shared = params.shared;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
@@ -324,8 +324,8 @@ export class Orderlists {
         if (typeof name !== 'undefined') {
             apiPayload['name'] = name;
         }
-        if (typeof xpublic !== 'undefined') {
-            apiPayload['public'] = xpublic;
+        if (typeof shared !== 'undefined') {
+            apiPayload['shared'] = shared;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

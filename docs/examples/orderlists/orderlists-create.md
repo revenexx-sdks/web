@@ -17,7 +17,7 @@ const result = await orderlists.orderlistsCreate({
     kind: OrderListKind.Shopping, // optional
     metadata: {}, // optional
     organizationId: '', // optional
-    public: null // optional
+    shared: null // optional
 });
 
 console.log(result);

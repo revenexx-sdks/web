@@ -14,7 +14,7 @@ const result = await orderlists.orderlistsUpdate({
     kind: OrderListKind.Shopping, // optional
     metadata: {}, // optional
     name: '', // optional
-    public: null // optional
+    shared: null // optional
 });
 
 console.log(result);
