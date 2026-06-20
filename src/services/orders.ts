@@ -2,6 +2,9 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+import { Status } from '../enums/status';
+import { PaymentStatus } from '../enums/payment-status';
+import { FulfillmentStatus } from '../enums/fulfillment-status';
 import { OrderCommentVisibility } from '../enums/order-comment-visibility';
 import { OrderPaymentStatus } from '../enums/order-payment-status';
 
@@ -14,13 +17,111 @@ export class Orders {
 
     /**
      *
+     * @param {Status} params.status - Filter by order status (exact match).
+     * @param {Payment_status} params.paymentStatus - Filter by payment status (exact match).
+     * @param {Fulfillment_status} params.fulfillmentStatus - Filter by fulfillment status (exact match).
+     * @param {string} params.contactId - Filter to one ordering contact.
+     * @param {string} params.organizationId - Filter to one B2B organization.
+     * @param {string} params.channelId - Filter to one sales channel.
+     * @param {string} params.marketId - Filter to one market.
+     * @param {string} params.number - Filter by exact order number.
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    ordersList(): Promise<{}> {
+    ordersList(params?: { status?: Status, paymentStatus?: Payment_status, fulfillmentStatus?: Fulfillment_status, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {Status} status - Filter by order status (exact match).
+     * @param {Payment_status} paymentStatus - Filter by payment status (exact match).
+     * @param {Fulfillment_status} fulfillmentStatus - Filter by fulfillment status (exact match).
+     * @param {string} contactId - Filter to one ordering contact.
+     * @param {string} organizationId - Filter to one B2B organization.
+     * @param {string} channelId - Filter to one sales channel.
+     * @param {string} marketId - Filter to one market.
+     * @param {string} number - Filter by exact order number.
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    ordersList(status?: Status, paymentStatus?: Payment_status, fulfillmentStatus?: Fulfillment_status, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    ordersList(
+        paramsOrFirst?: { status?: Status, paymentStatus?: Payment_status, fulfillmentStatus?: Fulfillment_status, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string } | Status,
+        ...rest: [(Payment_status)?, (Fulfillment_status)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { status?: Status, paymentStatus?: Payment_status, fulfillmentStatus?: Fulfillment_status, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('status' in paramsOrFirst || 'paymentStatus' in paramsOrFirst || 'fulfillmentStatus' in paramsOrFirst || 'contactId' in paramsOrFirst || 'organizationId' in paramsOrFirst || 'channelId' in paramsOrFirst || 'marketId' in paramsOrFirst || 'number' in paramsOrFirst || 'limit' in paramsOrFirst || 'offset' in paramsOrFirst || 'order' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { status?: Status, paymentStatus?: Payment_status, fulfillmentStatus?: Fulfillment_status, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                status: paramsOrFirst as Status,
+                paymentStatus: rest[0] as Payment_status,
+                fulfillmentStatus: rest[1] as Fulfillment_status,
+                contactId: rest[2] as string,
+                organizationId: rest[3] as string,
+                channelId: rest[4] as string,
+                marketId: rest[5] as string,
+                number: rest[6] as string,
+                limit: rest[7] as number,
+                offset: rest[8] as number,
+                order: rest[9] as string            
+            };
+        }
+        
+        const status = params.status;
+        const paymentStatus = params.paymentStatus;
+        const fulfillmentStatus = params.fulfillmentStatus;
+        const contactId = params.contactId;
+        const organizationId = params.organizationId;
+        const channelId = params.channelId;
+        const marketId = params.marketId;
+        const number = params.number;
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/orders';
         const apiPayload: Payload = {};
+        if (typeof status !== 'undefined') {
+            apiPayload['status'] = status;
+        }
+        if (typeof paymentStatus !== 'undefined') {
+            apiPayload['payment_status'] = paymentStatus;
+        }
+        if (typeof fulfillmentStatus !== 'undefined') {
+            apiPayload['fulfillment_status'] = fulfillmentStatus;
+        }
+        if (typeof contactId !== 'undefined') {
+            apiPayload['contact_id'] = contactId;
+        }
+        if (typeof organizationId !== 'undefined') {
+            apiPayload['organization_id'] = organizationId;
+        }
+        if (typeof channelId !== 'undefined') {
+            apiPayload['channel_id'] = channelId;
+        }
+        if (typeof marketId !== 'undefined') {
+            apiPayload['market_id'] = marketId;
+        }
+        if (typeof number !== 'undefined') {
+            apiPayload['number'] = number;
+        }
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Orders } from "@revenexx/sdk";
+import { Client, Orders, Status, PaymentStatus, FulfillmentStatus } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -9,7 +9,19 @@ const client = new Client()
 
 const orders = new Orders(client);
 
-const result = await orders.ordersList();
+const result = await orders.ordersList({
+    status: Status.Pending, // optional
+    paymentStatus: PaymentStatus.Open, // optional
+    fulfillmentStatus: FulfillmentStatus.Unfulfilled, // optional
+    contactId: '', // optional
+    organizationId: '', // optional
+    channelId: '', // optional
+    marketId: '', // optional
+    number: '', // optional
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```
