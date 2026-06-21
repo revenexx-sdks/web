@@ -328,7 +328,7 @@ export class Search {
         const apiPath = '/v1/search/multi_search';
         const apiPayload: Payload = {};
         if (typeof searches !== 'undefined') {
-            apiPayload['searches'] = searches;
+            apiPayload['searches'] = Client.toWireKeys(searches, {"facetBy":{"wire":"facet_by","children":null},"filterBy":{"wire":"filter_by","children":null},"perPage":{"wire":"per_page","children":null},"queryBy":{"wire":"query_by","children":null},"sortBy":{"wire":"sort_by","children":null}});
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

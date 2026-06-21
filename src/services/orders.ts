@@ -2,8 +2,10 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
-import { OrderCommentVisibility } from '../enums/order-comment-visibility';
+import { OrderStatus } from '../enums/order-status';
 import { OrderPaymentStatus } from '../enums/order-payment-status';
+import { OrderFulfillmentStatus } from '../enums/order-fulfillment-status';
+import { OrderCommentVisibility } from '../enums/order-comment-visibility';
 
 export class Orders {
     client: Client;
@@ -14,9 +16,9 @@ export class Orders {
 
     /**
      *
-     * @param {string} params.status - Filter by order status (exact match): pending | placed | in_fulfillment | completed | cancelled.
-     * @param {string} params.paymentStatus - Filter by payment status (exact match): open | pending | authorized | paid | partially_paid | refunded | failed.
-     * @param {string} params.fulfillmentStatus - Filter by fulfillment status (exact match): unfulfilled | partial | fulfilled.
+     * @param {OrderStatus} params.status - Filter by order status (exact match).
+     * @param {OrderPaymentStatus} params.paymentStatus - Filter by payment status (exact match).
+     * @param {OrderFulfillmentStatus} params.fulfillmentStatus - Filter by fulfillment status (exact match).
      * @param {string} params.contactId - Filter to one ordering contact.
      * @param {string} params.organizationId - Filter to one B2B organization.
      * @param {string} params.channelId - Filter to one sales channel.
@@ -28,12 +30,12 @@ export class Orders {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    ordersList(params?: { status?: string, paymentStatus?: string, fulfillmentStatus?: string, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    ordersList(params?: { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      *
-     * @param {string} status - Filter by order status (exact match): pending | placed | in_fulfillment | completed | cancelled.
-     * @param {string} paymentStatus - Filter by payment status (exact match): open | pending | authorized | paid | partially_paid | refunded | failed.
-     * @param {string} fulfillmentStatus - Filter by fulfillment status (exact match): unfulfilled | partial | fulfilled.
+     * @param {OrderStatus} status - Filter by order status (exact match).
+     * @param {OrderPaymentStatus} paymentStatus - Filter by payment status (exact match).
+     * @param {OrderFulfillmentStatus} fulfillmentStatus - Filter by fulfillment status (exact match).
      * @param {string} contactId - Filter to one ordering contact.
      * @param {string} organizationId - Filter to one B2B organization.
      * @param {string} channelId - Filter to one sales channel.
@@ -46,20 +48,20 @@ export class Orders {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersList(status?: string, paymentStatus?: string, fulfillmentStatus?: string, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    ordersList(status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     ordersList(
-        paramsOrFirst?: { status?: string, paymentStatus?: string, fulfillmentStatus?: string, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string } | OrderStatus,
+        ...rest: [(OrderPaymentStatus)?, (OrderFulfillmentStatus)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { status?: string, paymentStatus?: string, fulfillmentStatus?: string, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string };
+        let params: { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string };
         
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { status?: string, paymentStatus?: string, fulfillmentStatus?: string, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string };
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('status' in paramsOrFirst || 'paymentStatus' in paramsOrFirst || 'fulfillmentStatus' in paramsOrFirst || 'contactId' in paramsOrFirst || 'organizationId' in paramsOrFirst || 'channelId' in paramsOrFirst || 'marketId' in paramsOrFirst || 'number' in paramsOrFirst || 'limit' in paramsOrFirst || 'offset' in paramsOrFirst || 'order' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
-                status: paramsOrFirst as string,
-                paymentStatus: rest[0] as string,
-                fulfillmentStatus: rest[1] as string,
+                status: paramsOrFirst as OrderStatus,
+                paymentStatus: rest[0] as OrderPaymentStatus,
+                fulfillmentStatus: rest[1] as OrderFulfillmentStatus,
                 contactId: rest[2] as string,
                 organizationId: rest[3] as string,
                 channelId: rest[4] as string,
@@ -624,7 +626,7 @@ export class Orders {
             apiPayload['grand_total'] = grandTotal;
         }
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = items;
+            apiPayload['items'] = Client.toWireKeys(items, {"costCenter":{"wire":"cost_center","children":null},"positionText":{"wire":"position_text","children":null},"productId":{"wire":"product_id","children":null},"taxAmount":{"wire":"tax_amount","children":null},"taxRate":{"wire":"tax_rate","children":null},"unitPrice":{"wire":"unit_price","children":null},"userData":{"wire":"user_data","children":null}});
         }
         if (typeof marketId !== 'undefined') {
             apiPayload['market_id'] = marketId;
@@ -1216,7 +1218,7 @@ export class Orders {
             apiPayload['cancelled_by'] = cancelledBy;
         }
         if (typeof positions !== 'undefined') {
-            apiPayload['positions'] = positions;
+            apiPayload['positions'] = Client.toWireKeys(positions, {"orderItemId":{"wire":"order_item_id","children":null}});
         }
         if (typeof reason !== 'undefined') {
             apiPayload['reason'] = reason;
@@ -1359,7 +1361,7 @@ export class Orders {
             apiPayload['metadata'] = metadata;
         }
         if (typeof positions !== 'undefined') {
-            apiPayload['positions'] = positions;
+            apiPayload['positions'] = Client.toWireKeys(positions, {"orderItemId":{"wire":"order_item_id","children":null}});
         }
         if (typeof reason !== 'undefined') {
             apiPayload['reason'] = reason;
@@ -1658,7 +1660,7 @@ export class Orders {
             apiPayload['number'] = number;
         }
         if (typeof positions !== 'undefined') {
-            apiPayload['positions'] = positions;
+            apiPayload['positions'] = Client.toWireKeys(positions, {"orderItemId":{"wire":"order_item_id","children":null}});
         }
         if (typeof shippedAt !== 'undefined') {
             apiPayload['shipped_at'] = shippedAt;

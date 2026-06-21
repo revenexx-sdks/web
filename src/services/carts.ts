@@ -957,7 +957,7 @@ export class Carts {
         const apiPath = '/v1/carts/{cart_id}/items'.replace('{cart_id}', cartId);
         const apiPayload: Payload = {};
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = items;
+            apiPayload['items'] = Client.toWireKeys(items, {"productId":{"wire":"product_id","children":null},"taxRate":{"wire":"tax_rate","children":null},"unitPrice":{"wire":"unit_price","children":null}});
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

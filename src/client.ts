@@ -388,7 +388,7 @@ class Client {
         'x-sdk-name': 'Revenexx Web',
         'x-sdk-platform': '',
         'x-sdk-language': 'web',
-        'x-sdk-version': '0.0.9',
+        'x-sdk-version': '0.0.10',
     };
 
     /**
@@ -925,6 +925,35 @@ class Client {
         }
 
         return data;
+    }
+
+    /**
+     * Recursively renames an argument's DECLARED keys to their snake_case wire
+     * names, using a map generated from the API contract. Free-form subtrees
+     * (metadata / user_data — keys absent from the map, with no `children`) are
+     * passed through untouched, so user data is never mangled. For arrays the
+     * same element map is applied to every item.
+     */
+    static toWireKeys(value: any, map: Record<string, { wire: string, children: any }>): any {
+        if (Array.isArray(value)) {
+            return value.map((item) => Client.toWireKeys(item, map));
+        }
+        if (
+            value === null
+            || typeof value !== 'object'
+            || value instanceof File
+            || value instanceof Blob
+            || value instanceof Date
+        ) {
+            return value;
+        }
+        const output: Record<string, any> = {};
+        for (const [key, item] of Object.entries(value)) {
+            const entry = map[key];
+            const wireKey = entry ? entry.wire : key;
+            output[wireKey] = (entry && entry.children) ? Client.toWireKeys(item, entry.children) : item;
+        }
+        return output;
     }
 
     static flatten(data: Payload, prefix = ''): Payload {

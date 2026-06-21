@@ -687,7 +687,7 @@ export class Prices {
         const apiPath = '/v1/prices/lists/{list_id}/entries'.replace('{list_id}', listId);
         const apiPayload: Payload = {};
         if (typeof entries !== 'undefined') {
-            apiPayload['entries'] = entries;
+            apiPayload['entries'] = Client.toWireKeys(entries, {"priceType":{"wire":"price_type","children":null},"productId":{"wire":"product_id","children":null},"quantityMin":{"wire":"quantity_min","children":null},"unitPrice":{"wire":"unit_price","children":null},"validFrom":{"wire":"valid_from","children":null},"validUntil":{"wire":"valid_until","children":null}});
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -748,7 +748,7 @@ export class Prices {
         const apiPath = '/v1/prices/lists/{list_id}/entries/bulk'.replace('{list_id}', listId);
         const apiPayload: Payload = {};
         if (typeof entries !== 'undefined') {
-            apiPayload['entries'] = entries;
+            apiPayload['entries'] = Client.toWireKeys(entries, {"priceType":{"wire":"price_type","children":null},"productId":{"wire":"product_id","children":null},"quantityMin":{"wire":"quantity_min","children":null},"unitPrice":{"wire":"unit_price","children":null},"validFrom":{"wire":"valid_from","children":null},"validUntil":{"wire":"valid_until","children":null}});
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1073,7 +1073,7 @@ export class Prices {
             apiPayload['currency'] = currency;
         }
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = items;
+            apiPayload['items'] = Client.toWireKeys(items, {"productId":{"wire":"product_id","children":null}});
         }
         if (typeof marketId !== 'undefined') {
             apiPayload['market_id'] = marketId;

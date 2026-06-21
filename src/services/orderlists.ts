@@ -105,7 +105,7 @@ export class Orderlists {
         const apiPath = '/v1/orderlists';
         const apiPayload: Payload = {};
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = items;
+            apiPayload['items'] = Client.toWireKeys(items, {"categorySlug":{"wire":"category_slug","children":null},"costCenterId":{"wire":"cost_center_id","children":null},"customSku":{"wire":"custom_sku","children":null},"positionTexts":{"wire":"position_texts","children":null},"productId":{"wire":"product_id","children":null},"subcategorySlug":{"wire":"subcategory_slug","children":null},"taxRate":{"wire":"tax_rate","children":null}});
         }
         if (typeof kind !== 'undefined') {
             apiPayload['kind'] = kind;
@@ -594,7 +594,7 @@ export class Orderlists {
         const apiPath = '/v1/orderlists/{list_id}/items'.replace('{list_id}', listId);
         const apiPayload: Payload = {};
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = items;
+            apiPayload['items'] = Client.toWireKeys(items, {"categorySlug":{"wire":"category_slug","children":null},"costCenterId":{"wire":"cost_center_id","children":null},"customSku":{"wire":"custom_sku","children":null},"positionTexts":{"wire":"position_texts","children":null},"productId":{"wire":"product_id","children":null},"subcategorySlug":{"wire":"subcategory_slug","children":null},"taxRate":{"wire":"tax_rate","children":null}});
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

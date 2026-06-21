@@ -60,7 +60,7 @@ export class Inventories {
         const apiPath = '/v1/inventories/adjust';
         const apiPayload: Payload = {};
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = items;
+            apiPayload['items'] = Client.toWireKeys(items, {"productId":{"wire":"product_id","children":null}});
         }
         if (typeof locationCode !== 'undefined') {
             apiPayload['location_code'] = locationCode;
@@ -124,7 +124,7 @@ export class Inventories {
         const apiPath = '/v1/inventories/availability';
         const apiPayload: Payload = {};
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = items;
+            apiPayload['items'] = Client.toWireKeys(items, {"productId":{"wire":"product_id","children":null}});
         }
         if (typeof locationCode !== 'undefined') {
             apiPayload['location_code'] = locationCode;
@@ -668,7 +668,7 @@ export class Inventories {
         const apiPath = '/v1/inventories/receive';
         const apiPayload: Payload = {};
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = items;
+            apiPayload['items'] = Client.toWireKeys(items, {"productId":{"wire":"product_id","children":null}});
         }
         if (typeof locationCode !== 'undefined') {
             apiPayload['location_code'] = locationCode;
@@ -866,7 +866,7 @@ export class Inventories {
             apiPayload['expires_at'] = expiresAt;
         }
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = items;
+            apiPayload['items'] = Client.toWireKeys(items, {"productId":{"wire":"product_id","children":null}});
         }
         if (typeof orderRef !== 'undefined') {
             apiPayload['order_ref'] = orderRef;
@@ -935,7 +935,7 @@ export class Inventories {
         const apiPath = '/v1/inventories/restock';
         const apiPayload: Payload = {};
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = items;
+            apiPayload['items'] = Client.toWireKeys(items, {"productId":{"wire":"product_id","children":null}});
         }
         if (typeof locationCode !== 'undefined') {
             apiPayload['location_code'] = locationCode;

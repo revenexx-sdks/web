@@ -659,7 +659,7 @@ export class Shipping {
         const apiPath = '/v1/shipping/methods/{method_id}/tiers'.replace('{method_id}', methodId);
         const apiPayload: Payload = {};
         if (typeof tiers !== 'undefined') {
-            apiPayload['tiers'] = tiers;
+            apiPayload['tiers'] = Client.toWireKeys(tiers, {"fromValue":{"wire":"from_value","children":null}});
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
