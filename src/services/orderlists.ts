@@ -13,13 +13,76 @@ export class Orderlists {
 
     /**
      *
+     * @param {string} params.ownerId - Filter to one owning contact.
+     * @param {string} params.organizationId - Filter to one organization.
+     * @param {string} params.kind - Filter by list kind (shopping | label).
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    orderlistsList(): Promise<{}> {
+    orderlistsList(params?: { ownerId?: string, organizationId?: string, kind?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} ownerId - Filter to one owning contact.
+     * @param {string} organizationId - Filter to one organization.
+     * @param {string} kind - Filter by list kind (shopping | label).
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    orderlistsList(ownerId?: string, organizationId?: string, kind?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    orderlistsList(
+        paramsOrFirst?: { ownerId?: string, organizationId?: string, kind?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (number)?, (number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { ownerId?: string, organizationId?: string, kind?: string, limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { ownerId?: string, organizationId?: string, kind?: string, limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                ownerId: paramsOrFirst as string,
+                organizationId: rest[0] as string,
+                kind: rest[1] as string,
+                limit: rest[2] as number,
+                offset: rest[3] as number,
+                order: rest[4] as string            
+            };
+        }
+        
+        const ownerId = params.ownerId;
+        const organizationId = params.organizationId;
+        const kind = params.kind;
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/orderlists';
         const apiPayload: Payload = {};
+        if (typeof ownerId !== 'undefined') {
+            apiPayload['owner_id'] = ownerId;
+        }
+        if (typeof organizationId !== 'undefined') {
+            apiPayload['organization_id'] = organizationId;
+        }
+        if (typeof kind !== 'undefined') {
+            apiPayload['kind'] = kind;
+        }
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {

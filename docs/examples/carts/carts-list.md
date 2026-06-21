@@ -9,7 +9,14 @@ const client = new Client()
 
 const carts = new Carts(client);
 
-const result = await carts.cartsList();
+const result = await carts.cartsList({
+    contactId: '', // optional
+    sessionKey: '', // optional
+    status: '', // optional
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```

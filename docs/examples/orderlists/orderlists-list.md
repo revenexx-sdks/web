@@ -9,7 +9,14 @@ const client = new Client()
 
 const orderlists = new Orderlists(client);
 
-const result = await orderlists.orderlistsList();
+const result = await orderlists.orderlistsList({
+    ownerId: '', // optional
+    organizationId: '', // optional
+    kind: '', // optional
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```

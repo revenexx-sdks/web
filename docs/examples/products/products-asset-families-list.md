@@ -9,7 +9,11 @@ const client = new Client()
 
 const products = new Products(client);
 
-const result = await products.productsAssetFamiliesList();
+const result = await products.productsAssetFamiliesList({
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```

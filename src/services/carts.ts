@@ -18,13 +18,76 @@ export class Carts {
 
     /**
      *
+     * @param {string} params.contactId - Filter to one owning contact.
+     * @param {string} params.sessionKey - Filter to one guest session.
+     * @param {string} params.status - Filter by cart status (e.g. active).
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    cartsList(): Promise<{}> {
+    cartsList(params?: { contactId?: string, sessionKey?: string, status?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} contactId - Filter to one owning contact.
+     * @param {string} sessionKey - Filter to one guest session.
+     * @param {string} status - Filter by cart status (e.g. active).
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    cartsList(contactId?: string, sessionKey?: string, status?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    cartsList(
+        paramsOrFirst?: { contactId?: string, sessionKey?: string, status?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (number)?, (number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { contactId?: string, sessionKey?: string, status?: string, limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { contactId?: string, sessionKey?: string, status?: string, limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                contactId: paramsOrFirst as string,
+                sessionKey: rest[0] as string,
+                status: rest[1] as string,
+                limit: rest[2] as number,
+                offset: rest[3] as number,
+                order: rest[4] as string            
+            };
+        }
+        
+        const contactId = params.contactId;
+        const sessionKey = params.sessionKey;
+        const status = params.status;
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/carts';
         const apiPayload: Payload = {};
+        if (typeof contactId !== 'undefined') {
+            apiPayload['contact_id'] = contactId;
+        }
+        if (typeof sessionKey !== 'undefined') {
+            apiPayload['session_key'] = sessionKey;
+        }
+        if (typeof status !== 'undefined') {
+            apiPayload['status'] = status;
+        }
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {

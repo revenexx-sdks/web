@@ -9,7 +9,13 @@ const client = new Client()
 
 const customers = new Customers(client);
 
-const result = await customers.customersAddressesList();
+const result = await customers.customersAddressesList({
+    contactId: '', // optional
+    organizationId: '', // optional
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```

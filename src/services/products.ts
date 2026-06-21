@@ -12,13 +12,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsList(): Promise<{}> {
+    productsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -158,13 +200,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAssetFamiliesList(): Promise<{}> {
+    productsAssetFamiliesList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsAssetFamiliesList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsAssetFamiliesList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/asset_families';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -418,13 +502,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAssetsList(): Promise<{}> {
+    productsAssetsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsAssetsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsAssetsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/assets';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -695,13 +821,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAssociationTypesList(): Promise<{}> {
+    productsAssociationTypesList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsAssociationTypesList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsAssociationTypesList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/association_types';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -969,13 +1137,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAttributeGroupsList(): Promise<{}> {
+    productsAttributeGroupsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsAttributeGroupsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsAttributeGroupsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/attribute_groups';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1229,13 +1439,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAttributeOptionsList(): Promise<{}> {
+    productsAttributeOptionsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsAttributeOptionsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsAttributeOptionsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/attribute_options';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1520,13 +1772,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAttributesList(): Promise<{}> {
+    productsAttributesList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsAttributesList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsAttributesList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/attributes';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1995,13 +2289,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsCategoriesList(): Promise<{}> {
+    productsCategoriesList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsCategoriesList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsCategoriesList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/categories';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -2297,13 +2633,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsFamiliesList(): Promise<{}> {
+    productsFamiliesList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsFamiliesList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsFamiliesList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/families';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -2571,13 +2949,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsFamilyAttributesList(): Promise<{}> {
+    productsFamilyAttributesList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsFamilyAttributesList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsFamilyAttributesList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/family_attributes';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -2862,13 +3282,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsFamilyVariantsList(): Promise<{}> {
+    productsFamilyVariantsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsFamilyVariantsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsFamilyVariantsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/family_variants';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -3139,13 +3601,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsMeasurementFamiliesList(): Promise<{}> {
+    productsMeasurementFamiliesList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsMeasurementFamiliesList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsMeasurementFamiliesList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/measurement_families';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -3416,13 +3920,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsProductAssociationsList(): Promise<{}> {
+    productsProductAssociationsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsProductAssociationsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsProductAssociationsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/product_associations';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -3710,13 +4256,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsProductCategoriesList(): Promise<{}> {
+    productsProductCategoriesList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsProductCategoriesList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsProductCategoriesList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/product_categories';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -3973,13 +4561,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsReferenceEntitiesList(): Promise<{}> {
+    productsReferenceEntitiesList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsReferenceEntitiesList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsReferenceEntitiesList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/reference_entities';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -4233,13 +4863,55 @@ export class Products {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsReferenceEntityRecordsList(): Promise<{}> {
+    productsReferenceEntityRecordsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsReferenceEntityRecordsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    productsReferenceEntityRecordsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/products/reference_entity_records';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
