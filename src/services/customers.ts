@@ -907,13 +907,83 @@ export class Customers {
 
     /**
      *
+     * @param {string} params.organizationId - Filter to one organization.
+     * @param {string} params.role - Filter by role (buyer | approver | admin | requester).
+     * @param {string} params.status - Filter by status (invited | active | blocked).
+     * @param {string} params.email - Filter by exact email.
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    customersContactsList(): Promise<{}> {
+    customersContactsList(params?: { organizationId?: string, role?: string, status?: string, email?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {string} organizationId - Filter to one organization.
+     * @param {string} role - Filter by role (buyer | approver | admin | requester).
+     * @param {string} status - Filter by status (invited | active | blocked).
+     * @param {string} email - Filter by exact email.
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactsList(organizationId?: string, role?: string, status?: string, email?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    customersContactsList(
+        paramsOrFirst?: { organizationId?: string, role?: string, status?: string, email?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { organizationId?: string, role?: string, status?: string, email?: string, limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { organizationId?: string, role?: string, status?: string, email?: string, limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                organizationId: paramsOrFirst as string,
+                role: rest[0] as string,
+                status: rest[1] as string,
+                email: rest[2] as string,
+                limit: rest[3] as number,
+                offset: rest[4] as number,
+                order: rest[5] as string            
+            };
+        }
+        
+        const organizationId = params.organizationId;
+        const role = params.role;
+        const status = params.status;
+        const email = params.email;
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/customers/contacts';
         const apiPayload: Payload = {};
+        if (typeof organizationId !== 'undefined') {
+            apiPayload['organization_id'] = organizationId;
+        }
+        if (typeof role !== 'undefined') {
+            apiPayload['role'] = role;
+        }
+        if (typeof status !== 'undefined') {
+            apiPayload['status'] = status;
+        }
+        if (typeof email !== 'undefined') {
+            apiPayload['email'] = email;
+        }
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {

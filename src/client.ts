@@ -388,7 +388,7 @@ class Client {
         'x-sdk-name': 'Revenexx Web',
         'x-sdk-platform': '',
         'x-sdk-language': 'web',
-        'x-sdk-version': '0.0.11',
+        'x-sdk-version': '0.0.12',
     };
 
     /**
