@@ -18,10 +18,10 @@ const result = await prices.pricesListsCreate({
     description: '', // optional
     isDefault: null, // optional
     labels: {}, // optional
-    marketId: '', // optional
     metadata: {}, // optional
     organizationId: '', // optional
     priority: null, // optional
+    requiresAuth: null, // optional
     status: PriceListStatus.Active, // optional
     taxIncluded: null, // optional
     validFrom: '', // optional

@@ -86,10 +86,10 @@ export class Prices {
      * @param {string} params.description - 
      * @param {boolean} params.isDefault - Default lists resolve last within their group.
      * @param {object} params.labels - Localised names ({de, en, …}).
-     * @param {string} params.marketId - Scope: only this market.
      * @param {object} params.metadata - Free-form metadata.
      * @param {string} params.organizationId - Scope: only this organization.
      * @param {number} params.priority - Tie-breaker within a specificity group (higher wins, default 0).
+     * @param {boolean} params.requiresAuth - Gate: when true the list resolves only for an authenticated buyer (contact or organization context); anonymous resolve calls get on_request. Default false (open to everyone).
      * @param {PriceListStatus} params.status - Default 'active' — only active lists resolve.
      * @param {boolean} params.taxIncluded - Gross (true) or net (false, default) prices.
      * @param {string} params.validFrom - Validity window start.
@@ -97,7 +97,7 @@ export class Prices {
      * @throws {RevenexxException}
      * @returns {Promise<Models.PriceList>}
      */
-    pricesListsCreate(params: { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, marketId?: string, metadata?: object, organizationId?: string, priority?: number, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string }): Promise<Models.PriceList>;
+    pricesListsCreate(params: { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string }): Promise<Models.PriceList>;
     /**
      *
      * @param {string} code - Unique list code per tenant.
@@ -108,10 +108,10 @@ export class Prices {
      * @param {string} description - 
      * @param {boolean} isDefault - Default lists resolve last within their group.
      * @param {object} labels - Localised names ({de, en, …}).
-     * @param {string} marketId - Scope: only this market.
      * @param {object} metadata - Free-form metadata.
      * @param {string} organizationId - Scope: only this organization.
      * @param {number} priority - Tie-breaker within a specificity group (higher wins, default 0).
+     * @param {boolean} requiresAuth - Gate: when true the list resolves only for an authenticated buyer (contact or organization context); anonymous resolve calls get on_request. Default false (open to everyone).
      * @param {PriceListStatus} status - Default 'active' — only active lists resolve.
      * @param {boolean} taxIncluded - Gross (true) or net (false, default) prices.
      * @param {string} validFrom - Validity window start.
@@ -120,15 +120,15 @@ export class Prices {
      * @returns {Promise<Models.PriceList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesListsCreate(code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, marketId?: string, metadata?: object, organizationId?: string, priority?: number, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string): Promise<Models.PriceList>;
+    pricesListsCreate(code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string): Promise<Models.PriceList>;
     pricesListsCreate(
-        paramsOrFirst: { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, marketId?: string, metadata?: object, organizationId?: string, priority?: number, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (object)?, (string)?, (object)?, (string)?, (number)?, (PriceListStatus)?, (boolean)?, (string)?, (string)?]    
+        paramsOrFirst: { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (object)?, (object)?, (string)?, (number)?, (boolean)?, (PriceListStatus)?, (boolean)?, (string)?, (string)?]    
     ): Promise<Models.PriceList> {
-        let params: { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, marketId?: string, metadata?: object, organizationId?: string, priority?: number, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string };
+        let params: { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, marketId?: string, metadata?: object, organizationId?: string, priority?: number, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string };
+            params = (paramsOrFirst || {}) as { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
@@ -139,10 +139,10 @@ export class Prices {
                 description: rest[4] as string,
                 isDefault: rest[5] as boolean,
                 labels: rest[6] as object,
-                marketId: rest[7] as string,
-                metadata: rest[8] as object,
-                organizationId: rest[9] as string,
-                priority: rest[10] as number,
+                metadata: rest[7] as object,
+                organizationId: rest[8] as string,
+                priority: rest[9] as number,
+                requiresAuth: rest[10] as boolean,
                 status: rest[11] as PriceListStatus,
                 taxIncluded: rest[12] as boolean,
                 validFrom: rest[13] as string,
@@ -158,10 +158,10 @@ export class Prices {
         const description = params.description;
         const isDefault = params.isDefault;
         const labels = params.labels;
-        const marketId = params.marketId;
         const metadata = params.metadata;
         const organizationId = params.organizationId;
         const priority = params.priority;
+        const requiresAuth = params.requiresAuth;
         const status = params.status;
         const taxIncluded = params.taxIncluded;
         const validFrom = params.validFrom;
@@ -197,9 +197,6 @@ export class Prices {
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
         }
-        if (typeof marketId !== 'undefined') {
-            apiPayload['market_id'] = marketId;
-        }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
         }
@@ -211,6 +208,9 @@ export class Prices {
         }
         if (typeof priority !== 'undefined') {
             apiPayload['priority'] = priority;
+        }
+        if (typeof requiresAuth !== 'undefined') {
+            apiPayload['requires_auth'] = requiresAuth;
         }
         if (typeof status !== 'undefined') {
             apiPayload['status'] = status;
@@ -368,11 +368,11 @@ export class Prices {
      * @param {string} params.description - 
      * @param {boolean} params.isDefault - Default lists resolve last within their group.
      * @param {object} params.labels - Localised names ({de, en, …}).
-     * @param {string} params.marketId - Scope: only this market.
      * @param {object} params.metadata - Free-form metadata.
      * @param {string} params.name - 
      * @param {string} params.organizationId - Scope: only this organization.
      * @param {number} params.priority - Tie-breaker within a specificity group (higher wins, default 0).
+     * @param {boolean} params.requiresAuth - Gate: when true the list resolves only for an authenticated buyer (contact or organization context); anonymous resolve calls get on_request. Default false (open to everyone).
      * @param {PriceListStatus} params.status - Default 'active' — only active lists resolve.
      * @param {boolean} params.taxIncluded - Gross (true) or net (false, default) prices.
      * @param {string} params.validFrom - Validity window start.
@@ -380,7 +380,7 @@ export class Prices {
      * @throws {RevenexxException}
      * @returns {Promise<Models.PriceList>}
      */
-    pricesListsUpdate(params: { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, marketId?: string, metadata?: object, name?: string, organizationId?: string, priority?: number, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string }): Promise<Models.PriceList>;
+    pricesListsUpdate(params: { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string }): Promise<Models.PriceList>;
     /**
      *
      * @param {string} id - 
@@ -391,11 +391,11 @@ export class Prices {
      * @param {string} description - 
      * @param {boolean} isDefault - Default lists resolve last within their group.
      * @param {object} labels - Localised names ({de, en, …}).
-     * @param {string} marketId - Scope: only this market.
      * @param {object} metadata - Free-form metadata.
      * @param {string} name - 
      * @param {string} organizationId - Scope: only this organization.
      * @param {number} priority - Tie-breaker within a specificity group (higher wins, default 0).
+     * @param {boolean} requiresAuth - Gate: when true the list resolves only for an authenticated buyer (contact or organization context); anonymous resolve calls get on_request. Default false (open to everyone).
      * @param {PriceListStatus} status - Default 'active' — only active lists resolve.
      * @param {boolean} taxIncluded - Gross (true) or net (false, default) prices.
      * @param {string} validFrom - Validity window start.
@@ -404,15 +404,15 @@ export class Prices {
      * @returns {Promise<Models.PriceList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesListsUpdate(id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, marketId?: string, metadata?: object, name?: string, organizationId?: string, priority?: number, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string): Promise<Models.PriceList>;
+    pricesListsUpdate(id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string): Promise<Models.PriceList>;
     pricesListsUpdate(
-        paramsOrFirst: { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, marketId?: string, metadata?: object, name?: string, organizationId?: string, priority?: number, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (object)?, (string)?, (object)?, (string)?, (string)?, (number)?, (PriceListStatus)?, (boolean)?, (string)?, (string)?]    
+        paramsOrFirst: { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (object)?, (object)?, (string)?, (string)?, (number)?, (boolean)?, (PriceListStatus)?, (boolean)?, (string)?, (string)?]    
     ): Promise<Models.PriceList> {
-        let params: { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, marketId?: string, metadata?: object, name?: string, organizationId?: string, priority?: number, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string };
+        let params: { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, marketId?: string, metadata?: object, name?: string, organizationId?: string, priority?: number, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string };
+            params = (paramsOrFirst || {}) as { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxIncluded?: boolean, validFrom?: string, validUntil?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -423,11 +423,11 @@ export class Prices {
                 description: rest[4] as string,
                 isDefault: rest[5] as boolean,
                 labels: rest[6] as object,
-                marketId: rest[7] as string,
-                metadata: rest[8] as object,
-                name: rest[9] as string,
-                organizationId: rest[10] as string,
-                priority: rest[11] as number,
+                metadata: rest[7] as object,
+                name: rest[8] as string,
+                organizationId: rest[9] as string,
+                priority: rest[10] as number,
+                requiresAuth: rest[11] as boolean,
                 status: rest[12] as PriceListStatus,
                 taxIncluded: rest[13] as boolean,
                 validFrom: rest[14] as string,
@@ -443,11 +443,11 @@ export class Prices {
         const description = params.description;
         const isDefault = params.isDefault;
         const labels = params.labels;
-        const marketId = params.marketId;
         const metadata = params.metadata;
         const name = params.name;
         const organizationId = params.organizationId;
         const priority = params.priority;
+        const requiresAuth = params.requiresAuth;
         const status = params.status;
         const taxIncluded = params.taxIncluded;
         const validFrom = params.validFrom;
@@ -480,9 +480,6 @@ export class Prices {
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
         }
-        if (typeof marketId !== 'undefined') {
-            apiPayload['market_id'] = marketId;
-        }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
         }
@@ -494,6 +491,9 @@ export class Prices {
         }
         if (typeof priority !== 'undefined') {
             apiPayload['priority'] = priority;
+        }
+        if (typeof requiresAuth !== 'undefined') {
+            apiPayload['requires_auth'] = requiresAuth;
         }
         if (typeof status !== 'undefined') {
             apiPayload['status'] = status;

@@ -19,7 +19,6 @@ const result = await orders.ordersPlace({
     currency: '', // optional
     customerOrderNumber: '', // optional
     grandTotal: null, // optional
-    marketId: '', // optional
     metadata: {}, // optional
     organizationId: '', // optional
     payment: {}, // optional

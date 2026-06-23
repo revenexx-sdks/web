@@ -22,7 +22,6 @@ export class Orders {
      * @param {string} params.contactId - Filter to one ordering contact.
      * @param {string} params.organizationId - Filter to one B2B organization.
      * @param {string} params.channelId - Filter to one sales channel.
-     * @param {string} params.marketId - Filter to one market.
      * @param {string} params.number - Filter by exact order number.
      * @param {number} params.limit - Page size (default 50, max 200).
      * @param {number} params.offset - Row offset for pagination (default 0).
@@ -30,7 +29,7 @@ export class Orders {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    ordersList(params?: { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    ordersList(params?: { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, number?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      *
      * @param {OrderStatus} status - Filter by order status (exact match).
@@ -39,7 +38,6 @@ export class Orders {
      * @param {string} contactId - Filter to one ordering contact.
      * @param {string} organizationId - Filter to one B2B organization.
      * @param {string} channelId - Filter to one sales channel.
-     * @param {string} marketId - Filter to one market.
      * @param {string} number - Filter by exact order number.
      * @param {number} limit - Page size (default 50, max 200).
      * @param {number} offset - Row offset for pagination (default 0).
@@ -48,15 +46,15 @@ export class Orders {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersList(status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    ordersList(status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, number?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     ordersList(
-        paramsOrFirst?: { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string } | OrderStatus,
-        ...rest: [(OrderPaymentStatus)?, (OrderFulfillmentStatus)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, number?: string, limit?: number, offset?: number, order?: string } | OrderStatus,
+        ...rest: [(OrderPaymentStatus)?, (OrderFulfillmentStatus)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string };
+        let params: { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, number?: string, limit?: number, offset?: number, order?: string };
         
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('status' in paramsOrFirst || 'paymentStatus' in paramsOrFirst || 'fulfillmentStatus' in paramsOrFirst || 'contactId' in paramsOrFirst || 'organizationId' in paramsOrFirst || 'channelId' in paramsOrFirst || 'marketId' in paramsOrFirst || 'number' in paramsOrFirst || 'limit' in paramsOrFirst || 'offset' in paramsOrFirst || 'order' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, marketId?: string, number?: string, limit?: number, offset?: number, order?: string };
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('status' in paramsOrFirst || 'paymentStatus' in paramsOrFirst || 'fulfillmentStatus' in paramsOrFirst || 'contactId' in paramsOrFirst || 'organizationId' in paramsOrFirst || 'channelId' in paramsOrFirst || 'number' in paramsOrFirst || 'limit' in paramsOrFirst || 'offset' in paramsOrFirst || 'order' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, contactId?: string, organizationId?: string, channelId?: string, number?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 status: paramsOrFirst as OrderStatus,
@@ -65,11 +63,10 @@ export class Orders {
                 contactId: rest[2] as string,
                 organizationId: rest[3] as string,
                 channelId: rest[4] as string,
-                marketId: rest[5] as string,
-                number: rest[6] as string,
-                limit: rest[7] as number,
-                offset: rest[8] as number,
-                order: rest[9] as string            
+                number: rest[5] as string,
+                limit: rest[6] as number,
+                offset: rest[7] as number,
+                order: rest[8] as string            
             };
         }
         
@@ -79,7 +76,6 @@ export class Orders {
         const contactId = params.contactId;
         const organizationId = params.organizationId;
         const channelId = params.channelId;
-        const marketId = params.marketId;
         const number = params.number;
         const limit = params.limit;
         const offset = params.offset;
@@ -105,9 +101,6 @@ export class Orders {
         }
         if (typeof channelId !== 'undefined') {
             apiPayload['channel_id'] = channelId;
-        }
-        if (typeof marketId !== 'undefined') {
-            apiPayload['market_id'] = marketId;
         }
         if (typeof number !== 'undefined') {
             apiPayload['number'] = number;
@@ -553,7 +546,6 @@ export class Orders {
      * @param {string} params.currency - ISO 4217 code (default EUR).
      * @param {string} params.customerOrderNumber - The buyer's own order/PO number.
      * @param {number} params.grandTotal - Override — computed as subtotal + shipping + tax when omitted.
-     * @param {string} params.marketId - 
      * @param {object} params.metadata - Free-form metadata.
      * @param {string} params.organizationId - B2B organization.
      * @param {object} params.payment - Frozen payment snapshot — a known 'payment.status' seeds payment_status (otherwise 'open').
@@ -564,7 +556,7 @@ export class Orders {
      * @throws {RevenexxException}
      * @returns {Promise<Models.OrderDetail>}
      */
-    ordersPlace(params: { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, marketId?: string, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object }): Promise<Models.OrderDetail>;
+    ordersPlace(params: { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object }): Promise<Models.OrderDetail>;
     /**
      *
      * @param {Models.OrderItemCreateRequest[]} items - The order positions (at most 500).
@@ -576,7 +568,6 @@ export class Orders {
      * @param {string} currency - ISO 4217 code (default EUR).
      * @param {string} customerOrderNumber - The buyer's own order/PO number.
      * @param {number} grandTotal - Override — computed as subtotal + shipping + tax when omitted.
-     * @param {string} marketId - 
      * @param {object} metadata - Free-form metadata.
      * @param {string} organizationId - B2B organization.
      * @param {object} payment - Frozen payment snapshot — a known 'payment.status' seeds payment_status (otherwise 'open').
@@ -588,15 +579,15 @@ export class Orders {
      * @returns {Promise<Models.OrderDetail>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersPlace(items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, marketId?: string, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object): Promise<Models.OrderDetail>;
+    ordersPlace(items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object): Promise<Models.OrderDetail>;
     ordersPlace(
-        paramsOrFirst: { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, marketId?: string, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object } | Models.OrderItemCreateRequest[],
-        ...rest: [(object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (number)?, (object)?]    
+        paramsOrFirst: { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object } | Models.OrderItemCreateRequest[],
+        ...rest: [(object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (object)?, (string)?, (object)?, (object)?, (object)?, (number)?, (object)?]    
     ): Promise<Models.OrderDetail> {
-        let params: { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, marketId?: string, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object };
+        let params: { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('items' in paramsOrFirst || 'billingAddress' in paramsOrFirst || 'buyer' in paramsOrFirst || 'cartId' in paramsOrFirst || 'channelId' in paramsOrFirst || 'contactId' in paramsOrFirst || 'currency' in paramsOrFirst || 'customerOrderNumber' in paramsOrFirst || 'grandTotal' in paramsOrFirst || 'marketId' in paramsOrFirst || 'metadata' in paramsOrFirst || 'organizationId' in paramsOrFirst || 'payment' in paramsOrFirst || 'shipping' in paramsOrFirst || 'shippingAddress' in paramsOrFirst || 'shippingTotal' in paramsOrFirst || 'userData' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, marketId?: string, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object };
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('items' in paramsOrFirst || 'billingAddress' in paramsOrFirst || 'buyer' in paramsOrFirst || 'cartId' in paramsOrFirst || 'channelId' in paramsOrFirst || 'contactId' in paramsOrFirst || 'currency' in paramsOrFirst || 'customerOrderNumber' in paramsOrFirst || 'grandTotal' in paramsOrFirst || 'metadata' in paramsOrFirst || 'organizationId' in paramsOrFirst || 'payment' in paramsOrFirst || 'shipping' in paramsOrFirst || 'shippingAddress' in paramsOrFirst || 'shippingTotal' in paramsOrFirst || 'userData' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object };
         } else {
             params = {
                 items: paramsOrFirst as Models.OrderItemCreateRequest[],
@@ -608,14 +599,13 @@ export class Orders {
                 currency: rest[5] as string,
                 customerOrderNumber: rest[6] as string,
                 grandTotal: rest[7] as number,
-                marketId: rest[8] as string,
-                metadata: rest[9] as object,
-                organizationId: rest[10] as string,
-                payment: rest[11] as object,
-                shipping: rest[12] as object,
-                shippingAddress: rest[13] as object,
-                shippingTotal: rest[14] as number,
-                userData: rest[15] as object            
+                metadata: rest[8] as object,
+                organizationId: rest[9] as string,
+                payment: rest[10] as object,
+                shipping: rest[11] as object,
+                shippingAddress: rest[12] as object,
+                shippingTotal: rest[13] as number,
+                userData: rest[14] as object            
             };
         }
         
@@ -628,7 +618,6 @@ export class Orders {
         const currency = params.currency;
         const customerOrderNumber = params.customerOrderNumber;
         const grandTotal = params.grandTotal;
-        const marketId = params.marketId;
         const metadata = params.metadata;
         const organizationId = params.organizationId;
         const payment = params.payment;
@@ -669,9 +658,6 @@ export class Orders {
         }
         if (typeof items !== 'undefined') {
             apiPayload['items'] = Client.toWireKeys(items, {"costCenter":{"wire":"cost_center","children":null},"positionText":{"wire":"position_text","children":null},"productId":{"wire":"product_id","children":null},"taxAmount":{"wire":"tax_amount","children":null},"taxRate":{"wire":"tax_rate","children":null},"unitPrice":{"wire":"unit_price","children":null},"userData":{"wire":"user_data","children":null}});
-        }
-        if (typeof marketId !== 'undefined') {
-            apiPayload['market_id'] = marketId;
         }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;

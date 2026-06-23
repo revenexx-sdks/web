@@ -16,7 +16,6 @@ const result = await orders.ordersList({
     contactId: '', // optional
     organizationId: '', // optional
     channelId: '', // optional
-    marketId: '', // optional
     number: '', // optional
     limit: null, // optional
     offset: null, // optional

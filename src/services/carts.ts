@@ -107,21 +107,19 @@ export class Carts {
      * @param {string} params.contactId - Owning customer contact.
      * @param {string} params.currency - ISO 4217 code (default EUR).
      * @param {boolean} params.isCurrent - Make this THE current cart of its owner.
-     * @param {string} params.marketId - 
      * @param {object} params.metadata - Free-form metadata.
      * @param {string} params.name - Display name (default 'Cart').
      * @param {string} params.sessionKey - Owning guest session.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Cart>}
      */
-    cartsCreate(params?: { channelId?: string, contactId?: string, currency?: string, isCurrent?: boolean, marketId?: string, metadata?: object, name?: string, sessionKey?: string }): Promise<Models.Cart>;
+    cartsCreate(params?: { channelId?: string, contactId?: string, currency?: string, isCurrent?: boolean, metadata?: object, name?: string, sessionKey?: string }): Promise<Models.Cart>;
     /**
      *
      * @param {string} channelId - 
      * @param {string} contactId - Owning customer contact.
      * @param {string} currency - ISO 4217 code (default EUR).
      * @param {boolean} isCurrent - Make this THE current cart of its owner.
-     * @param {string} marketId - 
      * @param {object} metadata - Free-form metadata.
      * @param {string} name - Display name (default 'Cart').
      * @param {string} sessionKey - Owning guest session.
@@ -129,25 +127,24 @@ export class Carts {
      * @returns {Promise<Models.Cart>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    cartsCreate(channelId?: string, contactId?: string, currency?: string, isCurrent?: boolean, marketId?: string, metadata?: object, name?: string, sessionKey?: string): Promise<Models.Cart>;
+    cartsCreate(channelId?: string, contactId?: string, currency?: string, isCurrent?: boolean, metadata?: object, name?: string, sessionKey?: string): Promise<Models.Cart>;
     cartsCreate(
-        paramsOrFirst?: { channelId?: string, contactId?: string, currency?: string, isCurrent?: boolean, marketId?: string, metadata?: object, name?: string, sessionKey?: string } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (string)?, (object)?, (string)?, (string)?]    
+        paramsOrFirst?: { channelId?: string, contactId?: string, currency?: string, isCurrent?: boolean, metadata?: object, name?: string, sessionKey?: string } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (object)?, (string)?, (string)?]    
     ): Promise<Models.Cart> {
-        let params: { channelId?: string, contactId?: string, currency?: string, isCurrent?: boolean, marketId?: string, metadata?: object, name?: string, sessionKey?: string };
+        let params: { channelId?: string, contactId?: string, currency?: string, isCurrent?: boolean, metadata?: object, name?: string, sessionKey?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { channelId?: string, contactId?: string, currency?: string, isCurrent?: boolean, marketId?: string, metadata?: object, name?: string, sessionKey?: string };
+            params = (paramsOrFirst || {}) as { channelId?: string, contactId?: string, currency?: string, isCurrent?: boolean, metadata?: object, name?: string, sessionKey?: string };
         } else {
             params = {
                 channelId: paramsOrFirst as string,
                 contactId: rest[0] as string,
                 currency: rest[1] as string,
                 isCurrent: rest[2] as boolean,
-                marketId: rest[3] as string,
-                metadata: rest[4] as object,
-                name: rest[5] as string,
-                sessionKey: rest[6] as string            
+                metadata: rest[3] as object,
+                name: rest[4] as string,
+                sessionKey: rest[5] as string            
             };
         }
         
@@ -155,7 +152,6 @@ export class Carts {
         const contactId = params.contactId;
         const currency = params.currency;
         const isCurrent = params.isCurrent;
-        const marketId = params.marketId;
         const metadata = params.metadata;
         const name = params.name;
         const sessionKey = params.sessionKey;
@@ -174,9 +170,6 @@ export class Carts {
         }
         if (typeof isCurrent !== 'undefined') {
             apiPayload['is_current'] = isCurrent;
-        }
-        if (typeof marketId !== 'undefined') {
-            apiPayload['market_id'] = marketId;
         }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
@@ -1444,49 +1437,45 @@ export class Carts {
      * @param {string} params.id - 
      * @param {string} params.channelId - 
      * @param {string} params.currency - ISO 4217 code.
-     * @param {string} params.marketId - 
      * @param {object} params.metadata - Free-form metadata.
      * @param {string} params.name - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.Cart>}
      */
-    cartsUpdate(params: { id: string, channelId?: string, currency?: string, marketId?: string, metadata?: object, name?: string }): Promise<Models.Cart>;
+    cartsUpdate(params: { id: string, channelId?: string, currency?: string, metadata?: object, name?: string }): Promise<Models.Cart>;
     /**
      *
      * @param {string} id - 
      * @param {string} channelId - 
      * @param {string} currency - ISO 4217 code.
-     * @param {string} marketId - 
      * @param {object} metadata - Free-form metadata.
      * @param {string} name - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.Cart>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    cartsUpdate(id: string, channelId?: string, currency?: string, marketId?: string, metadata?: object, name?: string): Promise<Models.Cart>;
+    cartsUpdate(id: string, channelId?: string, currency?: string, metadata?: object, name?: string): Promise<Models.Cart>;
     cartsUpdate(
-        paramsOrFirst: { id: string, channelId?: string, currency?: string, marketId?: string, metadata?: object, name?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (object)?, (string)?]    
+        paramsOrFirst: { id: string, channelId?: string, currency?: string, metadata?: object, name?: string } | string,
+        ...rest: [(string)?, (string)?, (object)?, (string)?]    
     ): Promise<Models.Cart> {
-        let params: { id: string, channelId?: string, currency?: string, marketId?: string, metadata?: object, name?: string };
+        let params: { id: string, channelId?: string, currency?: string, metadata?: object, name?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, channelId?: string, currency?: string, marketId?: string, metadata?: object, name?: string };
+            params = (paramsOrFirst || {}) as { id: string, channelId?: string, currency?: string, metadata?: object, name?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 channelId: rest[0] as string,
                 currency: rest[1] as string,
-                marketId: rest[2] as string,
-                metadata: rest[3] as object,
-                name: rest[4] as string            
+                metadata: rest[2] as object,
+                name: rest[3] as string            
             };
         }
         
         const id = params.id;
         const channelId = params.channelId;
         const currency = params.currency;
-        const marketId = params.marketId;
         const metadata = params.metadata;
         const name = params.name;
 
@@ -1501,9 +1490,6 @@ export class Carts {
         }
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
-        }
-        if (typeof marketId !== 'undefined') {
-            apiPayload['market_id'] = marketId;
         }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;

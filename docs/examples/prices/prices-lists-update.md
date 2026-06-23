@@ -18,11 +18,11 @@ const result = await prices.pricesListsUpdate({
     description: '', // optional
     isDefault: null, // optional
     labels: {}, // optional
-    marketId: '', // optional
     metadata: {}, // optional
     name: '', // optional
     organizationId: '', // optional
     priority: null, // optional
+    requiresAuth: null, // optional
     status: PriceListStatus.Active, // optional
     taxIncluded: null, // optional
     validFrom: '', // optional

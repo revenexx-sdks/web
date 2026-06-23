@@ -14,7 +14,6 @@ const result = await carts.cartsCreate({
     contactId: '', // optional
     currency: '', // optional
     isCurrent: null, // optional
-    marketId: '', // optional
     metadata: {}, // optional
     name: '', // optional
     sessionKey: '' // optional

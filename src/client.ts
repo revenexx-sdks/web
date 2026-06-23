@@ -372,12 +372,14 @@ class Client {
         endpoint: string;
         endpointRealtime: string;
         tenant: string;
+        market: string;
         apikeyauth: string;
         bearerauth: string;
     } = {
         endpoint: 'https://api.revenexx.com',
         endpointRealtime: '',
         tenant: '',
+        market: '',
         apikeyauth: '',
         bearerauth: '',
     };
@@ -388,7 +390,7 @@ class Client {
         'x-sdk-name': 'Revenexx Web',
         'x-sdk-platform': '',
         'x-sdk-language': 'web',
-        'x-sdk-version': '0.0.14',
+        'x-sdk-version': '0.0.15',
     };
 
     /**
@@ -448,6 +450,22 @@ class Client {
     setTenant(value: string): this {
         this.headers['X-Revenexx-Tenant'] = value;
         this.config.tenant = value;
+        return this;
+    }
+
+    /**
+     * Set Market
+     *
+     * The active market slug to scope requests to, sent as the
+     * X-Revenexx-Market header. Optional — omit it to see only global rows.
+     *
+     * @param value string
+     *
+     * @return {this}
+     */
+    setMarket(value: string): this {
+        this.headers['X-Revenexx-Market'] = value;
+        this.config.market = value;
         return this;
     }
 

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Carts } from "@revenexx/sdk";
+import { Client, Settings } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -7,14 +7,11 @@ const client = new Client()
     .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
 ;
 
-const carts = new Carts(client);
+const settings = new Settings(client);
 
-const result = await carts.cartsUpdate({
-    id: '',
-    channelId: '', // optional
-    currency: '', // optional
-    metadata: {}, // optional
-    name: '' // optional
+const result = await settings.settingsGetAppSettings({
+    app: '',
+    market: '' // optional
 });
 
 console.log(result);

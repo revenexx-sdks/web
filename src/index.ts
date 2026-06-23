@@ -23,6 +23,7 @@ export { Payments } from './services/payments';
 export { Prices } from './services/prices';
 export { Products } from './services/products';
 export { Search } from './services/search';
+export { Settings } from './services/settings';
 export { Shipping } from './services/shipping';
 export { Sites } from './services/sites';
 export { Storage } from './services/storage';

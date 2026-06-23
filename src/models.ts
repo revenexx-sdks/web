@@ -1153,10 +1153,6 @@ export namespace Models {
         /**
          * 
          */
-        market_id?: string | null;
-        /**
-         * 
-         */
         merged_into_cart_id?: string | null;
         /**
          * 
@@ -1230,10 +1226,6 @@ export namespace Models {
          * Make this THE current cart of its owner.
          */
         is_current?: boolean | null;
-        /**
-         * 
-         */
-        market_id?: string | null;
         /**
          * Free-form metadata.
          */
@@ -1536,10 +1528,6 @@ export namespace Models {
          * ISO 4217 code.
          */
         currency?: string | null;
-        /**
-         * 
-         */
-        market_id?: string | null;
         /**
          * Free-form metadata.
          */
@@ -3629,10 +3617,6 @@ export namespace Models {
         /**
          * 
          */
-        market_id?: string | null;
-        /**
-         * 
-         */
         metadata?: object | null;
         /**
          * 
@@ -3892,10 +3876,6 @@ export namespace Models {
          * 
          */
         items?: OrderItem[];
-        /**
-         * 
-         */
-        market_id?: string | null;
         /**
          * 
          */
@@ -4718,10 +4698,6 @@ export namespace Models {
          * The order positions (at most 500).
          */
         items: OrderItemCreateRequest[];
-        /**
-         * 
-         */
-        market_id?: string | null;
         /**
          * Free-form metadata.
          */
@@ -5995,10 +5971,6 @@ export namespace Models {
         /**
          * 
          */
-        market_id?: string | null;
-        /**
-         * 
-         */
         metadata?: object | null;
         /**
          * 
@@ -6012,6 +5984,10 @@ export namespace Models {
          * 
          */
         priority?: number;
+        /**
+         * 
+         */
+        requires_auth?: boolean;
         /**
          * 
          */
@@ -6067,10 +6043,6 @@ export namespace Models {
          */
         labels?: object | null;
         /**
-         * Scope: only this market.
-         */
-        market_id?: string | null;
-        /**
          * Free-form metadata.
          */
         metadata?: object | null;
@@ -6086,6 +6058,10 @@ export namespace Models {
          * Tie-breaker within a specificity group (higher wins, default 0).
          */
         priority?: number;
+        /**
+         * Gate: when true the list resolves only for an authenticated buyer (contact or organization context); anonymous resolve calls get on_request. Default false (open to everyone).
+         */
+        requires_auth?: boolean;
         /**
          * Default 'active' — only active lists resolve.
          */
@@ -6137,10 +6113,6 @@ export namespace Models {
          */
         labels?: object | null;
         /**
-         * Scope: only this market.
-         */
-        market_id?: string | null;
-        /**
          * Free-form metadata.
          */
         metadata?: object | null;
@@ -6156,6 +6128,10 @@ export namespace Models {
          * Tie-breaker within a specificity group (higher wins, default 0).
          */
         priority?: number;
+        /**
+         * Gate: when true the list resolves only for an authenticated buyer (contact or organization context); anonymous resolve calls get on_request. Default false (open to everyone).
+         */
+        requires_auth?: boolean;
         /**
          * Default 'active' — only active lists resolve.
          */
