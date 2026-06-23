@@ -9,7 +9,11 @@ const client = new Client()
 
 const markets = new Markets(client);
 
-const result = await markets.marketsList();
+const result = await markets.marketsList({
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```

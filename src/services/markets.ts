@@ -13,13 +13,55 @@ export class Markets {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    marketsList(): Promise<{}> {
+    marketsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    marketsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    marketsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/markets';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -382,32 +424,45 @@ export class Markets {
     /**
      *
      * @param {string} params.marketId - 
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    marketsCurrenciesList(params: { marketId: string }): Promise<{}>;
+    marketsCurrenciesList(params: { marketId: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      *
      * @param {string} marketId - 
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCurrenciesList(marketId: string): Promise<{}>;
+    marketsCurrenciesList(marketId: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     marketsCurrenciesList(
-        paramsOrFirst: { marketId: string } | string    
+        paramsOrFirst: { marketId: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { marketId: string };
+        let params: { marketId: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string };
+            params = (paramsOrFirst || {}) as { marketId: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
-                marketId: paramsOrFirst as string            
+                marketId: paramsOrFirst as string,
+                limit: rest[0] as number,
+                offset: rest[1] as number,
+                order: rest[2] as string            
             };
         }
         
         const marketId = params.marketId;
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
 
         if (typeof marketId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "marketId"');
@@ -415,6 +470,15 @@ export class Markets {
 
         const apiPath = '/v1/markets/{market_id}/currencies'.replace('{market_id}', marketId);
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -699,32 +763,45 @@ export class Markets {
     /**
      *
      * @param {string} params.marketId - 
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    marketsLocalesList(params: { marketId: string }): Promise<{}>;
+    marketsLocalesList(params: { marketId: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      *
      * @param {string} marketId - 
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesList(marketId: string): Promise<{}>;
+    marketsLocalesList(marketId: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     marketsLocalesList(
-        paramsOrFirst: { marketId: string } | string    
+        paramsOrFirst: { marketId: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { marketId: string };
+        let params: { marketId: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string };
+            params = (paramsOrFirst || {}) as { marketId: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
-                marketId: paramsOrFirst as string            
+                marketId: paramsOrFirst as string,
+                limit: rest[0] as number,
+                offset: rest[1] as number,
+                order: rest[2] as string            
             };
         }
         
         const marketId = params.marketId;
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
 
         if (typeof marketId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "marketId"');
@@ -732,6 +809,15 @@ export class Markets {
 
         const apiPath = '/v1/markets/{market_id}/locales'.replace('{market_id}', marketId);
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1050,32 +1136,45 @@ export class Markets {
     /**
      *
      * @param {string} params.marketId - 
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    marketsTaxClassesList(params: { marketId: string }): Promise<{}>;
+    marketsTaxClassesList(params: { marketId: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      *
      * @param {string} marketId - 
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsTaxClassesList(marketId: string): Promise<{}>;
+    marketsTaxClassesList(marketId: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     marketsTaxClassesList(
-        paramsOrFirst: { marketId: string } | string    
+        paramsOrFirst: { marketId: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { marketId: string };
+        let params: { marketId: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string };
+            params = (paramsOrFirst || {}) as { marketId: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
-                marketId: paramsOrFirst as string            
+                marketId: paramsOrFirst as string,
+                limit: rest[0] as number,
+                offset: rest[1] as number,
+                order: rest[2] as string            
             };
         }
         
         const marketId = params.marketId;
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
 
         if (typeof marketId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "marketId"');
@@ -1083,6 +1182,15 @@ export class Markets {
 
         const apiPath = '/v1/markets/{market_id}/tax_classes'.replace('{market_id}', marketId);
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {

@@ -9,7 +9,11 @@ const client = new Client()
 
 const shipping = new Shipping(client);
 
-const result = await shipping.shippingMethodsList();
+const result = await shipping.shippingMethodsList({
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```

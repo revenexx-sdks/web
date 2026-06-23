@@ -10,7 +10,10 @@ const client = new Client()
 const shipping = new Shipping(client);
 
 const result = await shipping.shippingTiersList({
-    methodId: ''
+    methodId: '',
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
 });
 
 console.log(result);

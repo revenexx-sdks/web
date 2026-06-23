@@ -6921,6 +6921,10 @@ export namespace Models {
         /**
          * 
          */
+        quote_above?: number | null;
+        /**
+         * 
+         */
         tax_class?: string | null;
         /**
          * 

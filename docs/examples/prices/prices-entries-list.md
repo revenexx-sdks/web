@@ -10,7 +10,10 @@ const client = new Client()
 const prices = new Prices(client);
 
 const result = await prices.pricesEntriesList({
-    listId: ''
+    listId: '',
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
 });
 
 console.log(result);

@@ -9,7 +9,11 @@ const client = new Client()
 
 const pages = new Pages(client);
 
-const result = await pages.pagesDeliveryPages();
+const result = await pages.pagesDeliveryPages({
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```

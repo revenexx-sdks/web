@@ -9,7 +9,11 @@ const client = new Client()
 
 const orders = new Orders(client);
 
-const result = await orders.ordersNumberRangesList();
+const result = await orders.ordersNumberRangesList({
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```

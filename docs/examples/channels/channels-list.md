@@ -9,7 +9,11 @@ const client = new Client()
 
 const channels = new Channels(client);
 
-const result = await channels.channelsList();
+const result = await channels.channelsList({
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```

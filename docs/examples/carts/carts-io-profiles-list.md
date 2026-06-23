@@ -9,7 +9,11 @@ const client = new Client()
 
 const carts = new Carts(client);
 
-const result = await carts.cartsIoProfilesList();
+const result = await carts.cartsIoProfilesList({
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```

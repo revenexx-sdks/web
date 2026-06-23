@@ -14,13 +14,55 @@ export class Prices {
 
     /**
      *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    pricesListsList(): Promise<{}> {
+    pricesListsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pricesListsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    pricesListsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
 
         const apiPath = '/v1/prices/lists';
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -482,32 +524,45 @@ export class Prices {
     /**
      *
      * @param {string} params.listId - 
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    pricesEntriesList(params: { listId: string }): Promise<{}>;
+    pricesEntriesList(params: { listId: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      *
      * @param {string} listId - 
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesList(listId: string): Promise<{}>;
+    pricesEntriesList(listId: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     pricesEntriesList(
-        paramsOrFirst: { listId: string } | string    
+        paramsOrFirst: { listId: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { listId: string };
+        let params: { listId: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { listId: string };
+            params = (paramsOrFirst || {}) as { listId: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
-                listId: paramsOrFirst as string            
+                listId: paramsOrFirst as string,
+                limit: rest[0] as number,
+                offset: rest[1] as number,
+                order: rest[2] as string            
             };
         }
         
         const listId = params.listId;
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
 
         if (typeof listId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "listId"');
@@ -515,6 +570,15 @@ export class Prices {
 
         const apiPath = '/v1/prices/lists/{list_id}/entries'.replace('{list_id}', listId);
         const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {

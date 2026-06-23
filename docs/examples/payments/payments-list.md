@@ -9,7 +9,11 @@ const client = new Client()
 
 const payments = new Payments(client);
 
-const result = await payments.paymentsList();
+const result = await payments.paymentsList({
+    limit: null, // optional
+    offset: null, // optional
+    order: '' // optional
+});
 
 console.log(result);
 ```
