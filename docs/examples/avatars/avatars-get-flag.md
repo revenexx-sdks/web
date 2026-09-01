@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Avatars, Code } from "@revenexx/sdk";
+import { Client, Avatars, AvatarsGetFlagCode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,10 +10,10 @@ const client = new Client()
 const avatars = new Avatars(client);
 
 const result = await avatars.avatarsGetFlag({
-    code: Code.Af,
-    width: null, // optional
-    height: null, // optional
-    quality: null // optional
+    code: AvatarsGetFlagCode.Af,
+    width: 1, // optional
+    height: 1, // optional
+    quality: 1 // optional
 });
 
 console.log(result);

@@ -13,7 +13,7 @@ const result = await apps.appsListDeployments({
     functionId: '',
     queries: [], // optional
     search: '', // optional
-    total: null // optional
+    total: true // optional
 });
 
 console.log(result);

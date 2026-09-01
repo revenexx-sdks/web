@@ -10,7 +10,14 @@ const client = new Client()
 const orders = new Orders(client);
 
 const result = await orders.ordersEventsList({
-    id: ''
+    id: '',
+    idQuery: '', // optional
+    name: 'order.shipment.created', // optional
+    actor: '', // optional
+    createdAt: '2026-01-01T12:00:00Z', // optional
+    limit: 50, // optional
+    offset: 0, // optional
+    order: 'created_at.desc' // optional
 });
 
 console.log(result);

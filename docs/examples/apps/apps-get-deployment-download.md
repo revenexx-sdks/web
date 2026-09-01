@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Apps, Type } from "@revenexx/sdk";
+import { Client, Apps, AppsGetDeploymentDownloadType } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -12,7 +12,7 @@ const apps = new Apps(client);
 const result = await apps.appsGetDeploymentDownload({
     functionId: '',
     deploymentId: '',
-    type: Type.Source // optional
+    type: AppsGetDeploymentDownloadType.Source // optional
 });
 
 console.log(result);

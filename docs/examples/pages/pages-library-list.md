@@ -10,9 +10,11 @@ const client = new Client()
 const pages = new Pages(client);
 
 const result = await pages.pagesLibraryList({
-    limit: null, // optional
-    offset: null, // optional
-    order: '' // optional
+    limit: 1, // optional
+    offset: 1, // optional
+    order: 'created_at.desc', // optional
+    bundles: 'hero,teaser', // optional
+    text: 'hero' // optional
 });
 
 console.log(result);

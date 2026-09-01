@@ -11,9 +11,9 @@ const markets = new Markets(client);
 
 const result = await markets.marketsCurrenciesCreate({
     marketId: '',
-    code: '',
-    isDefault: null, // optional
-    position: null // optional
+    code: 'EUR',
+    isDefault: true, // optional
+    position: 0 // optional
 });
 
 console.log(result);

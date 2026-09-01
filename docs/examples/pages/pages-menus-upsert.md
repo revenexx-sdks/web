@@ -10,8 +10,8 @@ const client = new Client()
 const pages = new Pages(client);
 
 const result = await pages.pagesMenusUpsert({
-    label: '',
-    menuKey: '',
+    label: 'Main navigation',
+    menuKey: 'main',
     items: [] // optional
 });
 

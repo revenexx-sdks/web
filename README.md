@@ -24,7 +24,7 @@ npm install @revenexx/sdk --save
 If you're using a bundler (like [Rollup](https://rollupjs.org/) or [webpack](https://webpack.js.org/)), you can import the Revenexx Web module when you need it:
 
 ```js
-import { Client, Greetings } from "@revenexx/sdk";
+import { Client, Locale } from "@revenexx/sdk";
 ```
 
 
@@ -64,20 +64,18 @@ client
 Once your client is set up, instantiate any of the Revenexx services with it and send a request. All service methods accept a single params object and return a promise. Full documentation for every service method can be found in the [API References](https://revenexx.com/docs).
 
 ```js
-import { Client, Greetings } from "@revenexx/sdk";
+import { Client, Locale } from "@revenexx/sdk";
 
-const greetings = new Greetings(client);
+const locale = new Locale(client);
 
-await greetings.greetingsCreate({
-    name: 'World',
-    locale: 'en-US',
-});
+const continents = await locale.localeListContinents();
+console.log(continents);
 ```
 
 ### Full Example
 
 ```js
-import { Client, Greetings } from "@revenexx/sdk";
+import { Client, Locale } from "@revenexx/sdk";
 
 const client = new Client();
 
@@ -87,15 +85,13 @@ client
     .setApiKeyAuth('rvxk_...')
 ;
 
-const greetings = new Greetings(client);
+const locale = new Locale(client);
 
-await greetings.greetingsCreate({
-    name: 'World',
-    locale: 'en-US',
-});
+const continents = await locale.localeListContinents();
+console.log(continents);
 
-const greeting = await greetings.greetingsGet({ id: '<GREETING_ID>' });
-console.log(greeting.message);
+const currencies = await locale.localeListCurrencies();
+console.log(currencies);
 ```
 
 ### Type Safety with Models
@@ -123,8 +119,8 @@ The Revenexx Web SDK raises a `RevenexxException` object with `message`, `code` 
 import { RevenexxException } from "@revenexx/sdk";
 
 try {
-    const greeting = await greetings.greetingsGet({ id: '<GREETING_ID>' });
-    console.log(greeting);
+    const continents = await locale.localeListContinents();
+    console.log(continents);
 } catch (error) {
     if (error instanceof RevenexxException) {
         console.error(error.code, error.message);
@@ -138,6 +134,10 @@ You can use the following resources to learn more and get help
 
 - 📜 [Revenexx Docs](https://revenexx.com/docs)
 - 💬 [Discord Community](https://revenexx.com/discord)
+
+## Sample
+
+See a runnable example for this SDK in the [samples repo](https://github.com/revenexx-sdks/samples/tree/main/web).
 
 ## Contribution
 

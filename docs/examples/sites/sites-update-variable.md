@@ -13,7 +13,7 @@ const result = await sites.sitesUpdateVariable({
     siteId: '',
     variableId: '',
     key: '',
-    secret: null, // optional
+    secret: true, // optional
     value: '' // optional
 });
 

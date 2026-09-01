@@ -10,16 +10,34 @@ const client = new Client()
 const orders = new Orders(client);
 
 const result = await orders.ordersList({
-    status: OrderStatus.Pending, // optional
-    paymentStatus: OrderPaymentStatus.Open, // optional
-    fulfillmentStatus: OrderFulfillmentStatus.Unfulfilled, // optional
+    id: '', // optional
+    number: 'ORD-000123', // optional
+    customerOrderNumber: 'PO-2026-0042', // optional
+    externalRef: 'ERP-4711', // optional
+    acknowledgedAt: '2026-01-01T12:00:00Z', // optional
+    cartId: '', // optional
     contactId: '', // optional
     organizationId: '', // optional
     channelId: '', // optional
-    number: '', // optional
-    limit: null, // optional
-    offset: null, // optional
-    order: '' // optional
+    currency: 'EUR', // optional
+    status: OrderStatus.Pending, // optional
+    paymentStatus: OrderPaymentStatus.Open, // optional
+    fulfillmentStatus: OrderFulfillmentStatus.Unfulfilled, // optional
+    onHold: true, // optional
+    holdReason: 'Credit check pending', // optional
+    itemCount: 3, // optional
+    subtotal: 149.7, // optional
+    shippingTotal: 5.9, // optional
+    taxTotal: 29.56, // optional
+    grandTotal: 185.16, // optional
+    placedAt: '2026-01-01T12:00:00Z', // optional
+    completedAt: '2026-01-01T12:00:00Z', // optional
+    cancelledAt: '2026-01-01T12:00:00Z', // optional
+    createdAt: '2026-01-01T12:00:00Z', // optional
+    updatedAt: '2026-01-01T12:00:00Z', // optional
+    limit: 50, // optional
+    offset: 0, // optional
+    order: 'created_at.desc' // optional
 });
 
 console.log(result);

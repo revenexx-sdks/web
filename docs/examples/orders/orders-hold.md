@@ -11,7 +11,7 @@ const orders = new Orders(client);
 
 const result = await orders.ordersHold({
     id: '',
-    reason: '' // optional
+    reason: 'Credit check pending' // optional
 });
 
 console.log(result);

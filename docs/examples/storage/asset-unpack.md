@@ -11,7 +11,7 @@ const storage = new Storage(client);
 
 const result = await storage.assetUnpack({
     id: '',
-    keepArchive: null, // optional
+    keepArchive: true, // optional
     targetFolderId: '' // optional
 });
 

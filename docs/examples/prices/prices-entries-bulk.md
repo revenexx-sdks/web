@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Prices } from "@revenexx/sdk";
+import { Client, Prices, PriceEntriesBulkMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -11,7 +11,8 @@ const prices = new Prices(client);
 
 const result = await prices.pricesEntriesBulk({
     listId: '',
-    entries: []
+    entries: [],
+    mode: PriceEntriesBulkMode.Upsert // optional
 });
 
 console.log(result);

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Orders } from "@revenexx/sdk";
+import { Client, Orders, OrderReturnSettlement } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -12,7 +12,7 @@ const orders = new Orders(client);
 const result = await orders.ordersReturnsComplete({
     id: '',
     rid: '',
-    resolution: '' // optional
+    resolution: OrderReturnSettlement.Refund // optional
 });
 
 console.log(result);

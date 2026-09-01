@@ -12,9 +12,9 @@ const apps = new Apps(client);
 const result = await apps.appsListTemplates({
     runtimes: [Runtimes.Node180], // optional
     useCases: [UseCases.Starter], // optional
-    limit: null, // optional
-    offset: null, // optional
-    total: null // optional
+    limit: 1, // optional
+    offset: 1, // optional
+    total: true // optional
 });
 
 console.log(result);

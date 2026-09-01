@@ -13,7 +13,7 @@ const result = await sites.sitesCreateVariable({
     siteId: '',
     key: '',
     value: '',
-    secret: null // optional
+    secret: true // optional
 });
 
 console.log(result);

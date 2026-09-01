@@ -11,11 +11,11 @@ const pages = new Pages(client);
 
 const result = await pages.pagesTemplatesUpdate({
     id: '',
-    description: '', // optional
-    fieldName: '', // optional
-    isDefault: null, // optional
-    label: '', // optional
-    pageBundle: '', // optional
+    description: 'Full-width hero followed by a two-column teaser row.', // optional
+    fieldName: 'content', // optional
+    isDefault: true, // optional
+    label: 'Hero with two teasers', // optional
+    pageBundle: 'standard', // optional
     tree: [] // optional
 });
 

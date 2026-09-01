@@ -10,9 +10,9 @@ const client = new Client()
 const avatars = new Avatars(client);
 
 const result = await avatars.avatarsGetImage({
-    url: '',
-    width: null, // optional
-    height: null // optional
+    url: 'https://www.revenexx.com/img/hero-revenexx-poster.webp',
+    width: 1, // optional
+    height: 1 // optional
 });
 
 console.log(result);

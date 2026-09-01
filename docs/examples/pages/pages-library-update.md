@@ -11,8 +11,8 @@ const pages = new Pages(client);
 
 const result = await pages.pagesLibraryUpdate({
     id: '',
-    bundle: '', // optional
-    label: '', // optional
+    bundle: 'teaser', // optional
+    label: 'Newsletter teaser', // optional
     tree: {} // optional
 });
 

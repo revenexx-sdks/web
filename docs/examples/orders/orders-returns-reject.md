@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Orders } from "@revenexx/sdk";
+import { Client, Orders, OrderReturnRefusal } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -12,8 +12,8 @@ const orders = new Orders(client);
 const result = await orders.ordersReturnsReject({
     id: '',
     rid: '',
-    reason: '', // optional
-    resolution: '' // optional
+    reason: 'Returned outside the agreed window', // optional
+    resolution: OrderReturnRefusal.WearAndTear // optional
 });
 
 console.log(result);

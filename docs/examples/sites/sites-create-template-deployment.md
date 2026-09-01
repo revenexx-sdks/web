@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Sites, Type } from "@revenexx/sdk";
+import { Client, Sites, SitesCreateTemplateDeploymentType } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -15,8 +15,8 @@ const result = await sites.sitesCreateTemplateDeployment({
     reference: '',
     repository: '',
     rootDirectory: '',
-    type: Type.Branch,
-    activate: null // optional
+    type: SitesCreateTemplateDeploymentType.Branch,
+    activate: true // optional
 });
 
 console.log(result);

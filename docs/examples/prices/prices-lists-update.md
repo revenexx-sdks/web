@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Prices, PriceListStatus } from "@revenexx/sdk";
+import { Client, Prices, PriceListStatus, PriceListTaxBasis } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -12,21 +12,28 @@ const prices = new Prices(client);
 const result = await prices.pricesListsUpdate({
     id: '',
     channelId: '', // optional
-    code: '', // optional
+    code: 'dealer-de', // optional
     contactId: '', // optional
-    currency: '', // optional
-    description: '', // optional
-    isDefault: null, // optional
-    labels: {}, // optional
-    metadata: {}, // optional
-    name: '', // optional
+    currency: 'EUR', // optional
+    description: 'Contract prices for authorised dealers.', // optional
+    isDefault: true, // optional
+    labels: {
+        "de": "H\u00e4ndlerpreise",
+        "en": "Dealer prices"
+    }, // optional
+    metadata: {
+        "erp_price_group": "A1",
+        "source_system": "erp"
+    }, // optional
+    name: 'Dealer prices', // optional
     organizationId: '', // optional
-    priority: null, // optional
-    requiresAuth: null, // optional
+    priority: 1, // optional
+    requiresAuth: true, // optional
     status: PriceListStatus.Active, // optional
-    taxIncluded: null, // optional
-    validFrom: '', // optional
-    validUntil: '' // optional
+    taxBasis: PriceListTaxBasis.Net, // optional
+    taxIncluded: true, // optional
+    validFrom: '2026-01-01T00:00:00Z', // optional
+    validUntil: '2026-12-31T23:59:59Z' // optional
 });
 
 console.log(result);

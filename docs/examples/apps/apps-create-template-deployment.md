@@ -16,7 +16,7 @@ const result = await apps.appsCreateTemplateDeployment({
     repository: '',
     rootDirectory: '',
     type: Type.Commit,
-    activate: null // optional
+    activate: true // optional
 });
 
 console.log(result);

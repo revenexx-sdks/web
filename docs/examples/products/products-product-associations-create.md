@@ -13,8 +13,8 @@ const result = await products.productsProductAssociationsCreate({
     associationTypeId: '',
     productId: '',
     targetProductId: '',
-    position: null, // optional
-    quantity: null // optional
+    position: 1, // optional
+    quantity: 4 // optional
 });
 
 console.log(result);

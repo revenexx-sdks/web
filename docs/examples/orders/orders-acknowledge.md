@@ -11,7 +11,7 @@ const orders = new Orders(client);
 
 const result = await orders.ordersAcknowledge({
     id: '',
-    externalRef: '' // optional
+    externalRef: 'ERP-4711' // optional
 });
 
 console.log(result);

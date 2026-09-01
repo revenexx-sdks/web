@@ -11,9 +11,13 @@ const pages = new Pages(client);
 
 const result = await pages.pagesPagesRevisions({
     id: '',
-    limit: null, // optional
-    offset: null, // optional
-    order: '' // optional
+    limit: 1, // optional
+    offset: 1, // optional
+    order: 'created_at.desc', // optional
+    label: 'Autumn campaign', // optional
+    createdBy: '', // optional
+    createdByName: '', // optional
+    createdAt: '' // optional
 });
 
 console.log(result);

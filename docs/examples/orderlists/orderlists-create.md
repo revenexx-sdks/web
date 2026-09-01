@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Orderlists, OrderListKind } from "@revenexx/sdk";
+import { Client, Orderlists } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,14 +10,17 @@ const client = new Client()
 const orderlists = new Orderlists(client);
 
 const result = await orderlists.orderlistsCreate({
-    name: '',
+    name: 'Weekly office supplies',
     ownerId: '',
-    ownerName: '',
+    ownerName: 'Jamie Rivera',
     items: [], // optional
-    kind: OrderListKind.Shopping, // optional
-    metadata: {}, // optional
+    kind: 'shopping', // optional
+    metadata: {
+        "department": "facility",
+        "erp_reference": "REQ-2026-0042"
+    }, // optional
     organizationId: '', // optional
-    shared: null // optional
+    shared: true // optional
 });
 
 console.log(result);

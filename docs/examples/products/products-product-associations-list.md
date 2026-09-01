@@ -10,9 +10,16 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsProductAssociationsList({
-    limit: null, // optional
-    offset: null, // optional
-    order: '' // optional
+    limit: 1, // optional
+    offset: 1, // optional
+    order: 'created_at.desc', // optional
+    id: '', // optional
+    productId: '', // optional
+    associationTypeId: '', // optional
+    targetProductId: '', // optional
+    quantity: 9.99, // optional
+    position: 1, // optional
+    createdAt: '2026-01-01T12:00:00Z' // optional
 });
 
 console.log(result);

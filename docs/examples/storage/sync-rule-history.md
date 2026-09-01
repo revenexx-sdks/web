@@ -11,8 +11,8 @@ const storage = new Storage(client);
 
 const result = await storage.syncRuleHistory({
     ruleId: '', // optional
-    from: '', // optional
-    to: '' // optional
+    from: '2026-01-01T12:00:00Z', // optional
+    to: '2026-01-01T12:00:00Z' // optional
 });
 
 console.log(result);

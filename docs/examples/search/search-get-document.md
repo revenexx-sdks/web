@@ -10,7 +10,7 @@ const client = new Client()
 const search = new Search(client);
 
 const result = await search.searchGetDocument({
-    collection: Collection.Greetings,
+    collection: Collection.Products,
     documentId: ''
 });
 

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Products } from "@revenexx/sdk";
+import { Client, Products, Kind } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,9 +10,24 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsList({
-    limit: null, // optional
-    offset: null, // optional
-    order: '' // optional
+    limit: 1, // optional
+    offset: 1, // optional
+    order: 'created_at.desc', // optional
+    id: '', // optional
+    sku: 'ACME-4711-BLK', // optional
+    kind: Kind.Simple, // optional
+    parentId: '', // optional
+    familyId: '', // optional
+    familyVariantId: '', // optional
+    enabled: true, // optional
+    taxClass: 'standard', // optional
+    attributeValues: '{}', // optional
+    label: 'Akku-Bohrschrauber 18V', // optional
+    quantifiedAssociations: '{}', // optional
+    completeness: '{}', // optional
+    createdAt: '2026-01-01T12:00:00Z', // optional
+    updatedAt: '2026-01-01T12:00:00Z', // optional
+    deletedAt: '2026-01-01T12:00:00Z' // optional
 });
 
 console.log(result);

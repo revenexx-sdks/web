@@ -10,13 +10,21 @@ const client = new Client()
 const search = new Search(client);
 
 const result = await search.searchSearchDocumentsGet({
-    collection: Collection.Greetings,
+    collection: Collection.Products,
     q: '', // optional
     queryBy: '', // optional
     filterBy: '', // optional
     sortBy: '', // optional
-    page: null, // optional
-    perPage: null // optional
+    facetBy: '', // optional
+    maxFacetValues: 1, // optional
+    groupBy: '', // optional
+    includeFields: '', // optional
+    excludeFields: '', // optional
+    highlightFullFields: '', // optional
+    numTypos: 1, // optional
+    prefix: '', // optional
+    page: 1, // optional
+    perPage: 1 // optional
 });
 
 console.log(result);

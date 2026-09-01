@@ -10,11 +10,18 @@ const client = new Client()
 const search = new Search(client);
 
 const result = await search.searchSearchDocuments({
-    collection: Collection.Greetings,
+    collection: Collection.Products,
+    excludeFields: '', // optional
     facetBy: '', // optional
     filterBy: '', // optional
-    page: null, // optional
-    perPage: null, // optional
+    groupBy: '', // optional
+    highlightFullFields: '', // optional
+    includeFields: '', // optional
+    maxFacetValues: 1, // optional
+    numTypos: 1, // optional
+    page: 1, // optional
+    perPage: 1, // optional
+    prefix: '', // optional
     q: '', // optional
     queryBy: '', // optional
     sortBy: '' // optional

@@ -11,9 +11,9 @@ const avatars = new Avatars(client);
 
 const result = await avatars.avatarsGetBrowser({
     code: Code.Aa,
-    width: null, // optional
-    height: null, // optional
-    quality: null // optional
+    width: 1, // optional
+    height: 1, // optional
+    quality: 1 // optional
 });
 
 console.log(result);

@@ -11,10 +11,10 @@ const prices = new Prices(client);
 
 const result = await prices.pricesResolve({
     items: [],
-    at: '', // optional
+    at: '2026-03-15T09:00:00Z', // optional
     channelId: '', // optional
     contactId: '', // optional
-    currency: '', // optional
+    currency: 'EUR', // optional
     marketId: '', // optional
     organizationId: '' // optional
 });

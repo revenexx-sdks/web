@@ -11,12 +11,15 @@ const markets = new Markets(client);
 
 const result = await markets.marketsTaxClassesCreate({
     marketId: '',
-    code: '',
-    name: '',
-    isDefault: null, // optional
-    labels: {}, // optional
-    position: null, // optional
-    rate: null // optional
+    code: 'standard',
+    name: 'Standard rate',
+    isDefault: true, // optional
+    labels: {
+        "de-DE": "Regelsatz",
+        "en-GB": "Standard rate"
+    }, // optional
+    position: 0, // optional
+    rate: 20 // optional
 });
 
 console.log(result);

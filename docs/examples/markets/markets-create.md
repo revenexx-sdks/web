@@ -10,12 +10,15 @@ const client = new Client()
 const markets = new Markets(client);
 
 const result = await markets.marketsCreate({
-    code: '',
-    name: '',
-    currency: '', // optional
-    isDefault: null, // optional
-    labels: {}, // optional
-    position: null, // optional
+    code: 'northwind',
+    name: 'Northwind',
+    currency: 'EUR', // optional
+    isDefault: false, // optional
+    labels: {
+        "de-DE": "Nordwind",
+        "en-GB": "Northwind"
+    }, // optional
+    position: 0, // optional
     status: MarketStatus.Active // optional
 });
 

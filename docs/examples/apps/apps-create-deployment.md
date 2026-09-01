@@ -11,8 +11,8 @@ const apps = new Apps(client);
 
 const result = await apps.appsCreateDeployment({
     functionId: '',
-    activate: null,
-    code: '',
+    activate: true,
+    code: document.getElementById('uploader').files[0],
     commands: '', // optional
     entrypoint: '' // optional
 });

@@ -10,7 +10,7 @@ const client = new Client()
 const customers = new Customers(client);
 
 const result = await customers.customersAuthLogin({
-    email: '',
+    email: 'einkauf@example.com',
     password: ''
 });
 

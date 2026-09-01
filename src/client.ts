@@ -363,7 +363,6 @@ class RevenexxException extends Error {
  * Client that handles requests to Revenexx
  */
 class Client {
-    static CHUNK_SIZE = 1024 * 1024 * 5;
 
     /**
      * Holds configuration such as project.
@@ -390,7 +389,7 @@ class Client {
         'x-sdk-name': 'Revenexx Web',
         'x-sdk-platform': '',
         'x-sdk-language': 'web',
-        'x-sdk-version': '0.0.15',
+        'x-sdk-version': '0.1.0',
     };
 
     /**
@@ -493,7 +492,7 @@ class Client {
      * @return {this}
      */
     setBearerAuth(value: string): this {
-        this.headers['Authorization'] = value;
+        this.headers['Authorization'] = value.toLowerCase().startsWith('bearer ') ? value : `Bearer ${value}`;
         this.config.bearerauth = value;
         return this;
     }
@@ -717,29 +716,13 @@ class Client {
      * @param {string|string[]|Channel<any>|ActionableChannel|ResolvedChannel|(Channel<any>|ActionableChannel|ResolvedChannel)[]} channels
      * Channel to subscribe - pass a single channel as a string or Channel builder instance, or multiple with an array.
      *
-     * Possible channels are:
-     * - account
-     * - collections
-     * - collections.[ID]
-     * - collections.[ID].documents
-     * - documents
-     * - documents.[ID]
-     * - files
-     * - files.[ID]
-     * - executions
-     * - executions.[ID]
-     * - functions.[ID]
-     * - teams
-     * - teams.[ID]
-     * - memberships
-     * - memberships.[ID]
-     * 
-     * You can also use Channel builders:
-     * - Channel.database('db').collection('col').document('doc').create()
-     * - Channel.bucket('bucket').file('file').update()
-     * - Channel.function('func').execution('exec').delete()
-     * - Channel.team('team').create()
-     * - Channel.membership('membership').update()
+     * A channel is an opaque dot-separated string. This SDK does not validate it and
+     * ships no list of valid values: whatever you pass is forwarded verbatim as a
+     * `channels[]` query parameter when the realtime socket is opened, and which
+     * channels exist is decided by the API, not by this package. Use a channel string
+     * from the API documentation, or build one with the typed `Channel` builder this
+     * package exports — a `Channel` instance is accepted directly here and rendered
+     * via its `toString()`.
      * @param {(payload: RealtimeMessage) => void} callback Is called on every realtime update.
      * @returns {() => void} Unsubscribes from events.
      */
@@ -787,21 +770,12 @@ class Client {
 
         headers = Object.assign({}, this.headers, headers);
 
-        if (typeof window !== 'undefined' && window.localStorage) {
-            const cookieFallback = window.localStorage.getItem('cookieFallback');
-            if (cookieFallback) {
-                headers['X-Fallback-Cookies'] = cookieFallback;
-            }
-        }
-
         let options: RequestInit = {
             method,
             headers,
         };
 
-        if (headers['X-Revenexx-Dev-Key'] === undefined) {
-            options.credentials = 'include';
-        }
+        options.credentials = 'include';
 
         if (method === 'GET') {
             for (const [key, value] of Object.entries(Client.flatten(params))) {
@@ -844,42 +818,19 @@ class Client {
             throw new Error('File not found in payload');
         }
 
-        if (file.size <= Client.CHUNK_SIZE) {
-            return await this.call(method, url, headers, originalPayload);
-        }
+        // The API takes one multipart body per upload. It has no chunked or
+        // resumable protocol — no content-range, no upload id, no per-chunk
+        // endpoint — so the whole file always goes in a single request.
+        const response = await this.call(method, url, headers, originalPayload);
 
-        let start = 0;
-        let response = null;
-
-        while (start < file.size) {
-            let end = start + Client.CHUNK_SIZE; // Prepare end for the next chunk
-            if (end >= file.size) {
-                end = file.size; // Adjust for the last chunk to include the last byte
-            }
-
-            headers['content-range'] = `bytes ${start}-${end-1}/${file.size}`;
-            const chunk = file.slice(start, end);
-
-            let payload = { ...originalPayload };
-            payload[fileParam] = new File([chunk], file.name);
-
-            response = await this.call(method, url, headers, payload);
-
-            if (onProgress && typeof onProgress === 'function') {
-                onProgress({
-                    $id: response.$id,
-                    progress: Math.round((end / file.size) * 100),
-                    sizeUploaded: end,
-                    chunksTotal: Math.ceil(file.size / Client.CHUNK_SIZE),
-                    chunksUploaded: Math.ceil(end / Client.CHUNK_SIZE)
-                });
-            }
-
-            if (response && response.$id) {
-                headers['x-revenexx api — revenexx-id'] = response.$id;
-            }
-
-            start = end;
+        if (onProgress && typeof onProgress === 'function') {
+            onProgress({
+                $id: response?.$id,
+                progress: 100,
+                sizeUploaded: file.size,
+                chunksTotal: 1,
+                chunksUploaded: 1
+            });
         }
 
         return response;
@@ -929,13 +880,6 @@ class Client {
                 responseText = data?.message;
             }
             throw new RevenexxException(data?.message, response.status, data?.type, responseText);
-        }
-
-        const cookieFallback = response.headers.get('X-Fallback-Cookies');
-
-        if (typeof window !== 'undefined' && window.localStorage && cookieFallback) {
-            window.console.warn('Revenexx is using localStorage for session management. Increase your security by adding a custom domain as your API endpoint.');
-            window.localStorage.setItem('cookieFallback', cookieFallback);
         }
 
         if (data && typeof data === 'object') {

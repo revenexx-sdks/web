@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Carts } from "@revenexx/sdk";
+import { Client, Carts, CartMergeStrategy } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -11,7 +11,8 @@ const carts = new Carts(client);
 
 const result = await carts.cartsClaim({
     contactId: '',
-    sessionKey: '',
+    sessionKey: 'a1b2c3d4e5f6',
+    strategy: CartMergeStrategy.Merge, // optional
     targetCartId: '' // optional
 });
 

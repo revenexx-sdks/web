@@ -12,9 +12,13 @@ const carts = new Carts(client);
 const result = await carts.cartsUpdate({
     id: '',
     channelId: '', // optional
-    currency: '', // optional
-    metadata: {}, // optional
-    name: '' // optional
+    currency: 'EUR', // optional
+    metadata: {
+        "campaign": "spring-catalogue",
+        "locale": "de-DE",
+        "source": "storefront"
+    }, // optional
+    name: 'Weekly order' // optional
 });
 
 console.log(result);

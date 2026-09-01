@@ -12,10 +12,10 @@ const orderlists = new Orderlists(client);
 const result = await orderlists.orderlistsList({
     ownerId: '', // optional
     organizationId: '', // optional
-    kind: '', // optional
-    limit: null, // optional
-    offset: null, // optional
-    order: '' // optional
+    kind: 'shopping', // optional
+    limit: 50, // optional
+    offset: 0, // optional
+    order: 'created_at.desc' // optional
 });
 
 console.log(result);

@@ -11,11 +11,11 @@ const apps = new Apps(client);
 
 const result = await apps.appsCreateExecution({
     functionId: '',
-    async: null, // optional
+    async: true, // optional
     body: '', // optional
     headers: {}, // optional
     method: Method.GET, // optional
-    path: '', // optional
+    path: '/', // optional
     scheduledAt: '' // optional
 });
 

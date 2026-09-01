@@ -11,7 +11,7 @@ const carts = new Carts(client);
 
 const result = await carts.cartsOrder({
     id: '',
-    orderRef: '' // optional
+    orderRef: 'SO-10042' // optional
 });
 
 console.log(result);

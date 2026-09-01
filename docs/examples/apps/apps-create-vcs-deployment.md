@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Apps, Type } from "@revenexx/sdk";
+import { Client, Apps, AppsCreateVcsDeploymentType } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -11,9 +11,9 @@ const apps = new Apps(client);
 
 const result = await apps.appsCreateVcsDeployment({
     functionId: '',
-    reference: '',
-    type: Type.Branch,
-    activate: null // optional
+    reference: 'main',
+    type: AppsCreateVcsDeploymentType.Branch,
+    activate: true // optional
 });
 
 console.log(result);

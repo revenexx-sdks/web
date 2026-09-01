@@ -13,21 +13,21 @@ const result = await apps.appsCreate({
     functionId: '',
     name: '',
     runtime: Runtime.Node180,
-    commands: '', // optional
-    enabled: null, // optional
-    entrypoint: '', // optional
+    commands: 'npm install', // optional
+    enabled: true, // optional
+    entrypoint: 'src/main.js', // optional
     events: [], // optional
-    execute: [], // optional
+    execute: ["any"], // optional
     installationId: '', // optional
-    logging: null, // optional
-    providerBranch: '', // optional
+    logging: true, // optional
+    providerBranch: 'main', // optional
     providerRepositoryId: '', // optional
     providerRootDirectory: '', // optional
-    providerSilentMode: null, // optional
-    schedule: '', // optional
+    providerSilentMode: true, // optional
+    schedule: '0 3 * * *', // optional
     scopes: [Scopes.SessionsWrite], // optional
-    specification: '', // optional
-    timeout: null // optional
+    specification: 's-1vcpu-512mb', // optional
+    timeout: 1 // optional
 });
 
 console.log(result);

@@ -12,7 +12,7 @@ const sites = new Sites(client);
 const result = await sites.sitesList({
     queries: [], // optional
     search: '', // optional
-    total: null // optional
+    total: true // optional
 });
 
 console.log(result);

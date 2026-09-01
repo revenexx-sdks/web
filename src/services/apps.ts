@@ -8,6 +8,8 @@ import { Runtimes } from '../enums/runtimes';
 import { UseCases } from '../enums/use-cases';
 import { Range } from '../enums/range';
 import { Type } from '../enums/type';
+import { AppsCreateVcsDeploymentType } from '../enums/apps-create-vcs-deployment-type';
+import { AppsGetDeploymentDownloadType } from '../enums/apps-get-deployment-download-type';
 import { Method } from '../enums/method';
 
 export class Apps {
@@ -20,7 +22,7 @@ export class Apps {
     /**
      * List all Apps in the active project. Pass `search` to filter by name.
      *
-     * @param {string[]} params.queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, runtime, deploymentId, schedule, scheduleNext, schedulePrevious, timeout, entrypoint, commands, installationId
+     * @param {string[]} params.queries - Result filters, paging and ordering. Repeat the parameter once per query — `?queries=…&queries=…` — and make each value a JSON object, e.g. `{"method":"limit","values":[25]}`. The bracketed spellings `queries[]=` and `queries[0]=` are accepted too; the `limit(25)` call syntax is not. See “Query parameters” in this document's introduction. Filterable attributes, besides `$id`, `$createdAt`, `$updatedAt` and `$sequence`: name, enabled, runtime, deploymentId, schedule, scheduleNext, schedulePrevious, timeout, entrypoint, commands, installationId
      * @param {string} params.search - Search term to filter your list results. Max length: 256 chars.
      * @param {boolean} params.total - When set to false, the total count returned will be 0 and will not be calculated.
      * @throws {RevenexxException}
@@ -30,7 +32,7 @@ export class Apps {
     /**
      * List all Apps in the active project. Pass `search` to filter by name.
      *
-     * @param {string[]} queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: name, enabled, runtime, deploymentId, schedule, scheduleNext, schedulePrevious, timeout, entrypoint, commands, installationId
+     * @param {string[]} queries - Result filters, paging and ordering. Repeat the parameter once per query — `?queries=…&queries=…` — and make each value a JSON object, e.g. `{"method":"limit","values":[25]}`. The bracketed spellings `queries[]=` and `queries[0]=` are accepted too; the `limit(25)` call syntax is not. See “Query parameters” in this document's introduction. Filterable attributes, besides `$id`, `$createdAt`, `$updatedAt` and `$sequence`: name, enabled, runtime, deploymentId, schedule, scheduleNext, schedulePrevious, timeout, entrypoint, commands, installationId
      * @param {string} search - Search term to filter your list results. Max length: 256 chars.
      * @param {boolean} total - When set to false, the total count returned will be 0 and will not be calculated.
      * @throws {RevenexxException}
@@ -95,8 +97,8 @@ export class Apps {
      * @param {boolean} params.enabled - Is function enabled? When set to 'disabled', users cannot access the function but Server SDKs with and API key can still access the function. No data is lost when this is toggled.
      * @param {string} params.entrypoint - Entrypoint File. This path is relative to the "providerRootDirectory".
      * @param {string[]} params.events - Events list. Maximum of 100 events are allowed.
-     * @param {string[]} params.execute - An array of role strings with execution permissions. By default no user is granted with any execute permissions. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.
-     * @param {string} params.installationId - Appwrite Installation ID for VCS (Version Control System) deployment.
+     * @param {string[]} params.execute - An array of role strings with execution permissions. By default no user is granted with any execute permissions. Roles take the form `any`, `guests`, `users`, `user:<id>`, `team:<id>`, `member:<id>` or `label:<name>`, some of them with a `/<dimension>` suffix such as `users/verified` or `team:<id>/owner`. At most 100 entries. See “Role strings” in this document's introduction.
+     * @param {string} params.installationId - Installation ID of the platform's VCS (Version Control System) integration to deploy from.
      * @param {boolean} params.logging - When disabled, executions will exclude logs and errors, and will be slightly faster.
      * @param {string} params.providerBranch - Production branch for the repo linked to the function.
      * @param {string} params.providerRepositoryId - Repository ID of the repo linked to the function.
@@ -122,8 +124,8 @@ export class Apps {
      * @param {boolean} enabled - Is function enabled? When set to 'disabled', users cannot access the function but Server SDKs with and API key can still access the function. No data is lost when this is toggled.
      * @param {string} entrypoint - Entrypoint File. This path is relative to the "providerRootDirectory".
      * @param {string[]} events - Events list. Maximum of 100 events are allowed.
-     * @param {string[]} execute - An array of role strings with execution permissions. By default no user is granted with any execute permissions. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.
-     * @param {string} installationId - Appwrite Installation ID for VCS (Version Control System) deployment.
+     * @param {string[]} execute - An array of role strings with execution permissions. By default no user is granted with any execute permissions. Roles take the form `any`, `guests`, `users`, `user:<id>`, `team:<id>`, `member:<id>` or `label:<name>`, some of them with a `/<dimension>` suffix such as `users/verified` or `team:<id>/owner`. At most 100 entries. See “Role strings” in this document's introduction.
+     * @param {string} installationId - Installation ID of the platform's VCS (Version Control System) integration to deploy from.
      * @param {boolean} logging - When disabled, executions will exclude logs and errors, and will be slightly faster.
      * @param {string} providerBranch - Production branch for the repo linked to the function.
      * @param {string} providerRepositoryId - Repository ID of the repo linked to the function.
@@ -739,8 +741,8 @@ export class Apps {
      * @param {boolean} params.enabled - Is function enabled? When set to 'disabled', users cannot access the function but Server SDKs with and API key can still access the function. No data is lost when this is toggled.
      * @param {string} params.entrypoint - Entrypoint File. This path is relative to the "providerRootDirectory".
      * @param {string[]} params.events - Events list. Maximum of 100 events are allowed.
-     * @param {string[]} params.execute - An array of role strings with execution permissions. By default no user is granted with any execute permissions. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.
-     * @param {string} params.installationId - Appwrite Installation ID for VCS (Version Controle System) deployment.
+     * @param {string[]} params.execute - An array of role strings with execution permissions. By default no user is granted with any execute permissions. Roles take the form `any`, `guests`, `users`, `user:<id>`, `team:<id>`, `member:<id>` or `label:<name>`, some of them with a `/<dimension>` suffix such as `users/verified` or `team:<id>/owner`. At most 100 entries. See “Role strings” in this document's introduction.
+     * @param {string} params.installationId - Installation ID of the platform's VCS (Version Control System) integration to deploy from.
      * @param {boolean} params.logging - When disabled, executions will exclude logs and errors, and will be slightly faster.
      * @param {string} params.providerBranch - Production branch for the repo linked to the function
      * @param {string} params.providerRepositoryId - Repository ID of the repo linked to the function
@@ -764,8 +766,8 @@ export class Apps {
      * @param {boolean} enabled - Is function enabled? When set to 'disabled', users cannot access the function but Server SDKs with and API key can still access the function. No data is lost when this is toggled.
      * @param {string} entrypoint - Entrypoint File. This path is relative to the "providerRootDirectory".
      * @param {string[]} events - Events list. Maximum of 100 events are allowed.
-     * @param {string[]} execute - An array of role strings with execution permissions. By default no user is granted with any execute permissions. [learn more about roles](https://appwrite.io/docs/permissions#permission-roles). Maximum of 100 roles are allowed, each 64 characters long.
-     * @param {string} installationId - Appwrite Installation ID for VCS (Version Controle System) deployment.
+     * @param {string[]} execute - An array of role strings with execution permissions. By default no user is granted with any execute permissions. Roles take the form `any`, `guests`, `users`, `user:<id>`, `team:<id>`, `member:<id>` or `label:<name>`, some of them with a `/<dimension>` suffix such as `users/verified` or `team:<id>/owner`. At most 100 entries. See “Role strings” in this document's introduction.
+     * @param {string} installationId - Installation ID of the platform's VCS (Version Control System) integration to deploy from.
      * @param {boolean} logging - When disabled, executions will exclude logs and errors, and will be slightly faster.
      * @param {string} providerBranch - Production branch for the repo linked to the function
      * @param {string} providerRepositoryId - Repository ID of the repo linked to the function
@@ -972,7 +974,7 @@ export class Apps {
      * List the deployment history of an App.
      *
      * @param {string} params.functionId - Function ID.
-     * @param {string[]} params.queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type
+     * @param {string[]} params.queries - Result filters, paging and ordering. Repeat the parameter once per query — `?queries=…&queries=…` — and make each value a JSON object, e.g. `{"method":"limit","values":[25]}`. The bracketed spellings `queries[]=` and `queries[0]=` are accepted too; the `limit(25)` call syntax is not. See “Query parameters” in this document's introduction. Filterable attributes, besides `$id`, `$createdAt`, `$updatedAt` and `$sequence`: buildSize, sourceSize, totalSize, buildDuration, status, activate, type
      * @param {string} params.search - Search term to filter your list results. Max length: 256 chars.
      * @param {boolean} params.total - When set to false, the total count returned will be 0 and will not be calculated.
      * @throws {RevenexxException}
@@ -983,7 +985,7 @@ export class Apps {
      * List the deployment history of an App.
      *
      * @param {string} functionId - Function ID.
-     * @param {string[]} queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: buildSize, sourceSize, totalSize, buildDuration, status, activate, type
+     * @param {string[]} queries - Result filters, paging and ordering. Repeat the parameter once per query — `?queries=…&queries=…` — and make each value a JSON object, e.g. `{"method":"limit","values":[25]}`. The bracketed spellings `queries[]=` and `queries[0]=` are accepted too; the `limit(25)` call syntax is not. See “Query parameters” in this document's introduction. Filterable attributes, besides `$id`, `$createdAt`, `$updatedAt` and `$sequence`: buildSize, sourceSize, totalSize, buildDuration, status, activate, type
      * @param {string} search - Search term to filter your list results. Max length: 256 chars.
      * @param {boolean} total - When set to false, the total count returned will be 0 and will not be calculated.
      * @throws {RevenexxException}
@@ -1049,13 +1051,13 @@ export class Apps {
      *
      * @param {string} params.functionId - Function ID.
      * @param {boolean} params.activate - Automatically activate the deployment when it is finished building.
-     * @param {string} params.code - Gzip file with your code package. When used with the Appwrite CLI, pass the path to your code directory, and the CLI will automatically package your code. Use a path that is within the current directory.
+     * @param {File} params.code - Your source directory packaged as a gzipped tar archive (`.tar.gz`), sent as the file part of the multipart request.
      * @param {string} params.commands - Build Commands.
      * @param {string} params.entrypoint - Entrypoint File.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      */
-    appsCreateDeployment(params: { functionId: string, activate: boolean, code: string, commands?: string, entrypoint?: string, onProgress?: (progress: UploadProgress) => void }): Promise<Models.Deployment>;
+    appsCreateDeployment(params: { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, onProgress?: (progress: UploadProgress) => void }): Promise<Models.Deployment>;
     /**
      * Upload a new code deployment for an App. Accepts a `.tar.gz`
      * archive containing the App source. Phase 2 will extract the
@@ -1064,29 +1066,29 @@ export class Apps {
      *
      * @param {string} functionId - Function ID.
      * @param {boolean} activate - Automatically activate the deployment when it is finished building.
-     * @param {string} code - Gzip file with your code package. When used with the Appwrite CLI, pass the path to your code directory, and the CLI will automatically package your code. Use a path that is within the current directory.
+     * @param {File} code - Your source directory packaged as a gzipped tar archive (`.tar.gz`), sent as the file part of the multipart request.
      * @param {string} commands - Build Commands.
      * @param {string} entrypoint - Entrypoint File.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    appsCreateDeployment(functionId: string, activate: boolean, code: string, commands?: string, entrypoint?: string, onProgress?: (progress: UploadProgress) => void): Promise<Models.Deployment>;
+    appsCreateDeployment(functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, onProgress?: (progress: UploadProgress) => void): Promise<Models.Deployment>;
     appsCreateDeployment(
-        paramsOrFirst: { functionId: string, activate: boolean, code: string, commands?: string, entrypoint?: string, onProgress?: (progress: UploadProgress) => void } | string,
-        ...rest: [(boolean)?, (string)?, (string)?, (string)?,((progress: UploadProgress) => void)?]    
+        paramsOrFirst: { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, onProgress?: (progress: UploadProgress) => void } | string,
+        ...rest: [(boolean)?, (File)?, (string)?, (string)?,((progress: UploadProgress) => void)?]    
     ): Promise<Models.Deployment> {
-        let params: { functionId: string, activate: boolean, code: string, commands?: string, entrypoint?: string };
+        let params: { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string };
         let onProgress: ((progress: UploadProgress) => void);
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { functionId: string, activate: boolean, code: string, commands?: string, entrypoint?: string };
-            onProgress = paramsOrFirst?.onProgress as ((progress: UploadProgress) => void);
+            params = (paramsOrFirst || {}) as { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string };
+            onProgress = (paramsOrFirst as { onProgress?: (progress: UploadProgress) => void }).onProgress as ((progress: UploadProgress) => void);
         } else {
             params = {
                 functionId: paramsOrFirst as string,
                 activate: rest[0] as boolean,
-                code: rest[1] as string,
+                code: rest[1] as File,
                 commands: rest[2] as string,
                 entrypoint: rest[3] as string            
             };
@@ -1323,37 +1325,37 @@ export class Apps {
      *
      * @param {string} params.functionId - Function ID.
      * @param {string} params.reference - VCS reference to create deployment from. Depending on type this can be: branch name, commit hash
-     * @param {Type} params.type - Type of reference passed. Allowed values are: branch, commit
+     * @param {AppsCreateVcsDeploymentType} params.type - Type of reference passed. Allowed values are: branch, commit
      * @param {boolean} params.activate - Automatically activate the deployment when it is finished building.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      */
-    appsCreateVcsDeployment(params: { functionId: string, reference: string, type: Type, activate?: boolean }): Promise<Models.Deployment>;
+    appsCreateVcsDeployment(params: { functionId: string, reference: string, type: AppsCreateVcsDeploymentType, activate?: boolean }): Promise<Models.Deployment>;
     /**
      * Trigger a new deployment from the App's connected Git repository.
      *
      * @param {string} functionId - Function ID.
      * @param {string} reference - VCS reference to create deployment from. Depending on type this can be: branch name, commit hash
-     * @param {Type} type - Type of reference passed. Allowed values are: branch, commit
+     * @param {AppsCreateVcsDeploymentType} type - Type of reference passed. Allowed values are: branch, commit
      * @param {boolean} activate - Automatically activate the deployment when it is finished building.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    appsCreateVcsDeployment(functionId: string, reference: string, type: Type, activate?: boolean): Promise<Models.Deployment>;
+    appsCreateVcsDeployment(functionId: string, reference: string, type: AppsCreateVcsDeploymentType, activate?: boolean): Promise<Models.Deployment>;
     appsCreateVcsDeployment(
-        paramsOrFirst: { functionId: string, reference: string, type: Type, activate?: boolean } | string,
-        ...rest: [(string)?, (Type)?, (boolean)?]    
+        paramsOrFirst: { functionId: string, reference: string, type: AppsCreateVcsDeploymentType, activate?: boolean } | string,
+        ...rest: [(string)?, (AppsCreateVcsDeploymentType)?, (boolean)?]    
     ): Promise<Models.Deployment> {
-        let params: { functionId: string, reference: string, type: Type, activate?: boolean };
+        let params: { functionId: string, reference: string, type: AppsCreateVcsDeploymentType, activate?: boolean };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { functionId: string, reference: string, type: Type, activate?: boolean };
+            params = (paramsOrFirst || {}) as { functionId: string, reference: string, type: AppsCreateVcsDeploymentType, activate?: boolean };
         } else {
             params = {
                 functionId: paramsOrFirst as string,
                 reference: rest[0] as string,
-                type: rest[1] as Type,
+                type: rest[1] as AppsCreateVcsDeploymentType,
                 activate: rest[2] as boolean            
             };
         }
@@ -1521,35 +1523,35 @@ export class Apps {
      *
      * @param {string} params.functionId - Function ID.
      * @param {string} params.deploymentId - Deployment ID.
-     * @param {Type} params.type - Deployment file to download. Can be: "source", "output".
+     * @param {AppsGetDeploymentDownloadType} params.type - Deployment file to download. Can be: "source", "output".
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    appsGetDeploymentDownload(params: { functionId: string, deploymentId: string, type?: Type }): Promise<{}>;
+    appsGetDeploymentDownload(params: { functionId: string, deploymentId: string, type?: AppsGetDeploymentDownloadType }): Promise<{}>;
     /**
      * Get a redirect URL to download the source archive of an App deployment. Useful for re-running a build locally or auditing what was deployed.
      *
      * @param {string} functionId - Function ID.
      * @param {string} deploymentId - Deployment ID.
-     * @param {Type} type - Deployment file to download. Can be: "source", "output".
+     * @param {AppsGetDeploymentDownloadType} type - Deployment file to download. Can be: "source", "output".
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    appsGetDeploymentDownload(functionId: string, deploymentId: string, type?: Type): Promise<{}>;
+    appsGetDeploymentDownload(functionId: string, deploymentId: string, type?: AppsGetDeploymentDownloadType): Promise<{}>;
     appsGetDeploymentDownload(
-        paramsOrFirst: { functionId: string, deploymentId: string, type?: Type } | string,
-        ...rest: [(string)?, (Type)?]    
+        paramsOrFirst: { functionId: string, deploymentId: string, type?: AppsGetDeploymentDownloadType } | string,
+        ...rest: [(string)?, (AppsGetDeploymentDownloadType)?]    
     ): Promise<{}> {
-        let params: { functionId: string, deploymentId: string, type?: Type };
+        let params: { functionId: string, deploymentId: string, type?: AppsGetDeploymentDownloadType };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { functionId: string, deploymentId: string, type?: Type };
+            params = (paramsOrFirst || {}) as { functionId: string, deploymentId: string, type?: AppsGetDeploymentDownloadType };
         } else {
             params = {
                 functionId: paramsOrFirst as string,
                 deploymentId: rest[0] as string,
-                type: rest[1] as Type            
+                type: rest[1] as AppsGetDeploymentDownloadType            
             };
         }
         
@@ -1645,7 +1647,7 @@ export class Apps {
      * List the execution history of an App.
      *
      * @param {string} params.functionId - Function ID.
-     * @param {string[]} params.queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId
+     * @param {string[]} params.queries - Result filters, paging and ordering. Repeat the parameter once per query — `?queries=…&queries=…` — and make each value a JSON object, e.g. `{"method":"limit","values":[25]}`. The bracketed spellings `queries[]=` and `queries[0]=` are accepted too; the `limit(25)` call syntax is not. See “Query parameters” in this document's introduction. Filterable attributes, besides `$id`, `$createdAt`, `$updatedAt` and `$sequence`: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId
      * @param {boolean} params.total - When set to false, the total count returned will be 0 and will not be calculated.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ExecutionList>}
@@ -1655,7 +1657,7 @@ export class Apps {
      * List the execution history of an App.
      *
      * @param {string} functionId - Function ID.
-     * @param {string[]} queries - Array of query strings generated using the Query class provided by the SDK. [Learn more about queries](https://appwrite.io/docs/queries). Maximum of 100 queries are allowed, each 4096 characters long. You may filter on the following attributes: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId
+     * @param {string[]} queries - Result filters, paging and ordering. Repeat the parameter once per query — `?queries=…&queries=…` — and make each value a JSON object, e.g. `{"method":"limit","values":[25]}`. The bracketed spellings `queries[]=` and `queries[0]=` are accepted too; the `limit(25)` call syntax is not. See “Query parameters” in this document's introduction. Filterable attributes, besides `$id`, `$createdAt`, `$updatedAt` and `$sequence`: trigger, status, responseStatusCode, duration, requestMethod, requestPath, deploymentId
      * @param {boolean} total - When set to false, the total count returned will be 0 and will not be calculated.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ExecutionList>}

@@ -10,13 +10,16 @@ const client = new Client()
 const customers = new Customers(client);
 
 const result = await customers.customersAuthRegister({
-    email: '',
+    email: 'einkauf@example.com',
     password: '',
-    firstName: '', // optional
-    lastName: '', // optional
-    locale: '', // optional
+    firstName: 'Anna', // optional
+    lastName: 'Berger', // optional
+    locale: 'de-DE', // optional
     organizationId: '', // optional
-    organizationName: '' // optional
+    organizationName: 'Beispiel Industrietechnik GmbH', // optional
+    url: 'https://shop.example.com/account', // optional
+    vatId: 'DE123456789', // optional
+    verificationUrl: 'https://shop.example.com/bestaetigen' // optional
 });
 
 console.log(result);

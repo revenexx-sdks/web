@@ -1,9 +1,9 @@
 export enum PaymentStatus {
-    Open = 'open',
-    Pending = 'pending',
+    Created = 'created',
+    RequiresAction = 'requires_action',
     Authorized = 'authorized',
-    Paid = 'paid',
-    PartiallyPaid = 'partially_paid',
-    Refunded = 'refunded',
+    Captured = 'captured',
     Failed = 'failed',
+    Cancelled = 'cancelled',
+    Refunded = 'refunded',
 }

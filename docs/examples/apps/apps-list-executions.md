@@ -12,7 +12,7 @@ const apps = new Apps(client);
 const result = await apps.appsListExecutions({
     functionId: '',
     queries: [], // optional
-    total: null // optional
+    total: true // optional
 });
 
 console.log(result);

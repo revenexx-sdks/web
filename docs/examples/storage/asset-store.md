@@ -10,14 +10,14 @@ const client = new Client()
 const storage = new Storage(client);
 
 const result = await storage.assetStore({
-    file: '',
+    file: document.getElementById('uploader').files[0],
     altText: '', // optional
     description: '', // optional
     displayName: '', // optional
     folderId: '', // optional
-    keepArchive: null, // optional
+    keepArchive: true, // optional
     tags: [], // optional
-    unpack: null, // optional
+    unpack: true, // optional
     visibility: Visibility.Public // optional
 });
 

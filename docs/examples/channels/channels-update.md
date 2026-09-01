@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Channels, ChannelStatus, ChannelType } from "@revenexx/sdk";
+import { Client, Channels, ChannelStatus, ChannelUnassignedVisibility } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -11,13 +11,17 @@ const channels = new Channels(client);
 
 const result = await channels.channelsUpdate({
     id: '',
-    code: '', // optional
-    isDefault: null, // optional
-    labels: {}, // optional
-    name: '', // optional
-    position: null, // optional
+    code: 'shop', // optional
+    isDefault: true, // optional
+    labels: {
+        "de": "Shop",
+        "en": "Shop"
+    }, // optional
+    name: 'Shop', // optional
+    position: 1, // optional
     status: ChannelStatus.Active, // optional
-    type: ChannelType.Storefront // optional
+    type: 'storefront', // optional
+    unassignedVisibility: ChannelUnassignedVisibility.Inherit // optional
 });
 
 console.log(result);

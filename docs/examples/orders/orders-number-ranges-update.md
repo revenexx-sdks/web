@@ -12,13 +12,15 @@ const orders = new Orders(client);
 const result = await orders.ordersNumberRangesUpdate({
     id: '',
     channelId: '', // optional
-    code: '', // optional
-    counter: null, // optional
-    metadata: {}, // optional
-    padding: null, // optional
-    positionStep: null, // optional
-    prefix: '', // optional
-    step: null, // optional
+    code: 'order', // optional
+    counter: 123, // optional
+    metadata: {
+        "owner": "erp-sync"
+    }, // optional
+    padding: 6, // optional
+    positionStep: 10, // optional
+    prefix: 'ORD-', // optional
+    step: 1, // optional
     suffix: '' // optional
 });
 
