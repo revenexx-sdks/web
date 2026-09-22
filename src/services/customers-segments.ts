@@ -123,9 +123,9 @@ export class CustomersSegments {
      * @param {string} params.segmentId - The segment.
      * @param {SegmentMemberSource} params.source - How this membership came about: 'manual' is hand-picked, 'rule' was materialized by a recompute. The distinction is load-bearing — a recompute only ever inserts and deletes 'rule' rows, so a hand-picked member survives every rule change. Default 'manual'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentMember>}
      */
-    customersSegmentMembersCreate(params: { organizationId: string, segmentId: string, source?: SegmentMemberSource }): Promise<Models.Error>;
+    customersSegmentMembersCreate(params: { organizationId: string, segmentId: string, source?: SegmentMemberSource }): Promise<Models.SegmentMember>;
     /**
      * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. Adds a company to a segment BY HAND. The row is `source: "manual"`, which is what protects it: a rule recompute rewrites the rule-derived rows of that segment and never touches this one. A create cannot omit `segment_id` and `organization_id`; everything else is optional or defaulted by the database. Two rows of this tenant may not share the combination of `segment_id` + `organization_id`.
      *
@@ -133,14 +133,14 @@ export class CustomersSegments {
      * @param {string} segmentId - The segment.
      * @param {SegmentMemberSource} source - How this membership came about: 'manual' is hand-picked, 'rule' was materialized by a recompute. The distinction is load-bearing — a recompute only ever inserts and deletes 'rule' rows, so a hand-picked member survives every rule change. Default 'manual'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentMember>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentMembersCreate(organizationId: string, segmentId: string, source?: SegmentMemberSource): Promise<Models.Error>;
+    customersSegmentMembersCreate(organizationId: string, segmentId: string, source?: SegmentMemberSource): Promise<Models.SegmentMember>;
     customersSegmentMembersCreate(
         paramsOrFirst: { organizationId: string, segmentId: string, source?: SegmentMemberSource } | string,
         ...rest: [(string)?, (SegmentMemberSource)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.SegmentMember> {
         let params: { organizationId: string, segmentId: string, source?: SegmentMemberSource };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -194,21 +194,21 @@ export class CustomersSegments {
      *
      * @param {string} params.id - The segment membership to delete.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    customersSegmentMembersDelete(params: { id: string }): Promise<Models.Error>;
+    customersSegmentMembersDelete(params: { id: string }): Promise<{}>;
     /**
      * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. Takes the company out of the segment. If the segment carries rules and the company still matches them, the next recompute puts it back; remove it from the rule, not from the list. Nothing else in this app points at it, so nothing else goes with it.
      *
      * @param {string} id - The segment membership to delete.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentMembersDelete(id: string): Promise<Models.Error>;
+    customersSegmentMembersDelete(id: string): Promise<{}>;
     customersSegmentMembersDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -245,21 +245,21 @@ export class CustomersSegments {
      *
      * @param {string} params.id - The segment membership to read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentMember>}
      */
-    customersSegmentMembersGet(params: { id: string }): Promise<Models.Error>;
+    customersSegmentMembersGet(params: { id: string }): Promise<Models.SegmentMember>;
     /**
      * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. One membership row by id, with the `source` that says how it came about.
      *
      * @param {string} id - The segment membership to read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentMember>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentMembersGet(id: string): Promise<Models.Error>;
+    customersSegmentMembersGet(id: string): Promise<Models.SegmentMember>;
     customersSegmentMembersGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.SegmentMember> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -299,9 +299,9 @@ export class CustomersSegments {
      * @param {string} params.segmentId - The segment.
      * @param {SegmentMemberSource} params.source - How this membership came about: 'manual' is hand-picked, 'rule' was materialized by a recompute. The distinction is load-bearing — a recompute only ever inserts and deletes 'rule' rows, so a hand-picked member survives every rule change. Default 'manual'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentMember>}
      */
-    customersSegmentMembersUpdate(params: { id: string, organizationId?: string, segmentId?: string, source?: SegmentMemberSource }): Promise<Models.Error>;
+    customersSegmentMembersUpdate(params: { id: string, organizationId?: string, segmentId?: string, source?: SegmentMemberSource }): Promise<Models.SegmentMember>;
     /**
      * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. A partial update. In practice there is little to change — a membership is a pair of ids — so this exists for the `source` correction rather than as the normal path. Two rows of this tenant may not share the combination of `segment_id` + `organization_id`.
      *
@@ -310,14 +310,14 @@ export class CustomersSegments {
      * @param {string} segmentId - The segment.
      * @param {SegmentMemberSource} source - How this membership came about: 'manual' is hand-picked, 'rule' was materialized by a recompute. The distinction is load-bearing — a recompute only ever inserts and deletes 'rule' rows, so a hand-picked member survives every rule change. Default 'manual'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentMember>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentMembersUpdate(id: string, organizationId?: string, segmentId?: string, source?: SegmentMemberSource): Promise<Models.Error>;
+    customersSegmentMembersUpdate(id: string, organizationId?: string, segmentId?: string, source?: SegmentMemberSource): Promise<Models.SegmentMember>;
     customersSegmentMembersUpdate(
         paramsOrFirst: { id: string, organizationId?: string, segmentId?: string, source?: SegmentMemberSource } | string,
         ...rest: [(string)?, (string)?, (SegmentMemberSource)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.SegmentMember> {
         let params: { id: string, organizationId?: string, segmentId?: string, source?: SegmentMemberSource };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -489,9 +489,9 @@ export class CustomersSegments {
      * @param {SegmentRuleMatch} params.ruleMatch - How the conditions combine: 'all' (default) is AND, 'any' is OR. Null means the same as 'all'.
      * @param {object} params.rules - The selector that decides membership, stored verbatim. Null means the segment is manual-only. The same rule language product categories use, evaluated over organization columns, `setting:<key>` entries and the organization_metrics projection — so 'no order in 365 days' is expressible without joining the orders app. Null makes the segment manual-only. Changing it does not move a single membership — run the recompute.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Segment>}
      */
-    customersSegmentsCreate(params: { code: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object }): Promise<Models.Error>;
+    customersSegmentsCreate(params: { code: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object }): Promise<Models.Segment>;
     /**
      * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". Creates the group. Rules are optional: leave them out for a hand-picked list, or store a rule document and let the recompute keep the membership up to date. The `code` is what other apps point at, so pick it deliberately. `code` is the only field a create cannot omit; everything else is optional or defaulted by the database. Two rows of this tenant may not share `code`.
      *
@@ -501,14 +501,14 @@ export class CustomersSegments {
      * @param {SegmentRuleMatch} ruleMatch - How the conditions combine: 'all' (default) is AND, 'any' is OR. Null means the same as 'all'.
      * @param {object} rules - The selector that decides membership, stored verbatim. Null means the segment is manual-only. The same rule language product categories use, evaluated over organization columns, `setting:<key>` entries and the organization_metrics projection — so 'no order in 365 days' is expressible without joining the orders app. Null makes the segment manual-only. Changing it does not move a single membership — run the recompute.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Segment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsCreate(code: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object): Promise<Models.Error>;
+    customersSegmentsCreate(code: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object): Promise<Models.Segment>;
     customersSegmentsCreate(
         paramsOrFirst: { code: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object } | string,
         ...rest: [(object)?, (number)?, (SegmentRuleMatch)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Segment> {
         let params: { code: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -569,21 +569,21 @@ export class CustomersSegments {
      *
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentRuleRecomputeAllResponse>}
      */
-    customersSegmentsRulesRecomputeAll(params: { data: object }): Promise<Models.Error>;
+    customersSegmentsRulesRecomputeAll(params: { data: object }): Promise<Models.SegmentRuleRecomputeAllResponse>;
     /**
      * Same sync as the single-segment recompute, applied to every segment with non-null rules. A failing segment is reported in its result entry instead of aborting the run. The run shares one budget: a segment that does not fit reports done:false (or skipped:true) and keeps rules_computed_at null, so the next call resumes it from its own data. Repeat until the top-level done is true.
      *
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentRuleRecomputeAllResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsRulesRecomputeAll(data: object): Promise<Models.Error>;
+    customersSegmentsRulesRecomputeAll(data: object): Promise<Models.SegmentRuleRecomputeAllResponse>;
     customersSegmentsRulesRecomputeAll(
         paramsOrFirst: { data: object } | object    
-    ): Promise<Models.Error> {
+    ): Promise<Models.SegmentRuleRecomputeAllResponse> {
         let params: { data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst))) {
@@ -624,21 +624,21 @@ export class CustomersSegments {
      *
      * @param {string} params.id - The segment to delete.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    customersSegmentsDelete(params: { id: string }): Promise<Models.Error>;
+    customersSegmentsDelete(params: { id: string }): Promise<{}>;
     /**
      * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". Removes the segment. Anything in another app that points at its `code` — a price list, a campaign — is left pointing at nothing, because no app may hold a foreign key into another (ADR-0055). Deleting one takes every `segment_members` row that points at it with it — the foreign keys decide, not this route.
      *
      * @param {string} id - The segment to delete.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsDelete(id: string): Promise<Models.Error>;
+    customersSegmentsDelete(id: string): Promise<{}>;
     customersSegmentsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -675,21 +675,21 @@ export class CustomersSegments {
      *
      * @param {string} params.id - The segment to read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Segment>}
      */
-    customersSegmentsGet(params: { id: string }): Promise<Models.Error>;
+    customersSegmentsGet(params: { id: string }): Promise<Models.Segment>;
     /**
      * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". One segment by id, including the rule document it carries. A segment with no rules is hand-picked and completely valid.
      *
      * @param {string} id - The segment to read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Segment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsGet(id: string): Promise<Models.Error>;
+    customersSegmentsGet(id: string): Promise<Models.Segment>;
     customersSegmentsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Segment> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -731,9 +731,9 @@ export class CustomersSegments {
      * @param {SegmentRuleMatch} params.ruleMatch - How the conditions combine: 'all' (default) is AND, 'any' is OR. Null means the same as 'all'.
      * @param {object} params.rules - The selector that decides membership, stored verbatim. Null means the segment is manual-only. The same rule language product categories use, evaluated over organization columns, `setting:<key>` entries and the organization_metrics projection — so 'no order in 365 days' is expressible without joining the orders app. Null makes the segment manual-only. Changing it does not move a single membership — run the recompute.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Segment>}
      */
-    customersSegmentsUpdate(params: { id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object }): Promise<Models.Error>;
+    customersSegmentsUpdate(params: { id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object }): Promise<Models.Segment>;
     /**
      * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". A partial update — send only what changes. Editing the rules does NOT re-evaluate them: that is `POST /customers/segments/{segment_id}/rules/recompute`, so a half-typed rule never silently empties a live segment. Two rows of this tenant may not share `code`.
      *
@@ -744,14 +744,14 @@ export class CustomersSegments {
      * @param {SegmentRuleMatch} ruleMatch - How the conditions combine: 'all' (default) is AND, 'any' is OR. Null means the same as 'all'.
      * @param {object} rules - The selector that decides membership, stored verbatim. Null means the segment is manual-only. The same rule language product categories use, evaluated over organization columns, `setting:<key>` entries and the organization_metrics projection — so 'no order in 365 days' is expressible without joining the orders app. Null makes the segment manual-only. Changing it does not move a single membership — run the recompute.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Segment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsUpdate(id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object): Promise<Models.Error>;
+    customersSegmentsUpdate(id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object): Promise<Models.Segment>;
     customersSegmentsUpdate(
         paramsOrFirst: { id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object } | string,
         ...rest: [(string)?, (object)?, (number)?, (SegmentRuleMatch)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Segment> {
         let params: { id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -817,9 +817,9 @@ export class CustomersSegments {
      * @param {RuleMatch} params.ruleMatch - How the conditions combine. Default 'all'.
      * @param {Target} params.target - Only 'organizations' is supported; any other value is rejected. A segment groups COMPANIES — the people are reached through them.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentRulePreviewResponse>}
      */
-    customersSegmentsRulesPreview(params: { segmentId: string, conditions: Models.SegmentRuleCondition[], ruleMatch?: RuleMatch, target?: Target }): Promise<Models.Error>;
+    customersSegmentsRulesPreview(params: { segmentId: string, conditions: Models.SegmentRuleCondition[], ruleMatch?: RuleMatch, target?: Target }): Promise<Models.SegmentRulePreviewResponse>;
     /**
      * A dry run: it answers how many organizations the rule would select, with a handful of them by name, and writes nothing at all. Evaluates the rule document in the REQUEST BODY (not the stored segments.rules), so the cockpit can preview an unsaved rule. Costs a single count query for the common single-query rule; 'any' rules and rules repeating a column are combined in the app and capped at 5000 ids, in which case 'capped' is true and 'count' is a LOWER bound. Membership is never touched.
      *
@@ -828,14 +828,14 @@ export class CustomersSegments {
      * @param {RuleMatch} ruleMatch - How the conditions combine. Default 'all'.
      * @param {Target} target - Only 'organizations' is supported; any other value is rejected. A segment groups COMPANIES — the people are reached through them.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentRulePreviewResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsRulesPreview(segmentId: string, conditions: Models.SegmentRuleCondition[], ruleMatch?: RuleMatch, target?: Target): Promise<Models.Error>;
+    customersSegmentsRulesPreview(segmentId: string, conditions: Models.SegmentRuleCondition[], ruleMatch?: RuleMatch, target?: Target): Promise<Models.SegmentRulePreviewResponse>;
     customersSegmentsRulesPreview(
         paramsOrFirst: { segmentId: string, conditions: Models.SegmentRuleCondition[], ruleMatch?: RuleMatch, target?: Target } | string,
         ...rest: [(Models.SegmentRuleCondition[])?, (RuleMatch)?, (Target)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.SegmentRulePreviewResponse> {
         let params: { segmentId: string, conditions: Models.SegmentRuleCondition[], ruleMatch?: RuleMatch, target?: Target };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -892,23 +892,23 @@ export class CustomersSegments {
      * @param {string} params.segmentId - The segment whose stored rules are evaluated.
      * @param {string} params.cursor - Continuation token from a previous response — the id of the last organization the pass touched. Omit to resume or start automatically; pass null to force a restart from the beginning.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentRuleRecomputeResponse>}
      */
-    customersSegmentsRulesRecompute(params: { segmentId: string, cursor?: string }): Promise<Models.Error>;
+    customersSegmentsRulesRecompute(params: { segmentId: string, cursor?: string }): Promise<Models.SegmentRuleRecomputeResponse>;
     /**
      * Evaluates segments.rules (NOT the request body), then inserts the newly matching organizations as source='rule' rows and deletes the rule rows that no longer match. Manual (source='manual') memberships are never inserted, deleted or shadowed. Bounded by a wall-clock budget below the gateway's upstream timeout: when 'done' is false, POST again with the returned 'cursor' until it is true. added/removed/processed count THIS call only. Omitting 'cursor' resumes an unfinished pass and starts a fresh one after a completed pass; an explicit null always restarts. segments.rules_computed_at is stamped only when the pass completes.
      *
      * @param {string} segmentId - The segment whose stored rules are evaluated.
      * @param {string} cursor - Continuation token from a previous response — the id of the last organization the pass touched. Omit to resume or start automatically; pass null to force a restart from the beginning.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.SegmentRuleRecomputeResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsRulesRecompute(segmentId: string, cursor?: string): Promise<Models.Error>;
+    customersSegmentsRulesRecompute(segmentId: string, cursor?: string): Promise<Models.SegmentRuleRecomputeResponse>;
     customersSegmentsRulesRecompute(
         paramsOrFirst: { segmentId: string, cursor?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.SegmentRuleRecomputeResponse> {
         let params: { segmentId: string, cursor?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

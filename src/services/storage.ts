@@ -2,7 +2,7 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
-import { Visibility } from '../enums/visibility';
+import { AssetStoreVisibility } from '../enums/asset-store-visibility';
 
 export class Storage {
     client: Client;
@@ -103,11 +103,11 @@ export class Storage {
      * @param {boolean} params.keepArchive - 
      * @param {string[]} params.tags - 
      * @param {boolean} params.unpack - Archives only: unpack the members after upload (see AssetController).
-     * @param {Visibility} params.visibility - 
+     * @param {AssetStoreVisibility} params.visibility - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    assetStore(params: { file: File, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: Visibility, onProgress?: (progress: UploadProgress) => void }): Promise<{}>;
+    assetStore(params: { file: File, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: AssetStoreVisibility, onProgress?: (progress: UploadProgress) => void }): Promise<{}>;
     /**
      * Upload one file into this tenant's media library. The file is checked
      * against the tenant's single-file limit and its remaining storage quota,
@@ -131,21 +131,21 @@ export class Storage {
      * @param {boolean} keepArchive - 
      * @param {string[]} tags - 
      * @param {boolean} unpack - Archives only: unpack the members after upload (see AssetController).
-     * @param {Visibility} visibility - 
+     * @param {AssetStoreVisibility} visibility - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    assetStore(file: File, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: Visibility, onProgress?: (progress: UploadProgress) => void): Promise<{}>;
+    assetStore(file: File, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: AssetStoreVisibility, onProgress?: (progress: UploadProgress) => void): Promise<{}>;
     assetStore(
-        paramsOrFirst: { file: File, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: Visibility, onProgress?: (progress: UploadProgress) => void } | File,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (boolean)?, (string[])?, (boolean)?, (Visibility)?,((progress: UploadProgress) => void)?]    
+        paramsOrFirst: { file: File, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: AssetStoreVisibility, onProgress?: (progress: UploadProgress) => void } | File,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (boolean)?, (string[])?, (boolean)?, (AssetStoreVisibility)?,((progress: UploadProgress) => void)?]    
     ): Promise<{}> {
-        let params: { file: File, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: Visibility };
+        let params: { file: File, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: AssetStoreVisibility };
         let onProgress: ((progress: UploadProgress) => void);
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('file' in paramsOrFirst || 'altText' in paramsOrFirst || 'description' in paramsOrFirst || 'displayName' in paramsOrFirst || 'folderId' in paramsOrFirst || 'keepArchive' in paramsOrFirst || 'tags' in paramsOrFirst || 'unpack' in paramsOrFirst || 'visibility' in paramsOrFirst || 'onProgress' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { file: File, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: Visibility };
+            params = (paramsOrFirst || {}) as { file: File, altText?: string, description?: string, displayName?: string, folderId?: string, keepArchive?: boolean, tags?: string[], unpack?: boolean, visibility?: AssetStoreVisibility };
             onProgress = (paramsOrFirst as { onProgress?: (progress: UploadProgress) => void }).onProgress as ((progress: UploadProgress) => void);
         } else {
             params = {
@@ -157,7 +157,7 @@ export class Storage {
                 keepArchive: rest[4] as boolean,
                 tags: rest[5] as string[],
                 unpack: rest[6] as boolean,
-                visibility: rest[7] as Visibility            
+                visibility: rest[7] as AssetStoreVisibility            
             };
             onProgress = rest[8] as ((progress: UploadProgress) => void);
         }
@@ -441,11 +441,11 @@ export class Storage {
      * @param {string} params.folderId - 
      * @param {string} params.name - 
      * @param {string[]} params.tags - 
-     * @param {Visibility} params.visibility - 
+     * @param {AssetStoreVisibility} params.visibility - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    assetUpdate(params: { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: Visibility }): Promise<{}>;
+    assetUpdate(params: { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: AssetStoreVisibility }): Promise<{}>;
     /**
      * Change an asset's metadata: `display_name`, `alt_text`, `description`,
      * `visibility` and `tags`. Sending `folder_id` moves it and sending `name`
@@ -463,20 +463,20 @@ export class Storage {
      * @param {string} folderId - 
      * @param {string} name - 
      * @param {string[]} tags - 
-     * @param {Visibility} visibility - 
+     * @param {AssetStoreVisibility} visibility - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    assetUpdate(id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: Visibility): Promise<{}>;
+    assetUpdate(id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: AssetStoreVisibility): Promise<{}>;
     assetUpdate(
-        paramsOrFirst: { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: Visibility } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string[])?, (Visibility)?]    
+        paramsOrFirst: { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: AssetStoreVisibility } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string[])?, (AssetStoreVisibility)?]    
     ): Promise<{}> {
-        let params: { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: Visibility };
+        let params: { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: AssetStoreVisibility };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: Visibility };
+            params = (paramsOrFirst || {}) as { id: string, altText?: string, description?: string, displayName?: string, folderId?: string, name?: string, tags?: string[], visibility?: AssetStoreVisibility };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -486,7 +486,7 @@ export class Storage {
                 folderId: rest[3] as string,
                 name: rest[4] as string,
                 tags: rest[5] as string[],
-                visibility: rest[6] as Visibility            
+                visibility: rest[6] as AssetStoreVisibility            
             };
         }
         

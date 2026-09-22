@@ -22,9 +22,9 @@ export class ShippingCarriers {
      * @param {ShippingCarriersListStatus} params.status - Exact-match filter on `status`. Quoting state — the cheap way to list only the carriers that may currently be quoted.
      * @param {string} params.serviceLevel - Exact-match filter on `service_level`. A code into the tenant's own service levels (GET /shipping/service-levels).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingCarriersList(params?: { limit?: number, offset?: number, order?: string, code?: string, status?: ShippingCarriersListStatus, serviceLevel?: string }): Promise<Models.Error>;
+    shippingCarriersList(params?: { limit?: number, offset?: number, order?: string, code?: string, status?: ShippingCarriersListStatus, serviceLevel?: string }): Promise<{}>;
     /**
      * Filterable by exact column value — `?code=`, `?status=` and `?service_level=` are applied as equalities and echoed back in `filter`. A query key that names no column of this entity is SILENTLY IGNORED: the page comes back unfiltered, 200, with an empty `filter`, so compare the echo against what you sent rather than trusting the status.
      *
@@ -35,14 +35,14 @@ export class ShippingCarriers {
      * @param {ShippingCarriersListStatus} status - Exact-match filter on `status`. Quoting state — the cheap way to list only the carriers that may currently be quoted.
      * @param {string} serviceLevel - Exact-match filter on `service_level`. A code into the tenant's own service levels (GET /shipping/service-levels).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingCarriersList(limit?: number, offset?: number, order?: string, code?: string, status?: ShippingCarriersListStatus, serviceLevel?: string): Promise<Models.Error>;
+    shippingCarriersList(limit?: number, offset?: number, order?: string, code?: string, status?: ShippingCarriersListStatus, serviceLevel?: string): Promise<{}>;
     shippingCarriersList(
         paramsOrFirst?: { limit?: number, offset?: number, order?: string, code?: string, status?: ShippingCarriersListStatus, serviceLevel?: string } | number,
         ...rest: [(number)?, (string)?, (string)?, (ShippingCarriersListStatus)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { limit?: number, offset?: number, order?: string, code?: string, status?: ShippingCarriersListStatus, serviceLevel?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -116,9 +116,9 @@ export class ShippingCarriers {
      * @param {ShippingCarrierStatus} params.status - Whether this carrier may be quoted (default 'active'). Anything else excludes every method that ships with it from POST /shipping/rates, with a reason. Tracking links are NOT gated on it — a retired carrier's old shipments stay resolvable.
      * @param {string} params.trackingUrlTemplate - Tracking page URL with {tracking_code} where the number goes; {postal_code} and {country} are also substituted, URL-encoded. Null for a carrier with no public tracking page.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingCarrier>}
      */
-    shippingCarriersCreate(params: { code: string, name: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string }): Promise<Models.Error>;
+    shippingCarriersCreate(params: { code: string, name: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string }): Promise<Models.ShippingCarrier>;
     /**
      * A carrier row is one company shipping one class of service: it owns the tracking-URL template, the service level, the transit days, the pickup cut-off and the handling days, and every method that ships with it inherits all of those unless it states its own. A carrier selling both a parcel and an express product is two rows. Reach for it for a carrier this app does not describe — a regional courier, a forwarder, an own fleet; for the DACH networks read GET /shipping/carriers/catalog and let POST /shipping/carriers/defaults write them. A create cannot omit `code` and `name`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` — that is the 409. `service_level` has to name one of the tenant's own levels and `cutoff_time` has to be HH:MM in 24-hour UTC — both are refused rather than stored, because a cut-off the estimator cannot read would be dropped in silence and the shop would keep promising a ship date nobody computed. Creating a carrier quotes nothing on its own: a method has to reference it (`carrier_id`, or a `carrier` text equal to this code) before any of it is inherited.
      *
@@ -136,14 +136,14 @@ export class ShippingCarriers {
      * @param {ShippingCarrierStatus} status - Whether this carrier may be quoted (default 'active'). Anything else excludes every method that ships with it from POST /shipping/rates, with a reason. Tracking links are NOT gated on it — a retired carrier's old shipments stay resolvable.
      * @param {string} trackingUrlTemplate - Tracking page URL with {tracking_code} where the number goes; {postal_code} and {country} are also substituted, URL-encoded. Null for a carrier with no public tracking page.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingCarrier>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingCarriersCreate(code: string, name: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string): Promise<Models.Error>;
+    shippingCarriersCreate(code: string, name: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string): Promise<Models.ShippingCarrier>;
     shippingCarriersCreate(
         paramsOrFirst: { code: string, name: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string } | string,
         ...rest: [(string)?, (string[])?, (string)?, (number)?, (number)?, (number)?, (object)?, (object)?, (number)?, (string)?, (ShippingCarrierStatus)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingCarrier> {
         let params: { code: string, name: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -293,21 +293,21 @@ export class ShippingCarriers {
      *
      * @param {string} params.id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingCarriersDelete(params: { id: string }): Promise<Models.Error>;
+    shippingCarriersDelete(params: { id: string }): Promise<{}>;
     /**
      * Deleting one clears `shipping_methods.carrier_id` rather than deleting those rows — the foreign keys decide that, not this route. So a method that referenced this carrier keeps working and resolves through its `carrier` code instead, which is also why this never answers a conflict — and it is the reason to prefer `status: 'retired'` where the carrier is merely finished. What the method silently LOSES is everything it was inheriting: the tracking template, the pickup cut-off, the handling days and the transit days. Unless its `carrier` text still matches another carrier, its ship date is recomputed on the market's own cut-off and handling settings, and a method that stated no `eta_days_min`/`max` of its own stops carrying a `delivery` estimate altogether. Nothing errors; the promise in the checkout just changes.
      *
      * @param {string} id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingCarriersDelete(id: string): Promise<Models.Error>;
+    shippingCarriersDelete(id: string): Promise<{}>;
     shippingCarriersDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -344,21 +344,21 @@ export class ShippingCarriers {
      *
      * @param {string} params.id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingCarrier>}
      */
-    shippingCarriersGet(params: { id: string }): Promise<Models.Error>;
+    shippingCarriersGet(params: { id: string }): Promise<Models.ShippingCarrier>;
     /**
      * A carrier row is one company shipping one class of service: it owns the tracking-URL template, the service level, the transit days, the pickup cut-off and the handling days, and every method that ships with it inherits all of those unless it states its own. A carrier selling both a parcel and an express product is two rows. Read it when you need to know what a method's delivery promise really is: `cutoff_time`, `handling_days` and `eta_days_min`/`max` are inherited from here, so a shop that seems to promise the wrong ship date is usually explained by this row rather than by the method. It does NOT say which methods ship with it — that is GET /shipping/methods?carrier_id=… for the ones holding a reference and ?carrier=… for the ones still resolving through the legacy code text.
      *
      * @param {string} id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingCarrier>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingCarriersGet(id: string): Promise<Models.Error>;
+    shippingCarriersGet(id: string): Promise<Models.ShippingCarrier>;
     shippingCarriersGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingCarrier> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -408,9 +408,9 @@ export class ShippingCarriers {
      * @param {ShippingCarrierStatus} params.status - Whether this carrier may be quoted (default 'active'). Anything else excludes every method that ships with it from POST /shipping/rates, with a reason. Tracking links are NOT gated on it — a retired carrier's old shipments stay resolvable.
      * @param {string} params.trackingUrlTemplate - Tracking page URL with {tracking_code} where the number goes; {postal_code} and {country} are also substituted, URL-encoded. Null for a carrier with no public tracking page.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingCarrier>}
      */
-    shippingCarriersUpdate(params: { id: string, code?: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, name?: string, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string }): Promise<Models.Error>;
+    shippingCarriersUpdate(params: { id: string, code?: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, name?: string, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string }): Promise<Models.ShippingCarrier>;
     /**
      * A carrier row is one company shipping one class of service: it owns the tracking-URL template, the service level, the transit days, the pickup cut-off and the handling days, and every method that ships with it inherits all of those unless it states its own. A carrier selling both a parcel and an express product is two rows. A partial update — send only what changes, which is where a carrier is paused, given a different tracking template, or moved to another pickup cut-off or transit time. This is the one switch that acts on several methods at once, in both directions. Moving `status` off 'active' takes every method that ships with this carrier out of POST /shipping/rates with a reason, which beats disabling each of them and forgetting one; tracking links are deliberately not gated on it, so a retired carrier's old shipments stay resolvable. Editing `cutoff_time`, `handling_days` or `eta_days_min`/`max` MOVES THE PROMISED SHIP DATE of every method that states none of its own: the estimator adds the handling days, then one further day when the cut-off has already passed at the instant being evaluated — compared at or after, in UTC, and as calendar days that do not skip a weekend. Two rows of this tenant may not share `code` — that is the 409.
      *
@@ -429,14 +429,14 @@ export class ShippingCarriers {
      * @param {ShippingCarrierStatus} status - Whether this carrier may be quoted (default 'active'). Anything else excludes every method that ships with it from POST /shipping/rates, with a reason. Tracking links are NOT gated on it — a retired carrier's old shipments stay resolvable.
      * @param {string} trackingUrlTemplate - Tracking page URL with {tracking_code} where the number goes; {postal_code} and {country} are also substituted, URL-encoded. Null for a carrier with no public tracking page.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingCarrier>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingCarriersUpdate(id: string, code?: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, name?: string, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string): Promise<Models.Error>;
+    shippingCarriersUpdate(id: string, code?: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, name?: string, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string): Promise<Models.ShippingCarrier>;
     shippingCarriersUpdate(
         paramsOrFirst: { id: string, code?: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, name?: string, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string } | string,
         ...rest: [(string)?, (string[])?, (string)?, (number)?, (number)?, (number)?, (object)?, (object)?, (string)?, (number)?, (string)?, (ShippingCarrierStatus)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingCarrier> {
         let params: { id: string, code?: string, countries?: string[], cutoffTime?: string, etaDaysMax?: number, etaDaysMin?: number, handlingDays?: number, labels?: object, metadata?: object, name?: string, position?: number, serviceLevel?: string, status?: ShippingCarrierStatus, trackingUrlTemplate?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -542,9 +542,9 @@ export class ShippingCarriers {
      * @param {string} params.postalCode - Destination postcode — only needed by a template that names {postal_code}.
      * @param {string} params.trackingCode - The carrier's tracking number. Required by every template that names {tracking_code}, which is all of them in the shipped catalog. URL-encoded before substitution, so a code with a space or a slash cannot reshape the link.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingTracking(params: { carrier: string, country?: string, postalCode?: string, trackingCode?: string }): Promise<Models.Error>;
+    shippingTracking(params: { carrier: string, country?: string, postalCode?: string, trackingCode?: string }): Promise<{}>;
     /**
      * Hand in a carrier code and the tracking number printed on the label, and this answers the URL a buyer follows. The carrier owns the URL format, so nobody else has to. `order_shipments` stores a tracking_url per shipment today, which is one carrier's URL shape copied into every row — the day it changes, every historic link is wrong. Ask here instead. Tracking is NOT gated on carrier status: a retired carrier's old shipments stay resolvable.
      *
@@ -553,14 +553,14 @@ export class ShippingCarriers {
      * @param {string} postalCode - Destination postcode — only needed by a template that names {postal_code}.
      * @param {string} trackingCode - The carrier's tracking number. Required by every template that names {tracking_code}, which is all of them in the shipped catalog. URL-encoded before substitution, so a code with a space or a slash cannot reshape the link.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingTracking(carrier: string, country?: string, postalCode?: string, trackingCode?: string): Promise<Models.Error>;
+    shippingTracking(carrier: string, country?: string, postalCode?: string, trackingCode?: string): Promise<{}>;
     shippingTracking(
         paramsOrFirst: { carrier: string, country?: string, postalCode?: string, trackingCode?: string } | string,
         ...rest: [(string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { carrier: string, country?: string, postalCode?: string, trackingCode?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

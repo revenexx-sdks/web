@@ -115,20 +115,20 @@ export class PaymentsMethods {
      * @param {string} params.description - One line explaining the method where it is offered — payment terms, what happens after the order. Shown to the buyer, so it is the merchant's wording rather than the app's.
      * @param {boolean} params.enabled - A disabled method is never eligible and never reaches a checkout. This is the switch an operator wants: deleting a method the ledger still names — or renaming its `code` — is refused with 409. Defaults to false, so a half-configured method cannot reach a checkout by accident.
      * @param {number} params.feeAmount - The surcharge this method costs the buyer, read as an amount or as a percentage depending on `fee_type`. Never negative — a discount for paying a certain way is not expressible here. Defaults to 0.
-     * @param {string} params.feeCurrency - ISO 4217 code a fixed fee is expressed in. The database bounds the length at three characters and nothing else, so lower case is stored as written. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
+     * @param {string} params.feeCurrency - ISO 4217 code this method is configured in: the currency of a fixed fee, and the one `min_order_value` and `max_order_value` are read in (ADR-0106 D5a). Stamped from the market’s `default_currency` when a method is created naming none, and stored upper case — an order in another currency is not offered this method. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
      * @param {PaymentFeeType} params.feeType - How `fee_amount` applies: 'none' (no surcharge), 'fixed' (that many units of `fee_currency`) or 'percent' (that share of the order amount). Defaults to 'none'.
      * @param {PaymentMethodKind} params.kind - Who moves the money. 'self_managed' — invoice, prepayment — means the merchant fulfils and reconciles it outside any PSP, and such a payment authorizes the moment it is created. 'psp' means a configured provider authorizes, captures and refunds it. Defaults to 'self_managed'; 'psp' needs a 'provider' to transact.
      * @param {object} params.labels - Buyer-facing names keyed by language tag — what a storefront shows instead of the operator-facing `name`. Free jsonb: the database constrains neither the tags nor the values, so a client reads the tag it wants and falls back to `en`.
-     * @param {number} params.maxOrderValue - Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound.
+     * @param {number} params.maxOrderValue - Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound. Read in this method’s `fee_currency` — see `min_order_value` for why a differing order currency filters the method out instead.
      * @param {object} params.metadata - Free-form merchant data carried on the configuration. This app never reads it — it is storage for the integrations that do (an ERP key for the method, a ledger account, a display hint).
-     * @param {number} params.minOrderValue - Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound.
+     * @param {number} params.minOrderValue - Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound. Read in this method’s `fee_currency`, not in the order’s (ADR-0106 D5a): a method is configured for the money it charges in, and an order in another currency is not offered the method at all rather than compared against a threshold it is not denominated in.
      * @param {number} params.position - Sort order at checkout, ascending — the merchant's preferred payment method first. Defaults to 0.
      * @param {string} params.provider - The PSP code this method transacts through, from GET /payments/providers/catalog. Only meaningful for kind 'psp'; a PSP method that names none falls back to the tenant's `default_provider` setting. Must be a code GET /payments/providers/catalog carries.
      * @param {string} params.providerMethod - The provider's own payment-method id ('card', 'paypal', 'sepa_debit') — what the driver is told to charge. Copied onto every payment created with this method as `metadata.provider_method`.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentMethod>}
      */
-    paymentsMethodsCreate(params: { code: string, name: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, position?: number, provider?: string, providerMethod?: string }): Promise<Models.Error>;
+    paymentsMethodsCreate(params: { code: string, name: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, position?: number, provider?: string, providerMethod?: string }): Promise<Models.PaymentMethod>;
     /**
      * Adds a line a checkout can offer. A create cannot omit `code` and `name`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` — that is the 409. Two defaults are worth knowing before the first call: `enabled` is false, so a new method reaches no checkout until it is switched on, and `kind` is 'self_managed' — a card or wallet method needs `kind: "psp"` plus a `provider` the catalog carries, or it falls back to the tenant's `default_provider` at payment time and fails there if none is set. The `code` is the value every payment, every checkout and every ERP will name this method by from now on, and once a single payment has been made under it a rename is refused with 409: choose it once.
      *
@@ -138,25 +138,25 @@ export class PaymentsMethods {
      * @param {string} description - One line explaining the method where it is offered — payment terms, what happens after the order. Shown to the buyer, so it is the merchant's wording rather than the app's.
      * @param {boolean} enabled - A disabled method is never eligible and never reaches a checkout. This is the switch an operator wants: deleting a method the ledger still names — or renaming its `code` — is refused with 409. Defaults to false, so a half-configured method cannot reach a checkout by accident.
      * @param {number} feeAmount - The surcharge this method costs the buyer, read as an amount or as a percentage depending on `fee_type`. Never negative — a discount for paying a certain way is not expressible here. Defaults to 0.
-     * @param {string} feeCurrency - ISO 4217 code a fixed fee is expressed in. The database bounds the length at three characters and nothing else, so lower case is stored as written. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
+     * @param {string} feeCurrency - ISO 4217 code this method is configured in: the currency of a fixed fee, and the one `min_order_value` and `max_order_value` are read in (ADR-0106 D5a). Stamped from the market’s `default_currency` when a method is created naming none, and stored upper case — an order in another currency is not offered this method. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
      * @param {PaymentFeeType} feeType - How `fee_amount` applies: 'none' (no surcharge), 'fixed' (that many units of `fee_currency`) or 'percent' (that share of the order amount). Defaults to 'none'.
      * @param {PaymentMethodKind} kind - Who moves the money. 'self_managed' — invoice, prepayment — means the merchant fulfils and reconciles it outside any PSP, and such a payment authorizes the moment it is created. 'psp' means a configured provider authorizes, captures and refunds it. Defaults to 'self_managed'; 'psp' needs a 'provider' to transact.
      * @param {object} labels - Buyer-facing names keyed by language tag — what a storefront shows instead of the operator-facing `name`. Free jsonb: the database constrains neither the tags nor the values, so a client reads the tag it wants and falls back to `en`.
-     * @param {number} maxOrderValue - Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound.
+     * @param {number} maxOrderValue - Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound. Read in this method’s `fee_currency` — see `min_order_value` for why a differing order currency filters the method out instead.
      * @param {object} metadata - Free-form merchant data carried on the configuration. This app never reads it — it is storage for the integrations that do (an ERP key for the method, a ledger account, a display hint).
-     * @param {number} minOrderValue - Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound.
+     * @param {number} minOrderValue - Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound. Read in this method’s `fee_currency`, not in the order’s (ADR-0106 D5a): a method is configured for the money it charges in, and an order in another currency is not offered the method at all rather than compared against a threshold it is not denominated in.
      * @param {number} position - Sort order at checkout, ascending — the merchant's preferred payment method first. Defaults to 0.
      * @param {string} provider - The PSP code this method transacts through, from GET /payments/providers/catalog. Only meaningful for kind 'psp'; a PSP method that names none falls back to the tenant's `default_provider` setting. Must be a code GET /payments/providers/catalog carries.
      * @param {string} providerMethod - The provider's own payment-method id ('card', 'paypal', 'sepa_debit') — what the driver is told to charge. Copied onto every payment created with this method as `metadata.provider_method`.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentMethod>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsMethodsCreate(code: string, name: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, position?: number, provider?: string, providerMethod?: string): Promise<Models.Error>;
+    paymentsMethodsCreate(code: string, name: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, position?: number, provider?: string, providerMethod?: string): Promise<Models.PaymentMethod>;
     paymentsMethodsCreate(
         paramsOrFirst: { code: string, name: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, position?: number, provider?: string, providerMethod?: string } | string,
         ...rest: [(string)?, (string[])?, (string)?, (boolean)?, (number)?, (string)?, (PaymentFeeType)?, (PaymentMethodKind)?, (object)?, (number)?, (object)?, (number)?, (number)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PaymentMethod> {
         let params: { code: string, name: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, position?: number, provider?: string, providerMethod?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -294,7 +294,7 @@ export class PaymentsMethods {
     }
 
     /**
-     * The checkout's question — "what can THIS buyer pay with?" — answered server-side before any PSP is involved, so the storefront never renders a method the create would then refuse with 422. It evaluates the buyer context against every configured method: disabled, a country outside `countries`, an amount outside `min_order_value`/`max_order_value`. Restriction dimensions are ANDed and entries within one are ORed, and an empty dimension means unrestricted. Eligible methods come back sorted by `position` with their fee already computed for this amount; everything else lands in `excluded` with the reason in words, which is what makes a support question answerable. It reads only — nothing is written and no provider is called. Two things it does NOT check: whether the method's PSP is configured and enabled (a method whose provider is switched off is still offered here and fails at POST /payments — a provider a method names can no longer be deleted, which closes the other half of the same gap), and anything about the buyer beyond country and amount. A context that matches nothing is 200 with an empty `methods` list, never 404.
+     * The checkout's question — "what can THIS buyer pay with?" — answered server-side before any PSP is involved, so the storefront never renders a method the create would then refuse with 422. It evaluates the buyer context against every configured method: disabled, a country outside `countries`, a currency other than the method's own `fee_currency`, an amount outside `min_order_value`/`max_order_value`. The currency dimension is ADR-0106 D5a: a method is configured for the money it charges in, its two thresholds are read in that currency, and an order in another one is filtered out rather than compared against a bound it is not denominated in. It is reported before the thresholds, because a merchant told "amount below minimum 10" about a CHF order against a EUR method goes looking at the wrong number. Each eligible method carries the currency its own fee is in, never the order's. Restriction dimensions are ANDed and entries within one are ORed, and an empty dimension means unrestricted. Eligible methods come back sorted by `position` with their fee already computed for this amount; everything else lands in `excluded` with the reason in words, which is what makes a support question answerable. It reads only — nothing is written and no provider is called. Two things it does NOT check: whether the method's PSP is configured and enabled (a method whose provider is switched off is still offered here and fails at POST /payments — a provider a method names can no longer be deleted, which closes the other half of the same gap), and anything about the buyer beyond country and amount. A context that matches nothing is 200 with an empty `methods` list, never 404.
      *
      * @param {number} params.amount - The order amount the order-value bounds are checked against and the percentage fees are computed from. Defaults to 0, which excludes every method carrying a minimum. Nothing is written, so the ledger's own amount bound does not apply here.
      * @param {string} params.country - The buyer's ISO 3166-1 alpha-2 country code. A method restricted to countries is excluded without it — an unknown buyer sees only the unrestricted methods, which is the safe default and not a bug.
@@ -304,7 +304,7 @@ export class PaymentsMethods {
      */
     paymentsMethodsEligible(params?: { amount?: number, country?: string, currency?: string }): Promise<{}>;
     /**
-     * The checkout's question — "what can THIS buyer pay with?" — answered server-side before any PSP is involved, so the storefront never renders a method the create would then refuse with 422. It evaluates the buyer context against every configured method: disabled, a country outside `countries`, an amount outside `min_order_value`/`max_order_value`. Restriction dimensions are ANDed and entries within one are ORed, and an empty dimension means unrestricted. Eligible methods come back sorted by `position` with their fee already computed for this amount; everything else lands in `excluded` with the reason in words, which is what makes a support question answerable. It reads only — nothing is written and no provider is called. Two things it does NOT check: whether the method's PSP is configured and enabled (a method whose provider is switched off is still offered here and fails at POST /payments — a provider a method names can no longer be deleted, which closes the other half of the same gap), and anything about the buyer beyond country and amount. A context that matches nothing is 200 with an empty `methods` list, never 404.
+     * The checkout's question — "what can THIS buyer pay with?" — answered server-side before any PSP is involved, so the storefront never renders a method the create would then refuse with 422. It evaluates the buyer context against every configured method: disabled, a country outside `countries`, a currency other than the method's own `fee_currency`, an amount outside `min_order_value`/`max_order_value`. The currency dimension is ADR-0106 D5a: a method is configured for the money it charges in, its two thresholds are read in that currency, and an order in another one is filtered out rather than compared against a bound it is not denominated in. It is reported before the thresholds, because a merchant told "amount below minimum 10" about a CHF order against a EUR method goes looking at the wrong number. Each eligible method carries the currency its own fee is in, never the order's. Restriction dimensions are ANDed and entries within one are ORed, and an empty dimension means unrestricted. Eligible methods come back sorted by `position` with their fee already computed for this amount; everything else lands in `excluded` with the reason in words, which is what makes a support question answerable. It reads only — nothing is written and no provider is called. Two things it does NOT check: whether the method's PSP is configured and enabled (a method whose provider is switched off is still offered here and fails at POST /payments — a provider a method names can no longer be deleted, which closes the other half of the same gap), and anything about the buyer beyond country and amount. A context that matches nothing is 200 with an empty `methods` list, never 404.
      *
      * @param {number} amount - The order amount the order-value bounds are checked against and the percentage fees are computed from. Defaults to 0, which excludes every method carrying a minimum. Nothing is written, so the ledger's own amount bound does not apply here.
      * @param {string} country - The buyer's ISO 3166-1 alpha-2 country code. A method restricted to countries is excluded without it — an unknown buyer sees only the unrestricted methods, which is the safe default and not a bug.
@@ -365,21 +365,21 @@ export class PaymentsMethods {
      *
      * @param {string} params.id - The payment method configuration. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    paymentsMethodsDelete(params: { id: string }): Promise<Models.Error>;
+    paymentsMethodsDelete(params: { id: string }): Promise<{}>;
     /**
      * payments.method_code is a CODE, not a foreign key: a payment records what happened and has to survive the configuration it was made with. The cost of that looseness is that deleting a method turns every payment made with it into a row naming something that no longer exists. So the count is taken HERE and answered as 409 with the number, rather than left to whoever is about to click delete — a client that pre-counts asks a second question whose answer disagrees the moment a payment lands between the two calls. Disabling the method (enabled: false) is what an operator usually meant and stays available.
      *
      * @param {string} id - The payment method configuration. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsMethodsDelete(id: string): Promise<Models.Error>;
+    paymentsMethodsDelete(id: string): Promise<{}>;
     paymentsMethodsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -416,21 +416,21 @@ export class PaymentsMethods {
      *
      * @param {string} params.id - The payment method configuration. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentMethod>}
      */
-    paymentsMethodsGet(params: { id: string }): Promise<Models.Error>;
+    paymentsMethodsGet(params: { id: string }): Promise<Models.PaymentMethod>;
     /**
      * One configuration, every column, addressed by its row id — the edit form's read. It is addressed by ID and there is no route that takes a `code`, which matters because the CODE is what a checkout, a payment and an ERP name a method by: to resolve one, filter the list (`GET /payments/methods?code=invoice`), which answers a page of at most one row because (tenant_id, code) is unique. Reading a method says nothing about whether a buyer may use it — that is POST /payments/methods/eligible — and nothing about whether its PSP can transact, which is under the provider configuration.
      *
      * @param {string} id - The payment method configuration. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentMethod>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsMethodsGet(id: string): Promise<Models.Error>;
+    paymentsMethodsGet(id: string): Promise<Models.PaymentMethod>;
     paymentsMethodsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PaymentMethod> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -471,21 +471,21 @@ export class PaymentsMethods {
      * @param {string} params.description - One line explaining the method where it is offered — payment terms, what happens after the order. Shown to the buyer, so it is the merchant's wording rather than the app's.
      * @param {boolean} params.enabled - A disabled method is never eligible and never reaches a checkout. This is the switch an operator wants: deleting a method the ledger still names — or renaming its `code` — is refused with 409. Defaults to false, so a half-configured method cannot reach a checkout by accident.
      * @param {number} params.feeAmount - The surcharge this method costs the buyer, read as an amount or as a percentage depending on `fee_type`. Never negative — a discount for paying a certain way is not expressible here. Defaults to 0.
-     * @param {string} params.feeCurrency - ISO 4217 code a fixed fee is expressed in. The database bounds the length at three characters and nothing else, so lower case is stored as written. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
+     * @param {string} params.feeCurrency - ISO 4217 code this method is configured in: the currency of a fixed fee, and the one `min_order_value` and `max_order_value` are read in (ADR-0106 D5a). Stamped from the market’s `default_currency` when a method is created naming none, and stored upper case — an order in another currency is not offered this method. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
      * @param {PaymentFeeType} params.feeType - How `fee_amount` applies: 'none' (no surcharge), 'fixed' (that many units of `fee_currency`) or 'percent' (that share of the order amount). Defaults to 'none'.
      * @param {PaymentMethodKind} params.kind - Who moves the money. 'self_managed' — invoice, prepayment — means the merchant fulfils and reconciles it outside any PSP, and such a payment authorizes the moment it is created. 'psp' means a configured provider authorizes, captures and refunds it. Defaults to 'self_managed'; 'psp' needs a 'provider' to transact.
      * @param {object} params.labels - Buyer-facing names keyed by language tag — what a storefront shows instead of the operator-facing `name`. Free jsonb: the database constrains neither the tags nor the values, so a client reads the tag it wants and falls back to `en`.
-     * @param {number} params.maxOrderValue - Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound.
+     * @param {number} params.maxOrderValue - Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound. Read in this method’s `fee_currency` — see `min_order_value` for why a differing order currency filters the method out instead.
      * @param {object} params.metadata - Free-form merchant data carried on the configuration. This app never reads it — it is storage for the integrations that do (an ERP key for the method, a ledger account, a display hint).
-     * @param {number} params.minOrderValue - Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound.
+     * @param {number} params.minOrderValue - Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound. Read in this method’s `fee_currency`, not in the order’s (ADR-0106 D5a): a method is configured for the money it charges in, and an order in another currency is not offered the method at all rather than compared against a threshold it is not denominated in.
      * @param {string} params.name - Operator-facing name, in the language the merchant administers in. What a buyer sees comes from `labels`. Required on create.
      * @param {number} params.position - Sort order at checkout, ascending — the merchant's preferred payment method first. Defaults to 0.
      * @param {string} params.provider - The PSP code this method transacts through, from GET /payments/providers/catalog. Only meaningful for kind 'psp'; a PSP method that names none falls back to the tenant's `default_provider` setting. Must be a code GET /payments/providers/catalog carries.
      * @param {string} params.providerMethod - The provider's own payment-method id ('card', 'paypal', 'sepa_debit') — what the driver is told to charge. Copied onto every payment created with this method as `metadata.provider_method`.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentMethod>}
      */
-    paymentsMethodsUpdate(params: { id: string, code?: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, name?: string, position?: number, provider?: string, providerMethod?: string }): Promise<Models.Error>;
+    paymentsMethodsUpdate(params: { id: string, code?: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, name?: string, position?: number, provider?: string, providerMethod?: string }): Promise<Models.PaymentMethod>;
     /**
      * A PUT that PATCHES: only the keys in the body are written and every omitted column keeps its value, so `{"enabled": false}` is the whole request for taking a method out of checkout. A body with no writable key is refused with 400 rather than treated as a no-op. This is the route for all three things an operator changes about a method after it exists — the `enabled` switch that puts it in or out of checkout, the fee it charges (`fee_type`, `fee_amount`, `fee_currency`) and the restrictions that decide who is offered it (`countries`, `min_order_value`, `max_order_value`) — alongside its labels, description and `position`. `enabled: false` is the safe way to retire one — it disappears from POST /payments/methods/eligible immediately and stays on every payment ever made with it. The one write this route refuses is a rename of `code` while the ledger still names the old one. The three tables of this app carry no foreign keys at all: a payment names its method by `method_code` and its acquirer by `provider`, both plain text, because a payment records what happened and has to survive the configuration it was made with. So the database will not stop this — whatever the ledger still names, it goes on naming. A rename would therefore leave every recorded payment pointing at a code no configuration carries, which is the same harm DELETE on this row answers 409 for — so it answers the same 409, with the same `method_in_use` code and the same count. Renaming a method nothing has been paid with is still free, and so is every other column at any time.
      *
@@ -495,26 +495,26 @@ export class PaymentsMethods {
      * @param {string} description - One line explaining the method where it is offered — payment terms, what happens after the order. Shown to the buyer, so it is the merchant's wording rather than the app's.
      * @param {boolean} enabled - A disabled method is never eligible and never reaches a checkout. This is the switch an operator wants: deleting a method the ledger still names — or renaming its `code` — is refused with 409. Defaults to false, so a half-configured method cannot reach a checkout by accident.
      * @param {number} feeAmount - The surcharge this method costs the buyer, read as an amount or as a percentage depending on `fee_type`. Never negative — a discount for paying a certain way is not expressible here. Defaults to 0.
-     * @param {string} feeCurrency - ISO 4217 code a fixed fee is expressed in. The database bounds the length at three characters and nothing else, so lower case is stored as written. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
+     * @param {string} feeCurrency - ISO 4217 code this method is configured in: the currency of a fixed fee, and the one `min_order_value` and `max_order_value` are read in (ADR-0106 D5a). Stamped from the market’s `default_currency` when a method is created naming none, and stored upper case — an order in another currency is not offered this method. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
      * @param {PaymentFeeType} feeType - How `fee_amount` applies: 'none' (no surcharge), 'fixed' (that many units of `fee_currency`) or 'percent' (that share of the order amount). Defaults to 'none'.
      * @param {PaymentMethodKind} kind - Who moves the money. 'self_managed' — invoice, prepayment — means the merchant fulfils and reconciles it outside any PSP, and such a payment authorizes the moment it is created. 'psp' means a configured provider authorizes, captures and refunds it. Defaults to 'self_managed'; 'psp' needs a 'provider' to transact.
      * @param {object} labels - Buyer-facing names keyed by language tag — what a storefront shows instead of the operator-facing `name`. Free jsonb: the database constrains neither the tags nor the values, so a client reads the tag it wants and falls back to `en`.
-     * @param {number} maxOrderValue - Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound.
+     * @param {number} maxOrderValue - Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound. Read in this method’s `fee_currency` — see `min_order_value` for why a differing order currency filters the method out instead.
      * @param {object} metadata - Free-form merchant data carried on the configuration. This app never reads it — it is storage for the integrations that do (an ERP key for the method, a ledger account, a display hint).
-     * @param {number} minOrderValue - Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound.
+     * @param {number} minOrderValue - Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound. Read in this method’s `fee_currency`, not in the order’s (ADR-0106 D5a): a method is configured for the money it charges in, and an order in another currency is not offered the method at all rather than compared against a threshold it is not denominated in.
      * @param {string} name - Operator-facing name, in the language the merchant administers in. What a buyer sees comes from `labels`. Required on create.
      * @param {number} position - Sort order at checkout, ascending — the merchant's preferred payment method first. Defaults to 0.
      * @param {string} provider - The PSP code this method transacts through, from GET /payments/providers/catalog. Only meaningful for kind 'psp'; a PSP method that names none falls back to the tenant's `default_provider` setting. Must be a code GET /payments/providers/catalog carries.
      * @param {string} providerMethod - The provider's own payment-method id ('card', 'paypal', 'sepa_debit') — what the driver is told to charge. Copied onto every payment created with this method as `metadata.provider_method`.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentMethod>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsMethodsUpdate(id: string, code?: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, name?: string, position?: number, provider?: string, providerMethod?: string): Promise<Models.Error>;
+    paymentsMethodsUpdate(id: string, code?: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, name?: string, position?: number, provider?: string, providerMethod?: string): Promise<Models.PaymentMethod>;
     paymentsMethodsUpdate(
         paramsOrFirst: { id: string, code?: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, name?: string, position?: number, provider?: string, providerMethod?: string } | string,
         ...rest: [(string)?, (string[])?, (string)?, (boolean)?, (number)?, (string)?, (PaymentFeeType)?, (PaymentMethodKind)?, (object)?, (number)?, (object)?, (number)?, (string)?, (number)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PaymentMethod> {
         let params: { id: string, code?: string, countries?: string[], description?: string, enabled?: boolean, feeAmount?: number, feeCurrency?: string, feeType?: PaymentFeeType, kind?: PaymentMethodKind, labels?: object, maxOrderValue?: number, metadata?: object, minOrderValue?: number, name?: string, position?: number, provider?: string, providerMethod?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

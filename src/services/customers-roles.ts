@@ -38,21 +38,21 @@ export class CustomersRoles {
      *
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.RolesDefaultsResponse>}
      */
-    customersRolesDefaults(params: { data: object }): Promise<Models.Error>;
+    customersRolesDefaults(params: { data: object }): Promise<Models.RolesDefaultsResponse>;
     /**
      * Idempotent: a role that already exists is left completely alone, its permissions included, so re-seeding never undoes a merchant's edits. Creates viewer, requester, buyer, approver, admin with the built-in mapping. A tenant that never calls this still behaves correctly — the catalogue and every permission read fall back to the same built-ins.
      *
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.RolesDefaultsResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersRolesDefaults(data: object): Promise<Models.Error>;
+    customersRolesDefaults(data: object): Promise<Models.RolesDefaultsResponse>;
     customersRolesDefaults(
         paramsOrFirst: { data: object } | object    
-    ): Promise<Models.Error> {
+    ): Promise<Models.RolesDefaultsResponse> {
         let params: { data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst))) {
@@ -94,23 +94,23 @@ export class CustomersRoles {
      * @param {string} params.key - The role key — one of the tenant's own roles (GET /customers/roles).
      * @param {string[]} params.permissions - The complete new set. Duplicates and blanks are ignored; an empty array revokes everything.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.RolePermissionsResponse>}
      */
-    customersRolesPermissionsReplace(params: { key: string, permissions: string[] }): Promise<Models.Error>;
+    customersRolesPermissionsReplace(params: { key: string, permissions: string[] }): Promise<Models.RolePermissionsResponse>;
     /**
      * The whole new set in one call — the shape a role editor actually produces, and the one that cannot leave a half-applied grant behind if a second call fails. Seeds the built-in roles first when the tenant has none, so editing works without calling /defaults. Permission keys are free text on purpose: they belong to whichever app declared them, and a grant for an app that is not installed simply has nothing to act on.
      *
      * @param {string} key - The role key — one of the tenant's own roles (GET /customers/roles).
      * @param {string[]} permissions - The complete new set. Duplicates and blanks are ignored; an empty array revokes everything.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.RolePermissionsResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersRolesPermissionsReplace(key: string, permissions: string[]): Promise<Models.Error>;
+    customersRolesPermissionsReplace(key: string, permissions: string[]): Promise<Models.RolePermissionsResponse>;
     customersRolesPermissionsReplace(
         paramsOrFirst: { key: string, permissions: string[] } | string,
         ...rest: [(string[])?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.RolePermissionsResponse> {
         let params: { key: string, permissions: string[] };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

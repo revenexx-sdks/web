@@ -1,11 +1,27 @@
+import { AcceptLineDecision } from "./enums/accept-line-decision"
+import { AcceptResultOrigin } from "./enums/accept-result-origin"
+import { AcceptResultStatus } from "./enums/accept-result-status"
 import { AddressTypeRowTone } from "./enums/address-type-row-tone"
 import { AddressTypeRowCreateRequestTone } from "./enums/address-type-row-create-request-tone"
 import { AddressTypeRowUpdateRequestTone } from "./enums/address-type-row-update-request-tone"
+import { ApprovalRuleApproverType } from "./enums/approval-rule-approver-type"
+import { ApprovalRuleCondition } from "./enums/approval-rule-condition"
+import { ApprovalRuleEffect } from "./enums/approval-rule-effect"
+import { ApprovalRuleCreateRequestApproverType } from "./enums/approval-rule-create-request-approver-type"
+import { ApprovalRuleCreateRequestCondition } from "./enums/approval-rule-create-request-condition"
+import { ApprovalRuleCreateRequestEffect } from "./enums/approval-rule-create-request-effect"
+import { ApprovalRuleUpdateRequestApproverType } from "./enums/approval-rule-update-request-approver-type"
+import { ApprovalRuleUpdateRequestCondition } from "./enums/approval-rule-update-request-condition"
+import { ApprovalRuleUpdateRequestEffect } from "./enums/approval-rule-update-request-effect"
 import { AssetsSource } from "./enums/assets-source"
+import { AttachRequestDirection } from "./enums/attach-request-direction"
+import { AttachRequestVisibility } from "./enums/attach-request-visibility"
 import { AttributeValueBucket } from "./enums/attribute-value-bucket"
 import { AuthMailSource } from "./enums/auth-mail-source"
 import { RecoveryMailSource } from "./enums/recovery-mail-source"
 import { RegistrationStatus } from "./enums/registration-status"
+import { BudgetChangeReason } from "./enums/budget-change-reason"
+import { BudgetMovementResultStatus } from "./enums/budget-movement-result-status"
 import { CartStatus } from "./enums/cart-status"
 import { CartMergeStrategy } from "./enums/cart-merge-strategy"
 import { CartPriceSnapshotMode } from "./enums/cart-price-snapshot-mode"
@@ -42,8 +58,13 @@ import { ContactEventKindCreateRequestTone } from "./enums/contact-event-kind-cr
 import { ContactEventKindUpdateRequestTone } from "./enums/contact-event-kind-update-request-tone"
 import { ContactPermissionsPermissions } from "./enums/contact-permissions-permissions"
 import { ContactUpdateRequestRegistrationStatus } from "./enums/contact-update-request-registration-status"
+import { CostCenterBudgetType } from "./enums/cost-center-budget-type"
+import { CostCenterRestrictionType } from "./enums/cost-center-restriction-type"
+import { CostCenterRestrictionCreateRequestType } from "./enums/cost-center-restriction-create-request-type"
+import { CostCenterRestrictionUpdateRequestType } from "./enums/cost-center-restriction-update-request-type"
 import { PaymentFeeType } from "./enums/payment-fee-type"
 import { PaymentMethodKind } from "./enums/payment-method-kind"
+import { EvaluateRequestConditions } from "./enums/evaluate-request-conditions"
 import { FormStatus } from "./enums/form-status"
 import { FormSubmissionStatus } from "./enums/form-submission-status"
 import { FormNotifySource } from "./enums/form-notify-source"
@@ -78,6 +99,7 @@ import { MarketsVocabularyTone } from "./enums/markets-vocabulary-tone"
 import { MarketsVocabularyName } from "./enums/markets-vocabulary-name"
 import { MarketsVocabularySource } from "./enums/markets-vocabulary-source"
 import { MarketsVocabularySummaryName } from "./enums/markets-vocabulary-summary-name"
+import { NoteRequestVisibility } from "./enums/note-request-visibility"
 import { OrderFulfillmentStatus } from "./enums/order-fulfillment-status"
 import { OrderPaymentStatus } from "./enums/order-payment-status"
 import { OrderStatus } from "./enums/order-status"
@@ -85,6 +107,10 @@ import { OrderCancellationScope } from "./enums/order-cancellation-scope"
 import { OrderCommentVisibility } from "./enums/order-comment-visibility"
 import { OrderCustomerRollupRequestStatuses } from "./enums/order-customer-rollup-request-statuses"
 import { OrderCustomerRollupResponseStatuses } from "./enums/order-customer-rollup-response-statuses"
+import { OrderDiscountTarget } from "./enums/order-discount-target"
+import { OrderDiscountEffectKind } from "./enums/order-discount-effect-kind"
+import { OrderDiscountPlacement } from "./enums/order-discount-placement"
+import { OrderDiscountValueType } from "./enums/order-discount-value-type"
 import { OrderItemType } from "./enums/order-item-type"
 import { OrderListKindTone } from "./enums/order-list-kind-tone"
 import { OrderListKindRowTone } from "./enums/order-list-kind-row-tone"
@@ -115,12 +141,15 @@ import { PaymentTermTone } from "./enums/payment-term-tone"
 import { PaymentTermCreateRequestTone } from "./enums/payment-term-create-request-tone"
 import { PaymentTermUpdateRequestTone } from "./enums/payment-term-update-request-tone"
 import { PaymentVocabularyTone } from "./enums/payment-vocabulary-tone"
+import { PendingApprovalApproverType } from "./enums/pending-approval-approver-type"
+import { PendingApprovalStatus } from "./enums/pending-approval-status"
 import { PriceEndingRule } from "./enums/price-ending-rule"
 import { PriceEntriesAdjustResponseRounding } from "./enums/price-entries-adjust-response-rounding"
 import { PriceEntriesAdjustResponseRoundingMode } from "./enums/price-entries-adjust-response-rounding-mode"
 import { PriceEntriesBulkMode } from "./enums/price-entries-bulk-mode"
 import { PriceRoundingMode } from "./enums/price-rounding-mode"
 import { PriceEntryType } from "./enums/price-entry-type"
+import { PriceLinePriceReason } from "./enums/price-line-price-reason"
 import { PriceListStatus } from "./enums/price-list-status"
 import { PriceListTaxBasis } from "./enums/price-list-tax-basis"
 import { PriceCurrencySource } from "./enums/price-currency-source"
@@ -137,6 +166,63 @@ import { ProductGridColumnSource } from "./enums/product-grid-column-source"
 import { ProductLabelSource } from "./enums/product-label-source"
 import { ProductLabelAttributeSource } from "./enums/product-label-attribute-source"
 import { ProductsKind } from "./enums/products-kind"
+import { PromotionConditionMatch } from "./enums/promotion-condition-match"
+import { PromotionReach } from "./enums/promotion-reach"
+import { PromotionRecurrenceKind } from "./enums/promotion-recurrence-kind"
+import { PromotionReturnBehaviour } from "./enums/promotion-return-behaviour"
+import { PromotionStatus } from "./enums/promotion-status"
+import { PromotionBundleAllocation } from "./enums/promotion-bundle-allocation"
+import { PromotionBundlePatchAllocation } from "./enums/promotion-bundle-patch-allocation"
+import { PromotionBundleWriteAllocation } from "./enums/promotion-bundle-write-allocation"
+import { PromotionConditionKind } from "./enums/promotion-condition-kind"
+import { PromotionConditionMatchMode } from "./enums/promotion-condition-match-mode"
+import { PromotionConditionPatchKind } from "./enums/promotion-condition-patch-kind"
+import { PromotionConditionPatchMatchMode } from "./enums/promotion-condition-patch-match-mode"
+import { PromotionConditionWriteKind } from "./enums/promotion-condition-write-kind"
+import { PromotionConditionWriteMatchMode } from "./enums/promotion-condition-write-match-mode"
+import { PromotionEffectKind } from "./enums/promotion-effect-kind"
+import { PromotionEffectTargetScope } from "./enums/promotion-effect-target-scope"
+import { PromotionEffectUnitChoice } from "./enums/promotion-effect-unit-choice"
+import { PromotionEffectValueType } from "./enums/promotion-effect-value-type"
+import { PromotionEffectPatchKind } from "./enums/promotion-effect-patch-kind"
+import { PromotionEffectPatchTargetScope } from "./enums/promotion-effect-patch-target-scope"
+import { PromotionEffectPatchUnitChoice } from "./enums/promotion-effect-patch-unit-choice"
+import { PromotionEffectPatchValueType } from "./enums/promotion-effect-patch-value-type"
+import { PromotionEffectWriteKind } from "./enums/promotion-effect-write-kind"
+import { PromotionEffectWriteTargetScope } from "./enums/promotion-effect-write-target-scope"
+import { PromotionEffectWriteUnitChoice } from "./enums/promotion-effect-write-unit-choice"
+import { PromotionEffectWriteValueType } from "./enums/promotion-effect-write-value-type"
+import { PromotionPatchConditionMatch } from "./enums/promotion-patch-condition-match"
+import { PromotionPatchReach } from "./enums/promotion-patch-reach"
+import { PromotionPatchRecurrenceKind } from "./enums/promotion-patch-recurrence-kind"
+import { PromotionPatchReturnBehaviour } from "./enums/promotion-patch-return-behaviour"
+import { PromotionPatchStatus } from "./enums/promotion-patch-status"
+import { PromotionReleaseRequestReason } from "./enums/promotion-release-request-reason"
+import { PromotionWriteConditionMatch } from "./enums/promotion-write-condition-match"
+import { PromotionWriteReach } from "./enums/promotion-write-reach"
+import { PromotionWriteRecurrenceKind } from "./enums/promotion-write-recurrence-kind"
+import { PromotionWriteReturnBehaviour } from "./enums/promotion-write-return-behaviour"
+import { PromotionWriteStatus } from "./enums/promotion-write-status"
+import { PunchoutEntryProbeResultEntryProbeStatus } from "./enums/punchout-entry-probe-result-entry-probe-status"
+import { PunchoutEntryTestResultProtocol } from "./enums/punchout-entry-test-result-protocol"
+import { PunchoutFieldMappingImportRequestProtocol } from "./enums/punchout-field-mapping-import-request-protocol"
+import { PunchoutReturnPreviewProtocol } from "./enums/punchout-return-preview-protocol"
+import { PurchaseRequestStatus } from "./enums/purchase-request-status"
+import { PurchaseRequestEventName } from "./enums/purchase-request-event-name"
+import { PurchaseRequestItemType } from "./enums/purchase-request-item-type"
+import { PurchaseRequestItemCreateRequestType } from "./enums/purchase-request-item-create-request-type"
+import { PurchaseRequestItemUpdateRequestType } from "./enums/purchase-request-item-update-request-type"
+import { QuoteOrigin } from "./enums/quote-origin"
+import { QuoteStatus } from "./enums/quote-status"
+import { QuoteAttachmentDirection } from "./enums/quote-attachment-direction"
+import { QuoteAttachmentVisibility } from "./enums/quote-attachment-visibility"
+import { QuoteDetailOrigin } from "./enums/quote-detail-origin"
+import { QuoteDetailStatus } from "./enums/quote-detail-status"
+import { QuoteEventVisibility } from "./enums/quote-event-visibility"
+import { QuoteItemDecision } from "./enums/quote-item-decision"
+import { QuoteItemPriceReason } from "./enums/quote-item-price-reason"
+import { QuoteLineInputPriceReason } from "./enums/quote-line-input-price-reason"
+import { RedemptionState } from "./enums/redemption-state"
 import { ReorderPointSource } from "./enums/reorder-point-source"
 import { ReservationStatus } from "./enums/reservation-status"
 import { PriceOnRequestReason } from "./enums/price-on-request-reason"
@@ -172,12 +258,23 @@ import { ShippingVocabularyTone } from "./enums/shipping-vocabulary-tone"
 import { ShippingWeightUnitCreateRequestTone } from "./enums/shipping-weight-unit-create-request-tone"
 import { ShippingWeightUnitRowTone } from "./enums/shipping-weight-unit-row-tone"
 import { ShippingWeightUnitUpdateRequestTone } from "./enums/shipping-weight-unit-update-request-tone"
+import { StackingGroupMode } from "./enums/stacking-group-mode"
+import { StackingGroupPatchMode } from "./enums/stacking-group-patch-mode"
+import { StackingGroupWriteMode } from "./enums/stacking-group-write-mode"
 import { StockMovementType } from "./enums/stock-movement-type"
 import { StoreAssetRequestVisibility } from "./enums/store-asset-request-visibility"
+import { SubmitItemType } from "./enums/submit-item-type"
+import { SubmitResultOutcome } from "./enums/submit-result-outcome"
 import { ValidationFailedResponseStatus } from "./enums/validation-failed-response-status"
 import { VocabularyDefaultTone } from "./enums/vocabulary-default-tone"
 import { VocabularySource } from "./enums/vocabulary-source"
 import { VocabularyTone } from "./enums/vocabulary-tone"
+import { VoucherStatus } from "./enums/voucher-status"
+import { VoucherBatchStatus } from "./enums/voucher-batch-status"
+import { VoucherBatchPatchStatus } from "./enums/voucher-batch-patch-status"
+import { VoucherBatchWriteStatus } from "./enums/voucher-batch-write-status"
+import { VoucherPatchStatus } from "./enums/voucher-patch-status"
+import { VoucherWriteStatus } from "./enums/voucher-write-status"
 import { AttributeBooleanStatus } from "./enums/attribute-boolean-status"
 import { AttributeDatetimeStatus } from "./enums/attribute-datetime-status"
 import { AttributeEmailStatus } from "./enums/attribute-email-status"
@@ -229,6 +326,180 @@ export namespace Models {
     declare const __default: unique symbol;
 
     /**
+     * 
+     */
+    export type AcceptLine = {
+        /**
+         * What the buyer says about it. Accepted when left out.
+         */
+        decision?: AcceptLineDecision;
+        /**
+         * Which position.
+         */
+        id: string;
+    }
+
+    /**
+     * 
+     */
+    export type AcceptRequest = {
+        /**
+         * The positions to decide. Left out, every position still open is accepted.
+         */
+        items?: AcceptLine[];
+    }
+
+    /**
+     * 
+     */
+    export type AcceptResult = {
+        /**
+         * Files either side put on the quote.
+         */
+        attachments?: QuoteAttachment[];
+        /**
+         * Where the invoice would go. Carried to the order on acceptance.
+         */
+        billing_address?: object | null;
+        /**
+         * Name and address of who is asking, as handed in — a snapshot, not a link.
+         */
+        buyer?: object | null;
+        /**
+         * What the buyer wrote when asking.
+         */
+        buyer_note?: string | null;
+        /**
+         * The cart this was asked from, when there was one. Null on a quote sales opened. The positions are a COPY — the buyer keeps shopping and the quote does not move under the desk.
+         */
+        cart_id?: string | null;
+        /**
+         * The person the quote is for, in the customers app.
+         */
+        contact_id?: string | null;
+        /**
+         * When the row was written, stamped by the database.
+         */
+        created_at?: string;
+        /**
+         * ISO 4217 code EVERY amount on this quote is read in. Fixed at creation.
+         */
+        currency?: string;
+        /**
+         * When the buyer answered. Stays empty while a partially accepted quote still has open positions.
+         */
+        decided_at?: string | null;
+        /**
+         * The gap between the two, for reporting. Zero while nothing was negotiated, and zero on a basket that has no list price at all.
+         */
+        discount_total?: number;
+        /**
+         * The trail, oldest first — every state the quote moved through and every note either side wrote.
+         */
+        events?: QuoteEvent[];
+        /**
+         * When the sweep moved it to expired.
+         */
+        expired_at?: string | null;
+        /**
+         * What the buyer pays before tax: `quoted_total` plus `shipping_amount`. The one figure the list, the Cockpit and the storefront all show, so they cannot disagree about what a quote with freight is worth.
+         */
+        grand_total?: number;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Every position, in position order.
+         */
+        items?: QuoteItem[];
+        /**
+         * What the positions come to at catalogue prices. Kept beside `quoted_total` rather than as a difference — the question asked later is "what did we quote against what it normally costs", and a stored difference cannot answer it once a list price moves.
+         */
+        list_total?: number;
+        /**
+         * Free-form data the caller attached. Stored and returned verbatim; nothing here is read by this app, and none of it is indexed.
+         */
+        metadata?: object | null;
+        /**
+         * The quote number a person quotes on the phone, drawn from the configured range. Unique per tenant.
+         */
+        number?: string;
+        /**
+         * What to hand order management, covering only the positions THIS call accepted. The negotiated price arrives as `unit_price` — never as a discount for the order to re-derive.
+         */
+        order_draft?: OrderDraft;
+        /**
+         * The company the quote is for. What `acceptance_scope` widens acceptance to.
+         */
+        organization_id?: string | null;
+        /**
+         * Which door it came through: `buyer` sent a cart in, `seller` opened it at a desk with no cart behind it.
+         */
+        origin?: AcceptResultOrigin;
+        /**
+         * Who at the merchant is responsible. Set when somebody takes the quote onto their desk, and what a sales worklist filters by.
+         */
+        owner_id?: string | null;
+        /**
+         * When prices were last put on it.
+         */
+        quoted_at?: string | null;
+        /**
+         * What the positions come to at the negotiated prices. Equal to `list_total` until somebody prices it.
+         */
+        quoted_total?: number;
+        /**
+         * Why it was refused or declined, in the words the other side will read.
+         */
+        reason?: string | null;
+        /**
+         * When the quote was asked for, or opened.
+         */
+        requested_at?: string | null;
+        /**
+         * Which round of pricing this is. A re-price of a quote the buyer has already seen raises it, so every round stays readable.
+         */
+        revision?: number;
+        /**
+         * What the merchant wrote when quoting. The customer reads this one.
+         */
+        seller_note?: string | null;
+        /**
+         * Where the goods would go. Carried to the order on acceptance.
+         */
+        shipping_address?: object | null;
+        /**
+         * Carriage quoted alongside the goods, when the merchant put a figure on it.
+         */
+        shipping_amount?: number | null;
+        /**
+         * The rate that carriage is taxed at, in percent.
+         */
+        shipping_tax_rate?: number | null;
+        /**
+         * Where the quote stands. `requested` is a buyer's ask nobody has picked up; `in_review` is on somebody's desk; `quoted` carries prices and a deadline; `accepted`, `declined`, `rejected` and `expired` are final. `partially_accepted` is NOT final — some positions are ordered and the rest are still open, and the buyer may come back for them.
+         */
+        status?: AcceptResultStatus;
+        /**
+         * The earlier quote this one replaces, when a negotiation produced a new document rather than a new revision.
+         */
+        supersedes_quote_id?: string | null;
+        /**
+         * The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+         */
+        tenant_id?: string;
+        /**
+         * When the row last changed, stamped by the app on every write.
+         */
+        updated_at?: string;
+        /**
+         * When the offer stops standing. HARD: past it, acceptance is refused. A merchant may allow a grace period measured in hours, which is a courtesy and not a softer date.
+         */
+        valid_until?: string | null;
+    }
+
+    /**
      * A postal address belonging to an organization or to a contact, used for billing or shipping. Ownership is exactly one of the two.
      */
     export type Address = {
@@ -252,6 +523,10 @@ export namespace Models {
          * When the address was created.
          */
         created_at?: string;
+        /**
+         * Id of this address in the system it came from — an ERP address number. Nullable and unique per tenant where it is set. It is also the id a line-based order export has to hand back, because the receiving system names a delivery or invoice address by it rather than by its street.
+         */
+        external_id?: string | null;
         /**
          * Primary key of the address.
          */
@@ -322,6 +597,10 @@ export namespace Models {
          * ISO 3166-1 alpha-2 country code, exactly two letters. Uppercase by convention; it is what shipping and tax both key off.
          */
         country: string;
+        /**
+         * Id of this address in the system it came from — an ERP address number. Nullable and unique per tenant where it is set. It is also the id a line-based order export has to hand back, because the receiving system names a delivery or invoice address by it rather than by its street. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
+         */
+        external_id?: string | null;
         /**
          * The default address of its owner AND type: one default billing and one default shipping address per owner. Setting it moves the flag off the previous holder. Default false.
          */
@@ -511,6 +790,10 @@ export namespace Models {
          */
         country?: string;
         /**
+         * Id of this address in the system it came from — an ERP address number. Nullable and unique per tenant where it is set. It is also the id a line-based order export has to hand back, because the receiving system names a delivery or invoice address by it rather than by its street. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
+         */
+        external_id?: string | null;
+        /**
          * The default address of its owner AND type: one default billing and one default shipping address per owner. Setting it moves the flag off the previous holder. Default false.
          */
         is_default?: boolean;
@@ -546,6 +829,192 @@ export namespace Models {
          * Postal code, as text — leading zeros are real in most countries.
          */
         zip?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ApprovalRule = {
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        approver_contact_id?: string | null;
+        /**
+         * 
+         */
+        approver_role?: string | null;
+        /**
+         * 
+         */
+        approver_type?: ApprovalRuleApproverType;
+        /**
+         * 
+         */
+        condition?: ApprovalRuleCondition;
+        /**
+         * 
+         */
+        condition_parameters?: object | null;
+        /**
+         * 
+         */
+        cost_center_id?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        effect?: ApprovalRuleEffect;
+        /**
+         * 
+         */
+        effect_parameters?: object | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        sequence?: number;
+        /**
+         * 
+         */
+        show_condition?: boolean;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ApprovalRuleCreateRequest = {
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        approver_contact_id?: string | null;
+        /**
+         * 
+         */
+        approver_role?: string | null;
+        /**
+         * 
+         */
+        approver_type?: ApprovalRuleCreateRequestApproverType;
+        /**
+         * 
+         */
+        condition: ApprovalRuleCreateRequestCondition;
+        /**
+         * 
+         */
+        condition_parameters?: object | null;
+        /**
+         * 
+         */
+        cost_center_id?: string | null;
+        /**
+         * 
+         */
+        effect: ApprovalRuleCreateRequestEffect;
+        /**
+         * 
+         */
+        effect_parameters?: object | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * 
+         */
+        sequence?: number;
+        /**
+         * 
+         */
+        show_condition?: boolean;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type ApprovalRuleUpdateRequest = {
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        approver_contact_id?: string | null;
+        /**
+         * 
+         */
+        approver_role?: string | null;
+        /**
+         * 
+         */
+        approver_type?: ApprovalRuleUpdateRequestApproverType;
+        /**
+         * 
+         */
+        condition?: ApprovalRuleUpdateRequestCondition;
+        /**
+         * 
+         */
+        condition_parameters?: object | null;
+        /**
+         * 
+         */
+        cost_center_id?: string | null;
+        /**
+         * 
+         */
+        effect?: ApprovalRuleUpdateRequestEffect;
+        /**
+         * 
+         */
+        effect_parameters?: object | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        sequence?: number;
+        /**
+         * 
+         */
+        show_condition?: boolean;
     }
 
     /**
@@ -1101,6 +1570,36 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          * What the relation is called in a product form, per language tag.
          */
         labels?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type AttachRequest = {
+        /**
+         * How large it is, in bytes.
+         */
+        byte_size?: number;
+        /**
+         * The media type.
+         */
+        content_type?: string;
+        /**
+         * Who put it there.
+         */
+        direction?: AttachRequestDirection;
+        /**
+         * Where the file lives.
+         */
+        file_ref: string;
+        /**
+         * What to call it.
+         */
+        filename: string;
+        /**
+         * Who sees it.
+         */
+        visibility?: AttachRequestVisibility;
     }
 
     /**
@@ -1839,6 +2338,46 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     /**
      * 
      */
+    export type AuthHandoffRequest = {
+        /**
+         * The buyer to sign in, as this app knows them. Exactly one of this and `email` is sent — this one when the caller already resolved the external name to a contact.
+         */
+        contact_id?: string | null;
+        /**
+         * The buyer to sign in, by address, when the caller holds no contact id. Exactly one of this and `contact_id` is sent. An address nobody holds is a 404 — this route never registers.
+         */
+        email?: string | null;
+        /**
+         * The operations secret that makes the caller a trusted in-cluster app. Configured on both functions; never a value a browser or a storefront holds. In the body rather than a header because the gateway forwards a fixed header set, the same reason session material travels this way.
+         */
+        handoff_key: string;
+    }
+
+    /**
+     * The token, secret included. Nothing was sent anywhere — delivering it is the caller&#039;s job, and the point of the route is that it can be done over a back channel instead of through the external system.
+     */
+    export type AuthHandoffResponse = {
+        /**
+         * The buyer this session will belong to, echoed so a caller that asked by address learns the id.
+         */
+        contact_id?: string;
+        /**
+         * When the secret stops working. Short by design: a hand-off is redeemed in the same request chain that asked for it.
+         */
+        expire?: string;
+        /**
+         * The sign-in CREDENTIAL. Spent on first use and expiring, so a second attempt with the same one is a 401 rather than a second session. It must not reach a redirect URL, an ERP log or a browser history — fetch it over a back channel and redeem it server-side.
+         */
+        secret?: string;
+        /**
+         * The platform user. Send it back as `user_id` to `PUT /customers/auth/magic-link` together with the secret.
+         */
+        user_id?: string;
+    }
+
+    /**
+     * 
+     */
     export type AuthLoginRequest = {
         /**
          * The buyer's login address — the same one the contact carries.
@@ -2447,6 +2986,324 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     }
 
     /**
+     * 
+     */
+    export type Budget = {
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        cost_center_id?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        initial_value?: number;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        period_end?: string | null;
+        /**
+         * 
+         */
+        period_length?: number | null;
+        /**
+         * 
+         */
+        period_start?: string | null;
+        /**
+         * 
+         */
+        predecessor_id?: string | null;
+        /**
+         * 
+         */
+        recurring?: boolean;
+        /**
+         * 
+         */
+        remaining_value?: number;
+        /**
+         * 
+         */
+        sequence?: number;
+        /**
+         * 
+         */
+        takeover?: object | null;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Provide exactly one of amount (signed delta) or target (absolute remaining_value).
+     */
+    export type BudgetAdjustRequest = {
+        /**
+         * 
+         */
+        actor: string;
+        /**
+         * 
+         */
+        amount?: number | null;
+        /**
+         * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        note?: string | null;
+        /**
+         * 
+         */
+        target?: number | null;
+    }
+
+    /**
+     * 
+     */
+    export type BudgetAdjustResult = {
+        /**
+         * 
+         */
+        budget?: Budget;
+        /**
+         * 
+         */
+        change?: BudgetChange;
+    }
+
+    /**
+     * 
+     */
+    export type BudgetChange = {
+        /**
+         * 
+         */
+        actor?: string | null;
+        /**
+         * 
+         */
+        amount?: number;
+        /**
+         * 
+         */
+        budget_id?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        new_value?: number;
+        /**
+         * 
+         */
+        note?: string | null;
+        /**
+         * 
+         */
+        old_value?: number;
+        /**
+         * 
+         */
+        order_id?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id?: string | null;
+        /**
+         * 
+         */
+        reason?: BudgetChangeReason;
+    }
+
+    /**
+     * 
+     */
+    export type BudgetCreateRequest = {
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        cost_center_id: string;
+        /**
+         * 
+         */
+        initial_value?: number;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * 
+         */
+        period_length?: number | null;
+        /**
+         * 
+         */
+        period_start?: string | null;
+        /**
+         * 
+         */
+        recurring?: boolean;
+        /**
+         * 
+         */
+        sequence?: number;
+        /**
+         * 
+         */
+        takeover?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type BudgetMovementResult = {
+        /**
+         * 
+         */
+        changes?: BudgetChange[];
+        /**
+         * 
+         */
+        idempotent?: boolean;
+        /**
+         * 
+         */
+        order_id?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id?: string | null;
+        /**
+         * 
+         */
+        status?: BudgetMovementResultStatus;
+    }
+
+    /**
+     * Optional `today` (YYYY-MM-DD) runs the pass as of that date instead of now.
+     */
+    export type BudgetRolloverRequest = {
+        /**
+         * 
+         */
+        today?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type BudgetRolloverResult = {
+        /**
+         * 
+         */
+        ran_for?: string;
+        /**
+         * 
+         */
+        rolled?: object[];
+        /**
+         * 
+         */
+        rolled_count?: number;
+        /**
+         * 
+         */
+        skipped?: number;
+        /**
+         * Periods that ended longer ago than they lasted; left untouched.
+         */
+        stale?: object[];
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type BudgetUpdateRequest = {
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        cost_center_id?: string;
+        /**
+         * 
+         */
+        initial_value?: number;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        period_length?: number | null;
+        /**
+         * 
+         */
+        period_start?: string | null;
+        /**
+         * 
+         */
+        recurring?: boolean;
+        /**
+         * 
+         */
+        sequence?: number;
+        /**
+         * 
+         */
+        takeover?: object | null;
+    }
+
+    /**
      * A bulk job as returned by `/bulk-jobs`. Note that the row counts are
 nested under `counts` — they are not top-level fields — and that the
 response carries no `tenant_id` (the listing envelope does) and no
@@ -2558,7 +3415,7 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         created_at?: string;
         /**
-         * ISO 4217 code the whole cart is priced in. A line added without a currency of its own inherits this one.
+         * ISO 4217 code EVERY amount in this cart is read in — the cart's own subtotal and every line's unit_price and line_total. The cart is where currency lives (ADR-0106): a line carries none of its own, so the two can never disagree. Set from the caller's `currency` when a cart is opened, else from the market's `default_currency` setting, and then fixed: a cart holding a non-zero amount refuses to be re-denominated, and nothing anywhere in this app converts.
          */
         currency?: string;
         /**
@@ -2617,6 +3474,10 @@ response carries no `tenant_id` (the listing envelope does) and no
          * The last time anything about this cart or its lines changed — every write path in this app stamps it. It is also what the maintenance sweep measures idleness with, which is why the abandonment sweep is the one write that deliberately does not touch it: noticing that a cart is idle must not reset the clock that decides how long it is kept.
          */
         updated_at?: string;
+        /**
+         * The promotion codes the buyer ENTERED on this cart, in the order they entered them. Buyer intent, not a result: what a code is currently worth depends on the time, the buyer and what budget the promotion has left, so it is evaluated fresh every time the cart is shown and never stored here. Keeping the codes means a buyer who comes back tomorrow does not re-type them, and that an evaluation can be reproduced from the cart alone. A code that has since expired stays in the list and simply stops being worth anything — removing it silently would leave the buyer wondering where their discount went.
+         */
+        voucher_codes?: string[] | null;
     }
 
     /**
@@ -2700,7 +3561,7 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         created_at?: string;
         /**
-         * ISO 4217 code the whole cart is priced in. A line added without a currency of its own inherits this one.
+         * ISO 4217 code EVERY amount in this cart is read in — the cart's own subtotal and every line's unit_price and line_total. The cart is where currency lives (ADR-0106): a line carries none of its own, so the two can never disagree. Set from the caller's `currency` when a cart is opened, else from the market's `default_currency` setting, and then fixed: a cart holding a non-zero amount refuses to be re-denominated, and nothing anywhere in this app converts.
          */
         currency?: string;
         /**
@@ -2767,6 +3628,10 @@ response carries no `tenant_id` (the listing envelope does) and no
          * The last time anything about this cart or its lines changed — every write path in this app stamps it. It is also what the maintenance sweep measures idleness with, which is why the abandonment sweep is the one write that deliberately does not touch it: noticing that a cart is idle must not reset the clock that decides how long it is kept.
          */
         updated_at?: string;
+        /**
+         * The promotion codes the buyer ENTERED on this cart, in the order they entered them. Buyer intent, not a result: what a code is currently worth depends on the time, the buyer and what budget the promotion has left, so it is evaluated fresh every time the cart is shown and never stored here. Keeping the codes means a buyer who comes back tomorrow does not re-type them, and that an evaluation can be reproduced from the cart alone. A code that has since expired stays in the list and simply stops being worth anything — removing it silently would leave the buyer wondering where their discount went.
+         */
+        voucher_codes?: string[] | null;
     }
 
     /**
@@ -2846,7 +3711,7 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         contact_id?: string | null;
         /**
-         * ISO 4217 code the cart is priced in (default EUR). Lines added without a currency inherit it.
+         * ISO 4217 code EVERY amount in this cart will be read in, lines included — a line carries no currency of its own. Omit it and the cart is opened in the market's `default_currency` setting (EUR unless a market says otherwise), which is resolved once here and written to the row: changing that setting later never re-denominates a cart that already exists.
          */
         currency?: string | null;
         /**
@@ -2992,7 +3857,7 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         created_at?: string;
         /**
-         * ISO 4217 code this line is priced in. Defaults to the cart's currency when a line is added without one.
+         * The ISO 4217 code this line's amounts are read in, which is always its CART's — stamped onto the answer, stored nowhere (ADR-0106 D1). A line had a currency column of its own until RAD-15 and nothing kept it equal to the cart's; it is published here because an amount without the currency it is expressed in is not a figure a caller can act on, and reading it off the line saves fetching the cart for it. Not writable and not filterable: a payload may repeat it and is refused with 409 `currency_mismatch` if it names another, and a filter on it would be a filter on something the row does not hold.
          */
         currency?: string;
         /**
@@ -3048,7 +3913,7 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         unit?: string | null;
         /**
-         * Net price of ONE unit, in the line's currency. This is the working price — a resync, a PUT on the line or a repricing job may have moved it since the buyer saw it. The price the buyer WAS shown lives in snapshot, and carts.order decides which of the two the order is booked on.
+         * Net price of ONE unit, in the CART's currency. This is the working price — a resync, a PUT on the line or a repricing job may have moved it since the buyer saw it. The price the buyer WAS shown lives in snapshot, and carts.order decides which of the two the order is booked on.
          */
         unit_price?: number;
         /**
@@ -3066,7 +3931,7 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         configuration?: object | null;
         /**
-         * ISO 4217 code. Defaults to the cart's currency.
+         * Optional, and it cannot change anything: a line is read in its CART's currency and stores none of its own. Sending the cart's code (or nothing) is accepted — which is what makes an exported line re-importable — and sending a different one answers 409 `currency_mismatch` rather than being converted or quietly stored.
          */
         currency?: string | null;
         /**
@@ -3143,7 +4008,7 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         configuration?: object | null;
         /**
-         * ISO 4217 code. Defaults to the cart's currency.
+         * Optional, and it cannot change anything: a line is read in its CART's currency and stores none of its own. Sending the cart's code (or nothing) is accepted — which is what makes an exported line re-importable — and sending a different one answers 409 `currency_mismatch` rather than being converted or quietly stored.
          */
         currency?: string | null;
         /**
@@ -3345,9 +4210,9 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         channel_id?: string | null;
         /**
-         * ISO 4217 code. Changes what NEW lines inherit; lines already in the cart keep the currency they were added with.
+         * Re-denominate the cart — which re-denominates every amount in it, because the lines are read in this code and hold none of their own. Only while the cart is still empty of money: a cart whose subtotal or any line price is non-zero answers 409 `currency_mismatch`, since nothing here converts and a changed code would restate a history in a currency it was never in. `null` is refused: a cart is always priced in one.
          */
-        currency?: string | null;
+        currency?: string;
         /**
          * Free-form data the storefront hangs on the cart. Stored and returned verbatim; no key in here is read by this app, and none is indexed.
          */
@@ -4484,6 +5349,54 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
+     * 
+     */
+    export type CommitRequest = {
+        /**
+         * 
+         */
+        allocations: object[];
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        note?: string | null;
+        /**
+         * 
+         */
+        order_id: string;
+    }
+
+    /**
+     * 
+     */
+    export type ConfirmRequest = {
+        /**
+         * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        note?: string | null;
+        /**
+         * 
+         */
+        order_id?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id: string;
+    }
+
+    /**
      * A PERSON, and the unit that logs in: one platform user, one email, one role inside its organization. A contact without an organization is a standalone buyer, not an error.
      */
     export type Contact = {
@@ -4495,6 +5408,10 @@ response carries no `tenant_id` (the listing envelope does) and no
          * Login identity and the unique key of a person within the tenant. Changing it changes the platform login with it. Two people at the same company therefore need two addresses — a shared purchasing mailbox is one contact, not several.
          */
         email?: string;
+        /**
+         * Id of this person in the system the record came from — an ERP contact number, a CRM id. Nullable, because a contact created in the shop has none and never will, and unique per tenant where it is set, which is what lets a repeated import find the row it wrote last time instead of adding a second one. Distinct from `external_user_id`, which points at the platform account: this one points OUT of the platform.
+         */
+        external_id?: string | null;
         /**
          * Id of the platform USER this contact is mirrored as — the account that actually holds the password and the sessions. Written by the mirror and ignored on every write a caller sends.
          */
@@ -4603,6 +5520,10 @@ response carries no `tenant_id` (the listing envelope does) and no
          * Login identity and the unique key of a person within the tenant. Changing it changes the platform login with it. Two people at the same company therefore need two addresses — a shared purchasing mailbox is one contact, not several.
          */
         email: string;
+        /**
+         * Id of this person in the system the record came from — an ERP contact number, a CRM id. Nullable, because a contact created in the shop has none and never will, and unique per tenant where it is set, which is what lets a repeated import find the row it wrote last time instead of adding a second one. Distinct from `external_user_id`, which points at the platform account: this one points OUT of the platform. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
+         */
+        external_id?: string | null;
         /**
          * Given name. Optional: an ERP import often has only a mailbox.
          */
@@ -4862,6 +5783,84 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
+     * 
+     */
+    export type ContactLimit = {
+        /**
+         * 
+         */
+        contact_id?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        monetary_limit?: number;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ContactLimitCreateRequest = {
+        /**
+         * 
+         */
+        contact_id: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        monetary_limit?: number;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type ContactLimitUpdateRequest = {
+        /**
+         * 
+         */
+        contact_id?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        monetary_limit?: number;
+    }
+
+    /**
      * A contact&#039;s effective grants, derived from its role on every read — nothing here is stored, so a role change can never leave a stale grant behind. Carried here so a BFF does not need a second call to decide what to render.
      */
     export type ContactPermissions = {
@@ -4899,6 +5898,10 @@ response carries no `tenant_id` (the listing envelope does) and no
          * Login identity and the unique key of a person within the tenant. Changing it changes the platform login with it. Two people at the same company therefore need two addresses — a shared purchasing mailbox is one contact, not several.
          */
         email?: string;
+        /**
+         * Id of this person in the system the record came from — an ERP contact number, a CRM id. Nullable, because a contact created in the shop has none and never will, and unique per tenant where it is set, which is what lets a repeated import find the row it wrote last time instead of adding a second one. Distinct from `external_user_id`, which points at the platform account: this one points OUT of the platform. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
+         */
+        external_id?: string | null;
         /**
          * Given name. Optional: an ERP import often has only a mailbox.
          */
@@ -4946,6 +5949,360 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
+     * 
+     */
+    export type CostCenter = {
+        /**
+         * 
+         */
+        accountable_contact_id?: string | null;
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        budget_type?: CostCenterBudgetType;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type CostCenterConsumeRequest = {
+        /**
+         * 
+         */
+        actor?: string | null;
+        /**
+         * 
+         */
+        amount: number;
+        /**
+         * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        note?: string | null;
+        /**
+         * 
+         */
+        order_id?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type CostCenterConsumeResult = {
+        /**
+         * 
+         */
+        budgets?: object[];
+        /**
+         * 
+         */
+        changes?: BudgetChange[];
+        /**
+         * 
+         */
+        consumed?: number;
+        /**
+         * 
+         */
+        cost_center_id?: string;
+    }
+
+    /**
+     * 
+     */
+    export type CostCenterCreateRequest = {
+        /**
+         * 
+         */
+        accountable_contact_id?: string | null;
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type CostCenterRestriction = {
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        cost_center_id?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        parameters?: object;
+        /**
+         * 
+         */
+        type?: CostCenterRestrictionType;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type CostCenterRestrictionCreateRequest = {
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        cost_center_id: string;
+        /**
+         * 
+         */
+        parameters: object;
+        /**
+         * 
+         */
+        type: CostCenterRestrictionCreateRequestType;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type CostCenterRestrictionUpdateRequest = {
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        cost_center_id?: string;
+        /**
+         * 
+         */
+        parameters?: object;
+        /**
+         * 
+         */
+        type?: CostCenterRestrictionUpdateRequestType;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type CostCenterUpdateRequest = {
+        /**
+         * 
+         */
+        accountable_contact_id?: string | null;
+        /**
+         * 
+         */
+        active?: boolean;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type CustomEffectType = {
+        /**
+         * When true, an effect of this type must also name an amount shape and a target scope, and then goes through exactly the caps, budgets, stacking and rounding a discount does. When false it carries no money at all.
+         */
+        carries_amount?: boolean;
+        /**
+         * When the row was created. Written by the database, never by a caller.
+         */
+        created_at?: string;
+        /**
+         * What the type is for, for the person configuring a promotion — rarely the person who registered it.
+         */
+        description?: object;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * The identifier whatever consumes this effect dispatches on. Unique per tenant.
+         */
+        name?: string;
+        /**
+         * The JSON Schema an effect payload of this type is checked against, when the promotion is WRITTEN rather than at a till. It may grow and may not shrink while effects exist against it.
+         */
+        payload_shape?: object;
+        /**
+         * Incremented every time the shape grows. Every effect records the version it was checked against, so a consumer reading an old payload knows which fields it may expect.
+         */
+        shape_version?: number;
+        /**
+         * What the type is called where an effect is written. Per locale.
+         */
+        title?: object;
+        /**
+         * When the row last changed. Written by the database on every write.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type CustomEffectTypePatch = {
+        /**
+         * When true, an effect of this type must also name an amount shape and a target scope, and then goes through exactly the caps, budgets, stacking and rounding a discount does. When false it carries no money at all.
+         */
+        carries_amount?: boolean;
+        /**
+         * What the type is for, for the person configuring a promotion — rarely the person who registered it.
+         */
+        description?: object;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * The identifier whatever consumes this effect dispatches on. Unique per tenant.
+         */
+        name: string;
+        /**
+         * The JSON Schema an effect payload of this type is checked against, when the promotion is WRITTEN rather than at a till. It may grow and may not shrink while effects exist against it.
+         */
+        payload_shape?: object;
+        /**
+         * What the type is called where an effect is written. Per locale.
+         */
+        title?: object;
+    }
+
+    /**
+     * 
+     */
+    export type CustomEffectTypeWrite = {
+        /**
+         * When true, an effect of this type must also name an amount shape and a target scope, and then goes through exactly the caps, budgets, stacking and rounding a discount does. When false it carries no money at all.
+         */
+        carries_amount?: boolean;
+        /**
+         * What the type is for, for the person configuring a promotion — rarely the person who registered it.
+         */
+        description?: object;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * The identifier whatever consumes this effect dispatches on. Unique per tenant.
+         */
+        name: string;
+        /**
+         * The JSON Schema an effect payload of this type is checked against, when the promotion is WRITTEN rather than at a till. It may grow and may not shrink while effects exist against it.
+         */
+        payload_shape?: object;
+        /**
+         * What the type is called where an effect is written. Per locale.
+         */
+        title?: object;
+    }
+
+    /**
      * No fields — send {}.
      */
     export type CustomersDefaultsRequest = {
@@ -4959,6 +6316,30 @@ response carries no `tenant_id` (the listing envelope does) and no
          * One entry per value set, keyed by its route name — `payment-terms`, `address-types`, `lifecycle-stages`, `contact-event-kinds`. Each says what THIS call did: `created` are the codes it inserted, `existing` the seeded codes it found already there and left completely alone (a merchant's rename included). A second call therefore answers with everything under `existing` and nothing under `created`.
          */
         sets?: object;
+    }
+
+    /**
+     * 
+     */
+    export type DeclineRequest = {
+        /**
+         * Why, in the words the merchant will read.
+         */
+        reason?: string;
+    }
+
+    /**
+     * 
+     */
+    export type Deleted = {
+        /**
+         * True when the row is gone.
+         */
+        deleted?: boolean;
+        /**
+         * Which row.
+         */
+        id?: string;
     }
 
     /**
@@ -5177,6 +6558,94 @@ response carries no `tenant_id` (the listing envelope does) and no
          * Deprecated duplicate of `error`, kept so existing readers keep working. Read `error`.
          */
         message?: string;
+    }
+
+    /**
+     * 
+     */
+    export type EvaluateRequest = {
+        /**
+         * 
+         */
+        amount: number;
+        /**
+         * 
+         */
+        conditions?: string[];
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        cost_center_id?: string;
+        /**
+         * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+         */
+        currency?: string | null;
+        /**
+         * Code of the punchout account the request is made in. Omit outside a punchout session: a cost centre restricted with mode 'only' is then out of reach, and one restricted with 'except' is offered. A value that is not a non-empty string is refused with 400.
+         */
+        punchout_account_code?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type EvaluateResult = {
+        /**
+         * 
+         */
+        amount?: number;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        cost_center_id?: string;
+        /**
+         * The currency the answer is stated in.
+         */
+        currency?: string | null;
+        /**
+         * The punchout session the answer was given in, as the request stated it.
+         */
+        punchout_account_code?: string | null;
+        /**
+         * 
+         */
+        results?: object[];
+        /**
+         * 
+         */
+        satisfied?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type ExpireRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type ExpireResult = {
+        /**
+         * How many quotes this run moved.
+         */
+        expired?: number;
+        /**
+         * Which ones.
+         */
+        quotes?: string[];
+        /**
+         * Present when the sweep is switched off for this tenant.
+         */
+        skipped?: string;
     }
 
     /**
@@ -9185,6 +10654,24 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
+     * 
+     */
+    export type NoteRequest = {
+        /**
+         * Which side wrote it.
+         */
+        actor?: string;
+        /**
+         * What to write.
+         */
+        body: string;
+        /**
+         * Who sees it. Internal when left out.
+         */
+        visibility?: NoteRequestVisibility;
+    }
+
+    /**
      * A counter that issues human-readable numbers, one per series: orders, delivery notes, returns. The format is {prefix}{counter padded to padding}{suffix}, and drawing a number moves the counter.
      */
     export type NumberRange = {
@@ -9239,6 +10726,124 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
+     * 
+     */
+    export type NumberRangeCreate = {
+        /**
+         * What a market points at to draw from this range. Unique per tenant; `quote` is the one this app seeds.
+         */
+        code: string;
+        /**
+         * The last number drawn. The next draw adds `step` and stores the result, so a number is never handed out twice.
+         */
+        counter?: number;
+        /**
+         * When the row was written, stamped by the database.
+         */
+        created_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * How many digits the counter is padded to. 6 gives `000001`.
+         */
+        padding?: number;
+        /**
+         * How far apart position numbers sit on a new quote — 10 leaves room to insert a line later without renumbering.
+         */
+        position_step?: number;
+        /**
+         * Put in front of the counter — `ANG-` produces `ANG-000001`.
+         */
+        prefix?: string;
+        /**
+         * How far the counter moves per draw. 1 is consecutive; a larger step leaves gaps on purpose.
+         */
+        step?: number;
+        /**
+         * Put after the counter. Empty on the standard range.
+         */
+        suffix?: string;
+        /**
+         * The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+         */
+        tenant_id?: string;
+        /**
+         * When the row last changed, stamped by the app on every write.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type NumberRangeList = {
+        /**
+         * The exact-column filters this list understood. A key that made it through is in here — which is how "no rows match" is told apart from "the column was spelled wrong and dropped".
+         */
+        filter?: object;
+        /**
+         * The rows on this page.
+         */
+        items?: NumberRange[];
+        /**
+         * Where this page sits in the result set.
+         */
+        page?: object;
+    }
+
+    /**
+     * 
+     */
+    export type NumberRangeUpdate = {
+        /**
+         * What a market points at to draw from this range. Unique per tenant; `quote` is the one this app seeds.
+         */
+        code?: string;
+        /**
+         * The last number drawn. The next draw adds `step` and stores the result, so a number is never handed out twice.
+         */
+        counter?: number;
+        /**
+         * When the row was written, stamped by the database.
+         */
+        created_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * How many digits the counter is padded to. 6 gives `000001`.
+         */
+        padding?: number;
+        /**
+         * How far apart position numbers sit on a new quote — 10 leaves room to insert a line later without renumbering.
+         */
+        position_step?: number;
+        /**
+         * Put in front of the counter — `ANG-` produces `ANG-000001`.
+         */
+        prefix?: string;
+        /**
+         * How far the counter moves per draw. 1 is consecutive; a larger step leaves gaps on purpose.
+         */
+        step?: number;
+        /**
+         * Put after the counter. Empty on the standard range.
+         */
+        suffix?: string;
+        /**
+         * The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+         */
+        tenant_id?: string;
+        /**
+         * When the row last changed, stamped by the app on every write.
+         */
+        updated_at?: string;
+    }
+
+    /**
      * An ORDER as it was placed: a snapshot. Buyer, addresses, payment and shipping are frozen copies, the totals were computed here, and three independent dimensions say where it stands — status (lifecycle), payment_status (fed from outside) and fulfillment_status (derived from the positions).
      */
     export type Order = {
@@ -9287,6 +10892,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         customer_order_number?: string | null;
         /**
+         * What an invoice has to quote: how the discount fell across the tax rates present, highest rate first. A 10.00 voucher on a cart holding 19 % and 7 % lines is not 10.00 at one rate — it is split in proportion, and that split is what makes the tax on the invoice defensible. Null when nothing was discounted. Derivable from the components and stored anyway, because an invoice must not have to be recomputed years later by code that has moved on.
+         */
+        discount_tax_split?: object[];
+        /**
+         * Every discount a promotion took off this order, summed: the positions' discounts, a head-level voucher distributed across them, a discount placed as its own position, and any reduction of the shipping charge. COMPUTED here from the components the caller evaluated — a caller cannot set it. `subtotal` stays the UNDISCOUNTED sum, so the two together say what was charged and what was given away.
+         */
+        discount_total?: number;
+        /**
          * The FULFILLING system's reference for this order, typically the ERP order number. Written once by POST /orders/{id}/acknowledge and null until an integration acknowledged it.
          */
         external_ref?: string | null;
@@ -9295,7 +10908,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         fulfillment_status?: OrderFulfillmentStatus;
         /**
-         * What the buyer owes: subtotal + shipping_total + tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
+         * What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
          */
         grand_total?: number;
         /**
@@ -9347,7 +10960,15 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shipping_address?: object | null;
         /**
-         * NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`.
+         * Tax on the shipping charge, computed on what is OWED after any promotion reduced it. Part of tax_total, and stored separately so the shipping line can be stated on its own.
+         */
+        shipping_tax_amount?: number;
+        /**
+         * The tax percentage the shipping charge was taxed at, frozen at place-time (19 means 19 %). Stored rather than only used, because otherwise nobody could say afterwards how much of tax_total was shipping — which an ERP export of a discounted shipping charge needs.
+         */
+        shipping_tax_rate?: number;
+        /**
+         * NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. This is the price BEFORE any promotion reduced it; the reduction is a row in the discount components.
          */
         shipping_total?: number;
         /**
@@ -9649,7 +11270,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The order aggregate: every column of the order plus its items, shipments (with their booked positions), returns and cancellations.
+     * The order aggregate: every column of the order plus its items, the discount steps behind its totals, shipments (with their booked positions), returns and cancellations.
      */
     export type OrderDetail = {
         /**
@@ -9701,6 +11322,18 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         customer_order_number?: string | null;
         /**
+         * What an invoice has to quote: how the discount fell across the tax rates present, highest rate first. A 10.00 voucher on a cart holding 19 % and 7 % lines is not 10.00 at one rate — it is split in proportion, and that split is what makes the tax on the invoice defensible. Null when nothing was discounted. Derivable from the components and stored anyway, because an invoice must not have to be recomputed years later by code that has moved on.
+         */
+        discount_tax_split?: object[];
+        /**
+         * Every discount a promotion took off this order, summed: the positions' discounts, a head-level voucher distributed across them, a discount placed as its own position, and any reduction of the shipping charge. COMPUTED here from the components the caller evaluated — a caller cannot set it. `subtotal` stays the UNDISCOUNTED sum, so the two together say what was charged and what was given away.
+         */
+        discount_total?: number;
+        /**
+         * How the discount on this order was arrived at, step by step in the order the steps were applied. Each names its promotion, what it was worth and the base it acted on, so the arithmetic can be replayed rather than merely read — which is what a support desk asked to explain a figure, and an ERP asked to reproduce it, both need. Empty when nothing was discounted.
+         */
+        discounts?: OrderDiscount[];
+        /**
          * The FULFILLING system's reference for this order, typically the ERP order number. Written once by POST /orders/{id}/acknowledge and null until an integration acknowledged it.
          */
         external_ref?: string | null;
@@ -9709,7 +11342,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         fulfillment_status?: OrderFulfillmentStatus;
         /**
-         * What the buyer owes: subtotal + shipping_total + tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
+         * What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
          */
         grand_total?: number;
         /**
@@ -9773,7 +11406,15 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shipping_address?: object | null;
         /**
-         * NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`.
+         * Tax on the shipping charge, computed on what is OWED after any promotion reduced it. Part of tax_total, and stored separately so the shipping line can be stated on its own.
+         */
+        shipping_tax_amount?: number;
+        /**
+         * The tax percentage the shipping charge was taxed at, frozen at place-time (19 means 19 %). Stored rather than only used, because otherwise nobody could say afterwards how much of tax_total was shipping — which an ERP export of a discounted shipping charge needs.
+         */
+        shipping_tax_rate?: number;
+        /**
+         * NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. This is the price BEFORE any promotion reduced it; the reduction is a row in the discount components.
          */
         shipping_total?: number;
         /**
@@ -9796,6 +11437,156 @@ are no `created_at` / `updated_at` fields on this resource.
          * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change.
          */
         user_data?: object | null;
+    }
+
+    /**
+     * ONE step of the arithmetic that produced a discount: which promotion, what it was worth, and — the part that matters — THE BASE IT ACTED ON. A position discounted 3 % and then 5 % is not discounted 8 %; storing only the percentages leaves an order whose discount can be read but not re-derived, and an order is a snapshot. Rows sit in `sequence` order and replay exactly.
+     */
+    export type OrderDiscount = {
+        /**
+         * What this step took off, in the order currency. The positions' amounts sum to the order's discount_total.
+         */
+        amount?: number;
+        /**
+         * What was reduced: 'item' a position, 'shipping' the delivery charge, 'payment_fee' the payment surcharge.
+         */
+        applies_to?: OrderDiscountTarget;
+        /**
+         * What this step acted ON: the position's remaining value at the moment it applied. THE field that makes the chain replayable — 5 % of 97.00 is not 5 % of 100.00, and without the base nobody can tell which happened.
+         */
+        base_amount?: number;
+        /**
+         * When the step was written — place-time, with the order.
+         */
+        created_at?: string;
+        /**
+         * What kind of effect this was, mirroring the promotions app's own vocabulary: a discount, a free item, a surcharge, a bundle, or a custom effect a tenant defined.
+         */
+        effect_kind?: OrderDiscountEffectKind;
+        /**
+         * Primary key of this step.
+         */
+        id?: string;
+        /**
+         * Free-form data the caller attached to this step. Stored and returned; nothing is read out of it.
+         */
+        metadata?: object | null;
+        /**
+         * The order this discount was applied to. Deleting the order deletes it.
+         */
+        order_id?: string;
+        /**
+         * The position it reduced, or null when it reduced something that is not a position — the shipping charge, or a discount placed as a position of its own.
+         */
+        order_item_id?: string | null;
+        /**
+         * The percentage THIS step applied, when it was a percentage — not the effective rate on the position, which is the position's own discount_percent. Null for an absolute amount.
+         */
+        percent?: number | null;
+        /**
+         * Where the merchant configured the discount to land. 'line' reduces the named position; 'head' is spread across the positions in proportion to what is left of each, which is how a voucher stays correct in a cart with several tax rates; 'line_item' leaves the positions whole and becomes a position of its own — one per tax rate, because a single discount line in a cart holding 19 % and 7 % is wrong at either.
+         */
+        placement?: OrderDiscountPlacement;
+        /**
+         * The promotion in the promotions app that granted this. A loose reference on purpose — an order must stay readable after the promotion is edited or deleted, the same reason the buyer is a frozen copy.
+         */
+        promotion_id?: string;
+        /**
+         * What the promotion was called when it applied, frozen. Renaming it later does not rewrite this order.
+         */
+        promotion_name?: string;
+        /**
+         * The order in which the steps were applied, from 1. It is not decoration: a percentage acts on what is LEFT, so replaying the chain out of order gives a different answer.
+         */
+        sequence?: number;
+        /**
+         * The rate the reduced money was taxed at, which is how discount_tax_split is arrived at. Null when the step reduced something with no rate of its own.
+         */
+        tax_rate?: number | null;
+        /**
+         * How the promotion expressed itself: a 'percentage' of the base, an absolute 'amount', or a 'fixed_price' the position was set to. Null when the effect has no value of its own.
+         */
+        value_type?: OrderDiscountValueType;
+        /**
+         * The code the buyer entered, when a voucher was what triggered this. Null for an automatic promotion.
+         */
+        voucher_code?: string | null;
+    }
+
+    /**
+     * What to hand order management, covering only the positions THIS call accepted. The negotiated price arrives as `unit_price` — never as a discount for the order to re-derive.
+     */
+    export type OrderDraft = {
+        /**
+         * Where the invoice goes, as chosen when asking.
+         */
+        billing_address?: object;
+        /**
+         * Who is buying, as recorded on the quote.
+         */
+        buyer?: object;
+        /**
+         * The cart the quote was asked from, so the order names it too.
+         */
+        cart_id?: string;
+        /**
+         * Who is buying.
+         */
+        contact_id?: string;
+        /**
+         * The quote's currency.
+         */
+        currency?: string;
+        /**
+         * The accepted positions, at the negotiated price.
+         */
+        items?: OrderDraftLine[];
+        /**
+         * Carries `quote_id` and `quote_number`, so the order names where its price came from.
+         */
+        metadata?: object;
+        /**
+         * Which company.
+         */
+        organization_id?: string;
+        /**
+         * The quoted carriage, shaped the way order management takes it. Only on the FIRST acceptance of a quote, so a basket taken in two halves ships once; absent when no carriage was priced.
+         */
+        shipping?: object;
+        /**
+         * Where the goods go — the address the carriage was priced for.
+         */
+        shipping_address?: object;
+    }
+
+    /**
+     * 
+     */
+    export type OrderDraftLine = {
+        /**
+         * What it is called.
+         */
+        name?: string;
+        /**
+         * The catalogue product.
+         */
+        product_id?: string;
+        /**
+         * How many.
+         */
+        quantity?: number;
+        /**
+         * The article number.
+         */
+        sku?: string;
+        /**
+         * The rate in percent.
+         */
+        tax_rate?: number;
+        /**
+         * The negotiated price per unit.
+         */
+        unit_price?: number;
     }
 
     /**
@@ -9855,6 +11646,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         created_at?: string;
         /**
+         * What promotions took off this position, summed. `line_total` stays the undiscounted figure beside it, so an ERP that recomputes finds the original price where it has always been. Zero when nothing applied. The components behind it — which promotion, in what order, on what base — are answered with the order.
+         */
+        discount_amount?: number;
+        /**
+         * The EFFECTIVE rate this position was discounted at (discount_amount / line_total × 100). When exactly one promotion applied it is that promotion's own percentage; when several stacked it is the combined rate, which is the only honest single number — 3 % then 5 % is 7.85 %, not 8 %. Null when nothing was discounted.
+         */
+        discount_percent?: number | null;
+        /**
          * Primary key of the position. This is the id every positions[] payload names: /ship, /items/cancel and /return all take order_item_id.
          */
         id?: string;
@@ -9862,6 +11661,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * quantity × unit_price, NET, always COMPUTED here — a caller cannot set it. The order's subtotal is the sum of these.
          */
         line_total?: number;
+        /**
+         * line_total less discount_amount: what this position is actually owed, and what its tax is computed on. Named this rather than "net" because net already means "excluding VAT" here and the two would be confused. A discount placed as a position of its own carries a NEGATIVE value here, so adding this column over all positions gives the order's goods total.
+         */
+        line_total_discounted?: number;
         /**
          * Free-form data belonging to the integration side, per position. Stored and returned untouched.
          */
@@ -9911,7 +11714,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         sku?: string | null;
         /**
-         * Tax on this line in `currency`. Derived from line_total × tax_rate/100 when the caller sent none, which is the normal case — but a caller may send it, for a market whose rounding rules differ from ours.
+         * Tax on this line in `currency`. Derived from line_total_discounted × tax_rate/100 — the money actually owed, not the list price when the caller sent none, which is the normal case — but a caller may send it, for a market whose rounding rules differ from ours.
          */
         tax_amount?: number;
         /**
@@ -9949,7 +11752,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         configuration?: object | null;
         /**
-         * The buyer's own cost centre for this line — a B2B field: the same order is split across several of them and the buyer's finance department needs the split per line, not per order.
+         * The buyer's own cost centre for this line — a B2B field: the same order is split across several of them and the buyer's finance department needs the split per line, not per order. Omit it and a `cost_center` inside this line's `metadata` is taken instead: a cart has no cost-centre field of its own, so an order placed straight from one carries the centre there. Sending it here wins over that copy. A metadata value that is not a non-blank string is ignored rather than refused, and the metadata itself is stored exactly as sent either way.
          */
         cost_center?: string | null;
         /**
@@ -9989,7 +11792,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         snapshot?: object | null;
         /**
-         * Tax on this line in `currency`. Derived from line_total × tax_rate/100 when the caller sent none, which is the normal case — but a caller may send it, for a market whose rounding rules differ from ours. Send it only where your market rounds differently from line_total × tax_rate/100.
+         * Tax on this line in `currency`. Derived from line_total_discounted × tax_rate/100 — the money actually owed, not the list price when the caller sent none, which is the normal case — but a caller may send it, for a market whose rounding rules differ from ours. Send it only where your market rounds differently from line_total × tax_rate/100.
          */
         tax_amount?: number | null;
         /**
@@ -10983,7 +12786,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shipping_address?: object | null;
         /**
-         * NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. Only read when the shipping snapshot carries no 'price'.
+         * NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. This is the price BEFORE any promotion reduced it; the reduction is a row in the discount components. Only read when the shipping snapshot carries no 'price'.
          */
         shipping_total?: number | null;
         /**
@@ -11041,6 +12844,18 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         customer_order_number?: string | null;
         /**
+         * What an invoice has to quote: how the discount fell across the tax rates present, highest rate first. A 10.00 voucher on a cart holding 19 % and 7 % lines is not 10.00 at one rate — it is split in proportion, and that split is what makes the tax on the invoice defensible. Null when nothing was discounted. Derivable from the components and stored anyway, because an invoice must not have to be recomputed years later by code that has moved on.
+         */
+        discount_tax_split?: object[];
+        /**
+         * Every discount a promotion took off this order, summed: the positions' discounts, a head-level voucher distributed across them, a discount placed as its own position, and any reduction of the shipping charge. COMPUTED here from the components the caller evaluated — a caller cannot set it. `subtotal` stays the UNDISCOUNTED sum, so the two together say what was charged and what was given away.
+         */
+        discount_total?: number;
+        /**
+         * The discount steps that were applied, in the order they were applied. Empty when the placement carried no promotion.
+         */
+        discounts?: OrderDiscount[];
+        /**
          * The FULFILLING system's reference for this order, typically the ERP order number. Written once by POST /orders/{id}/acknowledge and null until an integration acknowledged it.
          */
         external_ref?: string | null;
@@ -11049,7 +12864,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         fulfillment_status?: OrderFulfillmentStatus;
         /**
-         * What the buyer owes: subtotal + shipping_total + tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
+         * What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
          */
         grand_total?: number;
         /**
@@ -11105,7 +12920,15 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shipping_address?: object | null;
         /**
-         * NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`.
+         * Tax on the shipping charge, computed on what is OWED after any promotion reduced it. Part of tax_total, and stored separately so the shipping line can be stated on its own.
+         */
+        shipping_tax_amount?: number;
+        /**
+         * The tax percentage the shipping charge was taxed at, frozen at place-time (19 means 19 %). Stored rather than only used, because otherwise nobody could say afterwards how much of tax_total was shipping — which an ERP export of a discounted shipping charge needs.
+         */
+        shipping_tax_rate?: number;
+        /**
+         * NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. This is the price BEFORE any promotion reduced it; the reduction is a row in the discount components.
          */
         shipping_total?: number;
         /**
@@ -11738,6 +13561,38 @@ are no `created_at` / `updated_at` fields on this resource.
          * Semantic badge colour. The client owns what each tone looks like.
          */
         tone?: OrderVocabularyTone;
+    }
+
+    /**
+     * 
+     */
+    export type OrderedRequest = {
+        /**
+         * Which positions went into it. Left out, every accepted position not yet on an order.
+         */
+        item_ids?: string[];
+        /**
+         * The order order management created.
+         */
+        order_id: string;
+    }
+
+    /**
+     * 
+     */
+    export type OrderedResult = {
+        /**
+         * How many positions were marked.
+         */
+        items?: number;
+        /**
+         * The order recorded.
+         */
+        order_id?: string;
+        /**
+         * The quote.
+         */
+        quote_id?: string;
     }
 
     /**
@@ -12896,7 +14751,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         fee_amount?: number;
         /**
-         * ISO 4217 code a fixed fee is expressed in. The database bounds the length at three characters and nothing else, so lower case is stored as written.
+         * ISO 4217 code this method is configured in: the currency of a fixed fee, and the one `min_order_value` and `max_order_value` are read in (ADR-0106 D5a). Stamped from the market’s `default_currency` when a method is created naming none, and stored upper case — an order in another currency is not offered this method.
          */
         fee_currency?: string;
         /**
@@ -12916,7 +14771,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         labels?: object | null;
         /**
-         * Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound.
+         * Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound. Read in this method’s `fee_currency` — see `min_order_value` for why a differing order currency filters the method out instead.
          */
         max_order_value?: number | null;
         /**
@@ -12924,7 +14779,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         metadata?: object | null;
         /**
-         * Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound.
+         * Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound. Read in this method’s `fee_currency`, not in the order’s (ADR-0106 D5a): a method is configured for the money it charges in, and an order in another currency is not offered the method at all rather than compared against a threshold it is not denominated in.
          */
         min_order_value?: number | null;
         /**
@@ -12978,7 +14833,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         fee_amount?: number;
         /**
-         * ISO 4217 code a fixed fee is expressed in. The database bounds the length at three characters and nothing else, so lower case is stored as written. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
+         * ISO 4217 code this method is configured in: the currency of a fixed fee, and the one `min_order_value` and `max_order_value` are read in (ADR-0106 D5a). Stamped from the market’s `default_currency` when a method is created naming none, and stored upper case — an order in another currency is not offered this method. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
          */
         fee_currency?: string;
         /**
@@ -12994,7 +14849,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         labels?: object | null;
         /**
-         * Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound.
+         * Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound. Read in this method’s `fee_currency` — see `min_order_value` for why a differing order currency filters the method out instead.
          */
         max_order_value?: number | null;
         /**
@@ -13002,7 +14857,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         metadata?: object | null;
         /**
-         * Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound.
+         * Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound. Read in this method’s `fee_currency`, not in the order’s (ADR-0106 D5a): a method is configured for the money it charges in, and an order in another currency is not offered the method at all rather than compared against a threshold it is not denominated in.
          */
         min_order_value?: number | null;
         /**
@@ -13048,7 +14903,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         fee_amount?: number;
         /**
-         * ISO 4217 code a fixed fee is expressed in. The database bounds the length at three characters and nothing else, so lower case is stored as written. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
+         * ISO 4217 code this method is configured in: the currency of a fixed fee, and the one `min_order_value` and `max_order_value` are read in (ADR-0106 D5a). Stamped from the market’s `default_currency` when a method is created naming none, and stored upper case — an order in another currency is not offered this method. Defaults to EUR, and lower case is accepted here exactly as the handlers accept it.
          */
         fee_currency?: string;
         /**
@@ -13064,7 +14919,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         labels?: object | null;
         /**
-         * Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound.
+         * Largest order amount this method may be used for — the usual credit-risk cap on invoice and prepayment. null means no upper bound. Read in this method’s `fee_currency` — see `min_order_value` for why a differing order currency filters the method out instead.
          */
         max_order_value?: number | null;
         /**
@@ -13072,7 +14927,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         metadata?: object | null;
         /**
-         * Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound.
+         * Smallest order amount this method may be used for — the usual guard against paying a €5 order by invoice. null means no lower bound. Read in this method’s `fee_currency`, not in the order’s (ADR-0106 D5a): a method is configured for the money it charges in, and an order in another currency is not offered the method at all rather than compared against a threshold it is not denominated in.
          */
         min_order_value?: number | null;
         /**
@@ -13419,6 +15274,72 @@ are no `created_at` / `updated_at` fields on this resource.
          * Whether the ingress verified the callback signature against the provider's `webhook_secret`. An explicit false is refused with 422: an endpoint may run in annotate mode, and the ledger stays sovereign over one that does.
          */
         verified?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PendingApproval = {
+        /**
+         * 
+         */
+        approver_contact_id?: string | null;
+        /**
+         * 
+         */
+        approver_role?: string | null;
+        /**
+         * 
+         */
+        approver_type?: PendingApprovalApproverType;
+        /**
+         * 
+         */
+        cost_center_code?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        purchase_request_id?: string;
+        /**
+         * 
+         */
+        reason?: string | null;
+        /**
+         * 
+         */
+        resolved_at?: string | null;
+        /**
+         * 
+         */
+        resolved_by_contact_id?: string | null;
+        /**
+         * 
+         */
+        rule_id?: string | null;
+        /**
+         * 
+         */
+        sequence?: number;
+        /**
+         * 
+         */
+        status?: PendingApprovalStatus;
+        /**
+         * 
+         */
+        updated_at?: string;
     }
 
     /**
@@ -13834,6 +15755,28 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
+     * 
+     */
+    export type PriceLine = {
+        /**
+         * Which position.
+         */
+        id: string;
+        /**
+         * Quoted delivery time in days.
+         */
+        lead_time_days?: number;
+        /**
+         * Why that price.
+         */
+        price_reason?: PriceLinePriceReason;
+        /**
+         * The negotiated price per unit.
+         */
+        quoted_price?: number;
+    }
+
+    /**
      * A price list: one currency, one tax basis, one validity window, one buyer scope — and the entries that price items in it. Which list wins for a given buyer is decided by scope first, then priority, then the default flag; see prices.resolve.
      */
     export type PriceList = {
@@ -14142,6 +16085,32 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
+     * 
+     */
+    export type PriceRequest = {
+        /**
+         * The positions to price. A position left out keeps what it has.
+         */
+        items?: PriceLine[];
+        /**
+         * What the customer reads with the quote.
+         */
+        seller_note?: string;
+        /**
+         * Carriage quoted alongside the goods, net. It enters `grand_total` and the first order out of the quote.
+         */
+        shipping_amount?: number;
+        /**
+         * The rate carriage is taxed at, in percent (0–100).
+         */
+        shipping_tax_rate?: number;
+        /**
+         * When the offer stops standing. Left out, the configured default validity is used.
+         */
+        valid_until?: string;
+    }
+
+    /**
      * The policy this answer was computed under — the tenant settings in force plus where the currency came from.
      */
     export type PriceResolveBasis = {
@@ -14390,13 +16359,63 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
+     * One line of a cart that has ALREADY been priced. This app reduces prices; it does not set them.
+     */
+    export type PricedCartLine = {
+        /**
+         * Product attributes a condition or a selector may name.
+         */
+        attributes?: object;
+        /**
+         * What a category condition and a category selector are matched against.
+         */
+        category?: string;
+        /**
+         * The resolved line total. Derived from unit price and quantity when absent.
+         */
+        line_total?: number;
+        /**
+         * What the line is called, for a notice or a free-item answer.
+         */
+        name?: string;
+        /**
+         * The line index, and what every reduction is attributed back to.
+         */
+        position?: number;
+        /**
+         * The product, where the caller knows it.
+         */
+        product_id?: string;
+        /**
+         * How many units. A bundle counts units, not lines.
+         */
+        quantity?: number;
+        /**
+         * The article number.
+         */
+        sku?: string;
+        /**
+         * The rate the price was resolved under.
+         */
+        tax_rate?: number;
+        /**
+         * The resolved unit price. A line without one is refused with 400 rather than guessed at.
+         */
+        unit_price: number;
+    }
+
+    /**
      * 
      */
     export type PrincipalResolveRequest = {
         /**
-         * The contact the caller is acting for.
+         * The contact the caller asserted it is acting for.
          */
-        contact_id: string;
+        contact_id?: string;
+        /**
+         * The platform login the gateway authenticated, matched against `contacts.external_user_id` — the identity mirror this app maintains when it registers or invites a contact. Not a uuid: it is whatever the identity service issues as a subject.
+         */
+        user_id?: string;
     }
 
     /**
@@ -15174,6 +17193,3330 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
     /**
      * 
      */
+    export type Promotion = {
+        /**
+         * The most this promotion may give away in total. Reaching it stops the promotion rather than refusing the cart.
+         */
+        budget_discount?: number;
+        /**
+         * The most times it may be redeemed in total.
+         */
+        budget_redemptions?: number;
+        /**
+         * A loose reference to a campaign. Nothing here reads it, and a reference to a campaign that does not exist changes nothing.
+         */
+        campaign_ref?: string;
+        /**
+         * The sales channel this promotion is limited to. Empty applies in every channel.
+         */
+        channel_id?: string;
+        /**
+         * The short identifier a merchant recognises the promotion by. Unique per tenant.
+         */
+        code?: string;
+        /**
+         * How the outermost conditions are held together when they are a flat list: `all` or `any`.
+         */
+        condition_match?: PromotionConditionMatch;
+        /**
+         * How much it has given away. The running total of its redemptions — not written by hand.
+         */
+        consumed_discount?: number;
+        /**
+         * How many times it has been redeemed. The running total of its redemptions — not written by hand.
+         */
+        consumed_redemptions?: number;
+        /**
+         * When the row was created. Written by the database, never by a caller.
+         */
+        created_at?: string;
+        /**
+         * The currency this promotion is stated in. A cart in another currency skips it rather than inventing an exchange rate. Empty applies in every currency.
+         */
+        currency?: string;
+        /**
+         * What the promotion is for, in the merchant own words.
+         */
+        description?: string;
+        /**
+         * When it stops. Empty means it runs until somebody stops it.
+         */
+        ends_at?: string;
+        /**
+         * When true, this promotion applying ends the whole evaluation across every group — the "cannot be combined with anything" printed on a voucher.
+         */
+        exclusive?: boolean;
+        /**
+         * The stacking group this promotion is weighed in. A promotion in no group follows the tenant default.
+         */
+        group_id?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Display text per locale, e.g. `{"de": "Sommeraktion", "en": "Summer sale"}`. What a storefront shows; `name` is what a merchant searches by.
+         */
+        labels?: object;
+        /**
+         * How often one person may redeem it.
+         */
+        limit_per_contact?: number;
+        /**
+         * How often one company may redeem it. In B2B this is usually what a merchant means by "once per customer".
+         */
+        limit_per_organization?: number;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * What the promotion is called.
+         */
+        name?: string;
+        /**
+         * Higher goes first. The order decides the money as soon as two effects touch the same amount, and a tie is settled by creation time so one cart never produces two different bills.
+         */
+        priority?: number;
+        /**
+         * How a buyer arrives at it: `automatic` applies on its own, `code` applies only to a buyer who entered one of its vouchers.
+         */
+        reach?: PromotionReach;
+        /**
+         * Days of the month it runs on: numbers from 1 to 31, or the word `last`. A day a month does not have simply does not occur that month.
+         */
+        recurrence_days?: object;
+        /**
+         * Time of day it starts, as HH:MM. A range that crosses midnight is honoured as one range.
+         */
+        recurrence_from?: string;
+        /**
+         * Whether it recurs inside its window, and how: `none`, `weekdays` or `days_of_month`. Never both shapes at once.
+         */
+        recurrence_kind?: PromotionRecurrenceKind;
+        /**
+         * Time of day it stops, as HH:MM.
+         */
+        recurrence_until?: string;
+        /**
+         * Day numbers from 1 (Monday) to 7 (Sunday) the promotion runs on.
+         */
+        recurrence_weekdays?: object;
+        /**
+         * What a return does to this promotion discounts: `reverse_proportionally` gives back what the returned lines carried, `reevaluate` decides again on the goods that were kept. Empty follows the tenant default.
+         */
+        return_behaviour?: PromotionReturnBehaviour;
+        /**
+         * When true, this promotion is searched against the others that asked for it, and the order giving the buyer most is used. Bounded by a tenant setting; beyond it the stated order is used and the answer says so.
+         */
+        search_best_combination?: boolean;
+        /**
+         * When the promotion becomes live. Empty means it is live as soon as it is active.
+         */
+        starts_at?: string;
+        /**
+         * What the merchant set: `draft`, `active`, `paused` or `archived`. What the promotion IS right now also depends on the clock — read `effective_state`.
+         */
+        status?: PromotionStatus;
+        /**
+         * Free labels a merchant groups promotions by. Carried onto every fact this app publishes.
+         */
+        tags?: object;
+        /**
+         * The IANA timezone the window and the recurrence are read in. Empty follows the market, then the tenant setting — a merchant means their own midnight.
+         */
+        timezone?: string;
+        /**
+         * When the row last changed. Written by the database on every write.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionAvailabilityRequest = {
+        /**
+         * The sales channel.
+         */
+        channel?: string;
+        /**
+         * The person buying.
+         */
+        contact_id?: string;
+        /**
+         * The three-letter currency the cart is stated in. A promotion in another currency is skipped rather than converted.
+         */
+        currency: string;
+        /**
+         * Units in the cart, for a quantity condition. Derived from the lines when absent.
+         */
+        item_count?: number;
+        /**
+         * The priced cart lines. At most 500.
+         */
+        lines?: PricedCartLine[];
+        /**
+         * The market the call is for. Also taken from the x-revenexx-market header.
+         */
+        market?: string;
+        /**
+         * The company they buy for.
+         */
+        organization_id?: string;
+        /**
+         * The payment fee, so an effect can reduce it.
+         */
+        payment_fee?: number;
+        /**
+         * Decimals every derived amount is rounded to. Follows the tenant price policy.
+         */
+        precision?: number;
+        /**
+         * How a fraction of a cent is rounded: half_up, half_even, up or down.
+         */
+        rounding?: string;
+        /**
+         * The freight cost, so an effect can reduce it.
+         */
+        shipping?: number;
+        /**
+         * The goods value before any promotion. Derived from the lines when absent.
+         */
+        subtotal?: number;
+        /**
+         * Whether the prices are gross. A net discount subtracted from a gross line is wrong by exactly the tax rate.
+         */
+        tax_included?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionBundle = {
+        /**
+         * How the units that form a bundle are picked: `best_for_buyer` ranks them by price so whichever unit the effect discounts is worth as much as the cart permits, `cart_order` takes the first it finds. Empty follows the tenant default.
+         */
+        allocation?: PromotionBundleAllocation;
+        /**
+         * When the row was created. Written by the database, never by a caller.
+         */
+        created_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * How often the bundle may repeat in one cart. Empty repeats as often as the cart allows.
+         */
+        max_per_cart?: number;
+        /**
+         * What the bundle is called, and what every discount it produces is attributed to.
+         */
+        name?: string;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id?: string;
+        /**
+         * What counts towards the bundle, as a list of `{match, quantity}` — which is what expresses "one machine and one packet of coffee" rather than two units of anything.
+         */
+        selectors?: object;
+        /**
+         * How many units make one bundle, when no selectors are stated.
+         */
+        units_required?: number;
+        /**
+         * When the row last changed. Written by the database on every write.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionBundlePatch = {
+        /**
+         * How the units that form a bundle are picked: `best_for_buyer` ranks them by price so whichever unit the effect discounts is worth as much as the cart permits, `cart_order` takes the first it finds. Empty follows the tenant default.
+         */
+        allocation?: PromotionBundlePatchAllocation;
+        /**
+         * How often the bundle may repeat in one cart. Empty repeats as often as the cart allows.
+         */
+        max_per_cart?: number;
+        /**
+         * What the bundle is called, and what every discount it produces is attributed to.
+         */
+        name: string;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id: string;
+        /**
+         * What counts towards the bundle, as a list of `{match, quantity}` — which is what expresses "one machine and one packet of coffee" rather than two units of anything.
+         */
+        selectors?: object;
+        /**
+         * How many units make one bundle, when no selectors are stated.
+         */
+        units_required?: number;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionBundleWrite = {
+        /**
+         * How the units that form a bundle are picked: `best_for_buyer` ranks them by price so whichever unit the effect discounts is worth as much as the cart permits, `cart_order` takes the first it finds. Empty follows the tenant default.
+         */
+        allocation?: PromotionBundleWriteAllocation;
+        /**
+         * How often the bundle may repeat in one cart. Empty repeats as often as the cart allows.
+         */
+        max_per_cart?: number;
+        /**
+         * What the bundle is called, and what every discount it produces is attributed to.
+         */
+        name: string;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id: string;
+        /**
+         * What counts towards the bundle, as a list of `{match, quantity}` — which is what expresses "one machine and one packet of coffee" rather than two units of anything.
+         */
+        selectors?: object;
+        /**
+         * How many units make one bundle, when no selectors are stated.
+         */
+        units_required?: number;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionCodeCheckRequest = {
+        /**
+         * The code to check.
+         */
+        code: string;
+        /**
+         * Who is asking, so a code held for them is reported as usable.
+         */
+        contact_id?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionCommitRequest = {
+        /**
+         * The cart whose hold is being committed.
+         */
+        cart_id?: string;
+        /**
+         * The person buying, for a direct commitment.
+         */
+        contact_id?: string;
+        /**
+         * The currency, for a direct commitment.
+         */
+        currency?: string;
+        /**
+         * The market, carried onto the published fact.
+         */
+        market?: string;
+        /**
+         * The order the redemptions are recorded against.
+         */
+        order_id: string;
+        /**
+         * The company, for a direct commitment.
+         */
+        organization_id?: string;
+        /**
+         * What to record, for a commitment with no prior hold.
+         */
+        promotions?: object[];
+        /**
+         * Per promotion, the effects that produced it — what a re-decided return is settled against, because an order is a snapshot everywhere else in this platform.
+         */
+        terms?: object;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionCondition = {
+        /**
+         * Added to the right-hand subject after the factor.
+         */
+        addend?: number;
+        /**
+         * What the subject is compared against.
+         */
+        compare_value?: object;
+        /**
+         * The upper end of a `between` comparison.
+         */
+        compare_value_to?: object;
+        /**
+         * How the subject is compared: eq, neq, gt, gte, lt, lte, between, in, not_in, is_true, is_false.
+         */
+        comparison?: string;
+        /**
+         * When the row was created. Written by the database, never by a caller.
+         */
+        created_at?: string;
+        /**
+         * Multiplies the right-hand subject before the comparison.
+         */
+        factor?: number;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Whether this row is a `group` (which holds others) or a `question` (which asks one thing).
+         */
+        kind?: PromotionConditionKind;
+        /**
+         * For a group: whether `all` of it must hold, or `any` of it.
+         */
+        match_mode?: PromotionConditionMatchMode;
+        /**
+         * Turns the row around. Excluding a range from an offer is how a merchant protects their margin.
+         */
+        negate?: boolean;
+        /**
+         * The group this row sits inside. Rows with no parent are the outermost level.
+         */
+        parent_id?: string;
+        /**
+         * Order among siblings, ascending. Two rows with the same position are ordered by their id, so a list never shuffles between reads.
+         */
+        position?: number;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id?: string;
+        /**
+         * Compare against another subject instead of a literal — "a fifth more than they usually spend", which no fixed threshold can express for a thousand buyers.
+         */
+        right_subject?: string;
+        /**
+         * What a question asks about — one of a closed vocabulary. A subject accepted at write time and unrecognised at checkout is a promotion that silently never fires, so an unknown one is refused here.
+         */
+        subject?: string;
+        /**
+         * When the row last changed. Written by the database on every write.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionConditionPatch = {
+        /**
+         * Added to the right-hand subject after the factor.
+         */
+        addend?: number;
+        /**
+         * What the subject is compared against.
+         */
+        compare_value?: object;
+        /**
+         * The upper end of a `between` comparison.
+         */
+        compare_value_to?: object;
+        /**
+         * How the subject is compared: eq, neq, gt, gte, lt, lte, between, in, not_in, is_true, is_false.
+         */
+        comparison?: string;
+        /**
+         * Multiplies the right-hand subject before the comparison.
+         */
+        factor?: number;
+        /**
+         * Whether this row is a `group` (which holds others) or a `question` (which asks one thing).
+         */
+        kind?: PromotionConditionPatchKind;
+        /**
+         * For a group: whether `all` of it must hold, or `any` of it.
+         */
+        match_mode?: PromotionConditionPatchMatchMode;
+        /**
+         * Turns the row around. Excluding a range from an offer is how a merchant protects their margin.
+         */
+        negate?: boolean;
+        /**
+         * The group this row sits inside. Rows with no parent are the outermost level.
+         */
+        parent_id?: string;
+        /**
+         * Order among siblings, ascending. Two rows with the same position are ordered by their id, so a list never shuffles between reads.
+         */
+        position?: number;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id: string;
+        /**
+         * Compare against another subject instead of a literal — "a fifth more than they usually spend", which no fixed threshold can express for a thousand buyers.
+         */
+        right_subject?: string;
+        /**
+         * What a question asks about — one of a closed vocabulary. A subject accepted at write time and unrecognised at checkout is a promotion that silently never fires, so an unknown one is refused here.
+         */
+        subject?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionConditionWrite = {
+        /**
+         * Added to the right-hand subject after the factor.
+         */
+        addend?: number;
+        /**
+         * What the subject is compared against.
+         */
+        compare_value?: object;
+        /**
+         * The upper end of a `between` comparison.
+         */
+        compare_value_to?: object;
+        /**
+         * How the subject is compared: eq, neq, gt, gte, lt, lte, between, in, not_in, is_true, is_false.
+         */
+        comparison?: string;
+        /**
+         * Multiplies the right-hand subject before the comparison.
+         */
+        factor?: number;
+        /**
+         * Whether this row is a `group` (which holds others) or a `question` (which asks one thing).
+         */
+        kind?: PromotionConditionWriteKind;
+        /**
+         * For a group: whether `all` of it must hold, or `any` of it.
+         */
+        match_mode?: PromotionConditionWriteMatchMode;
+        /**
+         * Turns the row around. Excluding a range from an offer is how a merchant protects their margin.
+         */
+        negate?: boolean;
+        /**
+         * The group this row sits inside. Rows with no parent are the outermost level.
+         */
+        parent_id?: string;
+        /**
+         * Order among siblings, ascending. Two rows with the same position are ordered by their id, so a list never shuffles between reads.
+         */
+        position?: number;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id: string;
+        /**
+         * Compare against another subject instead of a literal — "a fifth more than they usually spend", which no fixed threshold can express for a thousand buyers.
+         */
+        right_subject?: string;
+        /**
+         * What a question asks about — one of a closed vocabulary. A subject accepted at write time and unrecognised at checkout is a promotion that silently never fires, so an unknown one is refused here.
+         */
+        subject?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionEffect = {
+        /**
+         * The figure the value type is read with.
+         */
+        amount?: number;
+        /**
+         * Which goods the effect touches, as `{skus, product_ids, categories, attribute}`. Empty touches every line.
+         */
+        applies_to?: object;
+        /**
+         * The bundle a bundle effect discounts.
+         */
+        bundle_id?: string;
+        /**
+         * When the row was created. Written by the database, never by a caller.
+         */
+        created_at?: string;
+        /**
+         * What a custom effect carries. Checked against the type shape when the promotion is written, and handed back unchanged when it applies.
+         */
+        custom_payload?: object;
+        /**
+         * The shape version the payload was checked against.
+         */
+        custom_shape_version?: number;
+        /**
+         * The registered type a custom effect is of.
+         */
+        custom_type_id?: string;
+        /**
+         * How many of the free item.
+         */
+        free_item_quantity?: number;
+        /**
+         * The items a free-item effect adds, or offers a choice between.
+         */
+        free_items?: object;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * What the effect does: `discount`, `free_item`, `surcharge`, `notice`, `bundle` or `custom`.
+         */
+        kind?: PromotionEffectKind;
+        /**
+         * A ceiling on a percentage effect. "20% off, up to 50 euro" is an ordinary offer, and a merchant who cannot express the cap writes the percentage smaller.
+         */
+        max_discount?: number;
+        /**
+         * What a notice says, per locale. A notice carries no amount.
+         */
+        message?: object;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * Order among siblings, ascending. Two rows with the same position are ordered by their id, so a list never shuffles between reads.
+         */
+        position?: number;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id?: string;
+        /**
+         * When true, the buyer picks one of the items and the chosen one is what is held and committed.
+         */
+        requires_choice?: boolean;
+        /**
+         * Whether the discount is distributed across the bundle units in proportion to price. A bill showing one line at minus thirty and three at full price cannot be returned line by line.
+         */
+        spread?: boolean;
+        /**
+         * Which amount the effect is measured against: the unit price, the line total, the cart subtotal, the grand total, the shipping cost or the payment fee.
+         */
+        target_scope?: PromotionEffectTargetScope;
+        /**
+         * Which unit inside a formed bundle is discounted: `cheapest`, `dearest`, `position` or `all`.
+         */
+        unit_choice?: PromotionEffectUnitChoice;
+        /**
+         * Which unit, when unit_choice is `position`.
+         */
+        unit_position?: number;
+        /**
+         * When the row last changed. Written by the database on every write.
+         */
+        updated_at?: string;
+        /**
+         * How the amount is stated: `percentage`, `amount`, or `fixed_price` (charge this instead).
+         */
+        value_type?: PromotionEffectValueType;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionEffectPatch = {
+        /**
+         * The figure the value type is read with.
+         */
+        amount?: number;
+        /**
+         * Which goods the effect touches, as `{skus, product_ids, categories, attribute}`. Empty touches every line.
+         */
+        applies_to?: object;
+        /**
+         * The bundle a bundle effect discounts.
+         */
+        bundle_id?: string;
+        /**
+         * What a custom effect carries. Checked against the type shape when the promotion is written, and handed back unchanged when it applies.
+         */
+        custom_payload?: object;
+        /**
+         * The shape version the payload was checked against.
+         */
+        custom_shape_version?: number;
+        /**
+         * The registered type a custom effect is of.
+         */
+        custom_type_id?: string;
+        /**
+         * How many of the free item.
+         */
+        free_item_quantity?: number;
+        /**
+         * The items a free-item effect adds, or offers a choice between.
+         */
+        free_items?: object;
+        /**
+         * What the effect does: `discount`, `free_item`, `surcharge`, `notice`, `bundle` or `custom`.
+         */
+        kind?: PromotionEffectPatchKind;
+        /**
+         * A ceiling on a percentage effect. "20% off, up to 50 euro" is an ordinary offer, and a merchant who cannot express the cap writes the percentage smaller.
+         */
+        max_discount?: number;
+        /**
+         * What a notice says, per locale. A notice carries no amount.
+         */
+        message?: object;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * Order among siblings, ascending. Two rows with the same position are ordered by their id, so a list never shuffles between reads.
+         */
+        position?: number;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id: string;
+        /**
+         * When true, the buyer picks one of the items and the chosen one is what is held and committed.
+         */
+        requires_choice?: boolean;
+        /**
+         * Whether the discount is distributed across the bundle units in proportion to price. A bill showing one line at minus thirty and three at full price cannot be returned line by line.
+         */
+        spread?: boolean;
+        /**
+         * Which amount the effect is measured against: the unit price, the line total, the cart subtotal, the grand total, the shipping cost or the payment fee.
+         */
+        target_scope?: PromotionEffectPatchTargetScope;
+        /**
+         * Which unit inside a formed bundle is discounted: `cheapest`, `dearest`, `position` or `all`.
+         */
+        unit_choice?: PromotionEffectPatchUnitChoice;
+        /**
+         * Which unit, when unit_choice is `position`.
+         */
+        unit_position?: number;
+        /**
+         * How the amount is stated: `percentage`, `amount`, or `fixed_price` (charge this instead).
+         */
+        value_type?: PromotionEffectPatchValueType;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionEffectWrite = {
+        /**
+         * The figure the value type is read with.
+         */
+        amount?: number;
+        /**
+         * Which goods the effect touches, as `{skus, product_ids, categories, attribute}`. Empty touches every line.
+         */
+        applies_to?: object;
+        /**
+         * The bundle a bundle effect discounts.
+         */
+        bundle_id?: string;
+        /**
+         * What a custom effect carries. Checked against the type shape when the promotion is written, and handed back unchanged when it applies.
+         */
+        custom_payload?: object;
+        /**
+         * The shape version the payload was checked against.
+         */
+        custom_shape_version?: number;
+        /**
+         * The registered type a custom effect is of.
+         */
+        custom_type_id?: string;
+        /**
+         * How many of the free item.
+         */
+        free_item_quantity?: number;
+        /**
+         * The items a free-item effect adds, or offers a choice between.
+         */
+        free_items?: object;
+        /**
+         * What the effect does: `discount`, `free_item`, `surcharge`, `notice`, `bundle` or `custom`.
+         */
+        kind?: PromotionEffectWriteKind;
+        /**
+         * A ceiling on a percentage effect. "20% off, up to 50 euro" is an ordinary offer, and a merchant who cannot express the cap writes the percentage smaller.
+         */
+        max_discount?: number;
+        /**
+         * What a notice says, per locale. A notice carries no amount.
+         */
+        message?: object;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * Order among siblings, ascending. Two rows with the same position are ordered by their id, so a list never shuffles between reads.
+         */
+        position?: number;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id: string;
+        /**
+         * When true, the buyer picks one of the items and the chosen one is what is held and committed.
+         */
+        requires_choice?: boolean;
+        /**
+         * Whether the discount is distributed across the bundle units in proportion to price. A bill showing one line at minus thirty and three at full price cannot be returned line by line.
+         */
+        spread?: boolean;
+        /**
+         * Which amount the effect is measured against: the unit price, the line total, the cart subtotal, the grand total, the shipping cost or the payment fee.
+         */
+        target_scope?: PromotionEffectWriteTargetScope;
+        /**
+         * Which unit inside a formed bundle is discounted: `cheapest`, `dearest`, `position` or `all`.
+         */
+        unit_choice?: PromotionEffectWriteUnitChoice;
+        /**
+         * Which unit, when unit_choice is `position`.
+         */
+        unit_position?: number;
+        /**
+         * How the amount is stated: `percentage`, `amount`, or `fixed_price` (charge this instead).
+         */
+        value_type?: PromotionEffectWriteValueType;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionEvaluateRequest = {
+        /**
+         * The sales channel.
+         */
+        channel?: string;
+        /**
+         * Codes the buyer entered. Matched trimmed and case-insensitively unless the tenant made codes case-sensitive.
+         */
+        codes?: string[];
+        /**
+         * The person buying.
+         */
+        contact_id?: string;
+        /**
+         * The three-letter currency the cart is stated in. A promotion in another currency is skipped rather than converted.
+         */
+        currency: string;
+        /**
+         * Units in the cart, for a quantity condition. Derived from the lines when absent.
+         */
+        item_count?: number;
+        /**
+         * The priced cart lines. At most 500.
+         */
+        lines?: PricedCartLine[];
+        /**
+         * The market the call is for. Also taken from the x-revenexx-market header.
+         */
+        market?: string;
+        /**
+         * The company they buy for.
+         */
+        organization_id?: string;
+        /**
+         * The payment fee, so an effect can reduce it.
+         */
+        payment_fee?: number;
+        /**
+         * Decimals every derived amount is rounded to. Follows the tenant price policy.
+         */
+        precision?: number;
+        /**
+         * Promotions to evaluate although they are not live — a merchant testing a drafted offer against a real cart. Nothing about them is changed.
+         */
+        preview_promotion_ids?: string[];
+        /**
+         * How a fraction of a cent is rounded: half_up, half_even, up or down.
+         */
+        rounding?: string;
+        /**
+         * The freight cost, so an effect can reduce it.
+         */
+        shipping?: number;
+        /**
+         * The goods value before any promotion. Derived from the lines when absent.
+         */
+        subtotal?: number;
+        /**
+         * Whether the prices are gross. A net discount subtracted from a gross line is wrong by exactly the tax rate.
+         */
+        tax_included?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionHold = {
+        /**
+         * What it is worth on this cart.
+         */
+        amount?: number;
+        /**
+         * Which of the offered free items the buyer picked.
+         */
+        chosen_items?: string[];
+        /**
+         * The promotion to hold.
+         */
+        promotion_id: string;
+        /**
+         * The code being used, where one is.
+         */
+        voucher_id?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionPatch = {
+        /**
+         * The most this promotion may give away in total. Reaching it stops the promotion rather than refusing the cart.
+         */
+        budget_discount?: number;
+        /**
+         * The most times it may be redeemed in total.
+         */
+        budget_redemptions?: number;
+        /**
+         * A loose reference to a campaign. Nothing here reads it, and a reference to a campaign that does not exist changes nothing.
+         */
+        campaign_ref?: string;
+        /**
+         * The sales channel this promotion is limited to. Empty applies in every channel.
+         */
+        channel_id?: string;
+        /**
+         * The short identifier a merchant recognises the promotion by. Unique per tenant.
+         */
+        code: string;
+        /**
+         * How the outermost conditions are held together when they are a flat list: `all` or `any`.
+         */
+        condition_match?: PromotionPatchConditionMatch;
+        /**
+         * The currency this promotion is stated in. A cart in another currency skips it rather than inventing an exchange rate. Empty applies in every currency.
+         */
+        currency?: string;
+        /**
+         * What the promotion is for, in the merchant own words.
+         */
+        description?: string;
+        /**
+         * When it stops. Empty means it runs until somebody stops it.
+         */
+        ends_at?: string;
+        /**
+         * When true, this promotion applying ends the whole evaluation across every group — the "cannot be combined with anything" printed on a voucher.
+         */
+        exclusive?: boolean;
+        /**
+         * The stacking group this promotion is weighed in. A promotion in no group follows the tenant default.
+         */
+        group_id?: string;
+        /**
+         * Display text per locale, e.g. `{"de": "Sommeraktion", "en": "Summer sale"}`. What a storefront shows; `name` is what a merchant searches by.
+         */
+        labels?: object;
+        /**
+         * How often one person may redeem it.
+         */
+        limit_per_contact?: number;
+        /**
+         * How often one company may redeem it. In B2B this is usually what a merchant means by "once per customer".
+         */
+        limit_per_organization?: number;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * What the promotion is called.
+         */
+        name: string;
+        /**
+         * Higher goes first. The order decides the money as soon as two effects touch the same amount, and a tie is settled by creation time so one cart never produces two different bills.
+         */
+        priority?: number;
+        /**
+         * How a buyer arrives at it: `automatic` applies on its own, `code` applies only to a buyer who entered one of its vouchers.
+         */
+        reach?: PromotionPatchReach;
+        /**
+         * Days of the month it runs on: numbers from 1 to 31, or the word `last`. A day a month does not have simply does not occur that month.
+         */
+        recurrence_days?: object;
+        /**
+         * Time of day it starts, as HH:MM. A range that crosses midnight is honoured as one range.
+         */
+        recurrence_from?: string;
+        /**
+         * Whether it recurs inside its window, and how: `none`, `weekdays` or `days_of_month`. Never both shapes at once.
+         */
+        recurrence_kind?: PromotionPatchRecurrenceKind;
+        /**
+         * Time of day it stops, as HH:MM.
+         */
+        recurrence_until?: string;
+        /**
+         * Day numbers from 1 (Monday) to 7 (Sunday) the promotion runs on.
+         */
+        recurrence_weekdays?: object;
+        /**
+         * What a return does to this promotion discounts: `reverse_proportionally` gives back what the returned lines carried, `reevaluate` decides again on the goods that were kept. Empty follows the tenant default.
+         */
+        return_behaviour?: PromotionPatchReturnBehaviour;
+        /**
+         * When true, this promotion is searched against the others that asked for it, and the order giving the buyer most is used. Bounded by a tenant setting; beyond it the stated order is used and the answer says so.
+         */
+        search_best_combination?: boolean;
+        /**
+         * When the promotion becomes live. Empty means it is live as soon as it is active.
+         */
+        starts_at?: string;
+        /**
+         * What the merchant set: `draft`, `active`, `paused` or `archived`. What the promotion IS right now also depends on the clock — read `effective_state`.
+         */
+        status?: PromotionPatchStatus;
+        /**
+         * Free labels a merchant groups promotions by. Carried onto every fact this app publishes.
+         */
+        tags?: object;
+        /**
+         * The IANA timezone the window and the recurrence are read in. Empty follows the market, then the tenant setting — a merchant means their own midnight.
+         */
+        timezone?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionReleaseRequest = {
+        /**
+         * Release this cart hold.
+         */
+        cart_id?: string;
+        /**
+         * Release this order redemptions — a cancellation.
+         */
+        order_id?: string;
+        /**
+         * Why they came back. Carried onto the published fact.
+         */
+        reason?: PromotionReleaseRequestReason;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionReserveRequest = {
+        /**
+         * The cart the hold is taken on.
+         */
+        cart_id: string;
+        /**
+         * The person buying.
+         */
+        contact_id?: string;
+        /**
+         * The currency the amounts are stated in.
+         */
+        currency?: string;
+        /**
+         * A cart being merged into this one. Its hold is released in the same call, so the promotion is never scarcer than it really is.
+         */
+        from_cart_id?: string;
+        /**
+         * The company they buy for.
+         */
+        organization_id?: string;
+        /**
+         * What this cart intends to use, as the evaluation answered it.
+         */
+        promotions?: PromotionHold[];
+    }
+
+    /**
+     * 
+     */
+    export type PromotionReturnRequest = {
+        /**
+         * Everything came back. The same result as a cancellation, so a merchant watching campaign figures sees one answer either way.
+         */
+        all?: boolean;
+        /**
+         * Which lines came back.
+         */
+        lines?: ReturnedLine[];
+        /**
+         * The order goods came back from.
+         */
+        order_id: string;
+        /**
+         * Per promotion, what the kept goods are owed — for a promotion that re-decides rather than reversing in proportion.
+         */
+        remaining_amounts?: object;
+        /**
+         * The return identifier, so a repeated report credits nothing further.
+         */
+        return_ref?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PromotionWrite = {
+        /**
+         * The most this promotion may give away in total. Reaching it stops the promotion rather than refusing the cart.
+         */
+        budget_discount?: number;
+        /**
+         * The most times it may be redeemed in total.
+         */
+        budget_redemptions?: number;
+        /**
+         * A loose reference to a campaign. Nothing here reads it, and a reference to a campaign that does not exist changes nothing.
+         */
+        campaign_ref?: string;
+        /**
+         * The sales channel this promotion is limited to. Empty applies in every channel.
+         */
+        channel_id?: string;
+        /**
+         * The short identifier a merchant recognises the promotion by. Unique per tenant.
+         */
+        code: string;
+        /**
+         * How the outermost conditions are held together when they are a flat list: `all` or `any`.
+         */
+        condition_match?: PromotionWriteConditionMatch;
+        /**
+         * The currency this promotion is stated in. A cart in another currency skips it rather than inventing an exchange rate. Empty applies in every currency.
+         */
+        currency?: string;
+        /**
+         * What the promotion is for, in the merchant own words.
+         */
+        description?: string;
+        /**
+         * When it stops. Empty means it runs until somebody stops it.
+         */
+        ends_at?: string;
+        /**
+         * When true, this promotion applying ends the whole evaluation across every group — the "cannot be combined with anything" printed on a voucher.
+         */
+        exclusive?: boolean;
+        /**
+         * The stacking group this promotion is weighed in. A promotion in no group follows the tenant default.
+         */
+        group_id?: string;
+        /**
+         * Display text per locale, e.g. `{"de": "Sommeraktion", "en": "Summer sale"}`. What a storefront shows; `name` is what a merchant searches by.
+         */
+        labels?: object;
+        /**
+         * How often one person may redeem it.
+         */
+        limit_per_contact?: number;
+        /**
+         * How often one company may redeem it. In B2B this is usually what a merchant means by "once per customer".
+         */
+        limit_per_organization?: number;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * What the promotion is called.
+         */
+        name: string;
+        /**
+         * Higher goes first. The order decides the money as soon as two effects touch the same amount, and a tie is settled by creation time so one cart never produces two different bills.
+         */
+        priority?: number;
+        /**
+         * How a buyer arrives at it: `automatic` applies on its own, `code` applies only to a buyer who entered one of its vouchers.
+         */
+        reach?: PromotionWriteReach;
+        /**
+         * Days of the month it runs on: numbers from 1 to 31, or the word `last`. A day a month does not have simply does not occur that month.
+         */
+        recurrence_days?: object;
+        /**
+         * Time of day it starts, as HH:MM. A range that crosses midnight is honoured as one range.
+         */
+        recurrence_from?: string;
+        /**
+         * Whether it recurs inside its window, and how: `none`, `weekdays` or `days_of_month`. Never both shapes at once.
+         */
+        recurrence_kind?: PromotionWriteRecurrenceKind;
+        /**
+         * Time of day it stops, as HH:MM.
+         */
+        recurrence_until?: string;
+        /**
+         * Day numbers from 1 (Monday) to 7 (Sunday) the promotion runs on.
+         */
+        recurrence_weekdays?: object;
+        /**
+         * What a return does to this promotion discounts: `reverse_proportionally` gives back what the returned lines carried, `reevaluate` decides again on the goods that were kept. Empty follows the tenant default.
+         */
+        return_behaviour?: PromotionWriteReturnBehaviour;
+        /**
+         * When true, this promotion is searched against the others that asked for it, and the order giving the buyer most is used. Bounded by a tenant setting; beyond it the stated order is used and the answer says so.
+         */
+        search_best_combination?: boolean;
+        /**
+         * When the promotion becomes live. Empty means it is live as soon as it is active.
+         */
+        starts_at?: string;
+        /**
+         * What the merchant set: `draft`, `active`, `paused` or `archived`. What the promotion IS right now also depends on the clock — read `effective_state`.
+         */
+        status?: PromotionWriteStatus;
+        /**
+         * Free labels a merchant groups promotions by. Carried onto every fact this app publishes.
+         */
+        tags?: object;
+        /**
+         * The IANA timezone the window and the recurrence are read in. Empty follows the market, then the tenant setting — a merchant means their own midnight.
+         */
+        timezone?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutAccount = {
+        /**
+         * 
+         */
+        auth_strategy?: string;
+        /**
+         * 
+         */
+        behaviour?: object | null;
+        /**
+         * 
+         */
+        channel_code?: string;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        credential_domain?: string | null;
+        /**
+         * 
+         */
+        credential_identity?: string | null;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        entry_probe_at?: string | null;
+        /**
+         * 
+         */
+        entry_probe_detail?: string | null;
+        /**
+         * 
+         */
+        entry_probe_status?: string | null;
+        /**
+         * 
+         */
+        entry_probe_url?: string | null;
+        /**
+         * 
+         */
+        fallback_contact_id?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        ids_customer_name?: string | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        protocol?: string;
+        /**
+         * 
+         */
+        protocol_version?: string | null;
+        /**
+         * 
+         */
+        secure_oci?: boolean;
+        /**
+         * 
+         */
+        session_ttl_minutes?: number;
+        /**
+         * 
+         */
+        start_page_url?: string | null;
+        /**
+         * 
+         */
+        unknown_user_policy?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+        /**
+         * 
+         */
+        url_threading?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutAccountCreateRequest = {
+        /**
+         * 
+         */
+        auth_strategy?: string;
+        /**
+         * 
+         */
+        behaviour?: object;
+        /**
+         * 
+         */
+        channel_code: string;
+        /**
+         * 
+         */
+        code: string;
+        /**
+         * 
+         */
+        credential_domain?: string;
+        /**
+         * 
+         */
+        credential_identity?: string;
+        /**
+         * 
+         */
+        credential_secret?: string;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        fallback_contact_id?: string;
+        /**
+         * 
+         */
+        ids_customer_name?: string;
+        /**
+         * 
+         */
+        login_token?: string;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * 
+         */
+        organization_id?: string;
+        /**
+         * 
+         */
+        protocol: string;
+        /**
+         * 
+         */
+        protocol_version?: string;
+        /**
+         * 
+         */
+        secure_oci?: boolean;
+        /**
+         * 
+         */
+        session_ttl_minutes?: number;
+        /**
+         * 
+         */
+        shared_secret?: string;
+        /**
+         * 
+         */
+        start_page_url?: string;
+        /**
+         * 
+         */
+        unknown_user_policy?: string;
+        /**
+         * 
+         */
+        url_threading?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutAccountUpdateRequest = {
+        /**
+         * 
+         */
+        auth_strategy?: string;
+        /**
+         * 
+         */
+        behaviour?: object;
+        /**
+         * 
+         */
+        channel_code?: string;
+        /**
+         * 
+         */
+        code?: string;
+        /**
+         * 
+         */
+        credential_domain?: string;
+        /**
+         * 
+         */
+        credential_identity?: string;
+        /**
+         * 
+         */
+        credential_secret?: string;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        fallback_contact_id?: string;
+        /**
+         * 
+         */
+        ids_customer_name?: string;
+        /**
+         * 
+         */
+        login_token?: string;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        organization_id?: string;
+        /**
+         * 
+         */
+        protocol?: string;
+        /**
+         * 
+         */
+        protocol_version?: string;
+        /**
+         * 
+         */
+        secure_oci?: boolean;
+        /**
+         * 
+         */
+        session_ttl_minutes?: number;
+        /**
+         * 
+         */
+        shared_secret?: string;
+        /**
+         * 
+         */
+        start_page_url?: string;
+        /**
+         * 
+         */
+        unknown_user_policy?: string;
+        /**
+         * 
+         */
+        url_threading?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutClaim = {
+        /**
+         * The punchout account the buyer entered through.
+         */
+        account_code?: string | null;
+        /**
+         * The cart this visit fills. Already set when the external system sent a cart in, so the buyer must be landed on THAT cart rather than on "the" cart.
+         */
+        cart_id?: string | null;
+        /**
+         * The channel this buyer shops. Carry it on every call for the rest of the visit: without it a punchout buyer silently gets the public shop's catalogue and price list.
+         */
+        channel_code?: string;
+        /**
+         * When the handle was spent. A second claim is refused.
+         */
+        claimed_at?: string | null;
+        /**
+         * The contact the buyer shops as. Everything downstream reads it — limits, cost centres, approvers, order history.
+         */
+        contact_id?: string | null;
+        /**
+         * What the visit is, in this app's words rather than the protocol's raw code — shopping, one article, a search, a cart sent in.
+         */
+        entry_action?: string | null;
+        /**
+         * What that action named: the article, the search term, or the lines of a cart the external system sent in — including the ones this shop could not resolve.
+         */
+        entry_intent?: object | null;
+        /**
+         * When the secret stops being redeemable.
+         */
+        expire?: string | null;
+        /**
+         * When the visit runs out. After it, nothing can be claimed or handed back.
+         */
+        expires_at?: string;
+        /**
+         * The organisation that contact belongs to.
+         */
+        organization_id?: string | null;
+        /**
+         * The protocol the buyer entered by — 'oci', 'cxml' or 'ids'. What a transfer action is called follows it.
+         */
+        protocol?: string;
+        /**
+         * The visit that was claimed.
+         */
+        psid?: string;
+        /**
+         * The sign-in secret, treated as a credential: single-use, short-lived, redeemed server-side and never written to a URL, a log or a store.
+         */
+        secret?: string;
+        /**
+         * The platform user the secret signs in — pass it back with the secret when redeeming.
+         */
+        user_id?: string | null;
+    }
+
+    /**
+     * Nothing: the visit is named in the path, and who the buyer is was settled by the entry call and the account&#039;s own policy.
+     */
+    export type PunchoutClaimRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutDefaultsRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutDefaultsResult = {
+        /**
+         * 
+         */
+        created?: string[];
+        /**
+         * 
+         */
+        existing?: string[];
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutEntryProbeRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutEntryProbeResult = {
+        /**
+         * The account as it now stands, carrying the finding.
+         */
+        account?: PunchoutAccount;
+        /**
+         * What the outcome means for the setup — a theme without the entry layer, a `static` adapter, no bound domain.
+         */
+        cause?: string;
+        /**
+         * 
+         */
+        entry_probe_at?: string;
+        /**
+         * What came back, in words: the status, the certificate, the host it was redirected to.
+         */
+        entry_probe_detail?: string | null;
+        /**
+         * What was found.
+         */
+        entry_probe_status?: PunchoutEntryProbeResultEntryProbeStatus;
+        /**
+         * The address actually called — derived from the account's own URL and the protocol it speaks.
+         */
+        entry_probe_url?: string | null;
+        /**
+         * True only for `reachable`, and the one thing that lets the account be enabled.
+         */
+        passed?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutEntryRefusal = {
+        /**
+         * 
+         */
+        account_code?: string;
+        /**
+         * 
+         */
+        account_id?: string | null;
+        /**
+         * 
+         */
+        client_ip?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        occurred_at?: string;
+        /**
+         * 
+         */
+        origin?: string;
+        /**
+         * 
+         */
+        protocol?: string;
+        /**
+         * 
+         */
+        reason?: string;
+    }
+
+    /**
+     * The external system&#039;s entry call, forwarded verbatim by the storefront pass-through. The account credentials inside it are checked by this app against punchout_accounts; the pass-through authenticates nothing.
+     */
+    export type PunchoutEntryRequest = {
+        /**
+         * The raw request body, base64-encoded. Base64 because a cXML or IDS document must survive byte-for-byte — re-serialising it breaks signatures and encodings.
+         */
+        body_b64?: string;
+        /**
+         * The external system's IP, for the session record and rate accounting.
+         */
+        client_ip?: string;
+        /**
+         * The body content type as sent.
+         */
+        content_type?: string;
+        /**
+         * Request headers as sent, minus hop-by-hop and storefront session headers.
+         */
+        headers?: object;
+        /**
+         * The method the external system used ('GET' for a typical OCI entry, 'POST' for cXML/IDS).
+         */
+        method: string;
+        /**
+         * Query parameters as sent — OCI carries USERNAME/PASSWORD/HOOK_URL here.
+         */
+        query?: object;
+    }
+
+    /**
+     * What the storefront must answer the external system with, verbatim. A protocol answer, not a JSON envelope: OCI expects a redirect, cXML a PunchoutSetupResponse document, IDS its own XML.
+     */
+    export type PunchoutEntryResponse = {
+        /**
+         * The response body to write out unchanged — the protocol document, or null for a bare redirect.
+         */
+        body?: string | null;
+        /**
+         * Headers to answer with, including Location for a redirect and the document content type.
+         */
+        headers?: object;
+        /**
+         * The session handle this call opened, when it opened one. Not a credential: the platform session is (CONTEXT.md).
+         */
+        psid?: string | null;
+        /**
+         * Where the buyer's browser is sent to claim the session.
+         */
+        start_page_url?: string | null;
+        /**
+         * HTTP status to answer with (302 for an OCI redirect, 200 for a cXML/IDS document).
+         */
+        status?: number;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutEntryTestRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutEntryTestResult = {
+        /**
+         * 
+         */
+        account_code?: string;
+        /**
+         * 
+         */
+        account_id?: string;
+        /**
+         * 
+         */
+        protocol?: PunchoutEntryTestResultProtocol;
+        /**
+         * The call that was made, with its credentials redacted — the half an operator compares against what their customer's system sends.
+         */
+        request?: object;
+        /**
+         * The protocol answer itself: a 302 and its Location for OCI, a PunchOutSetupResponse for cXML, an IDS document — or the refusal one of them would have got.
+         */
+        response?: object;
+        /**
+         * The visits the test opened and closed again. Empty when the call was refused, which opens none.
+         */
+        revoked_sessions?: string[];
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutFieldMapping = {
+        /**
+         * 
+         */
+        account_id?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        document?: string;
+        /**
+         * 
+         */
+        emit?: string;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        mutators?: object | null;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        protocol?: string;
+        /**
+         * 
+         */
+        scope?: string;
+        /**
+         * 
+         */
+        source?: string;
+        /**
+         * 
+         */
+        source_config?: object | null;
+        /**
+         * 
+         */
+        target?: string;
+        /**
+         * 
+         */
+        target_kind?: string;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutFieldMappingCreateRequest = {
+        /**
+         * 
+         */
+        account_id?: string;
+        /**
+         * 
+         */
+        document?: string;
+        /**
+         * 
+         */
+        emit?: string;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        mutators?: object;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        protocol: string;
+        /**
+         * 
+         */
+        scope?: string;
+        /**
+         * 
+         */
+        source: string;
+        /**
+         * 
+         */
+        source_config?: object;
+        /**
+         * 
+         */
+        target: string;
+        /**
+         * 
+         */
+        target_kind: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutFieldMappingExportResult = {
+        /**
+         * 
+         */
+        account_id?: string;
+        /**
+         * The configuration in the shape the old platform stores one.
+         */
+        configuration?: object;
+        /**
+         * Mappings left out, each with the source the old platform has no word for.
+         */
+        dropped?: object[];
+        /**
+         * 
+         */
+        protocol?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutFieldMappingImportRequest = {
+        /**
+         * The account the configuration belongs to.
+         */
+        account_id: string;
+        /**
+         * The configuration as the old platform stored it.
+         */
+        configuration: object;
+        /**
+         * Optional, and only as a check: it has to be the protocol the account speaks. IDS has no configuration to carry over — the old platform held its document in code.
+         */
+        protocol?: PunchoutFieldMappingImportRequestProtocol;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutFieldMappingImportResult = {
+        /**
+         * 
+         */
+        account_id?: string;
+        /**
+         * The targets recorded for the first time.
+         */
+        created?: string[];
+        /**
+         * 
+         */
+        protocol?: string;
+        /**
+         * What was not imported, and why. Read this even on a 200: an import with refusals is a migration that needs a decision, not a failure.
+         */
+        refused?: object[];
+        /**
+         * Groups skipped whole — the one the old platform kept but never read, so importing it would produce elements that installation never sent.
+         */
+        skipped?: object[];
+        /**
+         * The targets that were already mapped and now carry what the configuration says.
+         */
+        updated?: string[];
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutFieldMappingUpdateRequest = {
+        /**
+         * 
+         */
+        account_id?: string;
+        /**
+         * 
+         */
+        document?: string;
+        /**
+         * 
+         */
+        emit?: string;
+        /**
+         * 
+         */
+        enabled?: boolean;
+        /**
+         * 
+         */
+        mutators?: object;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        protocol?: string;
+        /**
+         * 
+         */
+        scope?: string;
+        /**
+         * 
+         */
+        source?: string;
+        /**
+         * 
+         */
+        source_config?: object;
+        /**
+         * 
+         */
+        target?: string;
+        /**
+         * 
+         */
+        target_kind?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutReturnPayload = {
+        /**
+         * The key this app minted into the payload and recorded with the transfer.
+         */
+        correlation_key?: string;
+        /**
+         * The document itself, for a protocol that hands one over — the same bytes as the field that carries it, repeated here so a client can log or inspect it without knowing which field that is. Absent for OCI, which hands over fields and no document.
+         */
+        document?: string;
+        /**
+         * The form encoding to submit in — url-encoded for OCI and cXML, 'multipart/form-data' for IDS, whose standard rules a query string out because a cart does not fit in one.
+         */
+        encoding?: string;
+        /**
+         * The fields to submit, exactly as they must be named. OCI carries one entry per mapped field per cart line, indexed the way the protocol indexes them (NEW_ITEM-DESCRIPTION[1]); cXML and IDS carry the whole document in one field beside the parameters their standard names.
+         */
+        fields?: object;
+        /**
+         * How to submit it: 'POST' for every browser hand-back.
+         */
+        method?: string;
+        /**
+         * The visit that was handed back.
+         */
+        psid?: string;
+        /**
+         * True when this visit had already been handed back and this is the payload it produced then. A browser that came back to a page it had already submitted gets the same form rather than an error.
+         */
+        replayed?: boolean;
+        /**
+         * Where the buyer's browser submits the payload — the return address the entry call named. Null for a secured OCI visit, whose cart the procurement system fetches on its own backend channel instead.
+         */
+        target_url?: string | null;
+        /**
+         * The transfer this hand-back recorded — what the external system received, on whose behalf, and when.
+         */
+        transfer_id?: string;
+        /**
+         * When the cart was handed over.
+         */
+        transferred_at?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutReturnPreview = {
+        /**
+         * 
+         */
+        account_code?: string;
+        /**
+         * 
+         */
+        account_id?: string;
+        /**
+         * 
+         */
+        cart_id?: string;
+        /**
+         * Minted for the preview and kept nowhere: a mapping that sends one produces a value of the right shape.
+         */
+        correlation_key?: string;
+        /**
+         * The document itself, for a protocol that hands one over.
+         */
+        document?: string;
+        /**
+         * 
+         */
+        encoding?: string;
+        /**
+         * The fields as they would be submitted, named as the protocol names them.
+         */
+        fields?: object;
+        /**
+         * What ran and what did not.
+         */
+        mapping?: object;
+        /**
+         * 
+         */
+        method?: string;
+        /**
+         * Always true — this payload was answered to an operator and to nobody else.
+         */
+        preview?: boolean;
+        /**
+         * 
+         */
+        protocol?: PunchoutReturnPreviewProtocol;
+        /**
+         * 
+         */
+        target_url?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutReturnPreviewRequest = {
+        /**
+         * The cart to produce the payload for — already priced, the way a hand-back reads one.
+         */
+        cart_id: string;
+    }
+
+    /**
+     * Nothing: the visit is named in the path and everything else is the account&#039;s configuration and the cart.
+     */
+    export type PunchoutReturnRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutSession = {
+        /**
+         * 
+         */
+        account_id?: string;
+        /**
+         * 
+         */
+        cart_id?: string | null;
+        /**
+         * 
+         */
+        channel_code?: string;
+        /**
+         * 
+         */
+        claimed_at?: string | null;
+        /**
+         * 
+         */
+        closed_reason?: string | null;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        correlation_key?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        entry_action?: string | null;
+        /**
+         * 
+         */
+        entry_intent?: object | null;
+        /**
+         * 
+         */
+        entry_payload?: object | null;
+        /**
+         * 
+         */
+        expires_at?: string;
+        /**
+         * 
+         */
+        external_user_id?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        origin?: string;
+        /**
+         * 
+         */
+        protocol?: string;
+        /**
+         * 
+         */
+        psid?: string;
+        /**
+         * 
+         */
+        return_method?: string;
+        /**
+         * 
+         */
+        return_url?: string | null;
+        /**
+         * 
+         */
+        secure_session_id?: string | null;
+        /**
+         * 
+         */
+        secure_session_used_at?: string | null;
+        /**
+         * 
+         */
+        secure_transmission_id?: string | null;
+        /**
+         * 
+         */
+        status?: string;
+        /**
+         * 
+         */
+        transferred_at?: string | null;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutSessionCreateRequest = {
+        /**
+         * 
+         */
+        account_id: string;
+        /**
+         * 
+         */
+        cart_id?: string;
+        /**
+         * 
+         */
+        channel_code: string;
+        /**
+         * 
+         */
+        claimed_at?: string;
+        /**
+         * 
+         */
+        closed_reason?: string;
+        /**
+         * 
+         */
+        contact_id?: string;
+        /**
+         * 
+         */
+        correlation_key?: string;
+        /**
+         * 
+         */
+        entry_action?: string;
+        /**
+         * 
+         */
+        entry_intent?: object;
+        /**
+         * 
+         */
+        entry_payload?: object;
+        /**
+         * 
+         */
+        expires_at: string;
+        /**
+         * 
+         */
+        external_user_id?: string;
+        /**
+         * 
+         */
+        organization_id?: string;
+        /**
+         * 
+         */
+        origin?: string;
+        /**
+         * 
+         */
+        protocol: string;
+        /**
+         * 
+         */
+        psid: string;
+        /**
+         * 
+         */
+        return_method?: string;
+        /**
+         * 
+         */
+        return_url?: string;
+        /**
+         * 
+         */
+        secure_session_id?: string;
+        /**
+         * 
+         */
+        secure_session_used_at?: string;
+        /**
+         * 
+         */
+        secure_transmission_id?: string;
+        /**
+         * 
+         */
+        status?: string;
+        /**
+         * 
+         */
+        transferred_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutSessionUpdateRequest = {
+        /**
+         * 
+         */
+        account_id?: string;
+        /**
+         * 
+         */
+        cart_id?: string;
+        /**
+         * 
+         */
+        channel_code?: string;
+        /**
+         * 
+         */
+        claimed_at?: string;
+        /**
+         * 
+         */
+        closed_reason?: string;
+        /**
+         * 
+         */
+        contact_id?: string;
+        /**
+         * 
+         */
+        correlation_key?: string;
+        /**
+         * 
+         */
+        entry_action?: string;
+        /**
+         * 
+         */
+        entry_intent?: object;
+        /**
+         * 
+         */
+        entry_payload?: object;
+        /**
+         * 
+         */
+        expires_at?: string;
+        /**
+         * 
+         */
+        external_user_id?: string;
+        /**
+         * 
+         */
+        organization_id?: string;
+        /**
+         * 
+         */
+        origin?: string;
+        /**
+         * 
+         */
+        protocol?: string;
+        /**
+         * 
+         */
+        psid?: string;
+        /**
+         * 
+         */
+        return_method?: string;
+        /**
+         * 
+         */
+        return_url?: string;
+        /**
+         * 
+         */
+        secure_session_id?: string;
+        /**
+         * 
+         */
+        secure_session_used_at?: string;
+        /**
+         * 
+         */
+        secure_transmission_id?: string;
+        /**
+         * 
+         */
+        status?: string;
+        /**
+         * 
+         */
+        transferred_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutTransfer = {
+        /**
+         * 
+         */
+        account_id?: string;
+        /**
+         * 
+         */
+        cart_id?: string | null;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        correlation_key?: string;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        item_count?: number;
+        /**
+         * 
+         */
+        matched_at?: string | null;
+        /**
+         * 
+         */
+        matched_order_id?: string | null;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        payload?: object | null;
+        /**
+         * 
+         */
+        protocol?: string;
+        /**
+         * 
+         */
+        session_id?: string;
+        /**
+         * 
+         */
+        target_url?: string | null;
+        /**
+         * 
+         */
+        total_gross?: number;
+        /**
+         * 
+         */
+        total_net?: number;
+        /**
+         * 
+         */
+        transferred_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutTransferCreateRequest = {
+        /**
+         * 
+         */
+        account_id: string;
+        /**
+         * 
+         */
+        cart_id?: string;
+        /**
+         * 
+         */
+        contact_id?: string;
+        /**
+         * 
+         */
+        correlation_key: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        item_count?: number;
+        /**
+         * 
+         */
+        matched_at?: string;
+        /**
+         * 
+         */
+        matched_order_id?: string;
+        /**
+         * 
+         */
+        organization_id?: string;
+        /**
+         * 
+         */
+        payload?: object;
+        /**
+         * 
+         */
+        protocol: string;
+        /**
+         * 
+         */
+        session_id: string;
+        /**
+         * 
+         */
+        target_url?: string;
+        /**
+         * 
+         */
+        total_gross?: number;
+        /**
+         * 
+         */
+        total_net?: number;
+        /**
+         * 
+         */
+        transferred_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutTransferItem = {
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        external_ref?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        line_gross?: number;
+        /**
+         * 
+         */
+        line_net?: number;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        tax_rate?: number;
+        /**
+         * 
+         */
+        transfer_id?: string;
+        /**
+         * 
+         */
+        unit?: string | null;
+        /**
+         * 
+         */
+        unit_price?: number;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutTransferItemCreateRequest = {
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        external_ref?: string;
+        /**
+         * 
+         */
+        line_gross?: number;
+        /**
+         * 
+         */
+        line_net?: number;
+        /**
+         * 
+         */
+        metadata?: object;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        product_id?: string;
+        /**
+         * 
+         */
+        quantity: number;
+        /**
+         * 
+         */
+        sku?: string;
+        /**
+         * 
+         */
+        tax_rate?: number;
+        /**
+         * 
+         */
+        transfer_id: string;
+        /**
+         * 
+         */
+        unit?: string;
+        /**
+         * 
+         */
+        unit_price?: number;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutTransferUpdateRequest = {
+        /**
+         * 
+         */
+        account_id?: string;
+        /**
+         * 
+         */
+        cart_id?: string;
+        /**
+         * 
+         */
+        contact_id?: string;
+        /**
+         * 
+         */
+        correlation_key?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        item_count?: number;
+        /**
+         * 
+         */
+        matched_at?: string;
+        /**
+         * 
+         */
+        matched_order_id?: string;
+        /**
+         * 
+         */
+        organization_id?: string;
+        /**
+         * 
+         */
+        payload?: object;
+        /**
+         * 
+         */
+        protocol?: string;
+        /**
+         * 
+         */
+        session_id?: string;
+        /**
+         * 
+         */
+        target_url?: string;
+        /**
+         * 
+         */
+        total_gross?: number;
+        /**
+         * 
+         */
+        total_net?: number;
+        /**
+         * 
+         */
+        transferred_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutVocabulary = {
+        /**
+         * 
+         */
+        app?: string;
+        /**
+         * True when the values are the complete permitted set — always true here, since a CHECK constraint owns them.
+         */
+        closed?: boolean;
+        /**
+         * 
+         */
+        default_tone?: string;
+        /**
+         * 
+         */
+        description?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * Who owns the set: 'schema', a CHECK constraint, which changes only when this app is upgraded.
+         */
+        source?: string;
+        /**
+         * 
+         */
+        title?: object;
+        /**
+         * 
+         */
+        values?: object[];
+    }
+
+    /**
+     * 
+     */
+    export type PunchoutVocabularyIndex = {
+        /**
+         * 
+         */
+        app?: string;
+        /**
+         * 
+         */
+        vocabularies?: object[];
+    }
+
+    /**
+     * 
+     */
+    export type PurchaseRequest = {
+        /**
+         * 
+         */
+        approved_at?: string | null;
+        /**
+         * 
+         */
+        billing_address?: object | null;
+        /**
+         * 
+         */
+        buyer?: object | null;
+        /**
+         * 
+         */
+        cancelled_at?: string | null;
+        /**
+         * 
+         */
+        cart_id?: string | null;
+        /**
+         * 
+         */
+        channel_id?: string | null;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        customer_order_number?: string | null;
+        /**
+         * 
+         */
+        decline_reason?: string | null;
+        /**
+         * 
+         */
+        declined_at?: string | null;
+        /**
+         * 
+         */
+        external_ref?: string | null;
+        /**
+         * 
+         */
+        grand_total?: number;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        item_count?: number;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        number?: string;
+        /**
+         * 
+         */
+        order_id?: string | null;
+        /**
+         * 
+         */
+        ordered_at?: string | null;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        payment?: object | null;
+        /**
+         * 
+         */
+        shipping?: object | null;
+        /**
+         * 
+         */
+        shipping_address?: object | null;
+        /**
+         * 
+         */
+        shipping_total?: number;
+        /**
+         * 
+         */
+        status?: PurchaseRequestStatus;
+        /**
+         * 
+         */
+        submitted_at?: string | null;
+        /**
+         * 
+         */
+        subtotal?: number;
+        /**
+         * 
+         */
+        tax_total?: number;
+        /**
+         * 
+         */
+        updated_at?: string;
+        /**
+         * 
+         */
+        user_data?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type PurchaseRequestEvent = {
+        /**
+         * 
+         */
+        actor?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        dedupe_key?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        name?: PurchaseRequestEventName;
+        /**
+         * 
+         */
+        payload?: object | null;
+        /**
+         * 
+         */
+        purchase_request_id?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PurchaseRequestItem = {
+        /**
+         * 
+         */
+        configuration?: object | null;
+        /**
+         * 
+         */
+        cost_center?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        line_total?: number;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        position_text?: string | null;
+        /**
+         * 
+         */
+        product?: object | null;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id?: string;
+        /**
+         * 
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        tax_amount?: number;
+        /**
+         * 
+         */
+        tax_rate?: number;
+        /**
+         * 
+         */
+        type?: PurchaseRequestItemType;
+        /**
+         * 
+         */
+        unit?: string | null;
+        /**
+         * 
+         */
+        unit_price?: number;
+        /**
+         * 
+         */
+        updated_at?: string;
+        /**
+         * 
+         */
+        user_data?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type PurchaseRequestItemCreateRequest = {
+        /**
+         * 
+         */
+        configuration?: object | null;
+        /**
+         * 
+         */
+        cost_center?: string | null;
+        /**
+         * 
+         */
+        line_total?: number;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        position_text?: string | null;
+        /**
+         * 
+         */
+        product?: object | null;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id: string;
+        /**
+         * 
+         */
+        quantity: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        tax_amount?: number;
+        /**
+         * 
+         */
+        tax_rate?: number;
+        /**
+         * 
+         */
+        type?: PurchaseRequestItemCreateRequestType;
+        /**
+         * 
+         */
+        unit?: string | null;
+        /**
+         * 
+         */
+        unit_price?: number;
+        /**
+         * 
+         */
+        user_data?: object | null;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value. Refused (409) once the parent request has left `pending`; a line cannot be moved to another request.
+     */
+    export type PurchaseRequestItemUpdateRequest = {
+        /**
+         * 
+         */
+        configuration?: object | null;
+        /**
+         * 
+         */
+        cost_center?: string | null;
+        /**
+         * 
+         */
+        line_total?: number;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name?: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        position_text?: string | null;
+        /**
+         * 
+         */
+        product?: object | null;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id?: string;
+        /**
+         * 
+         */
+        quantity?: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        tax_amount?: number;
+        /**
+         * 
+         */
+        tax_rate?: number;
+        /**
+         * 
+         */
+        type?: PurchaseRequestItemUpdateRequestType;
+        /**
+         * 
+         */
+        unit?: string | null;
+        /**
+         * 
+         */
+        unit_price?: number;
+        /**
+         * 
+         */
+        user_data?: object | null;
+    }
+
+    /**
+     * Administrative correction — omitted fields keep their current value. The state columns and their stamps are absent deliberately: they are written by approving, declining, cancelling or ordering the request. Once the request has left `pending`, only the reference, snapshot and note columns can still be corrected (409 otherwise).
+     */
+    export type PurchaseRequestUpdateRequest = {
+        /**
+         * 
+         */
+        billing_address?: object | null;
+        /**
+         * 
+         */
+        buyer?: object | null;
+        /**
+         * 
+         */
+        cart_id?: string | null;
+        /**
+         * 
+         */
+        channel_id?: string | null;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        customer_order_number?: string | null;
+        /**
+         * 
+         */
+        external_ref?: string | null;
+        /**
+         * 
+         */
+        grand_total?: number;
+        /**
+         * 
+         */
+        item_count?: number;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        number?: string;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        payment?: object | null;
+        /**
+         * 
+         */
+        shipping?: object | null;
+        /**
+         * 
+         */
+        shipping_address?: object | null;
+        /**
+         * 
+         */
+        shipping_total?: number;
+        /**
+         * 
+         */
+        subtotal?: number;
+        /**
+         * 
+         */
+        tax_total?: number;
+        /**
+         * 
+         */
+        user_data?: object | null;
+    }
+
+    /**
+     * 
+     */
     export type PushSubscription = {
         /**
          * 
@@ -15207,6 +20550,780 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * 
          */
         user_agent: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type Quote = {
+        /**
+         * Where the invoice would go. Carried to the order on acceptance.
+         */
+        billing_address?: object | null;
+        /**
+         * Name and address of who is asking, as handed in — a snapshot, not a link.
+         */
+        buyer?: object | null;
+        /**
+         * What the buyer wrote when asking.
+         */
+        buyer_note?: string | null;
+        /**
+         * The cart this was asked from, when there was one. Null on a quote sales opened. The positions are a COPY — the buyer keeps shopping and the quote does not move under the desk.
+         */
+        cart_id?: string | null;
+        /**
+         * The person the quote is for, in the customers app.
+         */
+        contact_id?: string | null;
+        /**
+         * When the row was written, stamped by the database.
+         */
+        created_at?: string;
+        /**
+         * ISO 4217 code EVERY amount on this quote is read in. Fixed at creation.
+         */
+        currency?: string;
+        /**
+         * When the buyer answered. Stays empty while a partially accepted quote still has open positions.
+         */
+        decided_at?: string | null;
+        /**
+         * The gap between the two, for reporting. Zero while nothing was negotiated, and zero on a basket that has no list price at all.
+         */
+        discount_total?: number;
+        /**
+         * When the sweep moved it to expired.
+         */
+        expired_at?: string | null;
+        /**
+         * What the buyer pays before tax: `quoted_total` plus `shipping_amount`. The one figure the list, the Cockpit and the storefront all show, so they cannot disagree about what a quote with freight is worth.
+         */
+        grand_total?: number;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * What the positions come to at catalogue prices. Kept beside `quoted_total` rather than as a difference — the question asked later is "what did we quote against what it normally costs", and a stored difference cannot answer it once a list price moves.
+         */
+        list_total?: number;
+        /**
+         * Free-form data the caller attached. Stored and returned verbatim; nothing here is read by this app, and none of it is indexed.
+         */
+        metadata?: object | null;
+        /**
+         * The quote number a person quotes on the phone, drawn from the configured range. Unique per tenant.
+         */
+        number?: string;
+        /**
+         * The company the quote is for. What `acceptance_scope` widens acceptance to.
+         */
+        organization_id?: string | null;
+        /**
+         * Which door it came through: `buyer` sent a cart in, `seller` opened it at a desk with no cart behind it.
+         */
+        origin?: QuoteOrigin;
+        /**
+         * Who at the merchant is responsible. Set when somebody takes the quote onto their desk, and what a sales worklist filters by.
+         */
+        owner_id?: string | null;
+        /**
+         * When prices were last put on it.
+         */
+        quoted_at?: string | null;
+        /**
+         * What the positions come to at the negotiated prices. Equal to `list_total` until somebody prices it.
+         */
+        quoted_total?: number;
+        /**
+         * Why it was refused or declined, in the words the other side will read.
+         */
+        reason?: string | null;
+        /**
+         * When the quote was asked for, or opened.
+         */
+        requested_at?: string | null;
+        /**
+         * Which round of pricing this is. A re-price of a quote the buyer has already seen raises it, so every round stays readable.
+         */
+        revision?: number;
+        /**
+         * What the merchant wrote when quoting. The customer reads this one.
+         */
+        seller_note?: string | null;
+        /**
+         * Where the goods would go. Carried to the order on acceptance.
+         */
+        shipping_address?: object | null;
+        /**
+         * Carriage quoted alongside the goods, when the merchant put a figure on it.
+         */
+        shipping_amount?: number | null;
+        /**
+         * The rate that carriage is taxed at, in percent.
+         */
+        shipping_tax_rate?: number | null;
+        /**
+         * Where the quote stands. `requested` is a buyer's ask nobody has picked up; `in_review` is on somebody's desk; `quoted` carries prices and a deadline; `accepted`, `declined`, `rejected` and `expired` are final. `partially_accepted` is NOT final — some positions are ordered and the rest are still open, and the buyer may come back for them.
+         */
+        status?: QuoteStatus;
+        /**
+         * The earlier quote this one replaces, when a negotiation produced a new document rather than a new revision.
+         */
+        supersedes_quote_id?: string | null;
+        /**
+         * The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+         */
+        tenant_id?: string;
+        /**
+         * When the row last changed, stamped by the app on every write.
+         */
+        updated_at?: string;
+        /**
+         * When the offer stops standing. HARD: past it, acceptance is refused. A merchant may allow a grace period measured in hours, which is a courtesy and not a softer date.
+         */
+        valid_until?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type QuoteAttachment = {
+        /**
+         * How large the file is, in bytes.
+         */
+        byte_size?: number | null;
+        /**
+         * The media type, when the caller named one.
+         */
+        content_type?: string | null;
+        /**
+         * When the row was written, stamped by the database.
+         */
+        created_at?: string;
+        /**
+         * Who put it there: `buyer` sent a drawing in, `seller` attached a datasheet.
+         */
+        direction?: QuoteAttachmentDirection;
+        /**
+         * Where the file lives, in whatever storage the tenant uses. This app stores the reference and serves no bytes.
+         */
+        file_ref?: string;
+        /**
+         * The name to show and to download it as.
+         */
+        filename?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * The quote this file belongs to.
+         */
+        quote_id?: string;
+        /**
+         * The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+         */
+        tenant_id?: string;
+        /**
+         * Whether the customer sees the file, same meaning as on an entry.
+         */
+        visibility?: QuoteAttachmentVisibility;
+    }
+
+    /**
+     * 
+     */
+    export type QuoteCreate = {
+        /**
+         * Where an invoice would go.
+         */
+        billing_address?: object;
+        /**
+         * Name and address of the customer.
+         */
+        buyer?: object;
+        /**
+         * Who the quote is for.
+         */
+        contact_id?: string;
+        /**
+         * ISO 4217 code every amount is read in.
+         */
+        currency: string;
+        /**
+         * The positions. At least one.
+         */
+        items: QuoteLineInput[];
+        /**
+         * Free-form data carried with the quote.
+         */
+        metadata?: object;
+        /**
+         * Which company.
+         */
+        organization_id?: string;
+        /**
+         * Who at the merchant owns it. Taken from the caller identity when left out.
+         */
+        owner_id?: string;
+        /**
+         * What the quote is about.
+         */
+        reason?: string;
+        /**
+         * What the merchant wants the customer to read.
+         */
+        seller_note?: string;
+        /**
+         * Where the goods would go.
+         */
+        shipping_address?: object;
+    }
+
+    /**
+     * 
+     */
+    export type QuoteDetail = {
+        /**
+         * Files either side put on the quote.
+         */
+        attachments?: QuoteAttachment[];
+        /**
+         * Where the invoice would go. Carried to the order on acceptance.
+         */
+        billing_address?: object | null;
+        /**
+         * Name and address of who is asking, as handed in — a snapshot, not a link.
+         */
+        buyer?: object | null;
+        /**
+         * What the buyer wrote when asking.
+         */
+        buyer_note?: string | null;
+        /**
+         * The cart this was asked from, when there was one. Null on a quote sales opened. The positions are a COPY — the buyer keeps shopping and the quote does not move under the desk.
+         */
+        cart_id?: string | null;
+        /**
+         * The person the quote is for, in the customers app.
+         */
+        contact_id?: string | null;
+        /**
+         * When the row was written, stamped by the database.
+         */
+        created_at?: string;
+        /**
+         * ISO 4217 code EVERY amount on this quote is read in. Fixed at creation.
+         */
+        currency?: string;
+        /**
+         * When the buyer answered. Stays empty while a partially accepted quote still has open positions.
+         */
+        decided_at?: string | null;
+        /**
+         * The gap between the two, for reporting. Zero while nothing was negotiated, and zero on a basket that has no list price at all.
+         */
+        discount_total?: number;
+        /**
+         * The trail, oldest first — every state the quote moved through and every note either side wrote.
+         */
+        events?: QuoteEvent[];
+        /**
+         * When the sweep moved it to expired.
+         */
+        expired_at?: string | null;
+        /**
+         * What the buyer pays before tax: `quoted_total` plus `shipping_amount`. The one figure the list, the Cockpit and the storefront all show, so they cannot disagree about what a quote with freight is worth.
+         */
+        grand_total?: number;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Every position, in position order.
+         */
+        items?: QuoteItem[];
+        /**
+         * What the positions come to at catalogue prices. Kept beside `quoted_total` rather than as a difference — the question asked later is "what did we quote against what it normally costs", and a stored difference cannot answer it once a list price moves.
+         */
+        list_total?: number;
+        /**
+         * Free-form data the caller attached. Stored and returned verbatim; nothing here is read by this app, and none of it is indexed.
+         */
+        metadata?: object | null;
+        /**
+         * The quote number a person quotes on the phone, drawn from the configured range. Unique per tenant.
+         */
+        number?: string;
+        /**
+         * The company the quote is for. What `acceptance_scope` widens acceptance to.
+         */
+        organization_id?: string | null;
+        /**
+         * Which door it came through: `buyer` sent a cart in, `seller` opened it at a desk with no cart behind it.
+         */
+        origin?: QuoteDetailOrigin;
+        /**
+         * Who at the merchant is responsible. Set when somebody takes the quote onto their desk, and what a sales worklist filters by.
+         */
+        owner_id?: string | null;
+        /**
+         * When prices were last put on it.
+         */
+        quoted_at?: string | null;
+        /**
+         * What the positions come to at the negotiated prices. Equal to `list_total` until somebody prices it.
+         */
+        quoted_total?: number;
+        /**
+         * Why it was refused or declined, in the words the other side will read.
+         */
+        reason?: string | null;
+        /**
+         * When the quote was asked for, or opened.
+         */
+        requested_at?: string | null;
+        /**
+         * Which round of pricing this is. A re-price of a quote the buyer has already seen raises it, so every round stays readable.
+         */
+        revision?: number;
+        /**
+         * What the merchant wrote when quoting. The customer reads this one.
+         */
+        seller_note?: string | null;
+        /**
+         * Where the goods would go. Carried to the order on acceptance.
+         */
+        shipping_address?: object | null;
+        /**
+         * Carriage quoted alongside the goods, when the merchant put a figure on it.
+         */
+        shipping_amount?: number | null;
+        /**
+         * The rate that carriage is taxed at, in percent.
+         */
+        shipping_tax_rate?: number | null;
+        /**
+         * Where the quote stands. `requested` is a buyer's ask nobody has picked up; `in_review` is on somebody's desk; `quoted` carries prices and a deadline; `accepted`, `declined`, `rejected` and `expired` are final. `partially_accepted` is NOT final — some positions are ordered and the rest are still open, and the buyer may come back for them.
+         */
+        status?: QuoteDetailStatus;
+        /**
+         * The earlier quote this one replaces, when a negotiation produced a new document rather than a new revision.
+         */
+        supersedes_quote_id?: string | null;
+        /**
+         * The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+         */
+        tenant_id?: string;
+        /**
+         * When the row last changed, stamped by the app on every write.
+         */
+        updated_at?: string;
+        /**
+         * When the offer stops standing. HARD: past it, acceptance is refused. A merchant may allow a grace period measured in hours, which is a courtesy and not a softer date.
+         */
+        valid_until?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type QuoteEvent = {
+        /**
+         * Which side acted: `buyer`, `seller` or `system`.
+         */
+        actor?: string | null;
+        /**
+         * Who exactly, where the caller was identified.
+         */
+        actor_id?: string | null;
+        /**
+         * What was written, for a note or a refusal.
+         */
+        body?: string | null;
+        /**
+         * When the row was written, stamped by the database.
+         */
+        created_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * What happened — a state the quote moved to, or `note` for something a person wrote.
+         */
+        kind?: string;
+        /**
+         * Structured detail of the entry, such as how many positions were accepted.
+         */
+        payload?: object | null;
+        /**
+         * The quote this entry belongs to.
+         */
+        quote_id?: string;
+        /**
+         * The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+         */
+        tenant_id?: string;
+        /**
+         * Whether the customer sees this. `internal` is the merchant's own note — "under 950 we do not go" — and `customer` is what appears on the quote the buyer reads.
+         */
+        visibility?: QuoteEventVisibility;
+    }
+
+    /**
+     * 
+     */
+    export type QuoteItem = {
+        /**
+         * What was configured on this line, in the configurator's own vocabulary. Stored and carried; nothing is read out of it.
+         */
+        configuration?: object | null;
+        /**
+         * When the row was written, stamped by the database.
+         */
+        created_at?: string;
+        /**
+         * When the buyer answered for this position.
+         */
+        decided_at?: string | null;
+        /**
+         * What the buyer said about THIS position: `open` until they answer, then `accepted` or `declined`. This is where partial acceptance lives — the quote's own status follows from these.
+         */
+        decision?: QuoteItemDecision;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * How long delivery would take, in days, when the merchant quoted one alongside the price.
+         */
+        lead_time_days?: number | null;
+        /**
+         * Quantity times whichever price applies. Zero while the position has no price at all — that is a request for one, not a free item.
+         */
+        line_total?: number;
+        /**
+         * What the catalogue says per unit. Null on a position that has no list price at all, which is what "price on request" means.
+         */
+        list_price?: number | null;
+        /**
+         * Free-form data the caller attached. Stored and returned verbatim; nothing here is read by this app, and none of it is indexed.
+         */
+        metadata?: object | null;
+        /**
+         * What the position is called, as it will read on the quote and later on the order.
+         */
+        name?: string;
+        /**
+         * The order this position went into. Written back by the caller after order management minted it, which is the only way this app can know it.
+         */
+        order_id?: string | null;
+        /**
+         * Sort order on the quote, in steps of `position_step` so a line can be inserted later.
+         */
+        position?: number;
+        /**
+         * Why the price is what it is, from a closed list, so a report can group by it: volume, competition, relationship, clearance, cost_change, other.
+         */
+        price_reason?: QuoteItemPriceReason;
+        /**
+         * The catalogue product, when the position names one.
+         */
+        product_id?: string | null;
+        /**
+         * How many. Always positive.
+         */
+        quantity?: number;
+        /**
+         * The quote this position belongs to. Deleting the quote deletes it.
+         */
+        quote_id?: string;
+        /**
+         * What was negotiated per unit. Null until somebody prices it. Once set it WINS — including when it is higher than the list, and including when the list has since fallen. A quote that re-prices itself against a moving catalogue is not a quote.
+         */
+        quoted_price?: number | null;
+        /**
+         * The article number as the merchant knows it. Free text — this app does not resolve it against the catalogue.
+         */
+        sku?: string | null;
+        /**
+         * The rate this position is taxed at, in percent. Carried to the order unchanged.
+         */
+        tax_rate?: number | null;
+        /**
+         * The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+         */
+        tenant_id?: string;
+        /**
+         * The unit the quantity is counted in — pieces, metres, kilograms.
+         */
+        unit?: string | null;
+        /**
+         * When the row last changed, stamped by the app on every write.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type QuoteItemList = {
+        /**
+         * The positions, in order.
+         */
+        items?: QuoteItem[];
+    }
+
+    /**
+     * 
+     */
+    export type QuoteLineInput = {
+        /**
+         * What was configured on this line, in the configurator's vocabulary.
+         */
+        configuration?: object;
+        /**
+         * Quoted delivery time in days.
+         */
+        lead_time_days?: number;
+        /**
+         * The catalogue price per unit. Leave it out for a position that has none — that is what "price on request" is.
+         */
+        list_price?: number;
+        /**
+         * Free-form data carried with the line.
+         */
+        metadata?: object;
+        /**
+         * What the position is called.
+         */
+        name: string;
+        /**
+         * Sort order. Left out, positions are numbered in steps of ten.
+         */
+        position?: number;
+        /**
+         * Why the price is what it is.
+         */
+        price_reason?: QuoteLineInputPriceReason;
+        /**
+         * The catalogue product, when the line names one.
+         */
+        product_id?: string;
+        /**
+         * How many. Must be greater than zero.
+         */
+        quantity: number;
+        /**
+         * A negotiated price, when the caller already knows one. Normally set later, by pricing.
+         */
+        quoted_price?: number;
+        /**
+         * The article number. Free text.
+         */
+        sku?: string;
+        /**
+         * The rate in percent.
+         */
+        tax_rate?: number;
+        /**
+         * The unit the quantity is counted in.
+         */
+        unit?: string;
+    }
+
+    /**
+     * 
+     */
+    export type QuoteList = {
+        /**
+         * The exact-column filters this list understood. A key that made it through is in here — which is how "no rows match" is told apart from "the column was spelled wrong and dropped".
+         */
+        filter?: object;
+        /**
+         * The rows on this page.
+         */
+        items?: Quote[];
+        /**
+         * Where this page sits in the result set.
+         */
+        page?: object;
+    }
+
+    /**
+     * 
+     */
+    export type QuoteRequest = {
+        /**
+         * Where an invoice would go.
+         */
+        billing_address?: object;
+        /**
+         * Name and address of who is asking.
+         */
+        buyer?: object;
+        /**
+         * What the buyer wants to say about the request.
+         */
+        buyer_note?: string;
+        /**
+         * The cart this came from, for the trail back.
+         */
+        cart_id?: string;
+        /**
+         * Who is asking. Taken from the caller identity when left out.
+         */
+        contact_id?: string;
+        /**
+         * ISO 4217 code every amount is read in.
+         */
+        currency: string;
+        /**
+         * The positions asked about. At least one.
+         */
+        items: QuoteLineInput[];
+        /**
+         * Free-form data carried with the quote.
+         */
+        metadata?: object;
+        /**
+         * Which company they buy for.
+         */
+        organization_id?: string;
+        /**
+         * Why a quote is being asked for — too heavy to ship, price on request, a volume the list does not cover.
+         */
+        reason?: string;
+        /**
+         * Where the goods would go.
+         */
+        shipping_address?: object;
+    }
+
+    /**
+     * Bounded sweep: how many purchase requests to examine per status.
+     */
+    export type ReconcileRequest = {
+        /**
+         * Requests examined per status (default 50, max 200).
+         */
+        limit?: number;
+    }
+
+    /**
+     * What the sweep repaired. Everything it does is idempotent, so a repeated run reports less.
+     */
+    export type ReconcileResult = {
+        /**
+         * Outcome events recorded for a state that had none.
+         */
+        announced?: object[];
+        /**
+         * Per-request failures ({ purchase_request_id, step, error }); the sweep continues past them.
+         */
+        failed?: object[];
+        /**
+         * Approved PRs whose Order creation was completed.
+         */
+        ordered?: string[];
+        /**
+         * Purchase requests examined.
+         */
+        scanned?: number;
+        /**
+         * Terminated PRs whose budget reservation was released.
+         */
+        withdrawn?: string[];
+    }
+
+    /**
+     * 
+     */
+    export type Redemption = {
+        /**
+         * What it is worth now. A return lowers this.
+         */
+        amount?: number;
+        /**
+         * What it was worth when the order was placed — what the invoice said, and what a record that today configuration can rewrite would not be.
+         */
+        amount_committed?: number;
+        /**
+         * The cart the hold was taken on.
+         */
+        cart_id?: string;
+        /**
+         * Which of the offered free items the buyer picked.
+         */
+        chosen_items?: object;
+        /**
+         * When it became a commitment.
+         */
+        committed_at?: string;
+        /**
+         * The person who redeemed it.
+         */
+        contact_id?: string;
+        /**
+         * When the row was created. Written by the database, never by a caller.
+         */
+        created_at?: string;
+        /**
+         * The currency the amount is stated in.
+         */
+        currency?: string;
+        /**
+         * When an uncommitted hold stops counting. Checked when the promotion is next looked at, so correctness never waits on a sweep.
+         */
+        expires_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * The order it was committed against — what survives the cart.
+         */
+        order_id?: string;
+        /**
+         * The company it was redeemed for.
+         */
+        organization_id?: string;
+        /**
+         * The promotion that was redeemed.
+         */
+        promotion_id?: string;
+        /**
+         * When it came back.
+         */
+        released_at?: string;
+        /**
+         * When the hold was taken.
+         */
+        reserved_at?: string;
+        /**
+         * `reserved` while the buyer is still checking out, `committed` once the order exists, `released` when it came back.
+         */
+        state?: RedemptionState;
+        /**
+         * The effects that produced it, as they stood at commitment. What a re-decided return is settled against, because an order is a snapshot everywhere else in this platform.
+         */
+        terms?: object;
+        /**
+         * When the row last changed. Written by the database on every write.
+         */
+        updated_at?: string;
+        /**
+         * The code that was used, where one was.
+         */
+        voucher_id?: string;
     }
 
     /**
@@ -15511,6 +21628,16 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     /**
      * 
      */
+    export type RejectRequest = {
+        /**
+         * Why the merchant will not quote.
+         */
+        reason: string;
+    }
+
+    /**
+     * 
+     */
     export type ReorderAlert = {
         /**
          * on_hand − reserved: the figure compared against the reorder point. Alerting on AVAILABLE rather than on_hand is the point of this list — a shelf that looks full but is entirely sold is exactly the row a buyer must see.
@@ -15760,6 +21887,98 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     };
 
     /**
+     * 
+     */
+    export type ReserveAdjustRequest = {
+        /**
+         * 
+         */
+        allocations: object[];
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        note?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id: string;
+    }
+
+    /**
+     * 
+     */
+    export type ReserveRequest = {
+        /**
+         * 
+         */
+        allocations: object[];
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        note?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id: string;
+    }
+
+    /**
+     * Optional reason recorded on the resolved approval / terminated PR. Who is acting is NOT in this body — it is the acting identity the platform establishes, and a decision naming somebody else in the request is attributed to the caller regardless.
+     */
+    export type ResolutionDecisionRequest = {
+        /**
+         * Free-text note (decline/cancel reason, approval remark).
+         */
+        reason?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type ResolutionResult = {
+        /**
+         * PR is terminated but the budget withdrawal must still be retried (cost-centers unavailable).
+         */
+        budget_pending?: boolean;
+        /**
+         * True when the step found the transition already applied.
+         */
+        idempotent?: boolean;
+        /**
+         * The placed Order once approved→ordered completed.
+         */
+        order?: object | null;
+        /**
+         * PR is approved but Order creation must still be retried (orders unavailable).
+         */
+        order_pending?: boolean;
+        /**
+         * The PR's approvals after the transition.
+         */
+        pending_approvals?: object[];
+        /**
+         * The PR after the transition.
+         */
+        purchase_request?: object;
+    }
+
+    /**
      * What one item costs this buyer, and which list said so.
      */
     export type ResolvedPrice = {
@@ -15835,6 +22054,30 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * Unit price EXCLUDING tax, in `currency`, rounded to `basis.price_precision` under `basis.rounding_mode`. Present only when `tax.resolved` is true — null means the rate is unknown, not that there is no tax.
          */
         unit_price_net?: number | null;
+    }
+
+    /**
+     * 
+     */
+    export type ReturnedLine = {
+        /**
+         * The line index, as the order keeps it.
+         */
+        position?: number;
+        /**
+         * How many units came back.
+         */
+        quantity?: number;
+    }
+
+    /**
+     * 
+     */
+    export type ReviewRequest = {
+        /**
+         * Who takes it. The caller when left out.
+         */
+        owner_id?: string;
     }
 
     /**
@@ -17737,6 +23980,120 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     /**
      * 
      */
+    export type StackingGroup = {
+        /**
+         * The stable identifier a merchant refers to the group by. Unique per tenant.
+         */
+        code?: string;
+        /**
+         * When the row was created. Written by the database, never by a caller.
+         */
+        created_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Display text per locale, e.g. `{"de": "Sommeraktion", "en": "Summer sale"}`. What a storefront shows; `name` is what a merchant searches by.
+         */
+        labels?: object;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * How the promotions in this group are weighed: `stack` (all of them add up), `highest_value` (only the one worth most) or `first_match` (only the first that matches, by priority).
+         */
+        mode?: StackingGroupMode;
+        /**
+         * What the group is called in the Cockpit.
+         */
+        name?: string;
+        /**
+         * The group this one sits inside. A nested group is weighed among its own members first, then competes in its parent as ONE entry worth what it gives in total.
+         */
+        parent_id?: string;
+        /**
+         * Order among siblings, ascending. Two rows with the same position are ordered by their id, so a list never shuffles between reads.
+         */
+        position?: number;
+        /**
+         * When the row last changed. Written by the database on every write.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type StackingGroupPatch = {
+        /**
+         * The stable identifier a merchant refers to the group by. Unique per tenant.
+         */
+        code: string;
+        /**
+         * Display text per locale, e.g. `{"de": "Sommeraktion", "en": "Summer sale"}`. What a storefront shows; `name` is what a merchant searches by.
+         */
+        labels?: object;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * How the promotions in this group are weighed: `stack` (all of them add up), `highest_value` (only the one worth most) or `first_match` (only the first that matches, by priority).
+         */
+        mode?: StackingGroupPatchMode;
+        /**
+         * What the group is called in the Cockpit.
+         */
+        name: string;
+        /**
+         * The group this one sits inside. A nested group is weighed among its own members first, then competes in its parent as ONE entry worth what it gives in total.
+         */
+        parent_id?: string;
+        /**
+         * Order among siblings, ascending. Two rows with the same position are ordered by their id, so a list never shuffles between reads.
+         */
+        position?: number;
+    }
+
+    /**
+     * 
+     */
+    export type StackingGroupWrite = {
+        /**
+         * The stable identifier a merchant refers to the group by. Unique per tenant.
+         */
+        code: string;
+        /**
+         * Display text per locale, e.g. `{"de": "Sommeraktion", "en": "Summer sale"}`. What a storefront shows; `name` is what a merchant searches by.
+         */
+        labels?: object;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * How the promotions in this group are weighed: `stack` (all of them add up), `highest_value` (only the one worth most) or `first_match` (only the first that matches, by priority).
+         */
+        mode?: StackingGroupWriteMode;
+        /**
+         * What the group is called in the Cockpit.
+         */
+        name: string;
+        /**
+         * The group this one sits inside. A nested group is weighed among its own members first, then competes in its parent as ONE entry worth what it gives in total.
+         */
+        parent_id?: string;
+        /**
+         * Order among siblings, ascending. Two rows with the same position are ordered by their id, so a list never shuffles between reads.
+         */
+        position?: number;
+    }
+
+    /**
+     * 
+     */
     export type StockLevel = {
         /**
          * When the row was created. Server-set: it is in no request body, and a value sent for it is ignored.
@@ -18042,6 +24399,184 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * 
          */
         visibility?: StoreAssetRequestVisibility;
+    }
+
+    /**
+     * 
+     */
+    export type SubmitItem = {
+        /**
+         * 
+         */
+        configuration?: object | null;
+        /**
+         * Cost-centre CODE assigned to this line (loose ref to cost-centers; no FK).
+         */
+        cost_center?: string | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        name: string;
+        /**
+         * 
+         */
+        position?: number;
+        /**
+         * 
+         */
+        position_text?: string | null;
+        /**
+         * 
+         */
+        product?: object | null;
+        /**
+         * 
+         */
+        product_id?: string | null;
+        /**
+         * 
+         */
+        quantity: number;
+        /**
+         * 
+         */
+        sku?: string | null;
+        /**
+         * 
+         */
+        tax_amount?: number;
+        /**
+         * 
+         */
+        tax_rate?: number;
+        /**
+         * 
+         */
+        type?: SubmitItemType;
+        /**
+         * 
+         */
+        unit?: string | null;
+        /**
+         * 
+         */
+        unit_price?: number;
+        /**
+         * 
+         */
+        user_data?: object | null;
+    }
+
+    /**
+     * Sealed cart context. The server decides Order-vs-PR from rule evaluation; the client cannot choose.
+     */
+    export type SubmitRequest = {
+        /**
+         * 
+         */
+        billing_address?: object | null;
+        /**
+         * 
+         */
+        buyer?: object | null;
+        /**
+         * Idempotency key — a re-submit for the same cart returns the existing PR/Order; a cart whose request was declined or cancelled is refused (409).
+         */
+        cart_id: string;
+        /**
+         * 
+         */
+        channel_id?: string | null;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * ISO 4217 code the line amounts are stated in. It travels with every question and every movement put to cost-centers; a cost centre or personal limit holding another currency refuses the submission (409, outcome `currency_mismatch`). Omit to be read in the record's own currency.
+         */
+        currency?: string;
+        /**
+         * 
+         */
+        customer_order_number?: string | null;
+        /**
+         * 
+         */
+        external_ref?: string | null;
+        /**
+         * 
+         */
+        items: SubmitItem[];
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        payment?: object | null;
+        /**
+         * 
+         */
+        shipping?: object | null;
+        /**
+         * 
+         */
+        shipping_address?: object | null;
+        /**
+         * 
+         */
+        user_data?: object | null;
+    }
+
+    /**
+     * 
+     */
+    export type SubmitResult = {
+        /**
+         * { requested, actual, subject, reason } when the amount is stated in one currency and the cost centre or personal limit it is measured against holds another (currency_mismatch outcome, HTTP 409). Nothing converts, so the question is refused rather than decided (ADR-0099).
+         */
+        currency_mismatch?: object | null;
+        /**
+         * { status, reason } when this cart's request was already declined or cancelled (decided outcome, HTTP 409).
+         */
+        decided?: object | null;
+        /**
+         * sendEmail effect payloads (additive; delivery is RX-599).
+         */
+        emails?: object[];
+        /**
+         * True when a prior submit for this cart was returned unchanged.
+         */
+        idempotent?: boolean;
+        /**
+         * The placed Order (direct outcome).
+         */
+        order?: object | null;
+        /**
+         * 
+         */
+        outcome?: SubmitResultOutcome;
+        /**
+         * Pending approvals created for the PR (approval outcome).
+         */
+        pending_approvals?: object[];
+        /**
+         * { rule_id, reason } when blocked (prevent outcome, HTTP 409).
+         */
+        prevent?: object | null;
+        /**
+         * The created Purchase Request (approval outcome).
+         */
+        purchase_request?: object | null;
     }
 
     /**
@@ -18429,6 +24964,42 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
+     * Buyer identity + per-line context. Restrictions are open-by-default, AND across dimensions, OR within one.
+     */
+    export type UsableRequest = {
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        lines: object[];
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * Code of the punchout account the request is made in. Omit outside a punchout session: a cost centre restricted with mode 'only' is then out of reach, and one restricted with 'except' is offered. A value that is not a non-empty string is refused with 400.
+         */
+        punchout_account_code?: string | null;
+        /**
+         * 
+         */
+        roles?: string[];
+    }
+
+    /**
+     * 
+     */
+    export type UsableResult = {
+        /**
+         * 
+         */
+        lines?: object[];
+    }
+
+    /**
      * 
      */
     export type ValidationFailedResponse = {
@@ -18440,6 +25011,16 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * 
          */
         status?: ValidationFailedResponseStatus;
+    }
+
+    /**
+     * 
+     */
+    export type Vocabularies = {
+        /**
+         * One array per closed list.
+         */
+        vocabularies?: object;
     }
 
     /**
@@ -18536,6 +25117,496 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * Which badge colour a UI should paint this value in.
          */
         tone?: VocabularyTone;
+    }
+
+    /**
+     * 
+     */
+    export type Voucher = {
+        /**
+         * The batch this code was made in, when it was made in one.
+         */
+        batch_id?: string;
+        /**
+         * The code as it is printed and as a buyer types it.
+         */
+        code?: string;
+        /**
+         * The code as it is matched — trimmed, and upper-cased unless the tenant made codes case-sensitive.
+         */
+        code_key?: string;
+        /**
+         * The person the code was issued to. Anybody else is refused — a personal apology code is worthless if it can be forwarded.
+         */
+        contact_id?: string;
+        /**
+         * When the row was created. Written by the database, never by a caller.
+         */
+        created_at?: string;
+        /**
+         * The currency a residual value is stated in.
+         */
+        currency?: string;
+        /**
+         * When it expires. A merchant runs one promotion for a quarter and hands out codes that expire in a fortnight.
+         */
+        ends_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * The company it was issued to. Any of its contacts may redeem it.
+         */
+        organization_id?: string;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id?: string;
+        /**
+         * How many reservations may be held at once. A reservation that never ran out would promise a limited code to everybody who asked.
+         */
+        reservation_limit?: number;
+        /**
+         * When true the code works only for a buyer who has reserved it — which is what makes a code printed in a public place usable at all.
+         */
+        reservation_required?: boolean;
+        /**
+         * How much of that amount is gone. Not written by hand.
+         */
+        residual_used?: number;
+        /**
+         * An amount the code is worth, spent down rather than used up — how a goodwill amount survives a smaller first purchase.
+         */
+        residual_value?: number;
+        /**
+         * When the code becomes valid. Empty is bounded only by the promotion.
+         */
+        starts_at?: string;
+        /**
+         * A leaked code is `disabled`, not deleted: it has to stop working within the minute, and deleting it would take the evidence with it.
+         */
+        status?: VoucherStatus;
+        /**
+         * When the row last changed. Written by the database on every write.
+         */
+        updated_at?: string;
+        /**
+         * How often it has been. The running total of its redemptions — not written by hand.
+         */
+        usage_count?: number;
+        /**
+         * How often the code may be redeemed. Zero is unlimited, though the promotion own limits still apply.
+         */
+        usage_limit?: number;
+    }
+
+    /**
+     * 
+     */
+    export type VoucherBatch = {
+        /**
+         * The characters generated codes may use. The default omits the ones people confuse reading a code off paper.
+         */
+        alphabet?: string;
+        /**
+         * When the row was created. Written by the database, never by a caller.
+         */
+        created_at?: string;
+        /**
+         * How many exist. The figure a mailing is judged on.
+         */
+        created_count?: number;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * What the batch is called — the unit a mailing is accounted for by afterwards.
+         */
+        name?: string;
+        /**
+         * The shape generated codes take. `#` draws a character from the alphabet; every other character is kept.
+         */
+        pattern?: string;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id?: string;
+        /**
+         * How many of them have been redeemed.
+         */
+        redeemed_count?: number;
+        /**
+         * A reference the caller chose, so a retried generation makes no second batch. A timed-out call is retried by whoever sent it, and a retry that doubled a mailing is discovered when the codes are in the post.
+         */
+        request_ref?: string;
+        /**
+         * How many codes have been asked for.
+         */
+        requested?: number;
+        /**
+         * A leaked batch is `disabled`, which refuses every code in it at once — a leak is discovered as a batch and has to be stopped as one.
+         */
+        status?: VoucherBatchStatus;
+        /**
+         * When the row last changed. Written by the database on every write.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type VoucherBatchPatch = {
+        /**
+         * The characters generated codes may use. The default omits the ones people confuse reading a code off paper.
+         */
+        alphabet?: string;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * What the batch is called — the unit a mailing is accounted for by afterwards.
+         */
+        name: string;
+        /**
+         * The shape generated codes take. `#` draws a character from the alphabet; every other character is kept.
+         */
+        pattern?: string;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id: string;
+        /**
+         * A reference the caller chose, so a retried generation makes no second batch. A timed-out call is retried by whoever sent it, and a retry that doubled a mailing is discovered when the codes are in the post.
+         */
+        request_ref?: string;
+        /**
+         * How many codes have been asked for.
+         */
+        requested?: number;
+        /**
+         * A leaked batch is `disabled`, which refuses every code in it at once — a leak is discovered as a batch and has to be stopped as one.
+         */
+        status?: VoucherBatchPatchStatus;
+    }
+
+    /**
+     * 
+     */
+    export type VoucherBatchWrite = {
+        /**
+         * The characters generated codes may use. The default omits the ones people confuse reading a code off paper.
+         */
+        alphabet?: string;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * What the batch is called — the unit a mailing is accounted for by afterwards.
+         */
+        name: string;
+        /**
+         * The shape generated codes take. `#` draws a character from the alphabet; every other character is kept.
+         */
+        pattern?: string;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id: string;
+        /**
+         * A reference the caller chose, so a retried generation makes no second batch. A timed-out call is retried by whoever sent it, and a retry that doubled a mailing is discovered when the codes are in the post.
+         */
+        request_ref?: string;
+        /**
+         * How many codes have been asked for.
+         */
+        requested?: number;
+        /**
+         * A leaked batch is `disabled`, which refuses every code in it at once — a leak is discovered as a batch and has to be stopped as one.
+         */
+        status?: VoucherBatchWriteStatus;
+    }
+
+    /**
+     * 
+     */
+    export type VoucherGenerateForRequest = {
+        /**
+         * The contacts to issue a code to, one each.
+         */
+        recipients: string[];
+    }
+
+    /**
+     * 
+     */
+    export type VoucherGenerateRequest = {
+        /**
+         * The characters they may use.
+         */
+        alphabet?: string;
+        /**
+         * How many codes to make. Bounded by the tenant setting.
+         */
+        count: number;
+        /**
+         * The shape they take. Defaults to the batch pattern, then the tenant default.
+         */
+        pattern?: string;
+        /**
+         * A reference the caller chose, so a retry makes nothing further.
+         */
+        request_ref?: string;
+        /**
+         * How often each code may be redeemed. Zero is unlimited.
+         */
+        usage_limit?: number;
+    }
+
+    /**
+     * 
+     */
+    export type VoucherImportRequest = {
+        /**
+         * The codes to take, exactly as they are.
+         */
+        codes: string[];
+        /**
+         * How often each may be redeemed.
+         */
+        usage_limit?: number;
+    }
+
+    /**
+     * 
+     */
+    export type VoucherPatch = {
+        /**
+         * The batch this code was made in, when it was made in one.
+         */
+        batch_id?: string;
+        /**
+         * The code as it is printed and as a buyer types it.
+         */
+        code: string;
+        /**
+         * The person the code was issued to. Anybody else is refused — a personal apology code is worthless if it can be forwarded.
+         */
+        contact_id?: string;
+        /**
+         * The currency a residual value is stated in.
+         */
+        currency?: string;
+        /**
+         * When it expires. A merchant runs one promotion for a quarter and hands out codes that expire in a fortnight.
+         */
+        ends_at?: string;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * The company it was issued to. Any of its contacts may redeem it.
+         */
+        organization_id?: string;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id: string;
+        /**
+         * How many reservations may be held at once. A reservation that never ran out would promise a limited code to everybody who asked.
+         */
+        reservation_limit?: number;
+        /**
+         * When true the code works only for a buyer who has reserved it — which is what makes a code printed in a public place usable at all.
+         */
+        reservation_required?: boolean;
+        /**
+         * An amount the code is worth, spent down rather than used up — how a goodwill amount survives a smaller first purchase.
+         */
+        residual_value?: number;
+        /**
+         * When the code becomes valid. Empty is bounded only by the promotion.
+         */
+        starts_at?: string;
+        /**
+         * A leaked code is `disabled`, not deleted: it has to stop working within the minute, and deleting it would take the evidence with it.
+         */
+        status?: VoucherPatchStatus;
+        /**
+         * How often the code may be redeemed. Zero is unlimited, though the promotion own limits still apply.
+         */
+        usage_limit?: number;
+    }
+
+    /**
+     * 
+     */
+    export type VoucherReservation = {
+        /**
+         * Who it is held for.
+         */
+        contact_id?: string;
+        /**
+         * When the row was created. Written by the database, never by a caller.
+         */
+        created_at?: string;
+        /**
+         * When the hold stops counting. Empty is held until it is used or deleted.
+         */
+        expires_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Which company it is held for.
+         */
+        organization_id?: string;
+        /**
+         * When the row last changed. Written by the database on every write.
+         */
+        updated_at?: string;
+        /**
+         * The code being held.
+         */
+        voucher_id?: string;
+    }
+
+    /**
+     * 
+     */
+    export type VoucherReservationPatch = {
+        /**
+         * Who it is held for.
+         */
+        contact_id?: string;
+        /**
+         * When the hold stops counting. Empty is held until it is used or deleted.
+         */
+        expires_at?: string;
+        /**
+         * Which company it is held for.
+         */
+        organization_id?: string;
+        /**
+         * The code being held.
+         */
+        voucher_id: string;
+    }
+
+    /**
+     * 
+     */
+    export type VoucherReservationWrite = {
+        /**
+         * Who it is held for.
+         */
+        contact_id?: string;
+        /**
+         * When the hold stops counting. Empty is held until it is used or deleted.
+         */
+        expires_at?: string;
+        /**
+         * Which company it is held for.
+         */
+        organization_id?: string;
+        /**
+         * The code being held.
+         */
+        voucher_id: string;
+    }
+
+    /**
+     * 
+     */
+    export type VoucherWrite = {
+        /**
+         * The batch this code was made in, when it was made in one.
+         */
+        batch_id?: string;
+        /**
+         * The code as it is printed and as a buyer types it.
+         */
+        code: string;
+        /**
+         * The person the code was issued to. Anybody else is refused — a personal apology code is worthless if it can be forwarded.
+         */
+        contact_id?: string;
+        /**
+         * The currency a residual value is stated in.
+         */
+        currency?: string;
+        /**
+         * When it expires. A merchant runs one promotion for a quarter and hands out codes that expire in a fortnight.
+         */
+        ends_at?: string;
+        /**
+         * Free-form JSON a caller may keep on the row. Nothing here reads it.
+         */
+        metadata?: object;
+        /**
+         * The company it was issued to. Any of its contacts may redeem it.
+         */
+        organization_id?: string;
+        /**
+         * The promotion this row belongs to. Deleting the promotion deletes it.
+         */
+        promotion_id: string;
+        /**
+         * How many reservations may be held at once. A reservation that never ran out would promise a limited code to everybody who asked.
+         */
+        reservation_limit?: number;
+        /**
+         * When true the code works only for a buyer who has reserved it — which is what makes a code printed in a public place usable at all.
+         */
+        reservation_required?: boolean;
+        /**
+         * An amount the code is worth, spent down rather than used up — how a goodwill amount survives a smaller first purchase.
+         */
+        residual_value?: number;
+        /**
+         * When the code becomes valid. Empty is bounded only by the promotion.
+         */
+        starts_at?: string;
+        /**
+         * A leaked code is `disabled`, not deleted: it has to stop working within the minute, and deleting it would take the evidence with it.
+         */
+        status?: VoucherWriteStatus;
+        /**
+         * How often the code may be redeemed. Zero is unlimited, though the promotion own limits still apply.
+         */
+        usage_limit?: number;
+    }
+
+    /**
+     * 
+     */
+    export type WithdrawRequest = {
+        /**
+         * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        note?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id: string;
     }
 
     /**

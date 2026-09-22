@@ -16,21 +16,21 @@ export class InventoriesReservations {
      *
      * @param {string} params.orderRef - The order this hold belongs to. The caller supplies it — this app mints nothing — and it is the handle POST /inventories/release and POST /inventories/commit act on, so it has to be the same string the order carries elsewhere. At least one character (CHECK `length(order_ref) > 0`). Not unique: an order holds one reservation per item, and they are released or committed together. Every ACTIVE hold under this reference ships: `on_hand` and `reserved` both fall and a `shipment` booking is written for each. Unlike release, committing an order that has nothing active is a 422 — it means the hold was already released or already shipped, and shipping twice is worth saying out loud.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    inventoriesCommit(params: { orderRef: string }): Promise<Models.Error>;
+    inventoriesCommit(params: { orderRef: string }): Promise<{}>;
     /**
      * Call this when the goods leave the building, and not before. Reserving only promised them — `reserved` went up and `on_hand` did not move, because the stock was still on the shelf; committing is the moment they are gone, so it lowers BOTH on each stock row and writes one `shipment` booking per hold, with a SIGNED negative quantity, as the ledger's record that they left. It takes the whole `order_ref` and every hold still active on it: there is no partial commit and no per-line id, so a part shipment means reserving the parts separately in the first place. It is also final — 'committed' ends the lifecycle and nothing moves a hold out of it, so goods coming back are POST /inventories/restock (a new receipt), never an undo of this. An order with nothing active is a 422 rather than a quiet zero, because it means the hold was already released or already shipped; /release answers the same situation with a 200 on purpose, since cancelling twice is harmless and shipping twice is not.
      *
      * @param {string} orderRef - The order this hold belongs to. The caller supplies it — this app mints nothing — and it is the handle POST /inventories/release and POST /inventories/commit act on, so it has to be the same string the order carries elsewhere. At least one character (CHECK `length(order_ref) > 0`). Not unique: an order holds one reservation per item, and they are released or committed together. Every ACTIVE hold under this reference ships: `on_hand` and `reserved` both fall and a `shipment` booking is written for each. Unlike release, committing an order that has nothing active is a 422 — it means the hold was already released or already shipped, and shipping twice is worth saying out loud.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesCommit(orderRef: string): Promise<Models.Error>;
+    inventoriesCommit(orderRef: string): Promise<{}>;
     inventoriesCommit(
         paramsOrFirst: { orderRef: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { orderRef: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -71,21 +71,21 @@ export class InventoriesReservations {
      *
      * @param {string} params.orderRef - The order this hold belongs to. The caller supplies it — this app mints nothing — and it is the handle POST /inventories/release and POST /inventories/commit act on, so it has to be the same string the order carries elsewhere. At least one character (CHECK `length(order_ref) > 0`). Not unique: an order holds one reservation per item, and they are released or committed together. Every ACTIVE hold under this reference is given back; ones already committed or released are left alone. A reference no reservation carries releases nothing and answers `released: 0` — not an error, which is what makes a retried cancellation safe.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    inventoriesRelease(params: { orderRef: string }): Promise<Models.Error>;
+    inventoriesRelease(params: { orderRef: string }): Promise<{}>;
     /**
      * The cancellation end of the reserve → commit | release lifecycle: it takes an `order_ref`, ends every hold still active on it, gives the stock back and writes a 'release' booking for each one, exactly like the expiry sweeper. Idempotent: an order with nothing active answers released:0 — which is why it is a 200 and not the 422 commit answers.
      *
      * @param {string} orderRef - The order this hold belongs to. The caller supplies it — this app mints nothing — and it is the handle POST /inventories/release and POST /inventories/commit act on, so it has to be the same string the order carries elsewhere. At least one character (CHECK `length(order_ref) > 0`). Not unique: an order holds one reservation per item, and they are released or committed together. Every ACTIVE hold under this reference is given back; ones already committed or released are left alone. A reference no reservation carries releases nothing and answers `released: 0` — not an error, which is what makes a retried cancellation safe.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesRelease(orderRef: string): Promise<Models.Error>;
+    inventoriesRelease(orderRef: string): Promise<{}>;
     inventoriesRelease(
         paramsOrFirst: { orderRef: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { orderRef: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -139,9 +139,9 @@ export class InventoriesReservations {
      * @param {string} params.createdAt - Exact-match filter on `created_at`. When the row was created.
      * @param {string} params.updatedAt - Exact-match filter on `updated_at`. When the hold last changed — in practice, when it moved out of `active`..
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    inventoriesReservationsList(params?: { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, quantity?: number, orderRef?: string, status?: InventoriesReservationsListStatus, expiresAt?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<Models.Error>;
+    inventoriesReservationsList(params?: { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, quantity?: number, orderRef?: string, status?: InventoriesReservationsListStatus, expiresAt?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * A reservation is stock promised to an `order_ref`. It is created only by POST /inventories/reserve and moved only by /commit, /release and the expiry sweep — there is no create, update or delete route, because the lifecycle IS the API. Only an 'active' hold counts towards a stock row's `reserved`; 'released' and 'committed' rows stay for the audit trail and hold nothing. This is the answer to "what is this order actually holding" (`?order_ref=…`) and to "what is holding this stock" (`?status=active&location_id=…`) — the second is the only way to see WHY a row's `reserved` is what it is, since a stock row reports the total and never who asked for it. `expires_at` filters on an exact timestamp and not a range, so this cannot answer "what expires today"; the deadline is acted on by POST /inventories/reservations/sweep, not by reading it here.
      *
@@ -160,14 +160,14 @@ export class InventoriesReservations {
      * @param {string} createdAt - Exact-match filter on `created_at`. When the row was created.
      * @param {string} updatedAt - Exact-match filter on `updated_at`. When the hold last changed — in practice, when it moved out of `active`..
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesReservationsList(limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, quantity?: number, orderRef?: string, status?: InventoriesReservationsListStatus, expiresAt?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<Models.Error>;
+    inventoriesReservationsList(limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, quantity?: number, orderRef?: string, status?: InventoriesReservationsListStatus, expiresAt?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     inventoriesReservationsList(
         paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, quantity?: number, orderRef?: string, status?: InventoriesReservationsListStatus, expiresAt?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
         ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (InventoriesReservationsListStatus)?, (string)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, quantity?: number, orderRef?: string, status?: InventoriesReservationsListStatus, expiresAt?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -324,21 +324,21 @@ export class InventoriesReservations {
      *
      * @param {string} params.id - The reservation.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Reservation>}
      */
-    inventoriesReservationsGet(params: { id: string }): Promise<Models.Error>;
+    inventoriesReservationsGet(params: { id: string }): Promise<Models.Reservation>;
     /**
      * A reservation is stock promised to an `order_ref`. It is created only by POST /inventories/reserve and moved only by /commit, /release and the expiry sweep — there is no create, update or delete route, because the lifecycle IS the API. Only an 'active' hold counts towards a stock row's `reserved`; 'released' and 'committed' rows stay for the audit trail and hold nothing. One hold, with the three facts that are not on the order it belongs to: which location it was allocated to, when it expires, and — in `metadata.backordered` — how much of it was never covered by stock, which is how a promise made under a permissive backorder policy stays visible afterwards. The id is for reading only. Every transition acts on the whole `order_ref` (/commit, /release, the sweep), so there is no route that takes this id and no way to release one line of an order on its own.
      *
      * @param {string} id - The reservation.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Reservation>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesReservationsGet(id: string): Promise<Models.Error>;
+    inventoriesReservationsGet(id: string): Promise<Models.Reservation>;
     inventoriesReservationsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Reservation> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -382,9 +382,9 @@ export class InventoriesReservations {
      * @param {object} params.shipTo - Where the order is going. Read ONLY when the tenant's `allocation_strategy` is 'nearest' — under 'priority' or 'single_location' it is accepted and ignored, so sending it is never wrong, it is just not always heard.
      * @param {string} params.sku - Inline single-item form: the article number to move (instead of `product_id`).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    inventoriesReserve(params: { orderRef: string, expiresAt?: string, items?: Models.InventoryStockItem[], locationCode?: string, productId?: string, quantity?: number, shipTo?: object, sku?: string }): Promise<Models.Error>;
+    inventoriesReserve(params: { orderRef: string, expiresAt?: string, items?: Models.InventoryStockItem[], locationCode?: string, productId?: string, quantity?: number, shipTo?: object, sku?: string }): Promise<{}>;
     /**
      * Takes a hold against an `order_ref`, and plans the whole call before writing anything, so a reservation that cannot be satisfied changes nothing. WHICH location serves an item is not the caller's to choose: the tenant's allocation_strategy decides it ('priority', walking the enabled locations by their priority; 'nearest', matching ship_to against a location's country; or 'single_location' for the whole order); backorder_policy decides what happens when none can — refuse (422), or reserve anyway and let availability go negative. expires_at defaults from reservation_ttl_minutes and the sweeper enforces it.
      *
@@ -397,14 +397,14 @@ export class InventoriesReservations {
      * @param {object} shipTo - Where the order is going. Read ONLY when the tenant's `allocation_strategy` is 'nearest' — under 'priority' or 'single_location' it is accepted and ignored, so sending it is never wrong, it is just not always heard.
      * @param {string} sku - Inline single-item form: the article number to move (instead of `product_id`).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesReserve(orderRef: string, expiresAt?: string, items?: Models.InventoryStockItem[], locationCode?: string, productId?: string, quantity?: number, shipTo?: object, sku?: string): Promise<Models.Error>;
+    inventoriesReserve(orderRef: string, expiresAt?: string, items?: Models.InventoryStockItem[], locationCode?: string, productId?: string, quantity?: number, shipTo?: object, sku?: string): Promise<{}>;
     inventoriesReserve(
         paramsOrFirst: { orderRef: string, expiresAt?: string, items?: Models.InventoryStockItem[], locationCode?: string, productId?: string, quantity?: number, shipTo?: object, sku?: string } | string,
         ...rest: [(string)?, (Models.InventoryStockItem[])?, (string)?, (string)?, (number)?, (object)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { orderRef: string, expiresAt?: string, items?: Models.InventoryStockItem[], locationCode?: string, productId?: string, quantity?: number, shipTo?: object, sku?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

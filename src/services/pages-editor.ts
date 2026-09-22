@@ -82,21 +82,21 @@ export class PagesEditor {
      *
      * @param {object[]} params.items - The strings to translate. This app reads no element of the list — the provider defines the contract, and the blökkli adapter sends the fields below.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pagesEditorTranslate(params?: { items?: object[] }): Promise<Models.Error>;
+    pagesEditorTranslate(params?: { items?: object[] }): Promise<{}>;
     /**
      * The translation is the tenant's provider's, not this app's, and a tenant that has configured none gets no translation at all. The endpoint comes from the tenant setting `translate_endpoint` (PAGES_TRANSLATE_ENDPOINT remains a fallback). The bearer token does NOT: the gateway masks every setting flagged `sensitive`, so a key stored as one could never be read back — it stays the PAGES_TRANSLATE_KEY function secret. This app does not translate anything itself; it forwards `items` and hands the answer back.
      *
      * @param {object[]} items - The strings to translate. This app reads no element of the list — the provider defines the contract, and the blökkli adapter sends the fields below.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesEditorTranslate(items?: object[]): Promise<Models.Error>;
+    pagesEditorTranslate(items?: object[]): Promise<{}>;
     pagesEditorTranslate(
         paramsOrFirst?: { items?: object[] } | object[]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { items?: object[] };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('items' in paramsOrFirst))) {
@@ -549,9 +549,9 @@ export class PagesEditor {
      * @param {boolean} params.force - Publish despite violations. Without it a page with unresolved violations answers 422 and nothing is written.
      * @param {string} params.label - What to call this publication in the page's history — "Autumn campaign" rather than a timestamp.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MutationResponse>}
      */
-    pagesEditorPublish(params: { pageId: string, force?: boolean, label?: string }): Promise<Models.Error>;
+    pagesEditorPublish(params: { pageId: string, force?: boolean, label?: string }): Promise<Models.MutationResponse>;
     /**
      * Four things in one call: the mutation log is replayed into a finished block tree, that tree is snapshotted into a new revision, the page's canonical blocks are replaced by it, and the edit state is archived — so the page comes out of this with nothing unpublished and the working copy behind it closed rather than deleted. The revision is written FIRST and the canonical blocks replaced after, so a failure mid-way leaves the page recoverable. Block uuids survive, which is why comments anchored to a block outlive the publish.
      *
@@ -559,14 +559,14 @@ export class PagesEditor {
      * @param {boolean} force - Publish despite violations. Without it a page with unresolved violations answers 422 and nothing is written.
      * @param {string} label - What to call this publication in the page's history — "Autumn campaign" rather than a timestamp.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MutationResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesEditorPublish(pageId: string, force?: boolean, label?: string): Promise<Models.Error>;
+    pagesEditorPublish(pageId: string, force?: boolean, label?: string): Promise<Models.MutationResponse>;
     pagesEditorPublish(
         paramsOrFirst: { pageId: string, force?: boolean, label?: string } | string,
         ...rest: [(boolean)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MutationResponse> {
         let params: { pageId: string, force?: boolean, label?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -666,23 +666,23 @@ export class PagesEditor {
      * @param {string} params.pageId - The page being edited.
      * @param {string} params.scheduledAt - The moment to publish at. Stored on the edit state and echoed back normalized to UTC.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pagesEditorSchedule(params: { pageId: string, scheduledAt: string }): Promise<Models.Error>;
+    pagesEditorSchedule(params: { pageId: string, scheduledAt: string }): Promise<{}>;
     /**
      * Gated on the tenant setting `enable_scheduled_publishing`, which is off by default: nothing in the platform publishes a scheduled edit state yet, so a date accepted here would be a promise the app cannot keep. Every editor state carries `features.scheduledPublishing` so the control can be hidden rather than the refusal discovered.
      *
      * @param {string} pageId - The page being edited.
      * @param {string} scheduledAt - The moment to publish at. Stored on the edit state and echoed back normalized to UTC.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesEditorSchedule(pageId: string, scheduledAt: string): Promise<Models.Error>;
+    pagesEditorSchedule(pageId: string, scheduledAt: string): Promise<{}>;
     pagesEditorSchedule(
         paramsOrFirst: { pageId: string, scheduledAt: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { pageId: string, scheduledAt: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -851,9 +851,9 @@ export class PagesEditor {
      * @param {boolean} params.isDefault - Whether a new page of that type should start from this template.
      * @param {string} params.pageBundle - The page type this template should be offered on. Omit to take the current page's own type.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Template>}
      */
-    pagesEditorTemplatesCreate(params: { pageId: string, label: string, uuids: string[], description?: string, fieldName?: string, isDefault?: boolean, pageBundle?: string }): Promise<Models.Error>;
+    pagesEditorTemplatesCreate(params: { pageId: string, label: string, uuids: string[], description?: string, fieldName?: string, isDefault?: boolean, pageBundle?: string }): Promise<Models.Template>;
     /**
      * Freezes a selection into a reusable starting point. The blocks are read out of the page's CURRENT edit state rather than out of what is published, so a template can be cut from work in progress and the uuids you send are the ones the editor is showing. Unlike making a block reusable, this COPIES: pages later made from the template are independent of it and of each other.
      *
@@ -865,14 +865,14 @@ export class PagesEditor {
      * @param {boolean} isDefault - Whether a new page of that type should start from this template.
      * @param {string} pageBundle - The page type this template should be offered on. Omit to take the current page's own type.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Template>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesEditorTemplatesCreate(pageId: string, label: string, uuids: string[], description?: string, fieldName?: string, isDefault?: boolean, pageBundle?: string): Promise<Models.Error>;
+    pagesEditorTemplatesCreate(pageId: string, label: string, uuids: string[], description?: string, fieldName?: string, isDefault?: boolean, pageBundle?: string): Promise<Models.Template>;
     pagesEditorTemplatesCreate(
         paramsOrFirst: { pageId: string, label: string, uuids: string[], description?: string, fieldName?: string, isDefault?: boolean, pageBundle?: string } | string,
         ...rest: [(string)?, (string[])?, (string)?, (string)?, (boolean)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Template> {
         let params: { pageId: string, label: string, uuids: string[], description?: string, fieldName?: string, isDefault?: boolean, pageBundle?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

@@ -27,7 +27,10 @@ const result = await orders.ordersList({
     holdReason: 'Credit check pending', // optional
     itemCount: 3, // optional
     subtotal: 149.7, // optional
+    discountTotal: 7.85, // optional
     shippingTotal: 5.9, // optional
+    shippingTaxRate: 19, // optional
+    shippingTaxAmount: 1.12, // optional
     taxTotal: 29.56, // optional
     grandTotal: 185.16, // optional
     placedAt: '2026-01-01T12:00:00Z', // optional

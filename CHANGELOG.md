@@ -1,3 +1,6 @@
+## v0.2.0
+- Regenerated from the latest API specification (adds cost-centers, procurement, promotions, quotes and punchout; response models replace the previous error-typed returns)
+
 ## v0.1.0
 - Regenerated from the latest API specification
 

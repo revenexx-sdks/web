@@ -47,9 +47,9 @@ export class CustomersValueLists {
      * @param {number} params.position - Where it sits in the set, ascending. Default 0.
      * @param {Tone} params.tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AddressTypeRow>}
      */
-    customersAddressTypesCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.Error>;
+    customersAddressTypesCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.AddressTypeRow>;
     /**
      * Extends this tenant's address types set with a value of their own — the whole reason these four stopped being CHECK constraints. What an address is used for. Billing and shipping are what a checkout needs; a works entrance or a central accounts office is the tenant's own. The code is lowercase and becomes what `addresses.type` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
      *
@@ -62,14 +62,14 @@ export class CustomersValueLists {
      * @param {number} position - Where it sits in the set, ascending. Default 0.
      * @param {Tone} tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AddressTypeRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAddressTypesCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.Error>;
+    customersAddressTypesCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.AddressTypeRow>;
     customersAddressTypesCreate(
         paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
         ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AddressTypeRow> {
         let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -148,21 +148,21 @@ export class CustomersValueLists {
      *
      * @param {string} params.id - The address type to remove.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    customersAddressTypesDelete(params: { id: string }): Promise<Models.Error>;
+    customersAddressTypesDelete(params: { id: string }): Promise<{}>;
     /**
      * Takes a value out of the address types set. There is no foreign key behind `addresses.type` — one added to a table that starts empty fails the migration of every existing tenant — so this route IS the integrity: it refuses while any record still carries the code, and it refuses to empty the set. Retiring a value that is in use is therefore a two-step job: move the records onto another value first, then remove it.
      *
      * @param {string} id - The address type to remove.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAddressTypesDelete(id: string): Promise<Models.Error>;
+    customersAddressTypesDelete(id: string): Promise<{}>;
     customersAddressTypesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -199,21 +199,21 @@ export class CustomersValueLists {
      *
      * @param {string} params.id - The address type to read. Note that records store the CODE, not this id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AddressTypeRow>}
      */
-    customersAddressTypesGet(params: { id: string }): Promise<Models.Error>;
+    customersAddressTypesGet(params: { id: string }): Promise<Models.AddressTypeRow>;
     /**
      * One value of the address types set, by its id — its code, its fallback title, the per-language `labels` an operator reads and the badge `tone` a client renders it with. What an address is used for. Billing and shipping are what a checkout needs; a works entrance or a central accounts office is the tenant's own. Reading one value is the rare path: `GET /customers/address-types` answers the whole set in a single page, which is what a select needs.
      *
      * @param {string} id - The address type to read. Note that records store the CODE, not this id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AddressTypeRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAddressTypesGet(id: string): Promise<Models.Error>;
+    customersAddressTypesGet(id: string): Promise<Models.AddressTypeRow>;
     customersAddressTypesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AddressTypeRow> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -257,9 +257,9 @@ export class CustomersValueLists {
      * @param {string} params.title - The fallback name shown when no locale matches.
      * @param {Tone} params.tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AddressTypeRow>}
      */
-    customersAddressTypesUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.Error>;
+    customersAddressTypesUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.AddressTypeRow>;
     /**
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `shipping` to wording of their own changes what people READ and nothing about what `addresses.type` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
@@ -272,14 +272,14 @@ export class CustomersValueLists {
      * @param {string} title - The fallback name shown when no locale matches.
      * @param {Tone} tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AddressTypeRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAddressTypesUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.Error>;
+    customersAddressTypesUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.AddressTypeRow>;
     customersAddressTypesUpdate(
         paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
         ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AddressTypeRow> {
         let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -382,9 +382,9 @@ export class CustomersValueLists {
      * @param {number} params.position - Where it sits in the set, ascending. Default 0.
      * @param {Tone} params.tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ContactEventKind>}
      */
-    customersContactEventKindsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.Error>;
+    customersContactEventKindsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.ContactEventKind>;
     /**
      * Extends this tenant's activity types set with a value of their own — the whole reason these four stopped being CHECK constraints. What kind of entry lands on a customer timeline. 'system' is the app's own decision trail and a caller may not file one, whatever the set says. The code is lowercase and becomes what `contact_events.kind` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
      *
@@ -397,14 +397,14 @@ export class CustomersValueLists {
      * @param {number} position - Where it sits in the set, ascending. Default 0.
      * @param {Tone} tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ContactEventKind>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersContactEventKindsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.Error>;
+    customersContactEventKindsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.ContactEventKind>;
     customersContactEventKindsCreate(
         paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
         ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ContactEventKind> {
         let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -483,21 +483,21 @@ export class CustomersValueLists {
      *
      * @param {string} params.id - The activity type to remove.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    customersContactEventKindsDelete(params: { id: string }): Promise<Models.Error>;
+    customersContactEventKindsDelete(params: { id: string }): Promise<{}>;
     /**
      * Takes a value out of the activity types set. There is no foreign key behind `contact_events.kind` — one added to a table that starts empty fails the migration of every existing tenant — so this route IS the integrity: it refuses while any record still carries the code, and it refuses to empty the set. Retiring a value that is in use is therefore a two-step job: move the records onto another value first, then remove it.
      *
      * @param {string} id - The activity type to remove.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersContactEventKindsDelete(id: string): Promise<Models.Error>;
+    customersContactEventKindsDelete(id: string): Promise<{}>;
     customersContactEventKindsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -534,21 +534,21 @@ export class CustomersValueLists {
      *
      * @param {string} params.id - The activity type to read. Note that records store the CODE, not this id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ContactEventKind>}
      */
-    customersContactEventKindsGet(params: { id: string }): Promise<Models.Error>;
+    customersContactEventKindsGet(params: { id: string }): Promise<Models.ContactEventKind>;
     /**
      * One value of the activity types set, by its id — its code, its fallback title, the per-language `labels` an operator reads and the badge `tone` a client renders it with. What kind of entry lands on a customer timeline. 'system' is the app's own decision trail and a caller may not file one, whatever the set says. Reading one value is the rare path: `GET /customers/contact-event-kinds` answers the whole set in a single page, which is what a select needs.
      *
      * @param {string} id - The activity type to read. Note that records store the CODE, not this id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ContactEventKind>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersContactEventKindsGet(id: string): Promise<Models.Error>;
+    customersContactEventKindsGet(id: string): Promise<Models.ContactEventKind>;
     customersContactEventKindsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ContactEventKind> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -592,9 +592,9 @@ export class CustomersValueLists {
      * @param {string} params.title - The fallback name shown when no locale matches.
      * @param {Tone} params.tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ContactEventKind>}
      */
-    customersContactEventKindsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.Error>;
+    customersContactEventKindsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.ContactEventKind>;
     /**
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `call` to wording of their own changes what people READ and nothing about what `contact_events.kind` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
@@ -607,14 +607,14 @@ export class CustomersValueLists {
      * @param {string} title - The fallback name shown when no locale matches.
      * @param {Tone} tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ContactEventKind>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersContactEventKindsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.Error>;
+    customersContactEventKindsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.ContactEventKind>;
     customersContactEventKindsUpdate(
         paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
         ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ContactEventKind> {
         let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -687,21 +687,21 @@ export class CustomersValueLists {
      *
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.CustomersDefaultsResponse>}
      */
-    customersDefaults(params: { data: object }): Promise<Models.Error>;
+    customersDefaults(params: { data: object }): Promise<Models.CustomersDefaultsResponse>;
     /**
      * What the app.installed event runs. It fills all four of the value sets a tenant needs before anything else works — the payment terms, the address types, the lifecycle stages and the activity types — in one call. Idempotent by code: a set that already has its rows is left completely alone, so a re-delivered event and a merchant's renames both survive. A tenant installed before these tables existed is seeded lazily instead, by the first read that finds one empty.
      *
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.CustomersDefaultsResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersDefaults(data: object): Promise<Models.Error>;
+    customersDefaults(data: object): Promise<Models.CustomersDefaultsResponse>;
     customersDefaults(
         paramsOrFirst: { data: object } | object    
-    ): Promise<Models.Error> {
+    ): Promise<Models.CustomersDefaultsResponse> {
         let params: { data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst))) {
@@ -772,9 +772,9 @@ export class CustomersValueLists {
      * @param {number} params.position - Where it sits in the set, ascending. Default 0.
      * @param {Tone} params.tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.LifecycleStage>}
      */
-    customersLifecycleStagesCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.Error>;
+    customersLifecycleStagesCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.LifecycleStage>;
     /**
      * Extends this tenant's lifecycle stages set with a value of their own — the whole reason these four stopped being CHECK constraints. Where a company stands in the sales pipeline — a separate axis from status, and one whose steps are a sales team's own. The code is lowercase and becomes what `organizations.lifecycle_stage` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
      *
@@ -787,14 +787,14 @@ export class CustomersValueLists {
      * @param {number} position - Where it sits in the set, ascending. Default 0.
      * @param {Tone} tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.LifecycleStage>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersLifecycleStagesCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.Error>;
+    customersLifecycleStagesCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.LifecycleStage>;
     customersLifecycleStagesCreate(
         paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
         ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.LifecycleStage> {
         let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -873,21 +873,21 @@ export class CustomersValueLists {
      *
      * @param {string} params.id - The lifecycle stage to remove.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    customersLifecycleStagesDelete(params: { id: string }): Promise<Models.Error>;
+    customersLifecycleStagesDelete(params: { id: string }): Promise<{}>;
     /**
      * Takes a value out of the lifecycle stages set. There is no foreign key behind `organizations.lifecycle_stage` — one added to a table that starts empty fails the migration of every existing tenant — so this route IS the integrity: it refuses while any record still carries the code, and it refuses to empty the set. Retiring a value that is in use is therefore a two-step job: move the records onto another value first, then remove it.
      *
      * @param {string} id - The lifecycle stage to remove.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersLifecycleStagesDelete(id: string): Promise<Models.Error>;
+    customersLifecycleStagesDelete(id: string): Promise<{}>;
     customersLifecycleStagesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -924,21 +924,21 @@ export class CustomersValueLists {
      *
      * @param {string} params.id - The lifecycle stage to read. Note that records store the CODE, not this id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.LifecycleStage>}
      */
-    customersLifecycleStagesGet(params: { id: string }): Promise<Models.Error>;
+    customersLifecycleStagesGet(params: { id: string }): Promise<Models.LifecycleStage>;
     /**
      * One value of the lifecycle stages set, by its id — its code, its fallback title, the per-language `labels` an operator reads and the badge `tone` a client renders it with. Where a company stands in the sales pipeline — a separate axis from status, and one whose steps are a sales team's own. Reading one value is the rare path: `GET /customers/lifecycle-stages` answers the whole set in a single page, which is what a select needs.
      *
      * @param {string} id - The lifecycle stage to read. Note that records store the CODE, not this id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.LifecycleStage>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersLifecycleStagesGet(id: string): Promise<Models.Error>;
+    customersLifecycleStagesGet(id: string): Promise<Models.LifecycleStage>;
     customersLifecycleStagesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.LifecycleStage> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -982,9 +982,9 @@ export class CustomersValueLists {
      * @param {string} params.title - The fallback name shown when no locale matches.
      * @param {Tone} params.tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.LifecycleStage>}
      */
-    customersLifecycleStagesUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.Error>;
+    customersLifecycleStagesUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.LifecycleStage>;
     /**
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `customer` to wording of their own changes what people READ and nothing about what `organizations.lifecycle_stage` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
@@ -997,14 +997,14 @@ export class CustomersValueLists {
      * @param {string} title - The fallback name shown when no locale matches.
      * @param {Tone} tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.LifecycleStage>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersLifecycleStagesUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.Error>;
+    customersLifecycleStagesUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.LifecycleStage>;
     customersLifecycleStagesUpdate(
         paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
         ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.LifecycleStage> {
         let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1107,9 +1107,9 @@ export class CustomersValueLists {
      * @param {number} params.position - Where it sits in the set, ascending. Default 0.
      * @param {Tone} params.tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentTerm>}
      */
-    customersPaymentTermsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.Error>;
+    customersPaymentTermsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.PaymentTerm>;
     /**
      * Extends this tenant's payment terms set with a value of their own — the whole reason these four stopped being CHECK constraints. When a company has to pay. A wholesaler who agrees net 45 with one customer used to need a release of this app to say so. The code is lowercase and becomes what `organizations.payment_terms` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
      *
@@ -1122,14 +1122,14 @@ export class CustomersValueLists {
      * @param {number} position - Where it sits in the set, ascending. Default 0.
      * @param {Tone} tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentTerm>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersPaymentTermsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.Error>;
+    customersPaymentTermsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.PaymentTerm>;
     customersPaymentTermsCreate(
         paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
         ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PaymentTerm> {
         let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1208,21 +1208,21 @@ export class CustomersValueLists {
      *
      * @param {string} params.id - The payment term to remove.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    customersPaymentTermsDelete(params: { id: string }): Promise<Models.Error>;
+    customersPaymentTermsDelete(params: { id: string }): Promise<{}>;
     /**
      * Takes a value out of the payment terms set. There is no foreign key behind `organizations.payment_terms` — one added to a table that starts empty fails the migration of every existing tenant — so this route IS the integrity: it refuses while any record still carries the code, and it refuses to empty the set. Retiring a value that is in use is therefore a two-step job: move the records onto another value first, then remove it.
      *
      * @param {string} id - The payment term to remove.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersPaymentTermsDelete(id: string): Promise<Models.Error>;
+    customersPaymentTermsDelete(id: string): Promise<{}>;
     customersPaymentTermsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1259,21 +1259,21 @@ export class CustomersValueLists {
      *
      * @param {string} params.id - The payment term to read. Note that records store the CODE, not this id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentTerm>}
      */
-    customersPaymentTermsGet(params: { id: string }): Promise<Models.Error>;
+    customersPaymentTermsGet(params: { id: string }): Promise<Models.PaymentTerm>;
     /**
      * One value of the payment terms set, by its id — its code, its fallback title, the per-language `labels` an operator reads and the badge `tone` a client renders it with. When a company has to pay. A wholesaler who agrees net 45 with one customer used to need a release of this app to say so. Reading one value is the rare path: `GET /customers/payment-terms` answers the whole set in a single page, which is what a select needs.
      *
      * @param {string} id - The payment term to read. Note that records store the CODE, not this id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentTerm>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersPaymentTermsGet(id: string): Promise<Models.Error>;
+    customersPaymentTermsGet(id: string): Promise<Models.PaymentTerm>;
     customersPaymentTermsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PaymentTerm> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1317,9 +1317,9 @@ export class CustomersValueLists {
      * @param {string} params.title - The fallback name shown when no locale matches.
      * @param {Tone} params.tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentTerm>}
      */
-    customersPaymentTermsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.Error>;
+    customersPaymentTermsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.PaymentTerm>;
     /**
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `net_30` to wording of their own changes what people READ and nothing about what `organizations.payment_terms` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
@@ -1332,14 +1332,14 @@ export class CustomersValueLists {
      * @param {string} title - The fallback name shown when no locale matches.
      * @param {Tone} tone - Semantic badge colour.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentTerm>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersPaymentTermsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.Error>;
+    customersPaymentTermsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.PaymentTerm>;
     customersPaymentTermsUpdate(
         paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
         ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PaymentTerm> {
         let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1435,21 +1435,21 @@ export class CustomersValueLists {
      *
      * @param {CustomersVocabulariesGetName} params.name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Vocabulary>}
      */
-    customersVocabulariesGet(params: { name: CustomersVocabulariesGetName }): Promise<Models.Error>;
+    customersVocabulariesGet(params: { name: CustomersVocabulariesGetName }): Promise<Models.Vocabulary>;
     /**
      * One vocabulary in full: every permitted value, each with its title, its description and the badge tone a client renders it with — enough to build a select without a second call. Two kinds of set, and 'source' says which one answered. 'schema' — the values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift; a value added to the constraint appears here even before anyone labels it, titled from its own key. 'table' — the values are the TENANT's own rows (payment terms, address types, lifecycle stages, activity types, roles), so they carry labels/descriptions per locale, is_system and is_default, and a merchant may add to them without a release of this app. 'tenant'/'defaults' are the two answers for a set the merchant configures but may not extend. Either way 'closed' is true: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label. Values come back in the order a select should offer them — lifecycle order for a status, the merchant's own position for a table. Names: address-types, contact-event-kinds, contact-statuses, lifecycle-stages, locales, organization-statuses, payment-terms, registration-statuses, roles, rule-matches, segment-sources.
      *
      * @param {CustomersVocabulariesGetName} name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Vocabulary>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersVocabulariesGet(name: CustomersVocabulariesGetName): Promise<Models.Error>;
+    customersVocabulariesGet(name: CustomersVocabulariesGetName): Promise<Models.Vocabulary>;
     customersVocabulariesGet(
         paramsOrFirst: { name: CustomersVocabulariesGetName } | CustomersVocabulariesGetName    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Vocabulary> {
         let params: { name: CustomersVocabulariesGetName };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('name' in paramsOrFirst))) {

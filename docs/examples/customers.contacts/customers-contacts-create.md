@@ -11,6 +11,7 @@ const customersContacts = new CustomersContacts(client);
 
 const result = await customersContacts.customersContactsCreate({
     email: 'einkauf@example.com',
+    externalId: 'ASP000047', // optional
     firstName: 'Anna', // optional
     isPrimary: true, // optional
     jobTitle: 'Einkaufsleitung', // optional

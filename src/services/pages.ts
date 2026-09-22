@@ -97,21 +97,21 @@ export class Pages {
      *
      * @param {string} params.id - The library item id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pagesLibraryDelete(params: { id: string }): Promise<Models.Error>;
+    pagesLibraryDelete(params: { id: string }): Promise<{}>;
     /**
      * Retires a reusable block. It leaves the picker and every list, but the blocks pointing at it keep their `library_item_id` — the FK's `set null` belongs to a hard delete, and this writes a tombstone. Delivery then skips the expansion for a struck item rather than failing on it, so a page that used it falls back to the block content stored in its own published revision: nothing breaks, but the pages quietly stop tracking each other. Nothing here tells you which pages those are, so establish that before striking it.
      *
      * @param {string} id - The library item id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesLibraryDelete(id: string): Promise<Models.Error>;
+    pagesLibraryDelete(id: string): Promise<{}>;
     pagesLibraryDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -148,21 +148,21 @@ export class Pages {
      *
      * @param {string} params.id - The library item id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.LibraryItem>}
      */
-    pagesLibraryGet(params: { id: string }): Promise<Models.Error>;
+    pagesLibraryGet(params: { id: string }): Promise<Models.LibraryItem>;
     /**
      * The stored subtree behind one reusable block, so a picker can preview what dropping it into a page would produce. Because delivery expands the reference against THIS row at read time, what comes back is also what every page already using the item is currently rendering — which makes this the call to make before editing one.
      *
      * @param {string} id - The library item id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.LibraryItem>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesLibraryGet(id: string): Promise<Models.Error>;
+    pagesLibraryGet(id: string): Promise<Models.LibraryItem>;
     pagesLibraryGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.LibraryItem> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -202,9 +202,9 @@ export class Pages {
      * @param {string} params.label - What the item is called in the picker.
      * @param {object} params.tree - A block and its whole subtree, serialized. Produced by the editor when a selection is made reusable or saved as a template, and instantiated back into real blocks when one is inserted.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.LibraryItem>}
      */
-    pagesLibraryUpdate(params: { id: string, bundle?: string, label?: string, tree?: object }): Promise<Models.Error>;
+    pagesLibraryUpdate(params: { id: string, bundle?: string, label?: string, tree?: object }): Promise<Models.LibraryItem>;
     /**
      * The one write in this app whose blast radius is not a single page. Delivery expands a library reference against this row every time it serves, so replacing `tree` re-renders every page that points at the item — published ones included — without any of them being edited, republished or even touched. Nothing warns you first and no revision records it, because the pages did not change; the item did. Changing `label` or `bundle` only moves the item around the picker. Detaching one page from the item, so it keeps a copy of its own, is an editor mutation and not this route.
      *
@@ -213,14 +213,14 @@ export class Pages {
      * @param {string} label - What the item is called in the picker.
      * @param {object} tree - A block and its whole subtree, serialized. Produced by the editor when a selection is made reusable or saved as a template, and instantiated back into real blocks when one is inserted.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.LibraryItem>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesLibraryUpdate(id: string, bundle?: string, label?: string, tree?: object): Promise<Models.Error>;
+    pagesLibraryUpdate(id: string, bundle?: string, label?: string, tree?: object): Promise<Models.LibraryItem>;
     pagesLibraryUpdate(
         paramsOrFirst: { id: string, bundle?: string, label?: string, tree?: object } | string,
         ...rest: [(string)?, (string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.LibraryItem> {
         let params: { id: string, bundle?: string, label?: string, tree?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -341,9 +341,9 @@ export class Pages {
      * @param {string} params.menuKey - The stable slot the theme asks for this menu by. Idempotency is keyed on it: sending an existing key replaces that menu instead of creating a second one.
      * @param {Models.PageMenuItem[]} params.items - The ordered navigation tree. Replaces the stored one completely.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Menu>}
      */
-    pagesMenusUpsert(params: { label: string, menuKey: string, items?: Models.PageMenuItem[] }): Promise<Models.Error>;
+    pagesMenusUpsert(params: { label: string, menuKey: string, items?: Models.PageMenuItem[] }): Promise<Models.Menu>;
     /**
      * Writes a menu by its KEY rather than by its id, which is what makes theme seeding safe to repeat: a key the tenant already has has its label and items replaced in place, a key it does not have is created. `items` is replaced wholesale and never merged, so sending an empty list empties the navigation. One caveat worth reading before you rely on the idempotence: the key's uniqueness is this route's doing and not the database's — `menu_key` carries an index but no unique constraint — so a duplicate key created any other way leaves this route updating whichever row it finds first.
      *
@@ -351,14 +351,14 @@ export class Pages {
      * @param {string} menuKey - The stable slot the theme asks for this menu by. Idempotency is keyed on it: sending an existing key replaces that menu instead of creating a second one.
      * @param {Models.PageMenuItem[]} items - The ordered navigation tree. Replaces the stored one completely.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Menu>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesMenusUpsert(label: string, menuKey: string, items?: Models.PageMenuItem[]): Promise<Models.Error>;
+    pagesMenusUpsert(label: string, menuKey: string, items?: Models.PageMenuItem[]): Promise<Models.Menu>;
     pagesMenusUpsert(
         paramsOrFirst: { label: string, menuKey: string, items?: Models.PageMenuItem[] } | string,
         ...rest: [(string)?, (Models.PageMenuItem[])?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Menu> {
         let params: { label: string, menuKey: string, items?: Models.PageMenuItem[] };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -412,21 +412,21 @@ export class Pages {
      *
      * @param {string} params.id - The menu row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pagesMenusDelete(params: { id: string }): Promise<Models.Error>;
+    pagesMenusDelete(params: { id: string }): Promise<{}>;
     /**
      * Writes the tombstone. The menu drops out of the management list and out of `GET /pages/delivery/menus` in the same moment, so a theme that reads its key gets nothing back and renders nothing — there is no fallback and no error a storefront could act on. The key is free immediately, which means re-seeding the theme is the way back. Check what reads the key before striking it.
      *
      * @param {string} id - The menu row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesMenusDelete(id: string): Promise<Models.Error>;
+    pagesMenusDelete(id: string): Promise<{}>;
     pagesMenusDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -463,21 +463,21 @@ export class Pages {
      *
      * @param {string} params.id - The menu row id — not the menu key.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Menu>}
      */
-    pagesMenusGet(params: { id: string }): Promise<Models.Error>;
+    pagesMenusGet(params: { id: string }): Promise<Models.Menu>;
     /**
      * One menu and its whole item tree — the ordered links a theme renders as its header, footer or account navigation. `items` is nested, not one level, so this is the entire navigation for that key in a single read. Addressed by ROW ID here; the key a theme knows it by is `menu_key` on the body, and the route that works by key is the upsert.
      *
      * @param {string} id - The menu row id — not the menu key.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Menu>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesMenusGet(id: string): Promise<Models.Error>;
+    pagesMenusGet(id: string): Promise<Models.Menu>;
     pagesMenusGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Menu> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -516,9 +516,9 @@ export class Pages {
      * @param {Models.PageMenuItem[]} params.items - The ordered navigation tree. Replaces the stored one completely.
      * @param {string} params.label - What this menu is called for the people who edit it.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Menu>}
      */
-    pagesMenusUpdate(params: { id: string, items?: Models.PageMenuItem[], label?: string }): Promise<Models.Error>;
+    pagesMenusUpdate(params: { id: string, items?: Models.PageMenuItem[], label?: string }): Promise<Models.Menu>;
     /**
      * The same write as the upsert, for a caller that already holds the row id — use this when editing a menu a person picked from a list, and the upsert when reconciling a theme's defaults. `menu_key` is deliberately not editable here: the key is the handle every theme reads the menu by, so changing it would empty whatever is rendering that key without anything reporting an error.
      *
@@ -526,14 +526,14 @@ export class Pages {
      * @param {Models.PageMenuItem[]} items - The ordered navigation tree. Replaces the stored one completely.
      * @param {string} label - What this menu is called for the people who edit it.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Menu>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesMenusUpdate(id: string, items?: Models.PageMenuItem[], label?: string): Promise<Models.Error>;
+    pagesMenusUpdate(id: string, items?: Models.PageMenuItem[], label?: string): Promise<Models.Menu>;
     pagesMenusUpdate(
         paramsOrFirst: { id: string, items?: Models.PageMenuItem[], label?: string } | string,
         ...rest: [(Models.PageMenuItem[])?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Menu> {
         let params: { id: string, items?: Models.PageMenuItem[], label?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -673,9 +673,9 @@ export class Pages {
      * @param {string} params.slug - The path segment the storefront routes it under, without a leading slash. Unique per tenant among live pages; omit or send null for a page reached only by id. Nothing here derives one from the title.
      * @param {string} params.sourceLanguage - The language you are authoring in, and the fallback for every later translation. Omit to take the default_source_language setting for the request market.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Page>}
      */
-    pagesPagesCreate(params: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string }): Promise<Models.Error>;
+    pagesPagesCreate(params: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string }): Promise<Models.Page>;
     /**
      * Writes two rows, not one: the page itself and the translation row for its source language, so a page is never without the language it was authored in and `GET /pages/delivery/page?slug=` can match a localized URL from the first moment. Everything the caller leaves out comes from the tenant's settings, not from a literal in this app: `bundle` from default_page_bundle, `sourceLanguage` from default_source_language (resolved for the request's market), and the status of both the page and its source translation from default_page_status (draft | published).
      *
@@ -686,14 +686,14 @@ export class Pages {
      * @param {string} slug - The path segment the storefront routes it under, without a leading slash. Unique per tenant among live pages; omit or send null for a page reached only by id. Nothing here derives one from the title.
      * @param {string} sourceLanguage - The language you are authoring in, and the fallback for every later translation. Omit to take the default_source_language setting for the request market.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Page>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesPagesCreate(title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string): Promise<Models.Error>;
+    pagesPagesCreate(title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string): Promise<Models.Page>;
     pagesPagesCreate(
         paramsOrFirst: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string } | string,
         ...rest: [(string)?, (object)?, (object)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Page> {
         let params: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -759,21 +759,21 @@ export class Pages {
      *
      * @param {string} params.id - The page id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pagesPagesDelete(params: { id: string }): Promise<Models.Error>;
+    pagesPagesDelete(params: { id: string }): Promise<{}>;
     /**
      * Writes a tombstone. The page leaves every list, every read and all delivery at once, and its slug is immediately free for another page — the unique index counts live rows only. Nothing is erased: the translations, blocks, edit state, revisions, comments and preview grants that hang off the page all keep their rows, because their `on delete cascade` belongs to a hard delete and this is not one. So a page can be brought back intact by clearing `deleted_at` — but not through this app, which publishes no route that does it.
      *
      * @param {string} id - The page id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesPagesDelete(id: string): Promise<Models.Error>;
+    pagesPagesDelete(id: string): Promise<{}>;
     pagesPagesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -810,21 +810,21 @@ export class Pages {
      *
      * @param {string} params.id - The page id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Page>}
      */
-    pagesPagesGet(params: { id: string }): Promise<Models.Error>;
+    pagesPagesGet(params: { id: string }): Promise<Models.Page>;
     /**
      * One page RECORD: what it is called, where it routes, what type it is, which revision is live. Not its content — the blocks are not on this row and no expansion here returns them. The editor reads them with `GET /pages/editor/{page_id}/state`, a renderer with `GET /pages/delivery/page`. A soft-deleted page answers 404 exactly like one that never existed, so this is also the check for whether an id is still good.
      *
      * @param {string} id - The page id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Page>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesPagesGet(id: string): Promise<Models.Error>;
+    pagesPagesGet(id: string): Promise<Models.Page>;
     pagesPagesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Page> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -866,9 +866,9 @@ export class Pages {
      * @param {PageStatus} params.status - The lifecycle status. Setting `published` here does NOT publish content — delivery still needs a revision, which only `POST /pages/editor/{page_id}/publish` writes.
      * @param {string} params.title - The page title in its source language.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Page>}
      */
-    pagesPagesUpdate(params: { id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string }): Promise<Models.Error>;
+    pagesPagesUpdate(params: { id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string }): Promise<Models.Page>;
     /**
      * Corrects the page RECORD — the five fields an editor changes without opening the visual editor, which are `title`, `slug`, `status`, `meta` and `bundle`, and no others. Anything else in the body is dropped rather than refused, and the block tree is unreachable from here by design: content moves only through the editor's mutation log, so a caller cannot half-edit a page behind the undo history's back. Two consequences worth knowing before you call it: a slug is unique among live pages, so claiming one that is held answers 409; and setting `status` to published does NOT put anything in front of a visitor — delivery needs a revision, which only `POST /pages/editor/{page_id}/publish` writes.
      *
@@ -879,14 +879,14 @@ export class Pages {
      * @param {PageStatus} status - The lifecycle status. Setting `published` here does NOT publish content — delivery still needs a revision, which only `POST /pages/editor/{page_id}/publish` writes.
      * @param {string} title - The page title in its source language.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Page>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesPagesUpdate(id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string): Promise<Models.Error>;
+    pagesPagesUpdate(id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string): Promise<Models.Page>;
     pagesPagesUpdate(
         paramsOrFirst: { id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string } | string,
         ...rest: [(string)?, (object)?, (string)?, (PageStatus)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Page> {
         let params: { id: string, bundle?: string, meta?: object, slug?: string, status?: PageStatus, title?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -956,9 +956,9 @@ export class Pages {
      * @param {string} params.createdByName - Exact display name recorded at publish time.
      * @param {string} params.createdAt - Exact publication timestamp, RFC 3339. Equality only — this data plane has no range operator, so walk the history with `order=created_at.desc` and `limit` instead.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pagesPagesRevisions(params: { id: string, limit?: number, offset?: number, order?: string, label?: string, createdBy?: string, createdByName?: string, createdAt?: string }): Promise<Models.Error>;
+    pagesPagesRevisions(params: { id: string, limit?: number, offset?: number, order?: string, label?: string, createdBy?: string, createdByName?: string, createdAt?: string }): Promise<{}>;
     /**
      * One entry per publication, newest first, which is the order a history is read in and the one this route sorts by unless `order` says otherwise. The `snapshot` — the whole published page, in every language — is deliberately not in the index: it is page-sized, and nothing that renders a history needs it.
      *
@@ -971,14 +971,14 @@ export class Pages {
      * @param {string} createdByName - Exact display name recorded at publish time.
      * @param {string} createdAt - Exact publication timestamp, RFC 3339. Equality only — this data plane has no range operator, so walk the history with `order=created_at.desc` and `limit` instead.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesPagesRevisions(id: string, limit?: number, offset?: number, order?: string, label?: string, createdBy?: string, createdByName?: string, createdAt?: string): Promise<Models.Error>;
+    pagesPagesRevisions(id: string, limit?: number, offset?: number, order?: string, label?: string, createdBy?: string, createdByName?: string, createdAt?: string): Promise<{}>;
     pagesPagesRevisions(
         paramsOrFirst: { id: string, limit?: number, offset?: number, order?: string, label?: string, createdBy?: string, createdByName?: string, createdAt?: string } | string,
         ...rest: [(number)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string, limit?: number, offset?: number, order?: string, label?: string, createdBy?: string, createdByName?: string, createdAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1239,21 +1239,21 @@ export class Pages {
      *
      * @param {string} params.id - The template id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pagesTemplatesDelete(params: { id: string }): Promise<Models.Error>;
+    pagesTemplatesDelete(params: { id: string }): Promise<{}>;
     /**
      * Removes the template row outright. This is the one delete in the app that is not a tombstone — `templates` carries no `deleted_at` — so it cannot be undone and the id will not come back. Nothing else breaks by it: pages built from the template hold their own copy of the blocks and never referenced the row.
      *
      * @param {string} id - The template id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesTemplatesDelete(id: string): Promise<Models.Error>;
+    pagesTemplatesDelete(id: string): Promise<{}>;
     pagesTemplatesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1290,21 +1290,21 @@ export class Pages {
      *
      * @param {string} params.id - The template id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Template>}
      */
-    pagesTemplatesGet(params: { id: string }): Promise<Models.Error>;
+    pagesTemplatesGet(params: { id: string }): Promise<Models.Template>;
     /**
      * The blocks a page would START from if an editor picked this template — read it to preview the insert. A template is a COPY source, the opposite of a library item: nothing links back from the pages already built from it, so this tells you what future pages get and nothing about existing ones.
      *
      * @param {string} id - The template id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Template>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesTemplatesGet(id: string): Promise<Models.Error>;
+    pagesTemplatesGet(id: string): Promise<Models.Template>;
     pagesTemplatesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Template> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1347,9 +1347,9 @@ export class Pages {
      * @param {string} params.pageBundle - The page type this template is offered on. Null offers it on every page type.
      * @param {Models.PageBlockTree[]} params.tree - The blocks the template inserts, in order. Replaces the stored tree completely.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Template>}
      */
-    pagesTemplatesUpdate(params: { id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: Models.PageBlockTree[] }): Promise<Models.Error>;
+    pagesTemplatesUpdate(params: { id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: Models.PageBlockTree[] }): Promise<Models.Template>;
     /**
      * Edits what a future page will start from. Because templates copy rather than share, this reaches nothing that already exists — pages built from it keep the blocks they were handed, which is exactly the property that makes a template safe to edit and a library item dangerous. `is_default` is the one field with an effect past the picker: it decides what a new page of `page_bundle` starts with, and nothing here stops two templates of the same bundle from both claiming it, so which one wins is left to whoever reads the list.
      *
@@ -1361,14 +1361,14 @@ export class Pages {
      * @param {string} pageBundle - The page type this template is offered on. Null offers it on every page type.
      * @param {Models.PageBlockTree[]} tree - The blocks the template inserts, in order. Replaces the stored tree completely.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Template>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesTemplatesUpdate(id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: Models.PageBlockTree[]): Promise<Models.Error>;
+    pagesTemplatesUpdate(id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: Models.PageBlockTree[]): Promise<Models.Template>;
     pagesTemplatesUpdate(
         paramsOrFirst: { id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: Models.PageBlockTree[] } | string,
         ...rest: [(string)?, (string)?, (boolean)?, (string)?, (string)?, (Models.PageBlockTree[])?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Template> {
         let params: { id: string, description?: string, fieldName?: string, isDefault?: boolean, label?: string, pageBundle?: string, tree?: Models.PageBlockTree[] };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1459,21 +1459,21 @@ export class Pages {
      *
      * @param {PagesVocabulariesGetName} params.name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PagesVocabulary>}
      */
-    pagesVocabulariesGet(params: { name: PagesVocabulariesGetName }): Promise<Models.Error>;
+    pagesVocabulariesGet(params: { name: PagesVocabulariesGetName }): Promise<Models.PagesVocabulary>;
     /**
      * One vocabulary unpacked: every value the column permits, each with the title to show for it, the sentence explaining it and the badge tone to render it in — everything a select or a status pill needs, so nothing downstream keeps its own copy of the labels. The values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift — a value added to the constraint appears here even before anyone labels it, titled from its own key. Values come back in constraint order, which is the order a select should offer. 'closed' says the set is exhaustive, so a value outside it is stale data rather than a missing label. Names: edit-state-statuses, page-statuses, translation-statuses.
      *
      * @param {PagesVocabulariesGetName} name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PagesVocabulary>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesVocabulariesGet(name: PagesVocabulariesGetName): Promise<Models.Error>;
+    pagesVocabulariesGet(name: PagesVocabulariesGetName): Promise<Models.PagesVocabulary>;
     pagesVocabulariesGet(
         paramsOrFirst: { name: PagesVocabulariesGetName } | PagesVocabulariesGetName    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PagesVocabulary> {
         let params: { name: PagesVocabulariesGetName };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('name' in paramsOrFirst))) {

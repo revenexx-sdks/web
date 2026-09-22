@@ -10,7 +10,8 @@ const client = new Client()
 const customers = new Customers(client);
 
 const result = await customers.customersPrincipalResolve({
-    contactId: ''
+    contactId: '', // optional
+    userId: '284392058374652910' // optional
 });
 
 console.log(result);

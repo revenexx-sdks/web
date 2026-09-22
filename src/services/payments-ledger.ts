@@ -157,9 +157,9 @@ export class PaymentsLedger {
      * @param {string} params.orderRef - The external order reference the checkout wrote onto the payment. It is what POST /payments/orders/{order_ref}/capture resolves and the fallback key a PSP webhook is matched on when it carries no transaction id — so an integration that leaves it null gives up both. Free text with no uniqueness: several payments may share one reference.
      * @param {string} params.returnUrl - Where the PSP sends the buyer back after a redirect or a 3-D Secure challenge. Kept in `metadata.return_url` and handed to the driver — a PSP method that needs a redirect and has none leaves the buyer stranded at the provider.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      */
-    paymentsCreate(params: { amount: number, methodCode: string, cartId?: string, contactId?: string, country?: string, currency?: string, idempotencyKey?: string, metadata?: object, orderRef?: string, returnUrl?: string }): Promise<Models.Error>;
+    paymentsCreate(params: { amount: number, methodCode: string, cartId?: string, contactId?: string, country?: string, currency?: string, idempotencyKey?: string, metadata?: object, orderRef?: string, returnUrl?: string }): Promise<Models.Payment>;
     /**
      * The checkout's write: it opens the ledger row and takes it as far as the named method allows, in one call. A create cannot omit `method_code` and `amount`; every other column is optional or defaulted by the database. Nothing else about the money is the caller's to choose: `kind`, `provider` and `fee_amount` are read off the method that `method_code` names, so a caller can neither pick an acquirer nor discount its own fee. `amount: 0` is legal (free orders); negative is 400. Eligibility is enforced HERE and not only in the checkout UI — the same country and order-value rules POST /payments/methods/eligible applies answer 422 if the method does not apply to this buyer. What comes back depends on the method: a self-managed one (invoice, prepayment) is `authorized` at once with the dunning clock already started, and a PSP one is `captured` or `authorized`, or `requires_action` with `next_action` — the instruction the storefront must carry out, typically a redirect, set at that status and at no other. Send an `idempotency_key` and a repeat of the same call answers 200 with the payment that key already named, unchanged and not re-authorized. What is never stored: the `instrument`, `token` or `card` is handed to the driver in-process and no token or PAN is written to the row.
      *
@@ -174,14 +174,14 @@ export class PaymentsLedger {
      * @param {string} orderRef - The external order reference the checkout wrote onto the payment. It is what POST /payments/orders/{order_ref}/capture resolves and the fallback key a PSP webhook is matched on when it carries no transaction id — so an integration that leaves it null gives up both. Free text with no uniqueness: several payments may share one reference.
      * @param {string} returnUrl - Where the PSP sends the buyer back after a redirect or a 3-D Secure challenge. Kept in `metadata.return_url` and handed to the driver — a PSP method that needs a redirect and has none leaves the buyer stranded at the provider.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsCreate(amount: number, methodCode: string, cartId?: string, contactId?: string, country?: string, currency?: string, idempotencyKey?: string, metadata?: object, orderRef?: string, returnUrl?: string): Promise<Models.Error>;
+    paymentsCreate(amount: number, methodCode: string, cartId?: string, contactId?: string, country?: string, currency?: string, idempotencyKey?: string, metadata?: object, orderRef?: string, returnUrl?: string): Promise<Models.Payment>;
     paymentsCreate(
         paramsOrFirst: { amount: number, methodCode: string, cartId?: string, contactId?: string, country?: string, currency?: string, idempotencyKey?: string, metadata?: object, orderRef?: string, returnUrl?: string } | number,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Payment> {
         let params: { amount: number, methodCode: string, cartId?: string, contactId?: string, country?: string, currency?: string, idempotencyKey?: string, metadata?: object, orderRef?: string, returnUrl?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -353,21 +353,21 @@ export class PaymentsLedger {
      *
      * @param {string} params.orderRef - The external order reference the checkout wrote onto the payment, trimmed before it is resolved. Free text — the example is an invented shape, not a reference any tenant holds, and one no payment carries answers 404.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    paymentsOrdersCapture(params: { orderRef: string }): Promise<Models.Error>;
+    paymentsOrdersCapture(params: { orderRef: string }): Promise<{}>;
     /**
      * This is the hook the tenant's `auto_capture_policy: 'on_ship'` was written for: fulfilment knows the order it shipped and not the payment ids behind it, so the shipment calls this one route with the reference it already holds and the money for that order is collected in a single request. Resolves payments by their order_ref (the same key the PSP webhooks fall back to), captures every authorized one and reports the rest instead of failing — an order whose payment was already captured is a successful no-op, and a provider that refuses one payment lands in `skipped` rather than failing the call. Note that payments.order_ref is nullable with no foreign key: this route is exactly as good as the reference the checkout writes onto the payment.
      *
      * @param {string} orderRef - The external order reference the checkout wrote onto the payment, trimmed before it is resolved. Free text — the example is an invented shape, not a reference any tenant holds, and one no payment carries answers 404.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsOrdersCapture(orderRef: string): Promise<Models.Error>;
+    paymentsOrdersCapture(orderRef: string): Promise<{}>;
     paymentsOrdersCapture(
         paramsOrFirst: { orderRef: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { orderRef: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -427,21 +427,21 @@ export class PaymentsLedger {
      *
      * @param {PaymentsVocabulariesGetName} params.name - Which vocabulary to read. The set is closed: GET /payments/vocabularies lists exactly these.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentVocabulary>}
      */
-    paymentsVocabulariesGet(params: { name: PaymentsVocabulariesGetName }): Promise<Models.Error>;
+    paymentsVocabulariesGet(params: { name: PaymentsVocabulariesGetName }): Promise<Models.PaymentVocabulary>;
     /**
      * One set in full: every value it permits, the label to show for each and the badge tone to render it in, which is what a client needs to draw a status chip without hard-coding this app's enums. The value set is parsed out of the CHECK constraint in schema.json, so what is served IS what the database enforces. Labels are curated on top and can only add words and colour — a permitted value nobody labelled still appears, titled from its own key, which is why `title` and `description` are a locale map on a labelled value and a plain string on an unlabelled one.
      *
      * @param {PaymentsVocabulariesGetName} name - Which vocabulary to read. The set is closed: GET /payments/vocabularies lists exactly these.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PaymentVocabulary>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsVocabulariesGet(name: PaymentsVocabulariesGetName): Promise<Models.Error>;
+    paymentsVocabulariesGet(name: PaymentsVocabulariesGetName): Promise<Models.PaymentVocabulary>;
     paymentsVocabulariesGet(
         paramsOrFirst: { name: PaymentsVocabulariesGetName } | PaymentsVocabulariesGetName    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PaymentVocabulary> {
         let params: { name: PaymentsVocabulariesGetName };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('name' in paramsOrFirst))) {
@@ -481,9 +481,9 @@ export class PaymentsLedger {
      * @param {object} params.request - The captured HTTP request as the PSP sent it.
      * @param {any} params.verified - Whether the ingress verified the callback signature against the provider's `webhook_secret`. An explicit false is refused with 422: an endpoint may run in annotate mode, and the ledger stays sovereign over one that does.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    paymentsWebhooksIngest(params: { provider: string, id?: any, request?: object, verified?: any }): Promise<Models.Error>;
+    paymentsWebhooksIngest(params: { provider: string, id?: any, request?: object, verified?: any }): Promise<{}>;
     /**
      * The sink a PSP callback ends up in, and an inbound ingress endpoint in the sense of ADR-0066: the provider never posts here directly, it posts to webhooks.revenexx.com, which verifies and captures the delivery and dispatches its envelope to this route through the gateway. That indirection is also what makes this the one override point for PSP callback handling — everything a callback does to the ledger happens here and nowhere else, so a deployment that needs a provider's callbacks normalized differently replaces this operation instead of touching the lifecycle routes. Consumes the dispatch envelope from webhooks.revenexx.com: normalizes the provider callback (stripe payment intents + a generic shape), resolves the payment by psp_payment_id or order_ref and moves the ledger. Facts only move forward — provider retries and redeliveries are idempotent no-ops; unverified envelopes are refused.
      *
@@ -492,14 +492,14 @@ export class PaymentsLedger {
      * @param {object} request - The captured HTTP request as the PSP sent it.
      * @param {any} verified - Whether the ingress verified the callback signature against the provider's `webhook_secret`. An explicit false is refused with 422: an endpoint may run in annotate mode, and the ledger stays sovereign over one that does.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsWebhooksIngest(provider: string, id?: any, request?: object, verified?: any): Promise<Models.Error>;
+    paymentsWebhooksIngest(provider: string, id?: any, request?: object, verified?: any): Promise<{}>;
     paymentsWebhooksIngest(
         paramsOrFirst: { provider: string, id?: any, request?: object, verified?: any } | string,
         ...rest: [(any)?, (object)?, (any)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { provider: string, id?: any, request?: object, verified?: any };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -552,21 +552,21 @@ export class PaymentsLedger {
      *
      * @param {string} params.id - The payment. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      */
-    paymentsGet(params: { id: string }): Promise<Models.Error>;
+    paymentsGet(params: { id: string }): Promise<Models.Payment>;
     /**
      * One ledger row in full: the amount and the fee that were computed at creation, the method code and PSP it was made through, where it stands in the lifecycle, the timestamp of each transition it has been through (`authorized_at`, `captured_at`, `failed_at`, `refunded_at`), the dunning columns the daily scan maintains and, while the buyer still has something to do, `next_action`. This is the call to poll after sending a buyer to a PSP redirect. Two things it does not do: `error_message` is answered from the failure taxonomy and never carries the provider's or the runtime's own words, and there is no route that resolves a payment by `order_ref` — that column is nullable and not unique, so it is a filter on the list (`GET /payments?order_ref=…`) which may legitimately answer several rows.
      *
      * @param {string} id - The payment. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsGet(id: string): Promise<Models.Error>;
+    paymentsGet(id: string): Promise<Models.Payment>;
     paymentsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Payment> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -604,23 +604,23 @@ export class PaymentsLedger {
      * @param {string} params.id - The payment. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @param {string} params.reason - The operator's own words for why. Kept on the payment (`metadata.cancel_reason` / `metadata.refund_reason`) AND handed to the provider's own cancellation or refund reason field, so it is readable in the PSP's dashboard too. Trimmed and cut at 500 characters.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      */
-    paymentsCancel(params: { id: string, reason?: string }): Promise<Models.Error>;
+    paymentsCancel(params: { id: string, reason?: string }): Promise<Models.Payment>;
     /**
      * Drops the claim before any money has been taken — the abandoned basket, the buyer who never came back from the redirect, the invoice an operator writes off. It is the only transition that starts from three statuses rather than one, because everything short of captured can still be released. A captured payment is not cancellable at all: that is a refund, and the lattice answers 400 rather than pretending. Unlike capture and refund this transition has no time window — the merchant's `capture_expiry_days` and `refund_window_days` do not apply, so a stale authorization can always be released even once it is too old to collect. On a PSP payment the provider is called and the `reason` in the body is passed to it, so it reaches the PSP's own cancellation-reason field as well as being stored under `metadata.cancel_reason`. Cancelling stops the dunning clock: the stage goes back to `none` and the due date is cleared.
      *
      * @param {string} id - The payment. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @param {string} reason - The operator's own words for why. Kept on the payment (`metadata.cancel_reason` / `metadata.refund_reason`) AND handed to the provider's own cancellation or refund reason field, so it is readable in the PSP's dashboard too. Trimmed and cut at 500 characters.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsCancel(id: string, reason?: string): Promise<Models.Error>;
+    paymentsCancel(id: string, reason?: string): Promise<Models.Payment>;
     paymentsCancel(
         paramsOrFirst: { id: string, reason?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Payment> {
         let params: { id: string, reason?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -663,21 +663,21 @@ export class PaymentsLedger {
      *
      * @param {string} params.id - The payment. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      */
-    paymentsCapture(params: { id: string }): Promise<Models.Error>;
+    paymentsCapture(params: { id: string }): Promise<Models.Payment>;
     /**
      * Collects money that is currently only reserved. It starts from `authorized` and from nothing else — under `auto_capture_policy: 'immediate'` a payment is captured in the same request that created it and never passes through here, so this is the route for the 'manual' and 'on_ship' policies, and POST /payments/orders/{order_ref}/capture is the same operation addressed by the order reference a warehouse actually holds. There is no request body and no amount: the ledger carries one amount and one status, so a capture is the whole authorization or nothing. On a self-managed payment it takes no PSP anywhere near it — it records that an invoice or a prepayment was paid, and stops the dunning clock. Refused with 422 once the authorization is older than the tenant's `capture_expiry_days` (the message carries both numbers), because an expired authorization is declined by the provider anyway and a 422 here is the cheap version of finding out later.
      *
      * @param {string} id - The payment. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsCapture(id: string): Promise<Models.Error>;
+    paymentsCapture(id: string): Promise<Models.Payment>;
     paymentsCapture(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Payment> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -714,21 +714,21 @@ export class PaymentsLedger {
      *
      * @param {string} params.id - The payment. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      */
-    paymentsConfirm(params: { id: string }): Promise<Models.Error>;
+    paymentsConfirm(params: { id: string }): Promise<Models.Payment>;
     /**
      * The other half of a redirect. POST /payments answered `requires_action` with a `next_action` the storefront carried out — a 3-D Secure step, a wallet approval, a bank login — and this is the call that asks the PSP how it went and writes the answer to the ledger. It starts from `requires_action` and from nothing else, so a payment that already came back authorized needs no confirm and the lattice answers 400 rather than repeating one. `next_action` is cleared by this call whatever the outcome. Where the tenant's `auto_capture_policy` is 'immediate' the money is taken straight after the authorization, in the same request, so a successful confirm can come back `captured` rather than `authorized`; a failed auto-capture does not fail the confirm, because a good authorization is worth more than a tidy status.
      *
      * @param {string} id - The payment. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsConfirm(id: string): Promise<Models.Error>;
+    paymentsConfirm(id: string): Promise<Models.Payment>;
     paymentsConfirm(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Payment> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -766,23 +766,23 @@ export class PaymentsLedger {
      * @param {string} params.id - The payment. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @param {string} params.reason - The operator's own words for why. Kept on the payment (`metadata.cancel_reason` / `metadata.refund_reason`) AND handed to the provider's own cancellation or refund reason field, so it is readable in the PSP's dashboard too. Trimmed and cut at 500 characters.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      */
-    paymentsRefund(params: { id: string, reason?: string }): Promise<Models.Error>;
+    paymentsRefund(params: { id: string, reason?: string }): Promise<Models.Payment>;
     /**
      * Gives captured money back. It starts from `captured` and from nothing else — money that was only authorized is cancelled, not refunded, and the lattice answers 400 rather than guessing which was meant. All or nothing: the ledger carries one amount and one status, so there is no partial refund and no second one to express — a refunded payment is refunded in full, and a repeat is a 400 because `refunded` is not a status a refund starts from. The `reason` in the body is handed to the driver in the same call, so it reaches the PSP's own refund-reason field rather than being a note only this database ever sees, and it is stored under `metadata.refund_reason`. On a self-managed payment nothing is sent anywhere: it records that the merchant paid the buyer back by their own means. Refused with 422 once the capture is older than the tenant's `refund_window_days` (the message carries both numbers) — past that the provider stops accepting a refund against the transaction and it has to be made by bank transfer.
      *
      * @param {string} id - The payment. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
      * @param {string} reason - The operator's own words for why. Kept on the payment (`metadata.cancel_reason` / `metadata.refund_reason`) AND handed to the provider's own cancellation or refund reason field, so it is readable in the PSP's dashboard too. Trimmed and cut at 500 characters.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Payment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsRefund(id: string, reason?: string): Promise<Models.Error>;
+    paymentsRefund(id: string, reason?: string): Promise<Models.Payment>;
     paymentsRefund(
         paramsOrFirst: { id: string, reason?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Payment> {
         let params: { id: string, reason?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

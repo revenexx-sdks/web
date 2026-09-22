@@ -139,9 +139,9 @@ export class ProductsDataModel {
      * @param {object} params.labels - What the asset family is called, per language tag.
      * @param {object} params.namingConvention - How a file of this family is named, so an import can bind a file to a product without a mapping table. `source` is the product value the file name is built from, `pattern` how it is assembled, `allowed_extensions` what may be uploaded.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssetFamilies>}
      */
-    productsAssetFamiliesCreate(params: { code: string, labels?: object, namingConvention?: object }): Promise<Models.Error>;
+    productsAssetFamiliesCreate(params: { code: string, labels?: object, namingConvention?: object }): Promise<Models.AssetFamilies>;
     /**
      * Creates one asset family and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -153,14 +153,14 @@ export class ProductsDataModel {
      * @param {object} labels - What the asset family is called, per language tag.
      * @param {object} namingConvention - How a file of this family is named, so an import can bind a file to a product without a mapping table. `source` is the product value the file name is built from, `pattern` how it is assembled, `allowed_extensions` what may be uploaded.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssetFamilies>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssetFamiliesCreate(code: string, labels?: object, namingConvention?: object): Promise<Models.Error>;
+    productsAssetFamiliesCreate(code: string, labels?: object, namingConvention?: object): Promise<Models.AssetFamilies>;
     productsAssetFamiliesCreate(
         paramsOrFirst: { code: string, labels?: object, namingConvention?: object } | string,
         ...rest: [(object)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AssetFamilies> {
         let params: { code: string, labels?: object, namingConvention?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -215,9 +215,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `asset_families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/asset_families`. An id no asset familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsAssetFamiliesDelete(params: { id: string }): Promise<Models.Error>;
+    productsAssetFamiliesDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one asset family by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -227,13 +227,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `asset_families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/asset_families`. An id no asset familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssetFamiliesDelete(id: string): Promise<Models.Error>;
+    productsAssetFamiliesDelete(id: string): Promise<{}>;
     productsAssetFamiliesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -276,9 +276,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `asset_families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/asset_families`. An id no asset familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssetFamilies>}
      */
-    productsAssetFamiliesGet(params: { id: string }): Promise<Models.Error>;
+    productsAssetFamiliesGet(params: { id: string }): Promise<Models.AssetFamilies>;
     /**
      * Reads one asset family by its id — the whole row, every column, as it is stored.
      * 
@@ -290,13 +290,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `asset_families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/asset_families`. An id no asset familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssetFamilies>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssetFamiliesGet(id: string): Promise<Models.Error>;
+    productsAssetFamiliesGet(id: string): Promise<Models.AssetFamilies>;
     productsAssetFamiliesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AssetFamilies> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -340,9 +340,9 @@ export class ProductsDataModel {
      * @param {object} params.labels - What the asset family is called, per language tag.
      * @param {object} params.namingConvention - How a file of this family is named, so an import can bind a file to a product without a mapping table. `source` is the product value the file name is built from, `pattern` how it is assembled, `allowed_extensions` what may be uploaded.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssetFamilies>}
      */
-    productsAssetFamiliesUpdate(params: { id: string, code?: string, labels?: object, namingConvention?: object }): Promise<Models.Error>;
+    productsAssetFamiliesUpdate(params: { id: string, code?: string, labels?: object, namingConvention?: object }): Promise<Models.AssetFamilies>;
     /**
      * Updates one asset family by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -355,14 +355,14 @@ export class ProductsDataModel {
      * @param {object} labels - What the asset family is called, per language tag.
      * @param {object} namingConvention - How a file of this family is named, so an import can bind a file to a product without a mapping table. `source` is the product value the file name is built from, `pattern` how it is assembled, `allowed_extensions` what may be uploaded.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssetFamilies>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssetFamiliesUpdate(id: string, code?: string, labels?: object, namingConvention?: object): Promise<Models.Error>;
+    productsAssetFamiliesUpdate(id: string, code?: string, labels?: object, namingConvention?: object): Promise<Models.AssetFamilies>;
     productsAssetFamiliesUpdate(
         paramsOrFirst: { id: string, code?: string, labels?: object, namingConvention?: object } | string,
         ...rest: [(string)?, (object)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AssetFamilies> {
         let params: { id: string, code?: string, labels?: object, namingConvention?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -538,9 +538,9 @@ export class ProductsDataModel {
      * @param {boolean} params.isTwoWay - Declares the relation symmetric — an accessory of A is an accessory of B. It is a declaration a client reads: this app stores one row per direction and does not create the mirror for you.
      * @param {object} params.labels - What the relation is called in a product form, per language tag.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssociationTypes>}
      */
-    productsAssociationTypesCreate(params: { code: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object }): Promise<Models.Error>;
+    productsAssociationTypesCreate(params: { code: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object }): Promise<Models.AssociationTypes>;
     /**
      * Creates one association type and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -553,14 +553,14 @@ export class ProductsDataModel {
      * @param {boolean} isTwoWay - Declares the relation symmetric — an accessory of A is an accessory of B. It is a declaration a client reads: this app stores one row per direction and does not create the mirror for you.
      * @param {object} labels - What the relation is called in a product form, per language tag.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssociationTypes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssociationTypesCreate(code: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object): Promise<Models.Error>;
+    productsAssociationTypesCreate(code: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object): Promise<Models.AssociationTypes>;
     productsAssociationTypesCreate(
         paramsOrFirst: { code: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object } | string,
         ...rest: [(boolean)?, (boolean)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AssociationTypes> {
         let params: { code: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -620,9 +620,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `association_types` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/association_types`. An id no association type of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsAssociationTypesDelete(params: { id: string }): Promise<Models.Error>;
+    productsAssociationTypesDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one association type by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -632,13 +632,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `association_types` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/association_types`. An id no association type of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssociationTypesDelete(id: string): Promise<Models.Error>;
+    productsAssociationTypesDelete(id: string): Promise<{}>;
     productsAssociationTypesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -681,9 +681,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `association_types` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/association_types`. An id no association type of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssociationTypes>}
      */
-    productsAssociationTypesGet(params: { id: string }): Promise<Models.Error>;
+    productsAssociationTypesGet(params: { id: string }): Promise<Models.AssociationTypes>;
     /**
      * Reads one association type by its id — the whole row, every column, as it is stored.
      * 
@@ -695,13 +695,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `association_types` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/association_types`. An id no association type of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssociationTypes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssociationTypesGet(id: string): Promise<Models.Error>;
+    productsAssociationTypesGet(id: string): Promise<Models.AssociationTypes>;
     productsAssociationTypesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AssociationTypes> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -746,9 +746,9 @@ export class ProductsDataModel {
      * @param {boolean} params.isTwoWay - Declares the relation symmetric — an accessory of A is an accessory of B. It is a declaration a client reads: this app stores one row per direction and does not create the mirror for you.
      * @param {object} params.labels - What the relation is called in a product form, per language tag.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssociationTypes>}
      */
-    productsAssociationTypesUpdate(params: { id: string, code?: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object }): Promise<Models.Error>;
+    productsAssociationTypesUpdate(params: { id: string, code?: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object }): Promise<Models.AssociationTypes>;
     /**
      * Updates one association type by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -762,14 +762,14 @@ export class ProductsDataModel {
      * @param {boolean} isTwoWay - Declares the relation symmetric — an accessory of A is an accessory of B. It is a declaration a client reads: this app stores one row per direction and does not create the mirror for you.
      * @param {object} labels - What the relation is called in a product form, per language tag.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AssociationTypes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssociationTypesUpdate(id: string, code?: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object): Promise<Models.Error>;
+    productsAssociationTypesUpdate(id: string, code?: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object): Promise<Models.AssociationTypes>;
     productsAssociationTypesUpdate(
         paramsOrFirst: { id: string, code?: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object } | string,
         ...rest: [(string)?, (boolean)?, (boolean)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AssociationTypes> {
         let params: { id: string, code?: string, isQuantified?: boolean, isTwoWay?: boolean, labels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -833,9 +833,9 @@ export class ProductsDataModel {
      * @param {string} params.channel - Resolves the storage path of every scopable field, and narrows `required` to the channels the family requires the attribute in.
      * @param {Kind} params.kind - The product kind the fields are for. 'model' locks the family's variant axes, which are set on the variants.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsAttributeSchema(params?: { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind }): Promise<Models.Error>;
+    productsAttributeSchema(params?: { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind }): Promise<{}>;
     /**
      * Which fields does this family have — one ready-to-render list, not six joined tables. The catalog's SHAPE is tenant data: a product's properties are rows in `attributes`, grouped by `attribute_groups`, selected per family by `family_attributes`, with their permitted values in `attribute_options` and their variant axes in `family_variants`. Reading that shape used to mean five reads, a join, and a private `attributes.type` → input mapping in every client — and that mapping is the part that must live here, because the type list carries no CHECK by design and an integrator extends it. Answers one field list instead, ordered by group then by the family's own ordering. Without a family it answers every attribute declared for `entity_type`/`entity_ref` — the shape of a reference entity's records or an asset family, which have attributes but no family. Writes nothing.
      *
@@ -847,14 +847,14 @@ export class ProductsDataModel {
      * @param {string} channel - Resolves the storage path of every scopable field, and narrows `required` to the channels the family requires the attribute in.
      * @param {Kind} kind - The product kind the fields are for. 'model' locks the family's variant axes, which are set on the variants.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeSchema(familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind): Promise<Models.Error>;
+    productsAttributeSchema(familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind): Promise<{}>;
     productsAttributeSchema(
         paramsOrFirst?: { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind } | string,
         ...rest: [(string)?, (EntityType)?, (string)?, (string)?, (string)?, (Kind)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1043,9 +1043,9 @@ export class ProductsDataModel {
      * @param {object} params.labels - The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English.
      * @param {number} params.position - Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeGroups>}
      */
-    productsAttributeGroupsCreate(params: { code: string, labels?: object, position?: number }): Promise<Models.Error>;
+    productsAttributeGroupsCreate(params: { code: string, labels?: object, position?: number }): Promise<Models.AttributeGroups>;
     /**
      * Creates one attribute group and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -1057,14 +1057,14 @@ export class ProductsDataModel {
      * @param {object} labels - The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English.
      * @param {number} position - Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeGroups>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeGroupsCreate(code: string, labels?: object, position?: number): Promise<Models.Error>;
+    productsAttributeGroupsCreate(code: string, labels?: object, position?: number): Promise<Models.AttributeGroups>;
     productsAttributeGroupsCreate(
         paramsOrFirst: { code: string, labels?: object, position?: number } | string,
         ...rest: [(object)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AttributeGroups> {
         let params: { code: string, labels?: object, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1119,9 +1119,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `attribute_groups` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_groups`. An id no attribute group of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsAttributeGroupsDelete(params: { id: string }): Promise<Models.Error>;
+    productsAttributeGroupsDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one attribute group by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -1131,13 +1131,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `attribute_groups` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_groups`. An id no attribute group of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeGroupsDelete(id: string): Promise<Models.Error>;
+    productsAttributeGroupsDelete(id: string): Promise<{}>;
     productsAttributeGroupsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1180,9 +1180,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `attribute_groups` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_groups`. An id no attribute group of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeGroups>}
      */
-    productsAttributeGroupsGet(params: { id: string }): Promise<Models.Error>;
+    productsAttributeGroupsGet(params: { id: string }): Promise<Models.AttributeGroups>;
     /**
      * Reads one attribute group by its id — the whole row, every column, as it is stored.
      * 
@@ -1194,13 +1194,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `attribute_groups` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_groups`. An id no attribute group of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeGroups>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeGroupsGet(id: string): Promise<Models.Error>;
+    productsAttributeGroupsGet(id: string): Promise<Models.AttributeGroups>;
     productsAttributeGroupsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AttributeGroups> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1244,9 +1244,9 @@ export class ProductsDataModel {
      * @param {object} params.labels - The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English.
      * @param {number} params.position - Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeGroups>}
      */
-    productsAttributeGroupsUpdate(params: { id: string, code?: string, labels?: object, position?: number }): Promise<Models.Error>;
+    productsAttributeGroupsUpdate(params: { id: string, code?: string, labels?: object, position?: number }): Promise<Models.AttributeGroups>;
     /**
      * Updates one attribute group by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -1259,14 +1259,14 @@ export class ProductsDataModel {
      * @param {object} labels - The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English.
      * @param {number} position - Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeGroups>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeGroupsUpdate(id: string, code?: string, labels?: object, position?: number): Promise<Models.Error>;
+    productsAttributeGroupsUpdate(id: string, code?: string, labels?: object, position?: number): Promise<Models.AttributeGroups>;
     productsAttributeGroupsUpdate(
         paramsOrFirst: { id: string, code?: string, labels?: object, position?: number } | string,
         ...rest: [(string)?, (object)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AttributeGroups> {
         let params: { id: string, code?: string, labels?: object, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1450,9 +1450,9 @@ export class ProductsDataModel {
      * @param {number} params.position - Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
      * @param {object} params.swatch - A colour or texture chip for the picker. Null for an option that is not visual.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeOptions>}
      */
-    productsAttributeOptionsCreate(params: { attributeId: string, code: string, labels?: object, position?: number, swatch?: object }): Promise<Models.Error>;
+    productsAttributeOptionsCreate(params: { attributeId: string, code: string, labels?: object, position?: number, swatch?: object }): Promise<Models.AttributeOptions>;
     /**
      * Creates one attribute option and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -1466,14 +1466,14 @@ export class ProductsDataModel {
      * @param {number} position - Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
      * @param {object} swatch - A colour or texture chip for the picker. Null for an option that is not visual.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeOptions>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeOptionsCreate(attributeId: string, code: string, labels?: object, position?: number, swatch?: object): Promise<Models.Error>;
+    productsAttributeOptionsCreate(attributeId: string, code: string, labels?: object, position?: number, swatch?: object): Promise<Models.AttributeOptions>;
     productsAttributeOptionsCreate(
         paramsOrFirst: { attributeId: string, code: string, labels?: object, position?: number, swatch?: object } | string,
         ...rest: [(string)?, (object)?, (number)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AttributeOptions> {
         let params: { attributeId: string, code: string, labels?: object, position?: number, swatch?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1541,9 +1541,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `attribute_options` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_options`. An id no attribute option of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsAttributeOptionsDelete(params: { id: string }): Promise<Models.Error>;
+    productsAttributeOptionsDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one attribute option by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -1553,13 +1553,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `attribute_options` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_options`. An id no attribute option of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeOptionsDelete(id: string): Promise<Models.Error>;
+    productsAttributeOptionsDelete(id: string): Promise<{}>;
     productsAttributeOptionsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1602,9 +1602,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `attribute_options` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_options`. An id no attribute option of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeOptions>}
      */
-    productsAttributeOptionsGet(params: { id: string }): Promise<Models.Error>;
+    productsAttributeOptionsGet(params: { id: string }): Promise<Models.AttributeOptions>;
     /**
      * Reads one attribute option by its id — the whole row, every column, as it is stored.
      * 
@@ -1616,13 +1616,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `attribute_options` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_options`. An id no attribute option of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeOptions>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeOptionsGet(id: string): Promise<Models.Error>;
+    productsAttributeOptionsGet(id: string): Promise<Models.AttributeOptions>;
     productsAttributeOptionsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AttributeOptions> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1668,9 +1668,9 @@ export class ProductsDataModel {
      * @param {number} params.position - Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
      * @param {object} params.swatch - A colour or texture chip for the picker. Null for an option that is not visual.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeOptions>}
      */
-    productsAttributeOptionsUpdate(params: { id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object }): Promise<Models.Error>;
+    productsAttributeOptionsUpdate(params: { id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object }): Promise<Models.AttributeOptions>;
     /**
      * Updates one attribute option by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -1685,14 +1685,14 @@ export class ProductsDataModel {
      * @param {number} position - Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
      * @param {object} swatch - A colour or texture chip for the picker. Null for an option that is not visual.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AttributeOptions>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeOptionsUpdate(id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object): Promise<Models.Error>;
+    productsAttributeOptionsUpdate(id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object): Promise<Models.AttributeOptions>;
     productsAttributeOptionsUpdate(
         paramsOrFirst: { id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object } | string,
         ...rest: [(string)?, (string)?, (object)?, (number)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AttributeOptions> {
         let params: { id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1965,9 +1965,9 @@ export class ProductsDataModel {
      * @param {boolean} params.usableInGrid - Show this attribute as a COLUMN in the product grid. `GET /products/grid` returns a column definition and a per-row value for exactly these.
      * @param {object} params.validation - Limits a value has to satisfy, as a flat object. The seven keys a client can act on are `min`, `max`, `min_length`, `max_length`, `pattern`, `min_items`, `max_items` — `GET /products/attribute-schema` republishes those and leaves anything else the tenant stored untouched.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Attributes>}
      */
-    productsAttributesCreate(params: { code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object }): Promise<Models.Error>;
+    productsAttributesCreate(params: { code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object }): Promise<Models.Attributes>;
     /**
      * Creates one attribute and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -1990,14 +1990,14 @@ export class ProductsDataModel {
      * @param {boolean} usableInGrid - Show this attribute as a COLUMN in the product grid. `GET /products/grid` returns a column definition and a per-row value for exactly these.
      * @param {object} validation - Limits a value has to satisfy, as a flat object. The seven keys a client can act on are `min`, `max`, `min_length`, `max_length`, `pattern`, `min_items`, `max_items` — `GET /products/attribute-schema` republishes those and leaves anything else the tenant stored untouched.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Attributes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributesCreate(code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object): Promise<Models.Error>;
+    productsAttributesCreate(code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object): Promise<Models.Attributes>;
     productsAttributesCreate(
         paramsOrFirst: { code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object } | string,
         ...rest: [(string)?, (object)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (object)?, (boolean)?, (number)?, (boolean)?, (boolean)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Attributes> {
         let params: { code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2110,9 +2110,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `attributes` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attributes`. An id no attribute of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsAttributesDelete(params: { id: string }): Promise<Models.Error>;
+    productsAttributesDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one attribute by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -2122,13 +2122,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `attributes` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attributes`. An id no attribute of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributesDelete(id: string): Promise<Models.Error>;
+    productsAttributesDelete(id: string): Promise<{}>;
     productsAttributesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2171,9 +2171,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `attributes` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attributes`. An id no attribute of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Attributes>}
      */
-    productsAttributesGet(params: { id: string }): Promise<Models.Error>;
+    productsAttributesGet(params: { id: string }): Promise<Models.Attributes>;
     /**
      * Reads one attribute by its id — the whole row, every column, as it is stored.
      * 
@@ -2185,13 +2185,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `attributes` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attributes`. An id no attribute of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Attributes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributesGet(id: string): Promise<Models.Error>;
+    productsAttributesGet(id: string): Promise<Models.Attributes>;
     productsAttributesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Attributes> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2246,9 +2246,9 @@ export class ProductsDataModel {
      * @param {boolean} params.usableInGrid - Show this attribute as a COLUMN in the product grid. `GET /products/grid` returns a column definition and a per-row value for exactly these.
      * @param {object} params.validation - Limits a value has to satisfy, as a flat object. The seven keys a client can act on are `min`, `max`, `min_length`, `max_length`, `pattern`, `min_items`, `max_items` — `GET /products/attribute-schema` republishes those and leaves anything else the tenant stored untouched.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Attributes>}
      */
-    productsAttributesUpdate(params: { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object }): Promise<Models.Error>;
+    productsAttributesUpdate(params: { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object }): Promise<Models.Attributes>;
     /**
      * Updates one attribute by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -2272,14 +2272,14 @@ export class ProductsDataModel {
      * @param {boolean} usableInGrid - Show this attribute as a COLUMN in the product grid. `GET /products/grid` returns a column definition and a per-row value for exactly these.
      * @param {object} validation - Limits a value has to satisfy, as a flat object. The seven keys a client can act on are `min`, `max`, `min_length`, `max_length`, `pattern`, `min_items`, `max_items` — `GET /products/attribute-schema` republishes those and leaves anything else the tenant stored untouched.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Attributes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributesUpdate(id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object): Promise<Models.Error>;
+    productsAttributesUpdate(id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object): Promise<Models.Attributes>;
     productsAttributesUpdate(
         paramsOrFirst: { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object } | string,
         ...rest: [(string)?, (object)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (object)?, (boolean)?, (number)?, (boolean)?, (string)?, (boolean)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Attributes> {
         let params: { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2517,9 +2517,9 @@ export class ProductsDataModel {
      * @param {string} params.labelAttribute - Which attribute CODE carries the display name of a product in this family. A product's name is an attribute, not a column, and which attribute it is, is per family. Null falls back to the `default_label_attribute` setting and then to the conventional `name`.
      * @param {object} params.labels - What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Families>}
      */
-    productsFamiliesCreate(params: { code: string, imageAttribute?: string, labelAttribute?: string, labels?: object }): Promise<Models.Error>;
+    productsFamiliesCreate(params: { code: string, imageAttribute?: string, labelAttribute?: string, labels?: object }): Promise<Models.Families>;
     /**
      * Creates one family and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -2532,14 +2532,14 @@ export class ProductsDataModel {
      * @param {string} labelAttribute - Which attribute CODE carries the display name of a product in this family. A product's name is an attribute, not a column, and which attribute it is, is per family. Null falls back to the `default_label_attribute` setting and then to the conventional `name`.
      * @param {object} labels - What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Families>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamiliesCreate(code: string, imageAttribute?: string, labelAttribute?: string, labels?: object): Promise<Models.Error>;
+    productsFamiliesCreate(code: string, imageAttribute?: string, labelAttribute?: string, labels?: object): Promise<Models.Families>;
     productsFamiliesCreate(
         paramsOrFirst: { code: string, imageAttribute?: string, labelAttribute?: string, labels?: object } | string,
         ...rest: [(string)?, (string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Families> {
         let params: { code: string, imageAttribute?: string, labelAttribute?: string, labels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2599,9 +2599,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/families`. An id no familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsFamiliesDelete(params: { id: string }): Promise<Models.Error>;
+    productsFamiliesDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one family by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -2611,13 +2611,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/families`. An id no familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamiliesDelete(id: string): Promise<Models.Error>;
+    productsFamiliesDelete(id: string): Promise<{}>;
     productsFamiliesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2660,9 +2660,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/families`. An id no familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Families>}
      */
-    productsFamiliesGet(params: { id: string }): Promise<Models.Error>;
+    productsFamiliesGet(params: { id: string }): Promise<Models.Families>;
     /**
      * Reads one family by its id — the whole row, every column, as it is stored.
      * 
@@ -2674,13 +2674,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/families`. An id no familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Families>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamiliesGet(id: string): Promise<Models.Error>;
+    productsFamiliesGet(id: string): Promise<Models.Families>;
     productsFamiliesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Families> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2725,9 +2725,9 @@ export class ProductsDataModel {
      * @param {string} params.labelAttribute - Which attribute CODE carries the display name of a product in this family. A product's name is an attribute, not a column, and which attribute it is, is per family. Null falls back to the `default_label_attribute` setting and then to the conventional `name`.
      * @param {object} params.labels - What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Families>}
      */
-    productsFamiliesUpdate(params: { id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object }): Promise<Models.Error>;
+    productsFamiliesUpdate(params: { id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object }): Promise<Models.Families>;
     /**
      * Updates one family by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -2741,14 +2741,14 @@ export class ProductsDataModel {
      * @param {string} labelAttribute - Which attribute CODE carries the display name of a product in this family. A product's name is an attribute, not a column, and which attribute it is, is per family. Null falls back to the `default_label_attribute` setting and then to the conventional `name`.
      * @param {object} labels - What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Families>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamiliesUpdate(id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object): Promise<Models.Error>;
+    productsFamiliesUpdate(id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object): Promise<Models.Families>;
     productsFamiliesUpdate(
         paramsOrFirst: { id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object } | string,
         ...rest: [(string)?, (string)?, (string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Families> {
         let params: { id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2937,9 +2937,9 @@ export class ProductsDataModel {
      * @param {number} params.position - The family's own ordering of this attribute, which overrides the attribute's default `position` in this family's form.
      * @param {object} params.requiredChannels - Narrows `is_required` to named channels. NULL or an empty list means required EVERYWHERE, not nowhere — that is how every required link in the wild is stored, and reading an empty list as "nowhere" reports a fully configured family as demanding nothing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyAttributes>}
      */
-    productsFamilyAttributesCreate(params: { attributeId: string, familyId: string, isRequired?: boolean, position?: number, requiredChannels?: object }): Promise<Models.Error>;
+    productsFamilyAttributesCreate(params: { attributeId: string, familyId: string, isRequired?: boolean, position?: number, requiredChannels?: object }): Promise<Models.FamilyAttributes>;
     /**
      * Creates one family attribute and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -2953,14 +2953,14 @@ export class ProductsDataModel {
      * @param {number} position - The family's own ordering of this attribute, which overrides the attribute's default `position` in this family's form.
      * @param {object} requiredChannels - Narrows `is_required` to named channels. NULL or an empty list means required EVERYWHERE, not nowhere — that is how every required link in the wild is stored, and reading an empty list as "nowhere" reports a fully configured family as demanding nothing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyAttributes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyAttributesCreate(attributeId: string, familyId: string, isRequired?: boolean, position?: number, requiredChannels?: object): Promise<Models.Error>;
+    productsFamilyAttributesCreate(attributeId: string, familyId: string, isRequired?: boolean, position?: number, requiredChannels?: object): Promise<Models.FamilyAttributes>;
     productsFamilyAttributesCreate(
         paramsOrFirst: { attributeId: string, familyId: string, isRequired?: boolean, position?: number, requiredChannels?: object } | string,
         ...rest: [(string)?, (boolean)?, (number)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FamilyAttributes> {
         let params: { attributeId: string, familyId: string, isRequired?: boolean, position?: number, requiredChannels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3028,9 +3028,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `family_attributes` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/family_attributes`. An id no family attribute of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsFamilyAttributesDelete(params: { id: string }): Promise<Models.Error>;
+    productsFamilyAttributesDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one family attribute by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -3040,13 +3040,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `family_attributes` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/family_attributes`. An id no family attribute of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyAttributesDelete(id: string): Promise<Models.Error>;
+    productsFamilyAttributesDelete(id: string): Promise<{}>;
     productsFamilyAttributesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3089,9 +3089,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `family_attributes` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/family_attributes`. An id no family attribute of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyAttributes>}
      */
-    productsFamilyAttributesGet(params: { id: string }): Promise<Models.Error>;
+    productsFamilyAttributesGet(params: { id: string }): Promise<Models.FamilyAttributes>;
     /**
      * Reads one family attribute by its id — the whole row, every column, as it is stored.
      * 
@@ -3103,13 +3103,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `family_attributes` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/family_attributes`. An id no family attribute of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyAttributes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyAttributesGet(id: string): Promise<Models.Error>;
+    productsFamilyAttributesGet(id: string): Promise<Models.FamilyAttributes>;
     productsFamilyAttributesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FamilyAttributes> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3155,9 +3155,9 @@ export class ProductsDataModel {
      * @param {number} params.position - The family's own ordering of this attribute, which overrides the attribute's default `position` in this family's form.
      * @param {object} params.requiredChannels - Narrows `is_required` to named channels. NULL or an empty list means required EVERYWHERE, not nowhere — that is how every required link in the wild is stored, and reading an empty list as "nowhere" reports a fully configured family as demanding nothing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyAttributes>}
      */
-    productsFamilyAttributesUpdate(params: { id: string, attributeId?: string, familyId?: string, isRequired?: boolean, position?: number, requiredChannels?: object }): Promise<Models.Error>;
+    productsFamilyAttributesUpdate(params: { id: string, attributeId?: string, familyId?: string, isRequired?: boolean, position?: number, requiredChannels?: object }): Promise<Models.FamilyAttributes>;
     /**
      * Updates one family attribute by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -3172,14 +3172,14 @@ export class ProductsDataModel {
      * @param {number} position - The family's own ordering of this attribute, which overrides the attribute's default `position` in this family's form.
      * @param {object} requiredChannels - Narrows `is_required` to named channels. NULL or an empty list means required EVERYWHERE, not nowhere — that is how every required link in the wild is stored, and reading an empty list as "nowhere" reports a fully configured family as demanding nothing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyAttributes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyAttributesUpdate(id: string, attributeId?: string, familyId?: string, isRequired?: boolean, position?: number, requiredChannels?: object): Promise<Models.Error>;
+    productsFamilyAttributesUpdate(id: string, attributeId?: string, familyId?: string, isRequired?: boolean, position?: number, requiredChannels?: object): Promise<Models.FamilyAttributes>;
     productsFamilyAttributesUpdate(
         paramsOrFirst: { id: string, attributeId?: string, familyId?: string, isRequired?: boolean, position?: number, requiredChannels?: object } | string,
         ...rest: [(string)?, (string)?, (boolean)?, (number)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FamilyAttributes> {
         let params: { id: string, attributeId?: string, familyId?: string, isRequired?: boolean, position?: number, requiredChannels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3372,9 +3372,9 @@ export class ProductsDataModel {
      * @param {object} params.axes - The attribute codes a product model splits its variants on. Two shapes are in the wild and both are read: a bare list of codes, or one entry per level, outermost first — `[{"level": 1, "axes": ["colour"]}, {"level": 2, "axes": ["size"]}]`. An attribute named here is READ-ONLY on the model and set on each variant, which is what `AttributeField.readonly_reason` reports.
      * @param {object} params.labels - What the variant structure is called, per language tag.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyVariants>}
      */
-    productsFamilyVariantsCreate(params: { code: string, familyId: string, axes?: object, labels?: object }): Promise<Models.Error>;
+    productsFamilyVariantsCreate(params: { code: string, familyId: string, axes?: object, labels?: object }): Promise<Models.FamilyVariants>;
     /**
      * Creates one family variant and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -3387,14 +3387,14 @@ export class ProductsDataModel {
      * @param {object} axes - The attribute codes a product model splits its variants on. Two shapes are in the wild and both are read: a bare list of codes, or one entry per level, outermost first — `[{"level": 1, "axes": ["colour"]}, {"level": 2, "axes": ["size"]}]`. An attribute named here is READ-ONLY on the model and set on each variant, which is what `AttributeField.readonly_reason` reports.
      * @param {object} labels - What the variant structure is called, per language tag.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyVariants>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyVariantsCreate(code: string, familyId: string, axes?: object, labels?: object): Promise<Models.Error>;
+    productsFamilyVariantsCreate(code: string, familyId: string, axes?: object, labels?: object): Promise<Models.FamilyVariants>;
     productsFamilyVariantsCreate(
         paramsOrFirst: { code: string, familyId: string, axes?: object, labels?: object } | string,
         ...rest: [(string)?, (object)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FamilyVariants> {
         let params: { code: string, familyId: string, axes?: object, labels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3457,9 +3457,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `family_variants` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/family_variants`. An id no family variant of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsFamilyVariantsDelete(params: { id: string }): Promise<Models.Error>;
+    productsFamilyVariantsDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one family variant by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -3469,13 +3469,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `family_variants` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/family_variants`. An id no family variant of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyVariantsDelete(id: string): Promise<Models.Error>;
+    productsFamilyVariantsDelete(id: string): Promise<{}>;
     productsFamilyVariantsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3518,9 +3518,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `family_variants` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/family_variants`. An id no family variant of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyVariants>}
      */
-    productsFamilyVariantsGet(params: { id: string }): Promise<Models.Error>;
+    productsFamilyVariantsGet(params: { id: string }): Promise<Models.FamilyVariants>;
     /**
      * Reads one family variant by its id — the whole row, every column, as it is stored.
      * 
@@ -3532,13 +3532,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `family_variants` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/family_variants`. An id no family variant of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyVariants>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyVariantsGet(id: string): Promise<Models.Error>;
+    productsFamilyVariantsGet(id: string): Promise<Models.FamilyVariants>;
     productsFamilyVariantsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FamilyVariants> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3583,9 +3583,9 @@ export class ProductsDataModel {
      * @param {string} params.familyId - The family this variant structure belongs to. A family may carry several, and a product names the one it follows through `family_variant_id`.
      * @param {object} params.labels - What the variant structure is called, per language tag.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyVariants>}
      */
-    productsFamilyVariantsUpdate(params: { id: string, axes?: object, code?: string, familyId?: string, labels?: object }): Promise<Models.Error>;
+    productsFamilyVariantsUpdate(params: { id: string, axes?: object, code?: string, familyId?: string, labels?: object }): Promise<Models.FamilyVariants>;
     /**
      * Updates one family variant by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -3599,14 +3599,14 @@ export class ProductsDataModel {
      * @param {string} familyId - The family this variant structure belongs to. A family may carry several, and a product names the one it follows through `family_variant_id`.
      * @param {object} labels - What the variant structure is called, per language tag.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FamilyVariants>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyVariantsUpdate(id: string, axes?: object, code?: string, familyId?: string, labels?: object): Promise<Models.Error>;
+    productsFamilyVariantsUpdate(id: string, axes?: object, code?: string, familyId?: string, labels?: object): Promise<Models.FamilyVariants>;
     productsFamilyVariantsUpdate(
         paramsOrFirst: { id: string, axes?: object, code?: string, familyId?: string, labels?: object } | string,
         ...rest: [(object)?, (string)?, (string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FamilyVariants> {
         let params: { id: string, axes?: object, code?: string, familyId?: string, labels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3794,9 +3794,9 @@ export class ProductsDataModel {
      * @param {object} params.labels - What the measurement family is called, per language tag.
      * @param {object} params.units - The units this family offers. `convert_factor` multiplies a value into `standard_unit`, so a gram is 0.001 kilograms; `symbol` is what a form prints next to the number.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MeasurementFamilies>}
      */
-    productsMeasurementFamiliesCreate(params: { code: string, standardUnit: string, labels?: object, units?: object }): Promise<Models.Error>;
+    productsMeasurementFamiliesCreate(params: { code: string, standardUnit: string, labels?: object, units?: object }): Promise<Models.MeasurementFamilies>;
     /**
      * Creates one measurement family and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -3809,14 +3809,14 @@ export class ProductsDataModel {
      * @param {object} labels - What the measurement family is called, per language tag.
      * @param {object} units - The units this family offers. `convert_factor` multiplies a value into `standard_unit`, so a gram is 0.001 kilograms; `symbol` is what a form prints next to the number.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MeasurementFamilies>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsMeasurementFamiliesCreate(code: string, standardUnit: string, labels?: object, units?: object): Promise<Models.Error>;
+    productsMeasurementFamiliesCreate(code: string, standardUnit: string, labels?: object, units?: object): Promise<Models.MeasurementFamilies>;
     productsMeasurementFamiliesCreate(
         paramsOrFirst: { code: string, standardUnit: string, labels?: object, units?: object } | string,
         ...rest: [(string)?, (object)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MeasurementFamilies> {
         let params: { code: string, standardUnit: string, labels?: object, units?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3879,9 +3879,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `measurement_families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/measurement_families`. An id no measurement familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsMeasurementFamiliesDelete(params: { id: string }): Promise<Models.Error>;
+    productsMeasurementFamiliesDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one measurement family by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -3891,13 +3891,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `measurement_families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/measurement_families`. An id no measurement familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsMeasurementFamiliesDelete(id: string): Promise<Models.Error>;
+    productsMeasurementFamiliesDelete(id: string): Promise<{}>;
     productsMeasurementFamiliesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3940,9 +3940,9 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `measurement_families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/measurement_families`. An id no measurement familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MeasurementFamilies>}
      */
-    productsMeasurementFamiliesGet(params: { id: string }): Promise<Models.Error>;
+    productsMeasurementFamiliesGet(params: { id: string }): Promise<Models.MeasurementFamilies>;
     /**
      * Reads one measurement family by its id — the whole row, every column, as it is stored.
      * 
@@ -3954,13 +3954,13 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `measurement_families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/measurement_families`. An id no measurement familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MeasurementFamilies>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsMeasurementFamiliesGet(id: string): Promise<Models.Error>;
+    productsMeasurementFamiliesGet(id: string): Promise<Models.MeasurementFamilies>;
     productsMeasurementFamiliesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MeasurementFamilies> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -4005,9 +4005,9 @@ export class ProductsDataModel {
      * @param {string} params.standardUnit - The unit every value of this family is converted to before it is compared or sorted — the unit each `convert_factor` is relative to.
      * @param {object} params.units - The units this family offers. `convert_factor` multiplies a value into `standard_unit`, so a gram is 0.001 kilograms; `symbol` is what a form prints next to the number.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MeasurementFamilies>}
      */
-    productsMeasurementFamiliesUpdate(params: { id: string, code?: string, labels?: object, standardUnit?: string, units?: object }): Promise<Models.Error>;
+    productsMeasurementFamiliesUpdate(params: { id: string, code?: string, labels?: object, standardUnit?: string, units?: object }): Promise<Models.MeasurementFamilies>;
     /**
      * Updates one measurement family by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -4021,14 +4021,14 @@ export class ProductsDataModel {
      * @param {string} standardUnit - The unit every value of this family is converted to before it is compared or sorted — the unit each `convert_factor` is relative to.
      * @param {object} units - The units this family offers. `convert_factor` multiplies a value into `standard_unit`, so a gram is 0.001 kilograms; `symbol` is what a form prints next to the number.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MeasurementFamilies>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsMeasurementFamiliesUpdate(id: string, code?: string, labels?: object, standardUnit?: string, units?: object): Promise<Models.Error>;
+    productsMeasurementFamiliesUpdate(id: string, code?: string, labels?: object, standardUnit?: string, units?: object): Promise<Models.MeasurementFamilies>;
     productsMeasurementFamiliesUpdate(
         paramsOrFirst: { id: string, code?: string, labels?: object, standardUnit?: string, units?: object } | string,
         ...rest: [(string)?, (object)?, (string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MeasurementFamilies> {
         let params: { id: string, code?: string, labels?: object, standardUnit?: string, units?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

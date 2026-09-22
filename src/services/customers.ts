@@ -11,28 +11,98 @@ export class Customers {
     }
 
     /**
+     * The same token `POST /customers/auth/magic-link` mints, answered WITH its secret instead of mailed — for a buyer another system has already authenticated and who therefore has no mailbox to check and no link to click. Punchout is the caller it exists for: an ERP hands its user over, this app decides whether that buyer may sign in, and the secret is redeemed through `PUT /customers/auth/magic-link` exactly as a mailed one is. Which is also why the method checked is the magic-link one: a store with `login_magic_link` off cannot redeem what this mints. Nothing is delivered, no account is founded (an address nobody holds is a 404 here, not a registration) and no `contact_event` is written — signing in is mechanics, and this app keeps it off the event bus. Not callable from a browser or a storefront: `handoff_key` is an operations secret configured on the calling app, and a deployment that has none has this capability switched off.
+     *
+     * @param {string} params.handoffKey - The operations secret that makes the caller a trusted in-cluster app. Configured on both functions; never a value a browser or a storefront holds. In the body rather than a header because the gateway forwards a fixed header set, the same reason session material travels this way.
+     * @param {string} params.contactId - The buyer to sign in, as this app knows them. Exactly one of this and `email` is sent — this one when the caller already resolved the external name to a contact.
+     * @param {string} params.email - The buyer to sign in, by address, when the caller holds no contact id. Exactly one of this and `contact_id` is sent. An address nobody holds is a 404 — this route never registers.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.AuthHandoffResponse>}
+     */
+    customersAuthHandoff(params: { handoffKey: string, contactId?: string, email?: string }): Promise<Models.AuthHandoffResponse>;
+    /**
+     * The same token `POST /customers/auth/magic-link` mints, answered WITH its secret instead of mailed — for a buyer another system has already authenticated and who therefore has no mailbox to check and no link to click. Punchout is the caller it exists for: an ERP hands its user over, this app decides whether that buyer may sign in, and the secret is redeemed through `PUT /customers/auth/magic-link` exactly as a mailed one is. Which is also why the method checked is the magic-link one: a store with `login_magic_link` off cannot redeem what this mints. Nothing is delivered, no account is founded (an address nobody holds is a 404 here, not a registration) and no `contact_event` is written — signing in is mechanics, and this app keeps it off the event bus. Not callable from a browser or a storefront: `handoff_key` is an operations secret configured on the calling app, and a deployment that has none has this capability switched off.
+     *
+     * @param {string} handoffKey - The operations secret that makes the caller a trusted in-cluster app. Configured on both functions; never a value a browser or a storefront holds. In the body rather than a header because the gateway forwards a fixed header set, the same reason session material travels this way.
+     * @param {string} contactId - The buyer to sign in, as this app knows them. Exactly one of this and `email` is sent — this one when the caller already resolved the external name to a contact.
+     * @param {string} email - The buyer to sign in, by address, when the caller holds no contact id. Exactly one of this and `contact_id` is sent. An address nobody holds is a 404 — this route never registers.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.AuthHandoffResponse>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersAuthHandoff(handoffKey: string, contactId?: string, email?: string): Promise<Models.AuthHandoffResponse>;
+    customersAuthHandoff(
+        paramsOrFirst: { handoffKey: string, contactId?: string, email?: string } | string,
+        ...rest: [(string)?, (string)?]    
+    ): Promise<Models.AuthHandoffResponse> {
+        let params: { handoffKey: string, contactId?: string, email?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { handoffKey: string, contactId?: string, email?: string };
+        } else {
+            params = {
+                handoffKey: paramsOrFirst as string,
+                contactId: rest[0] as string,
+                email: rest[1] as string            
+            };
+        }
+        
+        const handoffKey = params.handoffKey;
+        const contactId = params.contactId;
+        const email = params.email;
+
+        if (typeof handoffKey === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "handoffKey"');
+        }
+
+        const apiPath = '/v1/customers/auth/handoff';
+        const apiPayload: Payload = {};
+        if (typeof contactId !== 'undefined') {
+            apiPayload['contact_id'] = contactId;
+        }
+        if (typeof email !== 'undefined') {
+            apiPayload['email'] = email;
+        }
+        if (typeof handoffKey !== 'undefined') {
+            apiPayload['handoff_key'] = handoffKey;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
      * An email and a password go in; a session and the CONTACT behind it come back, so a storefront knows in one call both that the buyer is signed in and who they are. The session is minted server-side rather than handed back from the credential check, because the account route hides the session secret from non-privileged responses and a trusted BFF needs it. `permissions` carries the buyer's effective grants, so a BFF does not need a second call to decide what to render.
      *
      * @param {string} params.email - The buyer's login address — the same one the contact carries.
      * @param {string} params.password - The password from registration or recovery. Wrong credentials are a 401; a correct one on an undecided application is a 403.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AuthLoginResponse>}
      */
-    customersAuthLogin(params: { email: string, password: string }): Promise<Models.Error>;
+    customersAuthLogin(params: { email: string, password: string }): Promise<Models.AuthLoginResponse>;
     /**
      * An email and a password go in; a session and the CONTACT behind it come back, so a storefront knows in one call both that the buyer is signed in and who they are. The session is minted server-side rather than handed back from the credential check, because the account route hides the session secret from non-privileged responses and a trusted BFF needs it. `permissions` carries the buyer's effective grants, so a BFF does not need a second call to decide what to render.
      *
      * @param {string} email - The buyer's login address — the same one the contact carries.
      * @param {string} password - The password from registration or recovery. Wrong credentials are a 401; a correct one on an undecided application is a 403.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AuthLoginResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthLogin(email: string, password: string): Promise<Models.Error>;
+    customersAuthLogin(email: string, password: string): Promise<Models.AuthLoginResponse>;
     customersAuthLogin(
         paramsOrFirst: { email: string, password: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AuthLoginResponse> {
         let params: { email: string, password: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -82,23 +152,23 @@ export class Customers {
      * @param {string} params.sessionId - The session to revoke — `session.$id` from the login.
      * @param {string} params.userId - The platform user — `session.userId` from the login.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    customersAuthLogout(params: { sessionId: string, userId: string }): Promise<Models.Error>;
+    customersAuthLogout(params: { sessionId: string, userId: string }): Promise<{}>;
     /**
      * Ends ONE session — the buyer signs out on this device and stays signed in on the others, because the session id is what is revoked and not the account. The contact row is untouched: signing out is not blocking, and a caller wanting the second thing wants `status: "blocked"` on the contact instead. Both ids come from what `/customers/auth/login` answered, and a BFF should drop its own cookie whatever this answers — the session is unusable afterwards either way.
      *
      * @param {string} sessionId - The session to revoke — `session.$id` from the login.
      * @param {string} userId - The platform user — `session.userId` from the login.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthLogout(sessionId: string, userId: string): Promise<Models.Error>;
+    customersAuthLogout(sessionId: string, userId: string): Promise<{}>;
     customersAuthLogout(
         paramsOrFirst: { sessionId: string, userId: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { sessionId: string, userId: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -148,23 +218,23 @@ export class Customers {
      * @param {string} params.email - Who to send the link to. An address that has never been seen creates an account rather than failing.
      * @param {string} params.url - Where the mailed link points. `userId`, `secret` and `expire` are appended as query parameters; the first two are what the confirm call takes.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthMagicLinkResponse>}
      */
-    customersAuthMagicLink(params: { email: string, url: string }): Promise<Models.Error>;
+    customersAuthMagicLink(params: { email: string, url: string }): Promise<Models.DefaultAuthMagicLinkResponse>;
     /**
      * Sign in without a password: a link goes to the address, and `PUT /customers/auth/magic-link` turns it into a session. Creates the account when the address is new, which makes this a registration path as much as a sign-in one — and why an address nobody holds is not distinguished in the answer. The mail is this shop's own template through the messaging service; the secret is not in this response, only in the link.
      *
      * @param {string} email - Who to send the link to. An address that has never been seen creates an account rather than failing.
      * @param {string} url - Where the mailed link points. `userId`, `secret` and `expire` are appended as query parameters; the first two are what the confirm call takes.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthMagicLinkResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthMagicLink(email: string, url: string): Promise<Models.Error>;
+    customersAuthMagicLink(email: string, url: string): Promise<Models.DefaultAuthMagicLinkResponse>;
     customersAuthMagicLink(
         paramsOrFirst: { email: string, url: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultAuthMagicLinkResponse> {
         let params: { email: string, url: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -214,23 +284,23 @@ export class Customers {
      * @param {string} params.secret - The one-time secret the mailed link carried. Spent on first use and expiring, so a second attempt with the same one is a 401 rather than a second session.
      * @param {string} params.userId - The `userId` the mailed link carried.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AuthMagicLinkConfirmResponse>}
      */
-    customersAuthMagicLinkConfirm(params: { secret: string, userId: string }): Promise<Models.Error>;
+    customersAuthMagicLinkConfirm(params: { secret: string, userId: string }): Promise<Models.AuthMagicLinkConfirmResponse>;
     /**
      * The buyer clicked the link and the storefront read `userId` and `secret` out of it. Answers exactly what a password login answers — session, contact and effective grants — because a shop must not have to branch on how somebody signed in.
      *
      * @param {string} secret - The one-time secret the mailed link carried. Spent on first use and expiring, so a second attempt with the same one is a 401 rather than a second session.
      * @param {string} userId - The `userId` the mailed link carried.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AuthMagicLinkConfirmResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthMagicLinkConfirm(secret: string, userId: string): Promise<Models.Error>;
+    customersAuthMagicLinkConfirm(secret: string, userId: string): Promise<Models.AuthMagicLinkConfirmResponse>;
     customersAuthMagicLinkConfirm(
         paramsOrFirst: { secret: string, userId: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AuthMagicLinkConfirmResponse> {
         let params: { secret: string, userId: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -280,23 +350,23 @@ export class Customers {
      * @param {string} params.userId - The platform user to resolve — `session.userId` from the login.
      * @param {string} params.sessionId - Optional session to verify. Pass it to ask "is this session still alive?" (a revoked one is then a 401); omit it to only ask who a user is.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AuthMeResponse>}
      */
-    customersAuthMe(params: { userId: string, sessionId?: string }): Promise<Models.Error>;
+    customersAuthMe(params: { userId: string, sessionId?: string }): Promise<Models.AuthMeResponse>;
     /**
      * The platform user, the customer record mirrored against it and the effective grants, in one call. The expected caller is a trusted storefront BFF holding the session on the buyer's behalf, which is why the ids travel in the body rather than in a browser-facing header. The grants are derived here on every call rather than returned from anywhere they could be cached, so a role changed a second ago is already reflected.
      *
      * @param {string} userId - The platform user to resolve — `session.userId` from the login.
      * @param {string} sessionId - Optional session to verify. Pass it to ask "is this session still alive?" (a revoked one is then a 401); omit it to only ask who a user is.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AuthMeResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthMe(userId: string, sessionId?: string): Promise<Models.Error>;
+    customersAuthMe(userId: string, sessionId?: string): Promise<Models.AuthMeResponse>;
     customersAuthMe(
         paramsOrFirst: { userId: string, sessionId?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AuthMeResponse> {
         let params: { userId: string, sessionId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -343,23 +413,23 @@ export class Customers {
      * @param {string} params.userId - The platform user being challenged.
      * @param {string} params.factor - Which factor to challenge. Defaults to `email`, the only one this route mails.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthMfaChallengeResponse>}
      */
-    customersAuthMfaChallenge(params: { userId: string, factor?: string }): Promise<Models.Error>;
+    customersAuthMfaChallenge(params: { userId: string, factor?: string }): Promise<Models.DefaultAuthMfaChallengeResponse>;
     /**
      * Between the password and the finished session: the buyer has proved one thing and is asked for another. Created by user id, because the account route that creates challenges hides the code from whoever may call it — and answered with the half-finished session the sign-in is in the middle of, through `PUT /customers/auth/mfa/challenge`. Needs a platform build that returns the challenge code; without one there is no way to read what to send, and the call answers 502 rather than mailing an empty challenge.
      *
      * @param {string} userId - The platform user being challenged.
      * @param {string} factor - Which factor to challenge. Defaults to `email`, the only one this route mails.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthMfaChallengeResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthMfaChallenge(userId: string, factor?: string): Promise<Models.Error>;
+    customersAuthMfaChallenge(userId: string, factor?: string): Promise<Models.DefaultAuthMfaChallengeResponse>;
     customersAuthMfaChallenge(
         paramsOrFirst: { userId: string, factor?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultAuthMfaChallengeResponse> {
         let params: { userId: string, factor?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -408,9 +478,9 @@ export class Customers {
      * @param {string} params.sessionSecret - The same session the challenge was created with.
      * @param {string} params.userId - The platform user, for the caller's own bookkeeping. The challenge already knows whose it is.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthMfaChallengeConfirmResponse>}
      */
-    customersAuthMfaChallengeConfirm(params: { challengeId: string, code: string, sessionSecret: string, userId?: string }): Promise<Models.Error>;
+    customersAuthMfaChallengeConfirm(params: { challengeId: string, code: string, sessionSecret: string, userId?: string }): Promise<Models.DefaultAuthMfaChallengeConfirmResponse>;
     /**
      * The code the buyer typed, against the challenge it was sent for. The session becomes fully authenticated when this answers.
      *
@@ -419,14 +489,14 @@ export class Customers {
      * @param {string} sessionSecret - The same session the challenge was created with.
      * @param {string} userId - The platform user, for the caller's own bookkeeping. The challenge already knows whose it is.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthMfaChallengeConfirmResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthMfaChallengeConfirm(challengeId: string, code: string, sessionSecret: string, userId?: string): Promise<Models.Error>;
+    customersAuthMfaChallengeConfirm(challengeId: string, code: string, sessionSecret: string, userId?: string): Promise<Models.DefaultAuthMfaChallengeConfirmResponse>;
     customersAuthMfaChallengeConfirm(
         paramsOrFirst: { challengeId: string, code: string, sessionSecret: string, userId?: string } | string,
         ...rest: [(string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultAuthMfaChallengeConfirmResponse> {
         let params: { challengeId: string, code: string, sessionSecret: string, userId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -488,21 +558,21 @@ export class Customers {
      *
      * @param {string} params.email - Who to send the code to. As with the sign-in link, an unknown address creates an account rather than failing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthOtpResponse>}
      */
-    customersAuthOtp(params: { email: string }): Promise<Models.Error>;
+    customersAuthOtp(params: { email: string }): Promise<Models.DefaultAuthOtpResponse>;
     /**
      * The same token as the sign-in link, delivered as a short code instead — for a buyer on a phone, where leaving for a mail client and coming back loses the checkout they were in the middle of. Redeemed with `PUT /customers/auth/otp`.
      *
      * @param {string} email - Who to send the code to. As with the sign-in link, an unknown address creates an account rather than failing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthOtpResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthOtp(email: string): Promise<Models.Error>;
+    customersAuthOtp(email: string): Promise<Models.DefaultAuthOtpResponse>;
     customersAuthOtp(
         paramsOrFirst: { email: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultAuthOtpResponse> {
         let params: { email: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -544,23 +614,23 @@ export class Customers {
      * @param {string} params.secret - The one-time secret the mailed code carried. Spent on first use and expiring, so a second attempt with the same one is a 401 rather than a second session.
      * @param {string} params.userId - The `userId` the mailed code carried.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AuthOtpConfirmResponse>}
      */
-    customersAuthOtpConfirm(params: { secret: string, userId: string }): Promise<Models.Error>;
+    customersAuthOtpConfirm(params: { secret: string, userId: string }): Promise<Models.AuthOtpConfirmResponse>;
     /**
      * The code the buyer typed, plus the `userId` the send answered with. Answers exactly what a password login answers — session, contact and effective grants — so a storefront never has to branch on how somebody signed in. The code is spent on first use and expires, so a second attempt with the same one is a 401 rather than a second session.
      *
      * @param {string} secret - The one-time secret the mailed code carried. Spent on first use and expiring, so a second attempt with the same one is a 401 rather than a second session.
      * @param {string} userId - The `userId` the mailed code carried.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AuthOtpConfirmResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthOtpConfirm(secret: string, userId: string): Promise<Models.Error>;
+    customersAuthOtpConfirm(secret: string, userId: string): Promise<Models.AuthOtpConfirmResponse>;
     customersAuthOtpConfirm(
         paramsOrFirst: { secret: string, userId: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AuthOtpConfirmResponse> {
         let params: { secret: string, userId: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -610,23 +680,23 @@ export class Customers {
      * @param {string} params.email - Who to send the recovery mail to. An address nobody holds is not distinguished here — do not build an account-existence check on the answer.
      * @param {string} params.url - Where the mailed link points. `userId`, `secret` and `expire` are appended as query parameters — the first two are what the confirm call takes. Same shape the identity service's own mail used, so a storefront that already handles that link needs no change.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthRecoveryResponse>}
      */
-    customersAuthRecovery(params: { email: string, url: string }): Promise<Models.Error>;
+    customersAuthRecovery(params: { email: string, url: string }): Promise<Models.DefaultAuthRecoveryResponse>;
     /**
      * Step one of two: a link goes to the address given, and `PUT /customers/auth/recovery` is what the buyer's browser comes back to. The identity service mints the token; the MAIL is this shop's own — the tenant's template, layout, language and sending domain, through the messaging service. The secret is NOT in this answer: it exists only inside the mailed link, which is the whole point of the two-step shape, and echoing it here would make the mail decorative. Nothing about the contact changes; the password only moves in step two.
      *
      * @param {string} email - Who to send the recovery mail to. An address nobody holds is not distinguished here — do not build an account-existence check on the answer.
      * @param {string} url - Where the mailed link points. `userId`, `secret` and `expire` are appended as query parameters — the first two are what the confirm call takes. Same shape the identity service's own mail used, so a storefront that already handles that link needs no change.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthRecoveryResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthRecovery(email: string, url: string): Promise<Models.Error>;
+    customersAuthRecovery(email: string, url: string): Promise<Models.DefaultAuthRecoveryResponse>;
     customersAuthRecovery(
         paramsOrFirst: { email: string, url: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultAuthRecoveryResponse> {
         let params: { email: string, url: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -677,9 +747,9 @@ export class Customers {
      * @param {string} params.secret - The one-time secret from the mailed link. Only that value works — it is spent on first use and expires, and anything else is a 401, so no example here would be anything but a call that fails.
      * @param {string} params.userId - The `userId` the mailed link carried.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthRecoveryConfirmResponse>}
      */
-    customersAuthRecoveryConfirm(params: { password: string, secret: string, userId: string }): Promise<Models.Error>;
+    customersAuthRecoveryConfirm(params: { password: string, secret: string, userId: string }): Promise<Models.DefaultAuthRecoveryConfirmResponse>;
     /**
      * Step two: the `userId` and `secret` the mailed link carried, plus the password the buyer just typed. The secret is spent on first use and expires, so a link cannot be replayed and a second attempt with the same one is a 401 rather than a second password change. The new password is in effect the moment this answers; what happens to sessions opened with the old one is the identity service's policy, not this app's.
      *
@@ -687,14 +757,14 @@ export class Customers {
      * @param {string} secret - The one-time secret from the mailed link. Only that value works — it is spent on first use and expires, and anything else is a 401, so no example here would be anything but a call that fails.
      * @param {string} userId - The `userId` the mailed link carried.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthRecoveryConfirmResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthRecoveryConfirm(password: string, secret: string, userId: string): Promise<Models.Error>;
+    customersAuthRecoveryConfirm(password: string, secret: string, userId: string): Promise<Models.DefaultAuthRecoveryConfirmResponse>;
     customersAuthRecoveryConfirm(
         paramsOrFirst: { password: string, secret: string, userId: string } | string,
         ...rest: [(string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultAuthRecoveryConfirmResponse> {
         let params: { password: string, secret: string, userId: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -760,9 +830,9 @@ export class Customers {
      * @param {string} params.vatId - VAT identification number (USt-IdNr. in Germany) — the closest thing a B2B buyer has to a legal identity. Validated against the EU VIES service when the tenant's `organization_vat_id_required` setting is on, and stored verbatim otherwise, including for buyers outside the EU. Required when the tenant's `organization_vat_id_required` is on, and checked BEFORE the company is created so a bad one leaves no half-founded organization behind.
      * @param {string} params.verificationUrl - Where the address-confirmation link points, when the tenant's `email_verification` asks for one on registration. `userId`, `secret` and `expire` are appended, and `PUT /customers/auth/verification` takes the first two. Without it the registration still succeeds and `verification_sent` is false — this app cannot invent a storefront URL, and a link pointing nowhere is worse than none.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AuthRegisterResponse>}
      */
-    customersAuthRegister(params: { email: string, password: string, firstName?: string, lastName?: string, locale?: string, organizationId?: string, organizationName?: string, url?: string, vatId?: string, verificationUrl?: string }): Promise<Models.Error>;
+    customersAuthRegister(params: { email: string, password: string, firstName?: string, lastName?: string, locale?: string, organizationId?: string, organizationName?: string, url?: string, vatId?: string, verificationUrl?: string }): Promise<Models.AuthRegisterResponse>;
     /**
      * One call writes the whole buyer: the contact this app is the system of record for, and the platform user behind its login. When the body names a company it also FOUNDS one — an organization, mirrored into platform auth as a team, with this contact as its admin. The tenant setting registration_mode decides what a registration IS. 'open' (the default, unchanged behaviour) creates a finished account: registration_status='approved', status='active', login works. 'approval_required' creates an APPLICATION: registration_status='pending', status='invited', the platform user exists with the applicant's own password but is DISABLED, and a newly founded organization is parked as 'blocked' — check `approval_required` in the response and show a 'we will get back to you' screen instead of logging the buyer in. The registration gates below are all evaluated BEFORE anything is written, and a failure after that point rolls the organization and the contact back together.
      *
@@ -777,14 +847,14 @@ export class Customers {
      * @param {string} vatId - VAT identification number (USt-IdNr. in Germany) — the closest thing a B2B buyer has to a legal identity. Validated against the EU VIES service when the tenant's `organization_vat_id_required` setting is on, and stored verbatim otherwise, including for buyers outside the EU. Required when the tenant's `organization_vat_id_required` is on, and checked BEFORE the company is created so a bad one leaves no half-founded organization behind.
      * @param {string} verificationUrl - Where the address-confirmation link points, when the tenant's `email_verification` asks for one on registration. `userId`, `secret` and `expire` are appended, and `PUT /customers/auth/verification` takes the first two. Without it the registration still succeeds and `verification_sent` is false — this app cannot invent a storefront URL, and a link pointing nowhere is worse than none.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.AuthRegisterResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthRegister(email: string, password: string, firstName?: string, lastName?: string, locale?: string, organizationId?: string, organizationName?: string, url?: string, vatId?: string, verificationUrl?: string): Promise<Models.Error>;
+    customersAuthRegister(email: string, password: string, firstName?: string, lastName?: string, locale?: string, organizationId?: string, organizationName?: string, url?: string, vatId?: string, verificationUrl?: string): Promise<Models.AuthRegisterResponse>;
     customersAuthRegister(
         paramsOrFirst: { email: string, password: string, firstName?: string, lastName?: string, locale?: string, organizationId?: string, organizationName?: string, url?: string, vatId?: string, verificationUrl?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.AuthRegisterResponse> {
         let params: { email: string, password: string, firstName?: string, lastName?: string, locale?: string, organizationId?: string, organizationName?: string, url?: string, vatId?: string, verificationUrl?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -874,23 +944,23 @@ export class Customers {
      * @param {string} params.url - Where the mailed link points. `userId`, `secret` and `expire` are appended as query parameters; the first two are what the confirm call takes.
      * @param {string} params.userId - The platform user whose address is being confirmed — `user_id` from the registration, or `session.userId` from a login.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthVerificationResponse>}
      */
-    customersAuthVerification(params: { url: string, userId: string }): Promise<Models.Error>;
+    customersAuthVerification(params: { url: string, userId: string }): Promise<Models.DefaultAuthVerificationResponse>;
     /**
      * Confirm that the address belongs to the buyer. Needs no session: the verification is created through the identity service's users surface, because its account counterpart reads the authenticated user and a caller authenticating AS the user cannot see the secret it just created. The buyer still confirms with their own session, through `PUT /customers/auth/verification` — only the creation moved. Send it right after a registration, or from an account page.
      *
      * @param {string} url - Where the mailed link points. `userId`, `secret` and `expire` are appended as query parameters; the first two are what the confirm call takes.
      * @param {string} userId - The platform user whose address is being confirmed — `user_id` from the registration, or `session.userId` from a login.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthVerificationResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthVerification(url: string, userId: string): Promise<Models.Error>;
+    customersAuthVerification(url: string, userId: string): Promise<Models.DefaultAuthVerificationResponse>;
     customersAuthVerification(
         paramsOrFirst: { url: string, userId: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultAuthVerificationResponse> {
         let params: { url: string, userId: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -940,23 +1010,23 @@ export class Customers {
      * @param {string} params.secret - The one-time secret the mailed link carried. Spent on first use and expiring, so a second attempt with the same one is a 401 rather than a second session.
      * @param {string} params.userId - The `userId` the mailed link carried.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthVerificationConfirmResponse>}
      */
-    customersAuthVerificationConfirm(params: { secret: string, userId: string }): Promise<Models.Error>;
+    customersAuthVerificationConfirm(params: { secret: string, userId: string }): Promise<Models.DefaultAuthVerificationConfirmResponse>;
     /**
      * The `userId` and `secret` the mailed link carried. The address counts as confirmed the moment this answers; the secret is spent, so the link cannot be replayed.
      *
      * @param {string} secret - The one-time secret the mailed link carried. Spent on first use and expiring, so a second attempt with the same one is a 401 rather than a second session.
      * @param {string} userId - The `userId` the mailed link carried.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultAuthVerificationConfirmResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthVerificationConfirm(secret: string, userId: string): Promise<Models.Error>;
+    customersAuthVerificationConfirm(secret: string, userId: string): Promise<Models.DefaultAuthVerificationConfirmResponse>;
     customersAuthVerificationConfirm(
         paramsOrFirst: { secret: string, userId: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultAuthVerificationConfirmResponse> {
         let params: { secret: string, userId: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1001,45 +1071,50 @@ export class Customers {
     }
 
     /**
-     * The capability the API gateway calls to turn a caller's X-Revenexx-Principal assertion into the permission set it forwards to every other app as X-Revenexx-Permissions. This app is the platform's role provider (manifest#provides_roles), and this is the hot path of every attributed storefront request — one contact read plus the tenant's role map. A blocked or pending contact always resolves with active=false; what its `permissions` then say is the tenant's blocked_contact_behavior setting — 'keep' (the default, the role's grants), 'catalog_only' or 'deny_all'.
+     * The capability the API gateway calls to turn whoever is acting into the permission set it forwards to every other app as X-Revenexx-Permissions. This app is the platform's role provider (manifest#provides_roles), and this is the hot path of every attributed request — one contact read plus the tenant's role map. Send EXACTLY ONE of two references. `contact_id` is the storefront plane: a BFF holding the tenant API key asserted a contact, and the gateway is resolving the assertion. `user_id` is the authenticated plane (RAD-12): the gateway verified a person's own Zitadel token and is resolving its subject against `contacts.external_user_id`, so the answer stands on a proven identity rather than a claimed one. The answer is the same shape either way — which plane a request came from is the gateway's business, not this app's. A blocked or pending contact always resolves with active=false; what its `permissions` then say is the tenant's blocked_contact_behavior setting — 'keep' (the default, the role's grants), 'catalog_only' or 'deny_all'.
      *
-     * @param {string} params.contactId - The contact the caller is acting for.
+     * @param {string} params.contactId - The contact the caller asserted it is acting for.
+     * @param {string} params.userId - The platform login the gateway authenticated, matched against `contacts.external_user_id` — the identity mirror this app maintains when it registers or invites a contact. Not a uuid: it is whatever the identity service issues as a subject.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ContactPermissions>}
      */
-    customersPrincipalResolve(params: { contactId: string }): Promise<Models.Error>;
+    customersPrincipalResolve(params?: { contactId?: string, userId?: string }): Promise<Models.ContactPermissions>;
     /**
-     * The capability the API gateway calls to turn a caller's X-Revenexx-Principal assertion into the permission set it forwards to every other app as X-Revenexx-Permissions. This app is the platform's role provider (manifest#provides_roles), and this is the hot path of every attributed storefront request — one contact read plus the tenant's role map. A blocked or pending contact always resolves with active=false; what its `permissions` then say is the tenant's blocked_contact_behavior setting — 'keep' (the default, the role's grants), 'catalog_only' or 'deny_all'.
+     * The capability the API gateway calls to turn whoever is acting into the permission set it forwards to every other app as X-Revenexx-Permissions. This app is the platform's role provider (manifest#provides_roles), and this is the hot path of every attributed request — one contact read plus the tenant's role map. Send EXACTLY ONE of two references. `contact_id` is the storefront plane: a BFF holding the tenant API key asserted a contact, and the gateway is resolving the assertion. `user_id` is the authenticated plane (RAD-12): the gateway verified a person's own Zitadel token and is resolving its subject against `contacts.external_user_id`, so the answer stands on a proven identity rather than a claimed one. The answer is the same shape either way — which plane a request came from is the gateway's business, not this app's. A blocked or pending contact always resolves with active=false; what its `permissions` then say is the tenant's blocked_contact_behavior setting — 'keep' (the default, the role's grants), 'catalog_only' or 'deny_all'.
      *
-     * @param {string} contactId - The contact the caller is acting for.
+     * @param {string} contactId - The contact the caller asserted it is acting for.
+     * @param {string} userId - The platform login the gateway authenticated, matched against `contacts.external_user_id` — the identity mirror this app maintains when it registers or invites a contact. Not a uuid: it is whatever the identity service issues as a subject.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ContactPermissions>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersPrincipalResolve(contactId: string): Promise<Models.Error>;
+    customersPrincipalResolve(contactId?: string, userId?: string): Promise<Models.ContactPermissions>;
     customersPrincipalResolve(
-        paramsOrFirst: { contactId: string } | string    
-    ): Promise<Models.Error> {
-        let params: { contactId: string };
+        paramsOrFirst?: { contactId?: string, userId?: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.ContactPermissions> {
+        let params: { contactId?: string, userId?: string };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { contactId: string };
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { contactId?: string, userId?: string };
         } else {
             params = {
-                contactId: paramsOrFirst as string            
+                contactId: paramsOrFirst as string,
+                userId: rest[0] as string            
             };
         }
         
         const contactId = params.contactId;
+        const userId = params.userId;
 
-        if (typeof contactId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "contactId"');
-        }
 
         const apiPath = '/v1/customers/principal/resolve';
         const apiPayload: Payload = {};
         if (typeof contactId !== 'undefined') {
             apiPayload['contact_id'] = contactId;
+        }
+        if (typeof userId !== 'undefined') {
+            apiPayload['user_id'] = userId;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

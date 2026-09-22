@@ -15,9 +15,9 @@ export class Search {
      * The collections the tenant's installed apps have provisioned. Available on the API-gateway-trust path only — a `revx_` key authorises a single collection, so discovery is a gateway concern and a key-authenticated caller gets 403.
      *
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.CollectionList>}
      */
-    searchListCollections(): Promise<Models.Error> {
+    searchListCollections(): Promise<Models.CollectionList> {
 
         const apiPath = '/v1/search/collections';
         const apiPayload: Payload = {};
@@ -39,21 +39,21 @@ export class Search {
      *
      * @param {Collection} params.collection - A collection the tenant owns (see `GET /api/v1/collections`). Resolved to its namespaced Typesense name server-side; a collection the tenant does not own is a 404.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultCollection>}
      */
-    searchGetCollection(params: { collection: Collection }): Promise<Models.Error>;
+    searchGetCollection(params: { collection: Collection }): Promise<Models.DefaultCollection>;
     /**
      * Returns the Typesense collection definition (fields, defaults, document count). Requires the `collections:read` action.
      *
      * @param {Collection} collection - A collection the tenant owns (see `GET /api/v1/collections`). Resolved to its namespaced Typesense name server-side; a collection the tenant does not own is a 404.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultCollection>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    searchGetCollection(collection: Collection): Promise<Models.Error>;
+    searchGetCollection(collection: Collection): Promise<Models.DefaultCollection>;
     searchGetCollection(
         paramsOrFirst: { collection: Collection } | Collection    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultCollection> {
         let params: { collection: Collection };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('collection' in paramsOrFirst))) {
@@ -104,9 +104,9 @@ export class Search {
      * @param {number} params.page - 1-based page number.
      * @param {number} params.perPage - Hits per page.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultSearchResult>}
      */
-    searchSearchDocumentsGet(params: { collection: Collection, q?: string, queryBy?: string, filterBy?: string, sortBy?: string, facetBy?: string, maxFacetValues?: number, groupBy?: string, includeFields?: string, excludeFields?: string, highlightFullFields?: string, numTypos?: number, prefix?: string, page?: number, perPage?: number }): Promise<Models.Error>;
+    searchSearchDocumentsGet(params: { collection: Collection, q?: string, queryBy?: string, filterBy?: string, sortBy?: string, facetBy?: string, maxFacetValues?: number, groupBy?: string, includeFields?: string, excludeFields?: string, highlightFullFields?: string, numTypos?: number, prefix?: string, page?: number, perPage?: number }): Promise<Models.DefaultSearchResult>;
     /**
      * Full-text search within one collection. Typesense search parameters are passed through verbatim as the query string, so parameters not listed here still reach Typesense. Requires the `documents:search` action.
      *
@@ -126,14 +126,14 @@ export class Search {
      * @param {number} page - 1-based page number.
      * @param {number} perPage - Hits per page.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultSearchResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    searchSearchDocumentsGet(collection: Collection, q?: string, queryBy?: string, filterBy?: string, sortBy?: string, facetBy?: string, maxFacetValues?: number, groupBy?: string, includeFields?: string, excludeFields?: string, highlightFullFields?: string, numTypos?: number, prefix?: string, page?: number, perPage?: number): Promise<Models.Error>;
+    searchSearchDocumentsGet(collection: Collection, q?: string, queryBy?: string, filterBy?: string, sortBy?: string, facetBy?: string, maxFacetValues?: number, groupBy?: string, includeFields?: string, excludeFields?: string, highlightFullFields?: string, numTypos?: number, prefix?: string, page?: number, perPage?: number): Promise<Models.DefaultSearchResult>;
     searchSearchDocumentsGet(
         paramsOrFirst: { collection: Collection, q?: string, queryBy?: string, filterBy?: string, sortBy?: string, facetBy?: string, maxFacetValues?: number, groupBy?: string, includeFields?: string, excludeFields?: string, highlightFullFields?: string, numTypos?: number, prefix?: string, page?: number, perPage?: number } | Collection,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (number)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultSearchResult> {
         let params: { collection: Collection, q?: string, queryBy?: string, filterBy?: string, sortBy?: string, facetBy?: string, maxFacetValues?: number, groupBy?: string, includeFields?: string, excludeFields?: string, highlightFullFields?: string, numTypos?: number, prefix?: string, page?: number, perPage?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('collection' in paramsOrFirst || 'q' in paramsOrFirst || 'queryBy' in paramsOrFirst || 'filterBy' in paramsOrFirst || 'sortBy' in paramsOrFirst || 'facetBy' in paramsOrFirst || 'maxFacetValues' in paramsOrFirst || 'groupBy' in paramsOrFirst || 'includeFields' in paramsOrFirst || 'excludeFields' in paramsOrFirst || 'highlightFullFields' in paramsOrFirst || 'numTypos' in paramsOrFirst || 'prefix' in paramsOrFirst || 'page' in paramsOrFirst || 'perPage' in paramsOrFirst))) {
@@ -254,9 +254,9 @@ export class Search {
      * @param {string} params.queryBy - Comma-separated fields to search, in weight order.
      * @param {string} params.sortBy - Sort expression, e.g. `price:desc`.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultSearchResult>}
      */
-    searchSearchDocuments(params: { collection: Collection, excludeFields?: string, facetBy?: string, filterBy?: string, groupBy?: string, highlightFullFields?: string, includeFields?: string, maxFacetValues?: number, numTypos?: number, page?: number, perPage?: number, prefix?: string, q?: string, queryBy?: string, sortBy?: string }): Promise<Models.Error>;
+    searchSearchDocuments(params: { collection: Collection, excludeFields?: string, facetBy?: string, filterBy?: string, groupBy?: string, highlightFullFields?: string, includeFields?: string, maxFacetValues?: number, numTypos?: number, page?: number, perPage?: number, prefix?: string, q?: string, queryBy?: string, sortBy?: string }): Promise<Models.DefaultSearchResult>;
     /**
      * Full-text search within one collection, with the Typesense search parameters in the body. Requires the `documents:search` action.
      *
@@ -276,14 +276,14 @@ export class Search {
      * @param {string} queryBy - Comma-separated fields to search, in weight order.
      * @param {string} sortBy - Sort expression, e.g. `price:desc`.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DefaultSearchResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    searchSearchDocuments(collection: Collection, excludeFields?: string, facetBy?: string, filterBy?: string, groupBy?: string, highlightFullFields?: string, includeFields?: string, maxFacetValues?: number, numTypos?: number, page?: number, perPage?: number, prefix?: string, q?: string, queryBy?: string, sortBy?: string): Promise<Models.Error>;
+    searchSearchDocuments(collection: Collection, excludeFields?: string, facetBy?: string, filterBy?: string, groupBy?: string, highlightFullFields?: string, includeFields?: string, maxFacetValues?: number, numTypos?: number, page?: number, perPage?: number, prefix?: string, q?: string, queryBy?: string, sortBy?: string): Promise<Models.DefaultSearchResult>;
     searchSearchDocuments(
         paramsOrFirst: { collection: Collection, excludeFields?: string, facetBy?: string, filterBy?: string, groupBy?: string, highlightFullFields?: string, includeFields?: string, maxFacetValues?: number, numTypos?: number, page?: number, perPage?: number, prefix?: string, q?: string, queryBy?: string, sortBy?: string } | Collection,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (number)?, (number)?, (string)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DefaultSearchResult> {
         let params: { collection: Collection, excludeFields?: string, facetBy?: string, filterBy?: string, groupBy?: string, highlightFullFields?: string, includeFields?: string, maxFacetValues?: number, numTypos?: number, page?: number, perPage?: number, prefix?: string, q?: string, queryBy?: string, sortBy?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('collection' in paramsOrFirst || 'excludeFields' in paramsOrFirst || 'facetBy' in paramsOrFirst || 'filterBy' in paramsOrFirst || 'groupBy' in paramsOrFirst || 'highlightFullFields' in paramsOrFirst || 'includeFields' in paramsOrFirst || 'maxFacetValues' in paramsOrFirst || 'numTypos' in paramsOrFirst || 'page' in paramsOrFirst || 'perPage' in paramsOrFirst || 'prefix' in paramsOrFirst || 'q' in paramsOrFirst || 'queryBy' in paramsOrFirst || 'sortBy' in paramsOrFirst))) {
@@ -392,23 +392,23 @@ export class Search {
      * @param {Collection} params.collection - A collection the tenant owns (see `GET /api/v1/collections`). Resolved to its namespaced Typesense name server-side; a collection the tenant does not own is a 404.
      * @param {string} params.documentId - The document's `id` within the collection.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    searchGetDocument(params: { collection: Collection, documentId: string }): Promise<Models.Error>;
+    searchGetDocument(params: { collection: Collection, documentId: string }): Promise<{}>;
     /**
      * Fetch a single document by id. The document shape is the collection's own schema, so it is described as a free-form object. Requires the `documents:get` action.
      *
      * @param {Collection} collection - A collection the tenant owns (see `GET /api/v1/collections`). Resolved to its namespaced Typesense name server-side; a collection the tenant does not own is a 404.
      * @param {string} documentId - The document's `id` within the collection.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    searchGetDocument(collection: Collection, documentId: string): Promise<Models.Error>;
+    searchGetDocument(collection: Collection, documentId: string): Promise<{}>;
     searchGetDocument(
         paramsOrFirst: { collection: Collection, documentId: string } | Collection,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { collection: Collection, documentId: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('collection' in paramsOrFirst || 'documentId' in paramsOrFirst))) {
@@ -550,21 +550,21 @@ export class Search {
      *
      * @param {Models.MultiSearchEntry[]} params.searches - The searches to run, in order. Must not be empty.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MultiSearchResult>}
      */
-    searchMultiSearch(params: { searches: Models.MultiSearchEntry[] }): Promise<Models.Error>;
+    searchMultiSearch(params: { searches: Models.MultiSearchEntry[] }): Promise<Models.MultiSearchResult>;
     /**
      * Run several searches in one round trip — the endpoint the typesense-js `multiSearch` helper and the InstantSearch adapter use for every query. On the gateway-trust path each entry must name a collection the tenant owns. With a `revx_` key `collection_name` is optional and is forced to the key's own collection. Requires the `documents:search` action.
      *
      * @param {Models.MultiSearchEntry[]} searches - The searches to run, in order. Must not be empty.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MultiSearchResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    searchMultiSearch(searches: Models.MultiSearchEntry[]): Promise<Models.Error>;
+    searchMultiSearch(searches: Models.MultiSearchEntry[]): Promise<Models.MultiSearchResult>;
     searchMultiSearch(
         paramsOrFirst: { searches: Models.MultiSearchEntry[] } | Models.MultiSearchEntry[]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MultiSearchResult> {
         let params: { searches: Models.MultiSearchEntry[] };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('searches' in paramsOrFirst))) {

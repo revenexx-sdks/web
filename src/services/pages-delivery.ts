@@ -83,9 +83,9 @@ export class PagesDelivery {
      * @param {string} params.id - The page id, for a storefront that already holds one (from `GET /pages/delivery/pages`). Either this or `slug`.
      * @param {string} params.langcode - Language to resolve the tree for, e.g. `de`. Falls back to the page's source language per field, so a partly translated page still renders whole.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DeliveryPage>}
      */
-    pagesDeliveryPage(params?: { slug?: string, id?: string, langcode?: string }): Promise<Models.Error>;
+    pagesDeliveryPage(params?: { slug?: string, id?: string, langcode?: string }): Promise<Models.DeliveryPage>;
     /**
      * What a storefront calls to render a URL: `GET /pages/delivery/page?slug=about-us&langcode=de`. Send exactly one selector — `slug` or `id`. `slug` is matched against the page and then against its translations, so a localized URL resolves to its page. Only the PUBLISHED revision is served, so an edit in progress never leaks. What comes back is finished rather than raw: `langcode` is resolved field by field with the page's source language behind it, blocks whose publish window has not opened or has already closed are left out, and every library reference is expanded into the subtree it points at — so a renderer walks the tree it is given and makes no second call for any of it.
      *
@@ -93,14 +93,14 @@ export class PagesDelivery {
      * @param {string} id - The page id, for a storefront that already holds one (from `GET /pages/delivery/pages`). Either this or `slug`.
      * @param {string} langcode - Language to resolve the tree for, e.g. `de`. Falls back to the page's source language per field, so a partly translated page still renders whole.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DeliveryPage>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesDeliveryPage(slug?: string, id?: string, langcode?: string): Promise<Models.Error>;
+    pagesDeliveryPage(slug?: string, id?: string, langcode?: string): Promise<Models.DeliveryPage>;
     pagesDeliveryPage(
         paramsOrFirst?: { slug?: string, id?: string, langcode?: string } | string,
         ...rest: [(string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DeliveryPage> {
         let params: { slug?: string, id?: string, langcode?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -221,23 +221,23 @@ export class PagesDelivery {
      * @param {string} params.token - The token handed out by POST /pages/editor/{page_id}/preview-grant.
      * @param {string} params.langcode - Language to resolve the tree for. Falls back to the page's source language, per field.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DeliveryPage>}
      */
-    pagesDeliveryPreview(params: { token: string, langcode?: string }): Promise<Models.Error>;
+    pagesDeliveryPreview(params: { token: string, langcode?: string }): Promise<Models.DeliveryPage>;
     /**
      * The same shape `GET /pages/delivery/page` answers, built from the UNPUBLISHED working copy instead of the published revision — so a reviewer without an editor account sees exactly what the storefront would render.
      *
      * @param {string} token - The token handed out by POST /pages/editor/{page_id}/preview-grant.
      * @param {string} langcode - Language to resolve the tree for. Falls back to the page's source language, per field.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.DeliveryPage>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesDeliveryPreview(token: string, langcode?: string): Promise<Models.Error>;
+    pagesDeliveryPreview(token: string, langcode?: string): Promise<Models.DeliveryPage>;
     pagesDeliveryPreview(
         paramsOrFirst: { token: string, langcode?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.DeliveryPage> {
         let params: { token: string, langcode?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

@@ -45,9 +45,9 @@ export class Prices {
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pricesListsList(params?: { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    pricesListsList(params?: { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * One page of the tenant's price list HEADERS — code, currency, tax basis, status, priority, validity window, buyer scope and the default flag. Never the prices themselves: those are a separate page per list (`GET /prices/lists/{list_id}/entries`).
      * 
@@ -77,14 +77,14 @@ export class Prices {
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesListsList(id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    pricesListsList(id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     pricesListsList(
         paramsOrFirst?: { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (PriceListStatus)?, (number)?, (boolean)?, (PriceListTaxBasis)?, (boolean)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -245,9 +245,9 @@ export class Prices {
      * @param {string} params.validFrom - Start of the validity window of the WHOLE list (ISO 8601); null = open-ended. Outside it the list is not a candidate at all.
      * @param {string} params.validUntil - End of the validity window of the whole list; null = open-ended. Lets a season expire on its own instead of being deactivated by hand.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceList>}
      */
-    pricesListsCreate(params: { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string }): Promise<Models.Error>;
+    pricesListsCreate(params: { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string }): Promise<Models.PriceList>;
     /**
      * Opens an empty book, and states in one row the four things that decide whether it will ever price anything: its currency, its priority within a specificity group, its validity window, and its buyer scope (contact, organization or channel — leave all three empty for a list open to everyone).
      * 
@@ -277,14 +277,14 @@ export class Prices {
      * @param {string} validFrom - Start of the validity window of the WHOLE list (ISO 8601); null = open-ended. Outside it the list is not a candidate at all.
      * @param {string} validUntil - End of the validity window of the whole list; null = open-ended. Lets a season expire on its own instead of being deactivated by hand.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesListsCreate(code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string): Promise<Models.Error>;
+    pricesListsCreate(code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string): Promise<Models.PriceList>;
     pricesListsCreate(
         paramsOrFirst: { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (object)?, (object)?, (string)?, (number)?, (boolean)?, (PriceListStatus)?, (PriceListTaxBasis)?, (boolean)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceList> {
         let params: { code: string, name: string, channelId?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -439,9 +439,9 @@ export class Prices {
      *
      * @param {string} params.id - The price list, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceDeleted>}
      */
-    pricesListsDelete(params: { id: string }): Promise<Models.Error>;
+    pricesListsDelete(params: { id: string }): Promise<Models.PriceDeleted>;
     /**
      * Deletes the list AND every price in it. `price_entries.price_list_id` references this row ON DELETE CASCADE, so the entries go in the same statement: nothing asks, nothing blocks, a book of 40 000 prices deletes exactly as fast as an empty one, and the answer is a bare `{deleted, id}` that never says how many prices went with it.
      * 
@@ -451,13 +451,13 @@ export class Prices {
      *
      * @param {string} id - The price list, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceDeleted>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesListsDelete(id: string): Promise<Models.Error>;
+    pricesListsDelete(id: string): Promise<Models.PriceDeleted>;
     pricesListsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceDeleted> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -494,21 +494,21 @@ export class Prices {
      *
      * @param {string} params.id - The price list, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceList>}
      */
-    pricesListsGet(params: { id: string }): Promise<Models.Error>;
+    pricesListsGet(params: { id: string }): Promise<Models.PriceList>;
     /**
      * The list HEADER, never its prices: currency, tax basis, buyer scope, priority, validity window and the default flag — the settings that decide WHETHER this list prices a given buyer, before any amount is looked at. Its entries are a separate page (`GET /prices/lists/{list_id}/entries`), because a price book runs to thousands of rows and no read of a list should carry them. This is the admin view and it reads the base table rather than the market-scoped one the resolve call uses, so a list that is invisible in the active market is still returned here.
      *
      * @param {string} id - The price list, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesListsGet(id: string): Promise<Models.Error>;
+    pricesListsGet(id: string): Promise<Models.PriceList>;
     pricesListsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceList> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -566,9 +566,9 @@ export class Prices {
      * @param {string} params.validFrom - Start of the validity window of the WHOLE list (ISO 8601); null = open-ended. Outside it the list is not a candidate at all.
      * @param {string} params.validUntil - End of the validity window of the whole list; null = open-ended. Lets a season expire on its own instead of being deactivated by hand.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceList>}
      */
-    pricesListsUpdate(params: { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string }): Promise<Models.Error>;
+    pricesListsUpdate(params: { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string }): Promise<Models.PriceList>;
     /**
      * A partial update: send only what changes, omitted fields keep their value, and a payload with no updatable column at all is refused rather than answered with an unchanged row. There is no draft and no publish step — the next resolve call reads what this one wrote.
      * 
@@ -595,14 +595,14 @@ export class Prices {
      * @param {string} validFrom - Start of the validity window of the WHOLE list (ISO 8601); null = open-ended. Outside it the list is not a candidate at all.
      * @param {string} validUntil - End of the validity window of the whole list; null = open-ended. Lets a season expire on its own instead of being deactivated by hand.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesListsUpdate(id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string): Promise<Models.Error>;
+    pricesListsUpdate(id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string): Promise<Models.PriceList>;
     pricesListsUpdate(
         paramsOrFirst: { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (object)?, (object)?, (string)?, (string)?, (number)?, (boolean)?, (PriceListStatus)?, (PriceListTaxBasis)?, (boolean)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceList> {
         let params: { id: string, channelId?: string, code?: string, contactId?: string, currency?: string, description?: string, isDefault?: boolean, labels?: object, metadata?: object, name?: string, organizationId?: string, priority?: number, requiresAuth?: boolean, status?: PriceListStatus, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, validFrom?: string, validUntil?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -741,9 +741,9 @@ export class Prices {
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pricesEntriesList(params: { listId: string, id?: string, productId?: string, sku?: string, priceType?: PriceEntryType, quantityMin?: number, unitPrice?: number, unit?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    pricesEntriesList(params: { listId: string, id?: string, productId?: string, sku?: string, priceType?: PriceEntryType, quantityMin?: number, unitPrice?: number, unit?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * The prices inside one list, a page at a time. An entry is a rung rather than "the price of a product": it carries a quantity threshold, an amount and a unit, its own validity window, and — where the answer is deliberately no number at all — an `on_request` marker instead of one. So this page is where the quantity tiers, the promo windows and the "ask us" markers of a book are read.
      * 
@@ -765,14 +765,14 @@ export class Prices {
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesList(listId: string, id?: string, productId?: string, sku?: string, priceType?: PriceEntryType, quantityMin?: number, unitPrice?: number, unit?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    pricesEntriesList(listId: string, id?: string, productId?: string, sku?: string, priceType?: PriceEntryType, quantityMin?: number, unitPrice?: number, unit?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     pricesEntriesList(
         paramsOrFirst: { listId: string, id?: string, productId?: string, sku?: string, priceType?: PriceEntryType, quantityMin?: number, unitPrice?: number, unit?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (PriceEntryType)?, (number)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { listId: string, id?: string, productId?: string, sku?: string, priceType?: PriceEntryType, quantityMin?: number, unitPrice?: number, unit?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -894,9 +894,9 @@ export class Prices {
      * @param {string} params.validFrom - Start of this entry’s own validity (ISO 8601) — how a promo price is expressed: a second rung, live only for its window. null = open-ended.
      * @param {string} params.validUntil - End of this entry’s own validity; null = open-ended. Outside it the rung is skipped and the ladder resolves as if it were not there.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntry>}
      */
-    pricesEntriesCreate(params: { listId: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string }): Promise<Models.Error>;
+    pricesEntriesCreate(params: { listId: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string }): Promise<Models.PriceEntry>;
     /**
      * Adds ONE rung to one item's quantity ladder in this list. The only thing an entry must have is an identity — `product_id` or `sku`, which the row CHECK enforces; everything else defaults, and one of those defaults deserves a warning.
      * 
@@ -917,14 +917,14 @@ export class Prices {
      * @param {string} validFrom - Start of this entry’s own validity (ISO 8601) — how a promo price is expressed: a second rung, live only for its window. null = open-ended.
      * @param {string} validUntil - End of this entry’s own validity; null = open-ended. Outside it the rung is skipped and the ladder resolves as if it were not there.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntry>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesCreate(listId: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string): Promise<Models.Error>;
+    pricesEntriesCreate(listId: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string): Promise<Models.PriceEntry>;
     pricesEntriesCreate(
         paramsOrFirst: { listId: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string } | string,
         ...rest: [(object)?, (PriceEntryType)?, (string)?, (number)?, (string)?, (string)?, (number)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceEntry> {
         let params: { listId: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1012,9 +1012,9 @@ export class Prices {
      * @param {string} params.listId - The price list the entries belong to. An id no list in this tenant has answers 404 rather than an empty page.
      * @param {Models.PriceEntryReplaceItem[]} params.entries - The complete new entry set (set semantics).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntriesReplaceResponse>}
      */
-    pricesEntriesReplace(params: { listId: string, entries: Models.PriceEntryReplaceItem[] }): Promise<Models.Error>;
+    pricesEntriesReplace(params: { listId: string, entries: Models.PriceEntryReplaceItem[] }): Promise<Models.PriceEntriesReplaceResponse>;
     /**
      * Set semantics over the WHOLE list, not over one item: every entry of the list is deleted and the payload becomes the complete new book. It exists for the two callers that genuinely hold the whole book in hand — the Cockpit's table editor, whose save is this call, and a small import. `entries: []` is a legal payload and empties the list — the items it priced then resolve from the next candidate list, or come back `on_request`.
      * 
@@ -1025,14 +1025,14 @@ export class Prices {
      * @param {string} listId - The price list the entries belong to. An id no list in this tenant has answers 404 rather than an empty page.
      * @param {Models.PriceEntryReplaceItem[]} entries - The complete new entry set (set semantics).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntriesReplaceResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesReplace(listId: string, entries: Models.PriceEntryReplaceItem[]): Promise<Models.Error>;
+    pricesEntriesReplace(listId: string, entries: Models.PriceEntryReplaceItem[]): Promise<Models.PriceEntriesReplaceResponse>;
     pricesEntriesReplace(
         paramsOrFirst: { listId: string, entries: Models.PriceEntryReplaceItem[] } | string,
         ...rest: [(Models.PriceEntryReplaceItem[])?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceEntriesReplaceResponse> {
         let params: { listId: string, entries: Models.PriceEntryReplaceItem[] };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1085,9 +1085,9 @@ export class Prices {
      * @param {PriceEndingRule} params.rounding - Ending the computed prices snap to (nearest match). Omit to use the tenant's bulk_adjust_rounding setting.
      * @param {string} params.skuPrefix - Restrict the change to entries whose SKU starts with this (a prefix, case-sensitive, no wildcards). Entries identified only by product_id never match a prefix. Omit to change the whole list.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntriesAdjustResponse>}
      */
-    pricesEntriesAdjust(params: { listId: string, amount?: number, dryRun?: boolean, percent?: number, rounding?: PriceEndingRule, skuPrefix?: string }): Promise<Models.Error>;
+    pricesEntriesAdjust(params: { listId: string, amount?: number, dryRun?: boolean, percent?: number, rounding?: PriceEndingRule, skuPrefix?: string }): Promise<Models.PriceEntriesAdjustResponse>;
     /**
      * Moves every priced entry of the list at once, in whichever of the two ways a merchant thinks about a price change: `percent` for a relative one (5 raises everything by 5 %) or `amount` for a flat one added to every unit price. One or the other, never both, and `sku_prefix` narrows the change to part of the book. On-request entries are never touched, because a percentage of "ask us" is not a number.
      * 
@@ -1100,14 +1100,14 @@ export class Prices {
      * @param {PriceEndingRule} rounding - Ending the computed prices snap to (nearest match). Omit to use the tenant's bulk_adjust_rounding setting.
      * @param {string} skuPrefix - Restrict the change to entries whose SKU starts with this (a prefix, case-sensitive, no wildcards). Entries identified only by product_id never match a prefix. Omit to change the whole list.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntriesAdjustResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesAdjust(listId: string, amount?: number, dryRun?: boolean, percent?: number, rounding?: PriceEndingRule, skuPrefix?: string): Promise<Models.Error>;
+    pricesEntriesAdjust(listId: string, amount?: number, dryRun?: boolean, percent?: number, rounding?: PriceEndingRule, skuPrefix?: string): Promise<Models.PriceEntriesAdjustResponse>;
     pricesEntriesAdjust(
         paramsOrFirst: { listId: string, amount?: number, dryRun?: boolean, percent?: number, rounding?: PriceEndingRule, skuPrefix?: string } | string,
         ...rest: [(number)?, (boolean)?, (number)?, (PriceEndingRule)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceEntriesAdjustResponse> {
         let params: { listId: string, amount?: number, dryRun?: boolean, percent?: number, rounding?: PriceEndingRule, skuPrefix?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1174,9 +1174,9 @@ export class Prices {
      * @param {Models.PriceEntryReplaceItem[]} params.entries - At most 5000 rows per call — send a large book in chunks.
      * @param {PriceEntriesBulkMode} params.mode - Default 'upsert': a row naming a rung the list already has (same product/sku AND quantity_min) updates it. 'append' always inserts — a re-run then duplicates the ladder, which is what makes an ambiguous tier table.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntriesBulkResponse>}
      */
-    pricesEntriesBulk(params: { listId: string, entries: Models.PriceEntryReplaceItem[], mode?: PriceEntriesBulkMode }): Promise<Models.Error>;
+    pricesEntriesBulk(params: { listId: string, entries: Models.PriceEntryReplaceItem[], mode?: PriceEntriesBulkMode }): Promise<Models.PriceEntriesBulkResponse>;
     /**
      * Adds entries to a list without wiping it, and UPSERTS rather than inserts: a row naming a rung the list already has (same product_id/sku AND quantity_min) updates that rung, so re-running an import corrects prices instead of duplicating the ladder. `mode: 'append'` keeps the old insert-everything behaviour. Inserts go out as one PostgREST bulk write per 1000 rows.
      * 
@@ -1186,14 +1186,14 @@ export class Prices {
      * @param {Models.PriceEntryReplaceItem[]} entries - At most 5000 rows per call — send a large book in chunks.
      * @param {PriceEntriesBulkMode} mode - Default 'upsert': a row naming a rung the list already has (same product/sku AND quantity_min) updates it. 'append' always inserts — a re-run then duplicates the ladder, which is what makes an ambiguous tier table.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntriesBulkResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesBulk(listId: string, entries: Models.PriceEntryReplaceItem[], mode?: PriceEntriesBulkMode): Promise<Models.Error>;
+    pricesEntriesBulk(listId: string, entries: Models.PriceEntryReplaceItem[], mode?: PriceEntriesBulkMode): Promise<Models.PriceEntriesBulkResponse>;
     pricesEntriesBulk(
         paramsOrFirst: { listId: string, entries: Models.PriceEntryReplaceItem[], mode?: PriceEntriesBulkMode } | string,
         ...rest: [(Models.PriceEntryReplaceItem[])?, (PriceEntriesBulkMode)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceEntriesBulkResponse> {
         let params: { listId: string, entries: Models.PriceEntryReplaceItem[], mode?: PriceEntriesBulkMode };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1252,9 +1252,9 @@ export class Prices {
      * @param {string} params.sku - The item the ladder prices (alternative to product_id).
      * @param {string} params.unit - Unit of measure carried onto every generated tier. Free text, neither validated nor converted.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntriesLadderResponse>}
      */
-    pricesEntriesLadder(params: { listId: string, basePrice: number, discountPercent?: number, productId?: string, quantities?: number[], replace?: boolean, rounding?: PriceEndingRule, sku?: string, unit?: string }): Promise<Models.Error>;
+    pricesEntriesLadder(params: { listId: string, basePrice: number, discountPercent?: number, productId?: string, quantities?: number[], replace?: boolean, rounding?: PriceEndingRule, sku?: string, unit?: string }): Promise<Models.PriceEntriesLadderResponse>;
     /**
      * Writes a whole quantity-tier ladder (Staffelpreise) for ONE item in one call, instead of typing a rung at a time. Tiers are a flat quantity_min column on purpose — the ladder IS the set of entries sharing an identity, and resolve returns it sorted as one array. What was missing was the gesture: "19.90 from 1, 5 % off per tier at 10 and 50". Prices are rounded and snapped exactly as a bulk adjust is.
      *
@@ -1268,14 +1268,14 @@ export class Prices {
      * @param {string} sku - The item the ladder prices (alternative to product_id).
      * @param {string} unit - Unit of measure carried onto every generated tier. Free text, neither validated nor converted.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntriesLadderResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesLadder(listId: string, basePrice: number, discountPercent?: number, productId?: string, quantities?: number[], replace?: boolean, rounding?: PriceEndingRule, sku?: string, unit?: string): Promise<Models.Error>;
+    pricesEntriesLadder(listId: string, basePrice: number, discountPercent?: number, productId?: string, quantities?: number[], replace?: boolean, rounding?: PriceEndingRule, sku?: string, unit?: string): Promise<Models.PriceEntriesLadderResponse>;
     pricesEntriesLadder(
         paramsOrFirst: { listId: string, basePrice: number, discountPercent?: number, productId?: string, quantities?: number[], replace?: boolean, rounding?: PriceEndingRule, sku?: string, unit?: string } | string,
         ...rest: [(number)?, (number)?, (string)?, (number[])?, (boolean)?, (PriceEndingRule)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceEntriesLadderResponse> {
         let params: { listId: string, basePrice: number, discountPercent?: number, productId?: string, quantities?: number[], replace?: boolean, rounding?: PriceEndingRule, sku?: string, unit?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1361,9 +1361,9 @@ export class Prices {
      * @param {string} params.listId - The price list the entries belong to. An id no list in this tenant has answers 404 rather than an empty page.
      * @param {string} params.id - The price entry, by id. An entry that belongs to a different list answers 404.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceDeleted>}
      */
-    pricesEntriesDelete(params: { listId: string, id: string }): Promise<Models.Error>;
+    pricesEntriesDelete(params: { listId: string, id: string }): Promise<Models.PriceDeleted>;
     /**
      * Removes ONE rung. The item keeps its other rungs and stays priced — which is exactly what makes the lowest rung the dangerous one to delete.
      * 
@@ -1374,14 +1374,14 @@ export class Prices {
      * @param {string} listId - The price list the entries belong to. An id no list in this tenant has answers 404 rather than an empty page.
      * @param {string} id - The price entry, by id. An entry that belongs to a different list answers 404.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceDeleted>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesDelete(listId: string, id: string): Promise<Models.Error>;
+    pricesEntriesDelete(listId: string, id: string): Promise<Models.PriceDeleted>;
     pricesEntriesDelete(
         paramsOrFirst: { listId: string, id: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceDeleted> {
         let params: { listId: string, id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1424,23 +1424,23 @@ export class Prices {
      * @param {string} params.listId - The price list the entries belong to. An id no list in this tenant has answers 404 rather than an empty page.
      * @param {string} params.id - The price entry, by id. An entry that belongs to a different list answers 404.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntry>}
      */
-    pricesEntriesGet(params: { listId: string, id: string }): Promise<Models.Error>;
+    pricesEntriesGet(params: { listId: string, id: string }): Promise<Models.PriceEntry>;
     /**
      * One rung of one ladder, exactly as stored — nothing is rounded, converted or taxed on the way out. `unit_price` is per ONE unit of `unit`, in the LIST's currency and on the LIST's tax basis; the entry itself carries neither, which is why a rung read on its own is not yet a price you can show a buyer. `POST /prices/resolve` is what turns it into one: it picks the rung that applies to a quantity, names the basis, and adds the net/gross pair and the tax rate. The id is checked against the list in the path, so an entry belonging to another list answers 404 rather than being read through the wrong parent.
      *
      * @param {string} listId - The price list the entries belong to. An id no list in this tenant has answers 404 rather than an empty page.
      * @param {string} id - The price entry, by id. An entry that belongs to a different list answers 404.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntry>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesGet(listId: string, id: string): Promise<Models.Error>;
+    pricesEntriesGet(listId: string, id: string): Promise<Models.PriceEntry>;
     pricesEntriesGet(
         paramsOrFirst: { listId: string, id: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceEntry> {
         let params: { listId: string, id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1496,9 +1496,9 @@ export class Prices {
      * @param {string} params.validFrom - Start of this entry’s own validity (ISO 8601) — how a promo price is expressed: a second rung, live only for its window. null = open-ended.
      * @param {string} params.validUntil - End of this entry’s own validity; null = open-ended. Outside it the rung is skipped and the ladder resolves as if it were not there.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntry>}
      */
-    pricesEntriesUpdate(params: { listId: string, id: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string }): Promise<Models.Error>;
+    pricesEntriesUpdate(params: { listId: string, id: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string }): Promise<Models.PriceEntry>;
     /**
      * A partial update of one rung: send only what changes, a payload with no updatable column at all is refused, and the next resolve call reads what this one wrote.
      * 
@@ -1518,14 +1518,14 @@ export class Prices {
      * @param {string} validFrom - Start of this entry’s own validity (ISO 8601) — how a promo price is expressed: a second rung, live only for its window. null = open-ended.
      * @param {string} validUntil - End of this entry’s own validity; null = open-ended. Outside it the rung is skipped and the ladder resolves as if it were not there.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceEntry>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesEntriesUpdate(listId: string, id: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string): Promise<Models.Error>;
+    pricesEntriesUpdate(listId: string, id: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string): Promise<Models.PriceEntry>;
     pricesEntriesUpdate(
         paramsOrFirst: { listId: string, id: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string } | string,
         ...rest: [(string)?, (object)?, (PriceEntryType)?, (string)?, (number)?, (string)?, (string)?, (number)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceEntry> {
         let params: { listId: string, id: string, metadata?: object, priceType?: PriceEntryType, productId?: string, quantityMin?: number, sku?: string, unit?: string, unitPrice?: number, validFrom?: string, validUntil?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1616,9 +1616,9 @@ export class Prices {
      * @param {string} params.listId - The price list the entries belong to. An id no list in this tenant has answers 404 rather than an empty page.
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceListMakeDefaultResponse>}
      */
-    pricesListsMakeDefault(params: { listId: string, data: object }): Promise<Models.Error>;
+    pricesListsMakeDefault(params: { listId: string, data: object }): Promise<Models.PriceListMakeDefaultResponse>;
     /**
      * Promotes this list AND demotes whoever held the flag, in one call. The flag is a single answer, not a per-row opinion: resolution uses it as the last tie-break, so two defaults leave the winner to row order and none leaves a tie unsettled. Promote-then-demote as two PATCHes from a client produces exactly those two states whenever the second call does not land.
      * 
@@ -1627,14 +1627,14 @@ export class Prices {
      * @param {string} listId - The price list the entries belong to. An id no list in this tenant has answers 404 rather than an empty page.
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceListMakeDefaultResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesListsMakeDefault(listId: string, data: object): Promise<Models.Error>;
+    pricesListsMakeDefault(listId: string, data: object): Promise<Models.PriceListMakeDefaultResponse>;
     pricesListsMakeDefault(
         paramsOrFirst: { listId: string, data: object } | string,
         ...rest: [(object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceListMakeDefaultResponse> {
         let params: { listId: string, data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1704,9 +1704,9 @@ export class Prices {
      * @param {string} params.marketId - Buyer context: the market, as a uuid pin for older callers. Prefer the `X-Revenexx-Market` header, which carries a market CODE and is what scopes the visible price lists. The market decides the tax rates AND which per-market settings (rounding, tie-break, anonymous access) apply — with several markets and no signal at all the answer says `tax.resolved: false`, `reason: market_required` rather than quoting another market’s VAT.
      * @param {string} params.organizationId - Buyer context: the organization the buyer belongs to. Second most specific scope; also counts as authenticated.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceResolveResponse>}
      */
-    pricesResolve(params: { items: Models.PriceResolveItem[], at?: string, channelId?: string, contactId?: string, currency?: string, marketId?: string, organizationId?: string }): Promise<Models.Error>;
+    pricesResolve(params: { items: Models.PriceResolveItem[], at?: string, channelId?: string, contactId?: string, currency?: string, marketId?: string, organizationId?: string }): Promise<Models.PriceResolveResponse>;
     /**
      * The live price call. Everything else in this app configures prices; this is the one route that ANSWERS them, and a storefront reaches it on every listing, every product page and every cart. Send up to 200 items and the buyer context they are for — contact, organization, market and channel — and get back, per item, the unit price this buyer pays, the net/gross pair, the tax rate, the list that decided it and that item's full quantity ladder.
      * 
@@ -1736,14 +1736,14 @@ export class Prices {
      * @param {string} marketId - Buyer context: the market, as a uuid pin for older callers. Prefer the `X-Revenexx-Market` header, which carries a market CODE and is what scopes the visible price lists. The market decides the tax rates AND which per-market settings (rounding, tie-break, anonymous access) apply — with several markets and no signal at all the answer says `tax.resolved: false`, `reason: market_required` rather than quoting another market’s VAT.
      * @param {string} organizationId - Buyer context: the organization the buyer belongs to. Second most specific scope; also counts as authenticated.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceResolveResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesResolve(items: Models.PriceResolveItem[], at?: string, channelId?: string, contactId?: string, currency?: string, marketId?: string, organizationId?: string): Promise<Models.Error>;
+    pricesResolve(items: Models.PriceResolveItem[], at?: string, channelId?: string, contactId?: string, currency?: string, marketId?: string, organizationId?: string): Promise<Models.PriceResolveResponse>;
     pricesResolve(
         paramsOrFirst: { items: Models.PriceResolveItem[], at?: string, channelId?: string, contactId?: string, currency?: string, marketId?: string, organizationId?: string } | Models.PriceResolveItem[],
         ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceResolveResponse> {
         let params: { items: Models.PriceResolveItem[], at?: string, channelId?: string, contactId?: string, currency?: string, marketId?: string, organizationId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('items' in paramsOrFirst || 'at' in paramsOrFirst || 'channelId' in paramsOrFirst || 'contactId' in paramsOrFirst || 'currency' in paramsOrFirst || 'marketId' in paramsOrFirst || 'organizationId' in paramsOrFirst))) {
@@ -1837,21 +1837,21 @@ export class Prices {
      *
      * @param {PricesVocabulariesGetName} params.name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceVocabulary>}
      */
-    pricesVocabulariesGet(params: { name: PricesVocabulariesGetName }): Promise<Models.Error>;
+    pricesVocabulariesGet(params: { name: PricesVocabulariesGetName }): Promise<Models.PriceVocabulary>;
     /**
      * One vocabulary in full: every permitted value, each with the title and description a human reads for it and the badge tone a UI colours it with — enough to render a select or a status chip without keeping a private copy of an enum this app enforces. The values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift — a value added to the constraint appears here even before anyone labels it, titled from its own key. Values come back in constraint order, which is the order a select should offer. 'closed' says the set is exhaustive, so a value outside it is stale data rather than a missing label. Answers 404 for an unknown name. Names: list-statuses, price-types, tax-bases.
      *
      * @param {PricesVocabulariesGetName} name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PriceVocabulary>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesVocabulariesGet(name: PricesVocabulariesGetName): Promise<Models.Error>;
+    pricesVocabulariesGet(name: PricesVocabulariesGetName): Promise<Models.PriceVocabulary>;
     pricesVocabulariesGet(
         paramsOrFirst: { name: PricesVocabulariesGetName } | PricesVocabulariesGetName    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PriceVocabulary> {
         let params: { name: PricesVocabulariesGetName };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('name' in paramsOrFirst))) {

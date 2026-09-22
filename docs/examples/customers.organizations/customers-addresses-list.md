@@ -24,6 +24,7 @@ const result = await customersOrganizations.customersAddressesList({
     country: 'DE', // optional
     phone: '+49 30 5550123', // optional
     isDefault: true, // optional
+    externalId: 'R_ADD000005', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z', // optional
     limit: 1, // optional

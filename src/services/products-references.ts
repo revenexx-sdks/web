@@ -137,9 +137,9 @@ export class ProductsReferences {
      * @param {string} params.image - A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
      * @param {object} params.labels - What the entity is called, per language tag — the heading over its record list.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntities>}
      */
-    productsReferenceEntitiesCreate(params: { code: string, image?: string, labels?: object }): Promise<Models.Error>;
+    productsReferenceEntitiesCreate(params: { code: string, image?: string, labels?: object }): Promise<Models.ReferenceEntities>;
     /**
      * Creates one reference entity and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -151,14 +151,14 @@ export class ProductsReferences {
      * @param {string} image - A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
      * @param {object} labels - What the entity is called, per language tag — the heading over its record list.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntities>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntitiesCreate(code: string, image?: string, labels?: object): Promise<Models.Error>;
+    productsReferenceEntitiesCreate(code: string, image?: string, labels?: object): Promise<Models.ReferenceEntities>;
     productsReferenceEntitiesCreate(
         paramsOrFirst: { code: string, image?: string, labels?: object } | string,
         ...rest: [(string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ReferenceEntities> {
         let params: { code: string, image?: string, labels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -213,9 +213,9 @@ export class ProductsReferences {
      *
      * @param {string} params.id - The `reference_entities` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entities`. An id no reference entitie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsReferenceEntitiesDelete(params: { id: string }): Promise<Models.Error>;
+    productsReferenceEntitiesDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one reference entity by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -225,13 +225,13 @@ export class ProductsReferences {
      *
      * @param {string} id - The `reference_entities` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entities`. An id no reference entitie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntitiesDelete(id: string): Promise<Models.Error>;
+    productsReferenceEntitiesDelete(id: string): Promise<{}>;
     productsReferenceEntitiesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -274,9 +274,9 @@ export class ProductsReferences {
      *
      * @param {string} params.id - The `reference_entities` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entities`. An id no reference entitie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntities>}
      */
-    productsReferenceEntitiesGet(params: { id: string }): Promise<Models.Error>;
+    productsReferenceEntitiesGet(params: { id: string }): Promise<Models.ReferenceEntities>;
     /**
      * Reads one reference entity by its id — the whole row, every column, as it is stored.
      * 
@@ -288,13 +288,13 @@ export class ProductsReferences {
      *
      * @param {string} id - The `reference_entities` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entities`. An id no reference entitie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntities>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntitiesGet(id: string): Promise<Models.Error>;
+    productsReferenceEntitiesGet(id: string): Promise<Models.ReferenceEntities>;
     productsReferenceEntitiesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ReferenceEntities> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -338,9 +338,9 @@ export class ProductsReferences {
      * @param {string} params.image - A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
      * @param {object} params.labels - What the entity is called, per language tag — the heading over its record list.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntities>}
      */
-    productsReferenceEntitiesUpdate(params: { id: string, code?: string, image?: string, labels?: object }): Promise<Models.Error>;
+    productsReferenceEntitiesUpdate(params: { id: string, code?: string, image?: string, labels?: object }): Promise<Models.ReferenceEntities>;
     /**
      * Updates one reference entity by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -353,14 +353,14 @@ export class ProductsReferences {
      * @param {string} image - A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
      * @param {object} labels - What the entity is called, per language tag — the heading over its record list.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntities>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntitiesUpdate(id: string, code?: string, image?: string, labels?: object): Promise<Models.Error>;
+    productsReferenceEntitiesUpdate(id: string, code?: string, image?: string, labels?: object): Promise<Models.ReferenceEntities>;
     productsReferenceEntitiesUpdate(
         paramsOrFirst: { id: string, code?: string, image?: string, labels?: object } | string,
         ...rest: [(string)?, (string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ReferenceEntities> {
         let params: { id: string, code?: string, image?: string, labels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -562,9 +562,9 @@ Defaults to `{}`, and an empty object is a normal state — a record nobody has 
 Which attributes a record of this entity has comes from `attributes` rows with `entity_type: "reference_entity"` and `entity_ref` equal to the entity's code — `GET /products/attribute-schema?entity_type=reference_entity&entity_ref=brand` answers it in one call.
      * @param {object} params.labels - What the record is called, per language tag — the text a picker shows while the code is what gets written.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntityRecords>}
      */
-    productsReferenceEntityRecordsCreate(params: { code: string, referenceEntityId: string, attributeValues?: object, labels?: object }): Promise<Models.Error>;
+    productsReferenceEntityRecordsCreate(params: { code: string, referenceEntityId: string, attributeValues?: object, labels?: object }): Promise<Models.ReferenceEntityRecords>;
     /**
      * Creates one reference entity record and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -596,14 +596,14 @@ Defaults to `{}`, and an empty object is a normal state — a record nobody has 
 Which attributes a record of this entity has comes from `attributes` rows with `entity_type: "reference_entity"` and `entity_ref` equal to the entity's code — `GET /products/attribute-schema?entity_type=reference_entity&entity_ref=brand` answers it in one call.
      * @param {object} labels - What the record is called, per language tag — the text a picker shows while the code is what gets written.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntityRecords>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntityRecordsCreate(code: string, referenceEntityId: string, attributeValues?: object, labels?: object): Promise<Models.Error>;
+    productsReferenceEntityRecordsCreate(code: string, referenceEntityId: string, attributeValues?: object, labels?: object): Promise<Models.ReferenceEntityRecords>;
     productsReferenceEntityRecordsCreate(
         paramsOrFirst: { code: string, referenceEntityId: string, attributeValues?: object, labels?: object } | string,
         ...rest: [(string)?, (object)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ReferenceEntityRecords> {
         let params: { code: string, referenceEntityId: string, attributeValues?: object, labels?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -666,9 +666,9 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      *
      * @param {string} params.id - The `reference_entity_records` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entity_records`. An id no reference entity record of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsReferenceEntityRecordsDelete(params: { id: string }): Promise<Models.Error>;
+    productsReferenceEntityRecordsDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one reference entity record by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -678,13 +678,13 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      *
      * @param {string} id - The `reference_entity_records` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entity_records`. An id no reference entity record of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntityRecordsDelete(id: string): Promise<Models.Error>;
+    productsReferenceEntityRecordsDelete(id: string): Promise<{}>;
     productsReferenceEntityRecordsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -727,9 +727,9 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      *
      * @param {string} params.id - The `reference_entity_records` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entity_records`. An id no reference entity record of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntityRecords>}
      */
-    productsReferenceEntityRecordsGet(params: { id: string }): Promise<Models.Error>;
+    productsReferenceEntityRecordsGet(params: { id: string }): Promise<Models.ReferenceEntityRecords>;
     /**
      * Reads one reference entity record by its id — the whole row, every column, as it is stored.
      * 
@@ -741,13 +741,13 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      *
      * @param {string} id - The `reference_entity_records` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entity_records`. An id no reference entity record of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntityRecords>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntityRecordsGet(id: string): Promise<Models.Error>;
+    productsReferenceEntityRecordsGet(id: string): Promise<Models.ReferenceEntityRecords>;
     productsReferenceEntityRecordsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ReferenceEntityRecords> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -811,9 +811,9 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      * @param {object} params.labels - What the record is called, per language tag — the text a picker shows while the code is what gets written.
      * @param {string} params.referenceEntityId - Which reference entity this record belongs to.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntityRecords>}
      */
-    productsReferenceEntityRecordsUpdate(params: { id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string }): Promise<Models.Error>;
+    productsReferenceEntityRecordsUpdate(params: { id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string }): Promise<Models.ReferenceEntityRecords>;
     /**
      * Updates one reference entity record by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -846,14 +846,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      * @param {object} labels - What the record is called, per language tag — the text a picker shows while the code is what gets written.
      * @param {string} referenceEntityId - Which reference entity this record belongs to.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ReferenceEntityRecords>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntityRecordsUpdate(id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string): Promise<Models.Error>;
+    productsReferenceEntityRecordsUpdate(id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string): Promise<Models.ReferenceEntityRecords>;
     productsReferenceEntityRecordsUpdate(
         paramsOrFirst: { id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string } | string,
         ...rest: [(object)?, (string)?, (object)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ReferenceEntityRecords> {
         let params: { id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

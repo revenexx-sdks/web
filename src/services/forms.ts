@@ -31,9 +31,9 @@ export class Forms {
      * @param {number} params.offset - How many matching rows to skip. Page N is `offset = (N - 1) * limit`; `page.hasMore` says whether there is a next one.
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    formsList(params?: { id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    formsList(params?: { id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * The catalogue of forms this tenant has authored, a page at a time. A row is the whole form — `definition`, `settings`, `status`, `slug` — so a list read is not a summary view that has to be followed by a read per row.
      * 
@@ -51,14 +51,14 @@ export class Forms {
      * @param {number} offset - How many matching rows to skip. Page N is `offset = (N - 1) * limit`; `page.hasMore` says whether there is a next one.
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsList(id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    formsList(id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     formsList(
         paramsOrFirst?: { id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (string)?, (FormStatus)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -150,9 +150,9 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @param {object} params.settings - Submit label, success message, per-form notify email, post-submit actions, translations — see the `FormSettings` schema for every key that is read. Unconstrained jsonb on the way in: nothing here is required and no key is refused.
      * @param {FormStatus} params.status - Lifecycle. `draft` while it is being built; `live` once the storefront may render it — the cover BFF resolves live forms only, so a draft is a 404 on the storefront and never a broken page; `archived` for a form that is kept for its submissions but no longer offered. Default 'draft'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Form>}
      */
-    formsCreate(params: { name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus }): Promise<Models.Error>;
+    formsCreate(params: { name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus }): Promise<Models.Form>;
     /**
      * A form is born a `draft` and stays off the storefront until somebody moves it to `live`, so creating one is safe: the cover BFF resolves live forms only, and nothing renders until the status says it may. `definition` may be omitted entirely — the row is then the empty shell the Form Builder fills in.
      * 
@@ -173,14 +173,14 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @param {object} settings - Submit label, success message, per-form notify email, post-submit actions, translations — see the `FormSettings` schema for every key that is read. Unconstrained jsonb on the way in: nothing here is required and no key is refused.
      * @param {FormStatus} status - Lifecycle. `draft` while it is being built; `live` once the storefront may render it — the cover BFF resolves live forms only, so a draft is a 404 on the storefront and never a broken page; `archived` for a form that is kept for its submissions but no longer offered. Default 'draft'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Form>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsCreate(name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus): Promise<Models.Error>;
+    formsCreate(name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus): Promise<Models.Form>;
     formsCreate(
         paramsOrFirst: { name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus } | string,
         ...rest: [(string)?, (object[])?, (object)?, (object)?, (FormStatus)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Form> {
         let params: { name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -289,9 +289,9 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @param {number} params.offset - How many matching rows to skip. Page N is `offset = (N - 1) * limit`; `page.hasMore` says whether there is a next one.
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    formsSubmissionsList(params?: { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    formsSubmissionsList(params?: { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * The inbox: every submission this tenant has received, a page at a time. A row is the whole submission, `data` included, so the list is the inbox and the detail view at once — nothing has to be fetched per row to show what somebody wrote. Treat all of it as END-USER data.
      * 
@@ -310,14 +310,14 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @param {number} offset - How many matching rows to skip. Page N is `offset = (N - 1) * limit`; `page.hasMore` says whether there is a next one.
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsSubmissionsList(id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    formsSubmissionsList(id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     formsSubmissionsList(
         paramsOrFirst?: { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (FormSubmissionStatus)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -414,9 +414,9 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      * @param {string} params.source - Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
      * @param {FormSubmissionStatus} params.status - Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. A create may set it — an inbox importer records a submission that is already read — but nothing needs to: omit it and the row is 'new'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormSubmission>}
      */
-    formsSubmissionsCreate(params: { data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus }): Promise<Models.Error>;
+    formsSubmissionsCreate(params: { data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus }): Promise<Models.FormSubmission>;
     /**
      * The storefront's path, and the moment a lead enters the platform. A stored submission emits `form.submitted` onto the tenant event bus with the row itself as the payload — that is the event an Integration Studio workflow or a notification email listens to, and it is the only event this app raises about a submission. A call that is refused therefore leaves no trace anywhere: no row, and no automation that ever hears about it.
      * 
@@ -437,14 +437,14 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      * @param {string} source - Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
      * @param {FormSubmissionStatus} status - Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. A create may set it — an inbox importer records a submission that is already read — but nothing needs to: omit it and the row is 'new'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormSubmission>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsSubmissionsCreate(data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus): Promise<Models.Error>;
+    formsSubmissionsCreate(data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus): Promise<Models.FormSubmission>;
     formsSubmissionsCreate(
         paramsOrFirst: { data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus } | object,
         ...rest: [(string)?, (string)?, (object)?, (string)?, (FormSubmissionStatus)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FormSubmission> {
         let params: { data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst || 'formId' in paramsOrFirst || 'formSlug' in paramsOrFirst || 'metadata' in paramsOrFirst || 'source' in paramsOrFirst || 'status' in paramsOrFirst))) {
@@ -524,9 +524,9 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      * @param {number} params.olderThanDays - Age threshold. Omit to use the retention floor. A value BELOW the floor is raised to it — the setting is the floor, not a default, and the floor is the LONGEST submission_retention_days configured anywhere in the tenant (see the operation description).
      * @param {FormsSubmissionsPruneStatus} params.status - Narrow the sweep to one inbox status, e.g. 'spam'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormSubmissionPruneResult>}
      */
-    formsSubmissionsPrune(params?: { dryRun?: boolean, formSlug?: string, olderThanDays?: number, status?: FormsSubmissionsPruneStatus }): Promise<Models.Error>;
+    formsSubmissionsPrune(params?: { dryRun?: boolean, formSlug?: string, olderThanDays?: number, status?: FormsSubmissionsPruneStatus }): Promise<Models.FormSubmissionPruneResult>;
     /**
      * The retention sweep. It deletes submissions the tenant has stopped promising to keep — everything older than `submission_retention_days` — and it is the one route in this app that reads that promise at all.
      * 
@@ -543,14 +543,14 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      * @param {number} olderThanDays - Age threshold. Omit to use the retention floor. A value BELOW the floor is raised to it — the setting is the floor, not a default, and the floor is the LONGEST submission_retention_days configured anywhere in the tenant (see the operation description).
      * @param {FormsSubmissionsPruneStatus} status - Narrow the sweep to one inbox status, e.g. 'spam'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormSubmissionPruneResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsSubmissionsPrune(dryRun?: boolean, formSlug?: string, olderThanDays?: number, status?: FormsSubmissionsPruneStatus): Promise<Models.Error>;
+    formsSubmissionsPrune(dryRun?: boolean, formSlug?: string, olderThanDays?: number, status?: FormsSubmissionsPruneStatus): Promise<Models.FormSubmissionPruneResult>;
     formsSubmissionsPrune(
         paramsOrFirst?: { dryRun?: boolean, formSlug?: string, olderThanDays?: number, status?: FormsSubmissionsPruneStatus } | boolean,
         ...rest: [(string)?, (number)?, (FormsSubmissionsPruneStatus)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FormSubmissionPruneResult> {
         let params: { dryRun?: boolean, formSlug?: string, olderThanDays?: number, status?: FormsSubmissionsPruneStatus };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -607,9 +607,9 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      *
      * @param {string} params.id - The submission, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormSubmissionDeleteResult>}
      */
-    formsSubmissionsDelete(params: { id: string }): Promise<Models.Error>;
+    formsSubmissionsDelete(params: { id: string }): Promise<Models.FormSubmissionDeleteResult>;
     /**
      * Removes one submission permanently. There is no soft delete anywhere in this app — no `deleted_at`, no trash, no undo — so the row and the end-user data in it are gone when this answers.
      * 
@@ -619,13 +619,13 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      *
      * @param {string} id - The submission, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormSubmissionDeleteResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsSubmissionsDelete(id: string): Promise<Models.Error>;
+    formsSubmissionsDelete(id: string): Promise<Models.FormSubmissionDeleteResult>;
     formsSubmissionsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FormSubmissionDeleteResult> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -668,9 +668,9 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      *
      * @param {string} params.id - The submission, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormSubmission>}
      */
-    formsSubmissionsGet(params: { id: string }): Promise<Models.Error>;
+    formsSubmissionsGet(params: { id: string }): Promise<Models.FormSubmission>;
     /**
      * One received submission, whole — the detail view behind a row of `GET /v1/forms/submissions`.
      * 
@@ -682,13 +682,13 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      *
      * @param {string} id - The submission, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormSubmission>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsSubmissionsGet(id: string): Promise<Models.Error>;
+    formsSubmissionsGet(id: string): Promise<Models.FormSubmission>;
     formsSubmissionsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FormSubmission> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -741,9 +741,9 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      * @param {string} params.source - Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
      * @param {FormSubmissionStatus} params.status - Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. A create may set it — an inbox importer records a submission that is already read — but nothing needs to: omit it and the row is 'new'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormSubmission>}
      */
-    formsSubmissionsUpdate(params: { id: string, data?: object, formId?: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus }): Promise<Models.Error>;
+    formsSubmissionsUpdate(params: { id: string, data?: object, formId?: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus }): Promise<Models.FormSubmission>;
     /**
      * Triage, not correction. What this route is FOR is moving the inbox `status` — 'new' to 'read' as somebody opens the lead, 'archived' once it is dealt with, 'spam' for what the honeypot did not catch — and stamping whatever an integration keeps in `metadata`.
      * 
@@ -765,14 +765,14 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      * @param {string} source - Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
      * @param {FormSubmissionStatus} status - Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. A create may set it — an inbox importer records a submission that is already read — but nothing needs to: omit it and the row is 'new'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormSubmission>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsSubmissionsUpdate(id: string, data?: object, formId?: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus): Promise<Models.Error>;
+    formsSubmissionsUpdate(id: string, data?: object, formId?: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus): Promise<Models.FormSubmission>;
     formsSubmissionsUpdate(
         paramsOrFirst: { id: string, data?: object, formId?: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus } | string,
         ...rest: [(object)?, (string)?, (string)?, (object)?, (string)?, (FormSubmissionStatus)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FormSubmission> {
         let params: { id: string, data?: object, formId?: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -871,9 +871,9 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      *
      * @param {FormsVocabulariesGetName} params.name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormsVocabulary>}
      */
-    formsVocabulariesGet(params: { name: FormsVocabulariesGetName }): Promise<Models.Error>;
+    formsVocabulariesGet(params: { name: FormsVocabulariesGetName }): Promise<Models.FormsVocabulary>;
     /**
      * One vocabulary WITH its values: every value the column permits, each carrying the `key` the database stores, the `title` and `description` a human reads, a semantic badge `tone`, and a `final` flag for the values that end the lifecycle. This is the call that fills a select or renders a status badge. Names: form-statuses, submission-statuses.
      * 
@@ -883,13 +883,13 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      *
      * @param {FormsVocabulariesGetName} name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormsVocabulary>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsVocabulariesGet(name: FormsVocabulariesGetName): Promise<Models.Error>;
+    formsVocabulariesGet(name: FormsVocabulariesGetName): Promise<Models.FormsVocabulary>;
     formsVocabulariesGet(
         paramsOrFirst: { name: FormsVocabulariesGetName } | FormsVocabulariesGetName    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FormsVocabulary> {
         let params: { name: FormsVocabulariesGetName };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('name' in paramsOrFirst))) {
@@ -936,9 +936,9 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      *
      * @param {string} params.id - The form, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormDeleteResult>}
      */
-    formsDelete(params: { id: string }): Promise<Models.Error>;
+    formsDelete(params: { id: string }): Promise<Models.FormDeleteResult>;
     /**
      * Deleting a form deletes every submission it ever received.
      * 
@@ -954,13 +954,13 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      *
      * @param {string} id - The form, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.FormDeleteResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsDelete(id: string): Promise<Models.Error>;
+    formsDelete(id: string): Promise<Models.FormDeleteResult>;
     formsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.FormDeleteResult> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1001,9 +1001,9 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      *
      * @param {string} params.id - The form, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Form>}
      */
-    formsGet(params: { id: string }): Promise<Models.Error>;
+    formsGet(params: { id: string }): Promise<Models.Form>;
     /**
      * The whole form: `definition` — the flat FormKit node array the storefront renders verbatim — plus `settings`, `status` and `slug`.
      * 
@@ -1013,13 +1013,13 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      *
      * @param {string} id - The form, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Form>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsGet(id: string): Promise<Models.Error>;
+    formsGet(id: string): Promise<Models.Form>;
     formsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Form> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1072,9 +1072,9 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @param {string} params.slug - URL-safe identifier, unique per tenant. This is the name a storefront resolves a form by (`GET /v1/forms?slug=contact&status=live&limit=1`), so it is part of the page's contract: changing it changes which form a page renders. Lower-case letters, digits and inner hyphens. Taken already? That is the 409 — one slug answers for one form.
      * @param {FormStatus} params.status - Lifecycle. `draft` while it is being built; `live` once the storefront may render it — the cover BFF resolves live forms only, so a draft is a 404 on the storefront and never a broken page; `archived` for a form that is kept for its submissions but no longer offered. Default 'draft'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Form>}
      */
-    formsUpdate(params: { id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus }): Promise<Models.Error>;
+    formsUpdate(params: { id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus }): Promise<Models.Form>;
     /**
      * A partial update over everything a create may set — `definition`, `settings`, `status`, `name`, `slug`, `metadata` — where an omitted field keeps the value it has. It is the write behind the Form Builder's save, and equally behind the one-field change that publishes a form by moving `status` from `draft` to `live`. `updated_at` is stamped on every call, so it is the column an editor sorts by.
      * 
@@ -1096,14 +1096,14 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @param {string} slug - URL-safe identifier, unique per tenant. This is the name a storefront resolves a form by (`GET /v1/forms?slug=contact&status=live&limit=1`), so it is part of the page's contract: changing it changes which form a page renders. Lower-case letters, digits and inner hyphens. Taken already? That is the 409 — one slug answers for one form.
      * @param {FormStatus} status - Lifecycle. `draft` while it is being built; `live` once the storefront may render it — the cover BFF resolves live forms only, so a draft is a 404 on the storefront and never a broken page; `archived` for a form that is kept for its submissions but no longer offered. Default 'draft'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Form>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsUpdate(id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus): Promise<Models.Error>;
+    formsUpdate(id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus): Promise<Models.Form>;
     formsUpdate(
         paramsOrFirst: { id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus } | string,
         ...rest: [(object[])?, (object)?, (string)?, (object)?, (string)?, (FormStatus)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Form> {
         let params: { id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

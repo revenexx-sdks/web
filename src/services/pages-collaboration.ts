@@ -332,9 +332,9 @@ export class PagesCollaboration {
      * @param {string} params.uuid - The comment id — the `uuid` of a `PageCommentItem`, not a row id of any other shape.
      * @param {string} params.body - The comment, as editor HTML. Replaces the old body completely.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PageCommentList>}
      */
-    pagesEditorCommentsUpdate(params: { pageId: string, uuid: string, body: string }): Promise<Models.Error>;
+    pagesEditorCommentsUpdate(params: { pageId: string, uuid: string, body: string }): Promise<Models.PageCommentList>;
     /**
      * Rewrites what a comment says, and only its author may — a comment carries an `author_id` and anybody else is refused with 403. Only the body moves: what the comment is pinned to, whether the thread is resolved and who wrote it are all fixed when it is created. Rewriting a body does NOT re-run the @mention notifications, so mentioning somebody new by editing will not reach them. Answers the page's whole comment list rather than the one row, so a client can re-render from the response.
      *
@@ -342,14 +342,14 @@ export class PagesCollaboration {
      * @param {string} uuid - The comment id — the `uuid` of a `PageCommentItem`, not a row id of any other shape.
      * @param {string} body - The comment, as editor HTML. Replaces the old body completely.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PageCommentList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesEditorCommentsUpdate(pageId: string, uuid: string, body: string): Promise<Models.Error>;
+    pagesEditorCommentsUpdate(pageId: string, uuid: string, body: string): Promise<Models.PageCommentList>;
     pagesEditorCommentsUpdate(
         paramsOrFirst: { pageId: string, uuid: string, body: string } | string,
         ...rest: [(string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PageCommentList> {
         let params: { pageId: string, uuid: string, body: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -401,23 +401,23 @@ export class PagesCollaboration {
      * @param {string} params.pageId - The page being edited.
      * @param {string} params.uuid - The comment id — the `uuid` of a `PageCommentItem`, not a row id of any other shape.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PageCommentList>}
      */
-    pagesEditorCommentsResolve(params: { pageId: string, uuid: string }): Promise<Models.Error>;
+    pagesEditorCommentsResolve(params: { pageId: string, uuid: string }): Promise<Models.PageCommentList>;
     /**
      * Marks a thread handled, so the editor stops surfacing it on the block it is pinned to. Only a ROOT can be resolved — resolved-ness is a property of the thread and not of a message in it, so pointing this at a reply is refused with 400 rather than quietly resolving its parent. Nothing is deleted, nobody is notified, and the thread stays in the list; `.../unresolve` is the way back. Answers the page's whole comment list.
      *
      * @param {string} pageId - The page being edited.
      * @param {string} uuid - The comment id — the `uuid` of a `PageCommentItem`, not a row id of any other shape.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PageCommentList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesEditorCommentsResolve(pageId: string, uuid: string): Promise<Models.Error>;
+    pagesEditorCommentsResolve(pageId: string, uuid: string): Promise<Models.PageCommentList>;
     pagesEditorCommentsResolve(
         paramsOrFirst: { pageId: string, uuid: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PageCommentList> {
         let params: { pageId: string, uuid: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -461,9 +461,9 @@ export class PagesCollaboration {
      * @param {string} params.uuid - The comment id — the `uuid` of a `PageCommentItem`, not a row id of any other shape.
      * @param {number} params.taskIndex - The task item to toggle, counted in document order from 0. A comment with fewer tasks than that answers 400, and so does anything that is not a whole number at or above 0.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PageCommentItem>}
      */
-    pagesEditorCommentsToggleTask(params: { pageId: string, uuid: string, taskIndex: number }): Promise<Models.Error>;
+    pagesEditorCommentsToggleTask(params: { pageId: string, uuid: string, taskIndex: number }): Promise<Models.PageCommentItem>;
     /**
      * A comment body may carry a task list. This flips one checkbox by rewriting the body's markup, and answers the single comment rather than the whole list. A `taskIndex` that names no checkbox is refused and nothing is written — the comment's `updated_at` is the editor's "edited" marker, so a call that changes nothing must not move it.
      *
@@ -471,14 +471,14 @@ export class PagesCollaboration {
      * @param {string} uuid - The comment id — the `uuid` of a `PageCommentItem`, not a row id of any other shape.
      * @param {number} taskIndex - The task item to toggle, counted in document order from 0. A comment with fewer tasks than that answers 400, and so does anything that is not a whole number at or above 0.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PageCommentItem>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesEditorCommentsToggleTask(pageId: string, uuid: string, taskIndex: number): Promise<Models.Error>;
+    pagesEditorCommentsToggleTask(pageId: string, uuid: string, taskIndex: number): Promise<Models.PageCommentItem>;
     pagesEditorCommentsToggleTask(
         paramsOrFirst: { pageId: string, uuid: string, taskIndex: number } | string,
         ...rest: [(string)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PageCommentItem> {
         let params: { pageId: string, uuid: string, taskIndex: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -530,23 +530,23 @@ export class PagesCollaboration {
      * @param {string} params.pageId - The page being edited.
      * @param {string} params.uuid - The comment id — the `uuid` of a `PageCommentItem`, not a row id of any other shape.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PageCommentList>}
      */
-    pagesEditorCommentsUnresolve(params: { pageId: string, uuid: string }): Promise<Models.Error>;
+    pagesEditorCommentsUnresolve(params: { pageId: string, uuid: string }): Promise<Models.PageCommentList>;
     /**
      * Clears the resolved flag and puts the thread back in front of whoever is editing — the mirror of `.../resolve` in every respect, including that only a root can be reopened and that a reply answers 400. A thread that was already open is accepted and stays open. Answers the page's whole comment list.
      *
      * @param {string} pageId - The page being edited.
      * @param {string} uuid - The comment id — the `uuid` of a `PageCommentItem`, not a row id of any other shape.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.PageCommentList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesEditorCommentsUnresolve(pageId: string, uuid: string): Promise<Models.Error>;
+    pagesEditorCommentsUnresolve(pageId: string, uuid: string): Promise<Models.PageCommentList>;
     pagesEditorCommentsUnresolve(
         paramsOrFirst: { pageId: string, uuid: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.PageCommentList> {
         let params: { pageId: string, uuid: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

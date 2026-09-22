@@ -37,9 +37,12 @@ export class Orders {
      * @param {string} params.holdReason - Filter to rows whose `hold_reason` is exactly this value. Why the order is held, in the words the shipping guard quotes back. Null when it is not held — releasing a hold clears it.
      * @param {number} params.itemCount - Filter to rows whose `item_count` is exactly this value. The summed ORDERED quantity over all positions, rounded to a whole number — a headline figure for a list, computed once at place-time. It is deliberately not reduced when something is cancelled or returned; the positions carry that arithmetic.
      * @param {number} params.subtotal - Filter to rows whose `subtotal` is exactly this value. NET total of the positions (the sum of their line_total), COMPUTED here at place-time. In `currency`, four decimal places. A caller cannot set it.
-     * @param {number} params.shippingTotal - Filter to rows whose `shipping_total` is exactly this value. NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`.
+     * @param {number} params.discountTotal - Filter to rows whose `discount_total` is exactly this value. Every discount a promotion took off this order, summed: the positions' discounts, a head-level voucher distributed across them, a discount placed as its own position, and any reduction of the shipping charge. COMPUTED here from the components the caller evaluated — a caller cannot set it. `subtotal` stays the UNDISCOUNTED sum, so the two together say what was charged and what was given away.
+     * @param {number} params.shippingTotal - Filter to rows whose `shipping_total` is exactly this value. NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. This is the price BEFORE any promotion reduced it; the reduction is a row in the discount components.
+     * @param {number} params.shippingTaxRate - Filter to rows whose `shipping_tax_rate` is exactly this value. The tax percentage the shipping charge was taxed at, frozen at place-time (19 means 19 %). Stored rather than only used, because otherwise nobody could say afterwards how much of tax_total was shipping — which an ERP export of a discounted shipping charge needs.
+     * @param {number} params.shippingTaxAmount - Filter to rows whose `shipping_tax_amount` is exactly this value. Tax on the shipping charge, computed on what is OWED after any promotion reduced it. Part of tax_total, and stored separately so the shipping line can be stated on its own.
      * @param {number} params.taxTotal - Filter to rows whose `tax_total` is exactly this value. All tax on this order: the positions' tax_amount plus the tax on shipping (shipping_total × shipping.tax_rate). COMPUTED here — a caller cannot set it.
-     * @param {number} params.grandTotal - Filter to rows whose `grand_total` is exactly this value. What the buyer owes: subtotal + shipping_total + tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
+     * @param {number} params.grandTotal - Filter to rows whose `grand_total` is exactly this value. What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
      * @param {string} params.placedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the order was PLACED. Null while it is pending approval: an order awaiting sign-off exists but was never placed, and that is exactly the difference this field records.
      * @param {string} params.completedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the order was closed — by a full shipment, by payment or by hand, depending on the tenant's auto_complete_on. Null until then.
      * @param {string} params.cancelledAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the order was cancelled, whether by a full cancel or by the last open quantity being cancelled position by position. Null otherwise.
@@ -51,7 +54,7 @@ export class Orders {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    ordersList(params?: { id?: string, number?: string, customerOrderNumber?: string, externalRef?: string, acknowledgedAt?: string, cartId?: string, contactId?: string, organizationId?: string, channelId?: string, currency?: string, status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, onHold?: boolean, holdReason?: string, itemCount?: number, subtotal?: number, shippingTotal?: number, taxTotal?: number, grandTotal?: number, placedAt?: string, completedAt?: string, cancelledAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    ordersList(params?: { id?: string, number?: string, customerOrderNumber?: string, externalRef?: string, acknowledgedAt?: string, cartId?: string, contactId?: string, organizationId?: string, channelId?: string, currency?: string, status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, onHold?: boolean, holdReason?: string, itemCount?: number, subtotal?: number, discountTotal?: number, shippingTotal?: number, shippingTaxRate?: number, shippingTaxAmount?: number, taxTotal?: number, grandTotal?: number, placedAt?: string, completedAt?: string, cancelledAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * The route behind every order overview: the open orders of one customer, everything on hold, everything a market placed last week, or the one order somebody is quoting a number for (?number=ORD-000123 — the number is not the id, and this is how one becomes the other). The order LIST: the order rows without their positions, shipments, returns or cancellations — read GET /orders/{id} for the aggregate of one. Every parameter below is an exact match on the column it names, and combining them is an AND. Two kinds of key are not offered: one that names NO column is dropped silently, so a mistyped ?stauts=placed answers 200 with the whole list (compare the 'filter' echo against what you sent — no status code reports it), and the jsonb columns buyer, billing_address, shipping_address, payment, shipping, user_data and metadata reach the database as a text comparison and answer 400 invalid_value for anything that is not a whole JSON document.
      *
@@ -72,9 +75,12 @@ export class Orders {
      * @param {string} holdReason - Filter to rows whose `hold_reason` is exactly this value. Why the order is held, in the words the shipping guard quotes back. Null when it is not held — releasing a hold clears it.
      * @param {number} itemCount - Filter to rows whose `item_count` is exactly this value. The summed ORDERED quantity over all positions, rounded to a whole number — a headline figure for a list, computed once at place-time. It is deliberately not reduced when something is cancelled or returned; the positions carry that arithmetic.
      * @param {number} subtotal - Filter to rows whose `subtotal` is exactly this value. NET total of the positions (the sum of their line_total), COMPUTED here at place-time. In `currency`, four decimal places. A caller cannot set it.
-     * @param {number} shippingTotal - Filter to rows whose `shipping_total` is exactly this value. NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`.
+     * @param {number} discountTotal - Filter to rows whose `discount_total` is exactly this value. Every discount a promotion took off this order, summed: the positions' discounts, a head-level voucher distributed across them, a discount placed as its own position, and any reduction of the shipping charge. COMPUTED here from the components the caller evaluated — a caller cannot set it. `subtotal` stays the UNDISCOUNTED sum, so the two together say what was charged and what was given away.
+     * @param {number} shippingTotal - Filter to rows whose `shipping_total` is exactly this value. NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. This is the price BEFORE any promotion reduced it; the reduction is a row in the discount components.
+     * @param {number} shippingTaxRate - Filter to rows whose `shipping_tax_rate` is exactly this value. The tax percentage the shipping charge was taxed at, frozen at place-time (19 means 19 %). Stored rather than only used, because otherwise nobody could say afterwards how much of tax_total was shipping — which an ERP export of a discounted shipping charge needs.
+     * @param {number} shippingTaxAmount - Filter to rows whose `shipping_tax_amount` is exactly this value. Tax on the shipping charge, computed on what is OWED after any promotion reduced it. Part of tax_total, and stored separately so the shipping line can be stated on its own.
      * @param {number} taxTotal - Filter to rows whose `tax_total` is exactly this value. All tax on this order: the positions' tax_amount plus the tax on shipping (shipping_total × shipping.tax_rate). COMPUTED here — a caller cannot set it.
-     * @param {number} grandTotal - Filter to rows whose `grand_total` is exactly this value. What the buyer owes: subtotal + shipping_total + tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
+     * @param {number} grandTotal - Filter to rows whose `grand_total` is exactly this value. What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
      * @param {string} placedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the order was PLACED. Null while it is pending approval: an order awaiting sign-off exists but was never placed, and that is exactly the difference this field records.
      * @param {string} completedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the order was closed — by a full shipment, by payment or by hand, depending on the tenant's auto_complete_on. Null until then.
      * @param {string} cancelledAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the order was cancelled, whether by a full cancel or by the last open quantity being cancelled position by position. Null otherwise.
@@ -87,15 +93,15 @@ export class Orders {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersList(id?: string, number?: string, customerOrderNumber?: string, externalRef?: string, acknowledgedAt?: string, cartId?: string, contactId?: string, organizationId?: string, channelId?: string, currency?: string, status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, onHold?: boolean, holdReason?: string, itemCount?: number, subtotal?: number, shippingTotal?: number, taxTotal?: number, grandTotal?: number, placedAt?: string, completedAt?: string, cancelledAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    ordersList(id?: string, number?: string, customerOrderNumber?: string, externalRef?: string, acknowledgedAt?: string, cartId?: string, contactId?: string, organizationId?: string, channelId?: string, currency?: string, status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, onHold?: boolean, holdReason?: string, itemCount?: number, subtotal?: number, discountTotal?: number, shippingTotal?: number, shippingTaxRate?: number, shippingTaxAmount?: number, taxTotal?: number, grandTotal?: number, placedAt?: string, completedAt?: string, cancelledAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     ordersList(
-        paramsOrFirst?: { id?: string, number?: string, customerOrderNumber?: string, externalRef?: string, acknowledgedAt?: string, cartId?: string, contactId?: string, organizationId?: string, channelId?: string, currency?: string, status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, onHold?: boolean, holdReason?: string, itemCount?: number, subtotal?: number, shippingTotal?: number, taxTotal?: number, grandTotal?: number, placedAt?: string, completedAt?: string, cancelledAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (OrderStatus)?, (OrderPaymentStatus)?, (OrderFulfillmentStatus)?, (boolean)?, (string)?, (number)?, (number)?, (number)?, (number)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, number?: string, customerOrderNumber?: string, externalRef?: string, acknowledgedAt?: string, cartId?: string, contactId?: string, organizationId?: string, channelId?: string, currency?: string, status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, onHold?: boolean, holdReason?: string, itemCount?: number, subtotal?: number, discountTotal?: number, shippingTotal?: number, shippingTaxRate?: number, shippingTaxAmount?: number, taxTotal?: number, grandTotal?: number, placedAt?: string, completedAt?: string, cancelledAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (OrderStatus)?, (OrderPaymentStatus)?, (OrderFulfillmentStatus)?, (boolean)?, (string)?, (number)?, (number)?, (number)?, (number)?, (number)?, (number)?, (number)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { id?: string, number?: string, customerOrderNumber?: string, externalRef?: string, acknowledgedAt?: string, cartId?: string, contactId?: string, organizationId?: string, channelId?: string, currency?: string, status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, onHold?: boolean, holdReason?: string, itemCount?: number, subtotal?: number, shippingTotal?: number, taxTotal?: number, grandTotal?: number, placedAt?: string, completedAt?: string, cancelledAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, number?: string, customerOrderNumber?: string, externalRef?: string, acknowledgedAt?: string, cartId?: string, contactId?: string, organizationId?: string, channelId?: string, currency?: string, status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, onHold?: boolean, holdReason?: string, itemCount?: number, subtotal?: number, discountTotal?: number, shippingTotal?: number, shippingTaxRate?: number, shippingTaxAmount?: number, taxTotal?: number, grandTotal?: number, placedAt?: string, completedAt?: string, cancelledAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, number?: string, customerOrderNumber?: string, externalRef?: string, acknowledgedAt?: string, cartId?: string, contactId?: string, organizationId?: string, channelId?: string, currency?: string, status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, onHold?: boolean, holdReason?: string, itemCount?: number, subtotal?: number, shippingTotal?: number, taxTotal?: number, grandTotal?: number, placedAt?: string, completedAt?: string, cancelledAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, number?: string, customerOrderNumber?: string, externalRef?: string, acknowledgedAt?: string, cartId?: string, contactId?: string, organizationId?: string, channelId?: string, currency?: string, status?: OrderStatus, paymentStatus?: OrderPaymentStatus, fulfillmentStatus?: OrderFulfillmentStatus, onHold?: boolean, holdReason?: string, itemCount?: number, subtotal?: number, discountTotal?: number, shippingTotal?: number, shippingTaxRate?: number, shippingTaxAmount?: number, taxTotal?: number, grandTotal?: number, placedAt?: string, completedAt?: string, cancelledAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -115,17 +121,20 @@ export class Orders {
                 holdReason: rest[13] as string,
                 itemCount: rest[14] as number,
                 subtotal: rest[15] as number,
-                shippingTotal: rest[16] as number,
-                taxTotal: rest[17] as number,
-                grandTotal: rest[18] as number,
-                placedAt: rest[19] as string,
-                completedAt: rest[20] as string,
-                cancelledAt: rest[21] as string,
-                createdAt: rest[22] as string,
-                updatedAt: rest[23] as string,
-                limit: rest[24] as number,
-                offset: rest[25] as number,
-                order: rest[26] as string            
+                discountTotal: rest[16] as number,
+                shippingTotal: rest[17] as number,
+                shippingTaxRate: rest[18] as number,
+                shippingTaxAmount: rest[19] as number,
+                taxTotal: rest[20] as number,
+                grandTotal: rest[21] as number,
+                placedAt: rest[22] as string,
+                completedAt: rest[23] as string,
+                cancelledAt: rest[24] as string,
+                createdAt: rest[25] as string,
+                updatedAt: rest[26] as string,
+                limit: rest[27] as number,
+                offset: rest[28] as number,
+                order: rest[29] as string            
             };
         }
         
@@ -146,7 +155,10 @@ export class Orders {
         const holdReason = params.holdReason;
         const itemCount = params.itemCount;
         const subtotal = params.subtotal;
+        const discountTotal = params.discountTotal;
         const shippingTotal = params.shippingTotal;
+        const shippingTaxRate = params.shippingTaxRate;
+        const shippingTaxAmount = params.shippingTaxAmount;
         const taxTotal = params.taxTotal;
         const grandTotal = params.grandTotal;
         const placedAt = params.placedAt;
@@ -212,8 +224,17 @@ export class Orders {
         if (typeof subtotal !== 'undefined') {
             apiPayload['subtotal'] = subtotal;
         }
+        if (typeof discountTotal !== 'undefined') {
+            apiPayload['discount_total'] = discountTotal;
+        }
         if (typeof shippingTotal !== 'undefined') {
             apiPayload['shipping_total'] = shippingTotal;
+        }
+        if (typeof shippingTaxRate !== 'undefined') {
+            apiPayload['shipping_tax_rate'] = shippingTaxRate;
+        }
+        if (typeof shippingTaxAmount !== 'undefined') {
+            apiPayload['shipping_tax_amount'] = shippingTaxAmount;
         }
         if (typeof taxTotal !== 'undefined') {
             apiPayload['tax_total'] = taxTotal;
@@ -414,9 +435,9 @@ export class Orders {
      * @param {number} params.step - How far the counter moves per draw. 1 is consecutive numbering; a larger step is what a merchant chooses who does not want their order volume readable off an invoice. Defaults to 1.
      * @param {string} params.suffix - Literal text after the counter — a market or year marker on merchants who number that way. Empty by default, which is what most of them use. Defaults to ''.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.NumberRange>}
      */
-    ordersNumberRangesCreate(params: { code: string, channelId?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string }): Promise<Models.Error>;
+    ordersNumberRangesCreate(params: { code: string, channelId?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string }): Promise<Models.NumberRange>;
     /**
      * Add a counter beyond the three a tenant is seeded with, and give it the shape a merchant's numbers actually have: {prefix}{counter padded to `padding`}{suffix}, moving by `step` per draw. A new range is what the order_number_range_code / delivery_number_range_code / return_number_range_code settings can then be pointed at — the code is the name those settings use, and a setting naming a code no range carries makes placing an order answer 422. `code` is unique per tenant, so this is a 409 for one that is taken rather than a second counter under the same name. It does not renumber anything that already exists, and setting `counter` to a value already issued re-issues those numbers, which the unique index on the order number then refuses.
      *
@@ -430,14 +451,14 @@ export class Orders {
      * @param {number} step - How far the counter moves per draw. 1 is consecutive numbering; a larger step is what a merchant chooses who does not want their order volume readable off an invoice. Defaults to 1.
      * @param {string} suffix - Literal text after the counter — a market or year marker on merchants who number that way. Empty by default, which is what most of them use. Defaults to ''.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.NumberRange>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersNumberRangesCreate(code: string, channelId?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string): Promise<Models.Error>;
+    ordersNumberRangesCreate(code: string, channelId?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string): Promise<Models.NumberRange>;
     ordersNumberRangesCreate(
         paramsOrFirst: { code: string, channelId?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string } | string,
         ...rest: [(string)?, (number)?, (object)?, (number)?, (number)?, (string)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.NumberRange> {
         let params: { code: string, channelId?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -541,21 +562,21 @@ export class Orders {
      *
      * @param {string} params.id - The number range id (uuid).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderDeleted>}
      */
-    ordersNumberRangesDelete(params: { id: string }): Promise<Models.Error>;
+    ordersNumberRangesDelete(params: { id: string }): Promise<Models.OrderDeleted>;
     /**
      * Remove a counter a tenant no longer numbers anything from. It touches nothing that was numbered out of it: existing orders, delivery notes and returns keep the numbers they were given, because a number is copied onto the row at place-time and is not a reference to this table. Deleting one of the three standard codes is allowed and is usually a mistake — the next draw against it answers 422 'number_range_missing', unless POST /orders/number-ranges/defaults or a reinstall seeds it again, which starts its counter back at 0.
      *
      * @param {string} id - The number range id (uuid).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderDeleted>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersNumberRangesDelete(id: string): Promise<Models.Error>;
+    ordersNumberRangesDelete(id: string): Promise<Models.OrderDeleted>;
     ordersNumberRangesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderDeleted> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -592,21 +613,21 @@ export class Orders {
      *
      * @param {string} params.id - The number range id (uuid).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.NumberRange>}
      */
-    ordersNumberRangesGet(params: { id: string }): Promise<Models.Error>;
+    ordersNumberRangesGet(params: { id: string }): Promise<Models.NumberRange>;
     /**
      * One counter with its whole configuration: the prefix and suffix around the number, how wide it is padded, how far each draw moves it, where it currently stands, and the position_step new order lines are numbered in. Reach for it when you hold the id — from the list, or from what a create answered — and want the row as it stands now. Reading does not draw a number and does not move `counter`; the id is the range's uuid, not its `code`, and a code is turned into a range through GET /orders/number-ranges?code=order.
      *
      * @param {string} id - The number range id (uuid).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.NumberRange>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersNumberRangesGet(id: string): Promise<Models.Error>;
+    ordersNumberRangesGet(id: string): Promise<Models.NumberRange>;
     ordersNumberRangesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.NumberRange> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -652,9 +673,9 @@ export class Orders {
      * @param {number} params.step - How far the counter moves per draw. 1 is consecutive numbering; a larger step is what a merchant chooses who does not want their order volume readable off an invoice. Defaults to 1.
      * @param {string} params.suffix - Literal text after the counter — a market or year marker on merchants who number that way. Empty by default, which is what most of them use. Defaults to ''.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.NumberRange>}
      */
-    ordersNumberRangesUpdate(params: { id: string, channelId?: string, code?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string }): Promise<Models.Error>;
+    ordersNumberRangesUpdate(params: { id: string, channelId?: string, code?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string }): Promise<Models.NumberRange>;
     /**
      * Change the format or the state of an existing counter: a new prefix or suffix, a wider padding, a different step, a different position_step for new order lines — or `counter` itself, which is state rather than configuration. Everything takes effect on the NEXT draw only: nothing that was already numbered is renumbered, so widening the padding leaves ORD-000123 and starts writing ORD-0000124. Moving `counter` forward skips numbers, and moving it back re-issues numbers that exist, which the unique index on the order number answers 409 for at place-time rather than here. Renaming `code` to one another range of this tenant already holds is a 409.
      *
@@ -669,14 +690,14 @@ export class Orders {
      * @param {number} step - How far the counter moves per draw. 1 is consecutive numbering; a larger step is what a merchant chooses who does not want their order volume readable off an invoice. Defaults to 1.
      * @param {string} suffix - Literal text after the counter — a market or year marker on merchants who number that way. Empty by default, which is what most of them use. Defaults to ''.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.NumberRange>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersNumberRangesUpdate(id: string, channelId?: string, code?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string): Promise<Models.Error>;
+    ordersNumberRangesUpdate(id: string, channelId?: string, code?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string): Promise<Models.NumberRange>;
     ordersNumberRangesUpdate(
         paramsOrFirst: { id: string, channelId?: string, code?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string } | string,
         ...rest: [(string)?, (string)?, (number)?, (object)?, (number)?, (number)?, (string)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.NumberRange> {
         let params: { id: string, channelId?: string, code?: string, counter?: number, metadata?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -771,12 +792,12 @@ export class Orders {
      * @param {object} params.payment - The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
      * @param {object} params.shipping - The shipping arrangement as it was chosen, FROZEN. Two keys are READ at place-time and feed the totals: 'price' becomes shipping_total (the shipping_total field is only the fallback when this is absent) and 'tax_rate' is what shipping is taxed at, because shipping is a Nebenleistung and is taxed too. Everything else — the carrier product, the delivery window, the pickup point — is stored untouched and belongs to the shipping app.
      * @param {object} params.shippingAddress - The delivery address, FROZEN at place-time — what goes on the label of every shipment of this order. Null on an order that is never delivered (a service, a digital item, a collection).
-     * @param {number} params.shippingTotal - NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. Only read when the shipping snapshot carries no 'price'.
+     * @param {number} params.shippingTotal - NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. This is the price BEFORE any promotion reduced it; the reduction is a row in the discount components. Only read when the shipping snapshot carries no 'price'.
      * @param {object} params.userData - Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderPlaced>}
      */
-    ordersPlace(params: { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object }): Promise<Models.Error>;
+    ordersPlace(params: { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object }): Promise<Models.OrderPlaced>;
     /**
      * The way an order comes into existence — the call a checkout, a punch-out or an ERP import makes once the basket is final. The body is a SNAPSHOT: items with their product copies, plus the buyer, the addresses and the payment and shipping choices frozen as they were at this moment, so the order stays readable when the catalogue or the customer changes underneath it. The app draws the order number from the tenant's order range, numbers the positions, computes subtotal, tax and grand_total from the lines, and writes the order.placed event that carries the order onto the bus. It does not reserve stock, take payment or talk to an ERP: those are separate capabilities, and this route's job ends when the event is on the bus. Two things can turn a placement into a REQUEST awaiting approval, and both still answer 201 — with status='pending' and no placed_at: a principal holding only orders.request, and an order worth more than the tenant's require_approval_above_value (a principal holding orders.approve is exempt from the threshold). The order.requested event says which, in 'approval_reason'. The currency defaults to the market's default_currency setting and the position cap is the tenant's max_items_per_order.
      *
@@ -794,17 +815,17 @@ export class Orders {
      * @param {object} payment - The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
      * @param {object} shipping - The shipping arrangement as it was chosen, FROZEN. Two keys are READ at place-time and feed the totals: 'price' becomes shipping_total (the shipping_total field is only the fallback when this is absent) and 'tax_rate' is what shipping is taxed at, because shipping is a Nebenleistung and is taxed too. Everything else — the carrier product, the delivery window, the pickup point — is stored untouched and belongs to the shipping app.
      * @param {object} shippingAddress - The delivery address, FROZEN at place-time — what goes on the label of every shipment of this order. Null on an order that is never delivered (a service, a digital item, a collection).
-     * @param {number} shippingTotal - NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. Only read when the shipping snapshot carries no 'price'.
+     * @param {number} shippingTotal - NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. This is the price BEFORE any promotion reduced it; the reduction is a row in the discount components. Only read when the shipping snapshot carries no 'price'.
      * @param {object} userData - Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderPlaced>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersPlace(items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object): Promise<Models.Error>;
+    ordersPlace(items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object): Promise<Models.OrderPlaced>;
     ordersPlace(
         paramsOrFirst: { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object } | Models.OrderItemCreateRequest[],
         ...rest: [(object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (object)?, (string)?, (object)?, (object)?, (object)?, (number)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderPlaced> {
         let params: { items: Models.OrderItemCreateRequest[], billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, grandTotal?: number, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, userData?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('items' in paramsOrFirst || 'billingAddress' in paramsOrFirst || 'buyer' in paramsOrFirst || 'cartId' in paramsOrFirst || 'channelId' in paramsOrFirst || 'contactId' in paramsOrFirst || 'currency' in paramsOrFirst || 'customerOrderNumber' in paramsOrFirst || 'grandTotal' in paramsOrFirst || 'metadata' in paramsOrFirst || 'organizationId' in paramsOrFirst || 'payment' in paramsOrFirst || 'shipping' in paramsOrFirst || 'shippingAddress' in paramsOrFirst || 'shippingTotal' in paramsOrFirst || 'userData' in paramsOrFirst))) {
@@ -1017,21 +1038,21 @@ export class Orders {
      *
      * @param {OrdersVocabulariesGetName} params.name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderVocabulary>}
      */
-    ordersVocabulariesGet(params: { name: OrdersVocabulariesGetName }): Promise<Models.Error>;
+    ordersVocabulariesGet(params: { name: OrdersVocabulariesGetName }): Promise<Models.OrderVocabulary>;
     /**
      * Everything a UI needs to render one of this app's value sets without knowing it: every permitted value, in order, each with a title and description in the locales somebody wrote and a badge tone to colour it. Fetch it once and a status filter, a status badge and a resolution picker all stay correct through a lifecycle change, because the set served IS the set enforced. It answers about values, not about rows — nothing here says how many orders are in a status. The values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift — a value added to the constraint appears here even before anyone labels it, titled from its own key. Values come back in constraint order, which is lifecycle order for a status, and 'final' marks the values that END the lifecycle (completed, cancelled) so a client can ask "is this order still open?" instead of matching names it guessed. Every set is exhaustive ('closed' is always true); 'source' says who enforces it — 'schema' for a CHECK constraint, 'app' for 'return-resolutions', whose column carries none and whose words the return routes enforce instead. Those values additionally carry 'stage' (complete | reject): the transition that accepts them. 'title' and 'description' are locale maps where the copy was written and plain strings where the key-derived fallback answered, on the vocabulary and on every value alike. Names: cancellation-scopes, comment-visibilities, fulfillment-statuses, item-types, payment-statuses, return-resolutions, return-statuses, statuses.
      *
      * @param {OrdersVocabulariesGetName} name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderVocabulary>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersVocabulariesGet(name: OrdersVocabulariesGetName): Promise<Models.Error>;
+    ordersVocabulariesGet(name: OrdersVocabulariesGetName): Promise<Models.OrderVocabulary>;
     ordersVocabulariesGet(
         paramsOrFirst: { name: OrdersVocabulariesGetName } | OrdersVocabulariesGetName    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderVocabulary> {
         let params: { name: OrdersVocabulariesGetName };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('name' in paramsOrFirst))) {
@@ -1068,21 +1089,21 @@ export class Orders {
      *
      * @param {string} params.id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderDetail>}
      */
-    ordersGet(params: { id: string }): Promise<Models.Error>;
+    ordersGet(params: { id: string }): Promise<Models.OrderDetail>;
     /**
      * The single source of order information, and what an order detail screen is built from: the order row plus its positions, its shipments with the shipment_items each one booked, its returns and its cancellations — one call, no assembling five lists. A cancellation's and a return's 'positions' are ARRAYS of {order_item_id, quantity}; a return's entries additionally carry 'restock'. Two things it does not carry: the comments and the event trail, which are their own paginated routes because both grow without bound. Addressed by uuid — an order number goes through GET /orders?number=… first.
      *
      * @param {string} id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderDetail>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersGet(id: string): Promise<Models.Error>;
+    ordersGet(id: string): Promise<Models.OrderDetail>;
     ordersGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderDetail> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1125,9 +1146,9 @@ export class Orders {
      * @param {object} params.shippingAddress - The delivery address, FROZEN at place-time — what goes on the label of every shipment of this order. Null on an order that is never delivered (a service, a digital item, a collection). Replaced wholesale. This is the one correction that actually matters after placement: the label of every shipment still to go out is printed from it.
      * @param {object} params.userData - Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change. Replaced wholesale.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      */
-    ordersUpdate(params: { id: string, billingAddress?: object, buyer?: object, customerOrderNumber?: string, metadata?: object, shippingAddress?: object, userData?: object }): Promise<Models.Error>;
+    ordersUpdate(params: { id: string, billingAddress?: object, buyer?: object, customerOrderNumber?: string, metadata?: object, shippingAddress?: object, userData?: object }): Promise<Models.Order>;
     /**
      * The narrow correction window a service desk needs: the customer gave the wrong delivery address, the buyer's name is misspelled, their purchase-order number was missing. Six columns and no others — customer_order_number, buyer, billing_address, shipping_address, user_data and metadata — and each is REPLACED whole, not merged, so send the entire address rather than the one line that changed. It moves nothing: status, payment_status, fulfillment_status and the quantities belong to the action routes, and a body carrying them is accepted with those keys quietly dropped. The window closes when the fulfilling system acknowledges the order, because from then on the ERP holds the copy that ships — unless the tenant set allow_modification_after_acknowledge. Every accepted change writes an order.updated event naming the columns it touched.
      *
@@ -1139,14 +1160,14 @@ export class Orders {
      * @param {object} shippingAddress - The delivery address, FROZEN at place-time — what goes on the label of every shipment of this order. Null on an order that is never delivered (a service, a digital item, a collection). Replaced wholesale. This is the one correction that actually matters after placement: the label of every shipment still to go out is printed from it.
      * @param {object} userData - Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change. Replaced wholesale.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersUpdate(id: string, billingAddress?: object, buyer?: object, customerOrderNumber?: string, metadata?: object, shippingAddress?: object, userData?: object): Promise<Models.Error>;
+    ordersUpdate(id: string, billingAddress?: object, buyer?: object, customerOrderNumber?: string, metadata?: object, shippingAddress?: object, userData?: object): Promise<Models.Order>;
     ordersUpdate(
         paramsOrFirst: { id: string, billingAddress?: object, buyer?: object, customerOrderNumber?: string, metadata?: object, shippingAddress?: object, userData?: object } | string,
         ...rest: [(object)?, (object)?, (string)?, (object)?, (object)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Order> {
         let params: { id: string, billingAddress?: object, buyer?: object, customerOrderNumber?: string, metadata?: object, shippingAddress?: object, userData?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1215,23 +1236,23 @@ export class Orders {
      * @param {string} params.id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @param {string} params.externalRef - The FULFILLING system's reference for this order, typically the ERP order number. Written once by POST /orders/{id}/acknowledge and null until an integration acknowledged it. Keeps the existing value when omitted.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      */
-    ordersAcknowledge(params: { id: string, externalRef?: string }): Promise<Models.Error>;
+    ordersAcknowledge(params: { id: string, externalRef?: string }): Promise<Models.Order>;
     /**
      * The return channel for whatever fulfils the order. An Integration Studio workflow picks up order.placed, books the order into the ERP, and calls this with the id the ERP gave it — which lands in external_ref and makes the two systems mutually findable. It stamps acknowledged_at from the server's clock, and that timestamp is what closes the correction window: PUT /orders/{id} refuses afterwards, because the copy that ships now lives elsewhere. It is a handshake and nothing more — it does not change status, payment_status or fulfillment_status, and it does not ship anything. Once only: a second call is a 422 rather than a silent overwrite of the first system's reference.
      *
      * @param {string} id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @param {string} externalRef - The FULFILLING system's reference for this order, typically the ERP order number. Written once by POST /orders/{id}/acknowledge and null until an integration acknowledged it. Keeps the existing value when omitted.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersAcknowledge(id: string, externalRef?: string): Promise<Models.Error>;
+    ordersAcknowledge(id: string, externalRef?: string): Promise<Models.Order>;
     ordersAcknowledge(
         paramsOrFirst: { id: string, externalRef?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Order> {
         let params: { id: string, externalRef?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1276,9 +1297,9 @@ export class Orders {
      * @param {string} params.cancelledBy - Who cancelled, as the caller reported it — an operator, a desk, a system. Free text; this app does not resolve it against a user directory.
      * @param {string} params.reason - Why it was cancelled, free text. Mandatory when the tenant sets cancel_requires_reason — for those merchants an unexplained cancellation is refused with a 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      */
-    ordersCancel(params: { id: string, cancelledBy?: string, reason?: string }): Promise<Models.Error>;
+    ordersCancel(params: { id: string, cancelledBy?: string, reason?: string }): Promise<Models.Order>;
     /**
      * Call the whole order off: every position's full quantity is booked as cancelled, the order moves to 'cancelled', a cancellation record is written with the reason and who gave it, and an order.cancelled event goes onto the bus. Only while NOTHING has shipped — once a single position has gone out the order is partly real and this answers 422; take the remaining quantities off with POST /orders/{id}/items/cancel instead, and handle what already shipped as a return. It refunds nothing and returns nothing to stock: payment travels through /payment-status and restocking is an explicit inventories call by the orchestrator. A tenant may require a reason (cancel_requires_reason), and a hold may block it (on_hold_blocks = 'shipping_and_cancel').
      *
@@ -1286,14 +1307,14 @@ export class Orders {
      * @param {string} cancelledBy - Who cancelled, as the caller reported it — an operator, a desk, a system. Free text; this app does not resolve it against a user directory.
      * @param {string} reason - Why it was cancelled, free text. Mandatory when the tenant sets cancel_requires_reason — for those merchants an unexplained cancellation is refused with a 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersCancel(id: string, cancelledBy?: string, reason?: string): Promise<Models.Error>;
+    ordersCancel(id: string, cancelledBy?: string, reason?: string): Promise<Models.Order>;
     ordersCancel(
         paramsOrFirst: { id: string, cancelledBy?: string, reason?: string } | string,
         ...rest: [(string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Order> {
         let params: { id: string, cancelledBy?: string, reason?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1349,9 +1370,9 @@ export class Orders {
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending, the direction is lower case, and the column has to exist — the value reaches the data plane verbatim and anything else is a 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    ordersCommentsList(params: { id: string, idQuery?: string, body?: string, visibility?: OrderCommentVisibility, author?: string, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    ordersCommentsList(params: { id: string, idQuery?: string, body?: string, visibility?: OrderCommentVisibility, author?: string, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * What people have written about this order, oldest first: the service desk's own notes and the messages meant for the customer, in one list. Filter by ?visibility=customer to build the version a customer may see, and by ?visibility=internal for the desk's own — the route does NOT decide that for you, so a customer-facing surface has to ask for the customer ones. Comments are prose about the order and never move it; the lifecycle lives in the event trail. Every parameter below is an exact match on the column it names. `order_id` is deliberately absent: the route fixes it from the path AFTER the query filter is read, so sending one is accepted and then overwritten — it filters nothing. DEPRECATED KEY: the response also repeats 'items' under 'comments' for compatibility with the pre-envelope shape. It is the same array; read 'items'. The alias is removed in the next minor version.
      *
@@ -1365,14 +1386,14 @@ export class Orders {
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending, the direction is lower case, and the column has to exist — the value reaches the data plane verbatim and anything else is a 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersCommentsList(id: string, idQuery?: string, body?: string, visibility?: OrderCommentVisibility, author?: string, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    ordersCommentsList(id: string, idQuery?: string, body?: string, visibility?: OrderCommentVisibility, author?: string, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     ordersCommentsList(
         paramsOrFirst: { id: string, idQuery?: string, body?: string, visibility?: OrderCommentVisibility, author?: string, createdAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (string)?, (OrderCommentVisibility)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string, idQuery?: string, body?: string, visibility?: OrderCommentVisibility, author?: string, createdAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1452,9 +1473,9 @@ export class Orders {
      * @param {string} params.author - Who wrote it, as the caller reported it. Free text; not resolved against a user directory.
      * @param {OrderCommentVisibility} params.visibility - Who may see it: 'internal' is a note between operators, 'customer' is meant to be shown in the customer's order view. Nothing here enforces that — this app labels the comment and the client showing it decides. Defaults to the tenant's default_comment_visibility. Defaults to the tenant's default_comment_visibility setting, which is 'internal' out of the box.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderComment>}
      */
-    ordersCommentsCreate(params: { id: string, body: string, author?: string, visibility?: OrderCommentVisibility }): Promise<Models.Error>;
+    ordersCommentsCreate(params: { id: string, body: string, author?: string, visibility?: OrderCommentVisibility }): Promise<Models.OrderComment>;
     /**
      * Write down what happened that the state machine cannot record: what the customer said on the phone, why an exception was made, what the warehouse found in the box. `visibility` decides who the note is for — 'internal' for the service desk, 'customer' for text meant to be shown to the buyer — and it defaults to the tenant's default_comment_visibility, which is 'internal' out of the box, so a note is never accidentally customer-facing. Adding one writes an order.comment.added event, so the trail shows that a note was made and its visibility, without copying the text onto the bus. It changes nothing about the order, and it sends nothing to anybody: this stores a comment, it does not email the customer.
      *
@@ -1463,14 +1484,14 @@ export class Orders {
      * @param {string} author - Who wrote it, as the caller reported it. Free text; not resolved against a user directory.
      * @param {OrderCommentVisibility} visibility - Who may see it: 'internal' is a note between operators, 'customer' is meant to be shown in the customer's order view. Nothing here enforces that — this app labels the comment and the client showing it decides. Defaults to the tenant's default_comment_visibility. Defaults to the tenant's default_comment_visibility setting, which is 'internal' out of the box.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderComment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersCommentsCreate(id: string, body: string, author?: string, visibility?: OrderCommentVisibility): Promise<Models.Error>;
+    ordersCommentsCreate(id: string, body: string, author?: string, visibility?: OrderCommentVisibility): Promise<Models.OrderComment>;
     ordersCommentsCreate(
         paramsOrFirst: { id: string, body: string, author?: string, visibility?: OrderCommentVisibility } | string,
         ...rest: [(string)?, (string)?, (OrderCommentVisibility)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderComment> {
         let params: { id: string, body: string, author?: string, visibility?: OrderCommentVisibility };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1527,23 +1548,23 @@ export class Orders {
      * @param {string} params.id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @param {string} params.completedBy - Who closed the order, as the caller reports it. Not stored on the order: it is carried in the order.completed event's payload, which is where the audit trail keeps who did what. Free text, not resolved against a user directory.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      */
-    ordersComplete(params: { id: string, completedBy?: string }): Promise<Models.Error>;
+    ordersComplete(params: { id: string, completedBy?: string }): Promise<Models.Order>;
     /**
      * Declare the order finished, whatever the quantities say — the service was delivered, the download was fetched, or an operator has decided the rest is not coming. status moves to 'completed' and completed_at is stamped from the server's clock. It does NOT ship anything or change the quantities, so fulfillment_status stays whatever the positions make it, and an order completed with lines still open shows exactly that. A completed order is final: modification, shipping and cancellation all refuse afterwards, and only a return may still be registered against it. The counterpart of auto_complete_on = 'payment' | 'manual': something has to close an order that shipping no longer closes by itself, and it is also the honest end for a service or digital order that never ships. Writes an order_events row 'order.completed' with via='manual'.
      *
      * @param {string} id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @param {string} completedBy - Who closed the order, as the caller reports it. Not stored on the order: it is carried in the order.completed event's payload, which is where the audit trail keeps who did what. Free text, not resolved against a user directory.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersComplete(id: string, completedBy?: string): Promise<Models.Error>;
+    ordersComplete(id: string, completedBy?: string): Promise<Models.Order>;
     ordersComplete(
         paramsOrFirst: { id: string, completedBy?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Order> {
         let params: { id: string, completedBy?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1593,9 +1614,9 @@ export class Orders {
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending, the direction is lower case, and the column has to exist — the value reaches the data plane verbatim and anything else is a 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    ordersEventsList(params: { id: string, idQuery?: string, name?: string, actor?: string, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    ordersEventsList(params: { id: string, idQuery?: string, name?: string, actor?: string, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * Everything that has ever happened to this order, oldest first: placed or requested, updated, acknowledged, shipped, held, paid, returned, completed, cancelled — each with the payload the action carried. This is the audit trail an operator reads to answer "why is this order in this state", and it is the same row the platform publishes as a domain event, so what a workflow reacted to and what a person sees here cannot diverge. It is append-only and this route is read-only: rows are written by the action routes and there is no way to add, edit or remove one. An order's trail grows for as long as the order lives, so it is paginated like every other list — 'page.hasMore' says whether more of it exists. Every parameter below is an exact match on the column it names; `order_id` is deliberately absent, because the route fixes it from the path after the query filter is read and a value sent for it is overwritten rather than honoured. The jsonb column 'payload' is not offered for the same reason it is not offered on the order list: the data plane answers 400 for anything that is not a whole JSON document. DEPRECATED KEY: the response also repeats 'items' under 'events' for compatibility with the pre-envelope shape. It is the same array; read 'items'. The alias is removed in the next minor version.
      *
@@ -1608,14 +1629,14 @@ export class Orders {
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending, the direction is lower case, and the column has to exist — the value reaches the data plane verbatim and anything else is a 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersEventsList(id: string, idQuery?: string, name?: string, actor?: string, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    ordersEventsList(id: string, idQuery?: string, name?: string, actor?: string, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     ordersEventsList(
         paramsOrFirst: { id: string, idQuery?: string, name?: string, actor?: string, createdAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string, idQuery?: string, name?: string, actor?: string, createdAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1688,23 +1709,23 @@ export class Orders {
      * @param {string} params.id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @param {string} params.reason - Why the order is held, in the words the shipping guard quotes back. Null when it is not held — releasing a hold clears it.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      */
-    ordersHold(params: { id: string, reason?: string }): Promise<Models.Error>;
+    ordersHold(params: { id: string, reason?: string }): Promise<Models.Order>;
     /**
      * Stop an order from moving while a human sorts something out — a credit check, a suspected fraud, an address nobody can deliver to. It sets a flag with the reason attached, and the flag is deliberately ORTHOGONAL to the lifecycle: the order keeps its status, its payment status and its quantities, and appears on a worklist as 'held' rather than being pushed into a state it will have to come back out of. How far the hold reaches is the tenant's setting on_hold_blocks: shipping only, shipping and cancellation (the credit-check case, where the order must move in neither direction), or nothing at all, which leaves the flag advisory. Holding an order twice is allowed and simply replaces the reason; releasing it is POST /orders/{id}/unhold.
      *
      * @param {string} id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @param {string} reason - Why the order is held, in the words the shipping guard quotes back. Null when it is not held — releasing a hold clears it.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersHold(id: string, reason?: string): Promise<Models.Error>;
+    ordersHold(id: string, reason?: string): Promise<Models.Order>;
     ordersHold(
         paramsOrFirst: { id: string, reason?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Order> {
         let params: { id: string, reason?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1750,9 +1771,9 @@ export class Orders {
      * @param {string} params.cancelledBy - Who cancelled, as the caller reported it — an operator, a desk, a system. Free text; this app does not resolve it against a user directory.
      * @param {string} params.reason - Why it was cancelled, free text. Mandatory when the tenant sets cancel_requires_reason — for those merchants an unexplained cancellation is refused with a 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      */
-    ordersItemsCancel(params: { id: string, positions: Models.OrderCancelPosition[], cancelledBy?: string, reason?: string }): Promise<Models.Error>;
+    ordersItemsCancel(params: { id: string, positions: Models.OrderCancelPosition[], cancelledBy?: string, reason?: string }): Promise<Models.Order>;
     /**
      * Take quantities off an order that is otherwise going ahead — three of the ten are discontinued, one line is out of stock and the customer would rather not wait. Each named quantity is booked onto its position as cancelled and guarded against the OPEN quantity (ordered − shipped − cancelled), so nothing already shipped can be cancelled away underneath a shipment. The order's fulfillment_status is re-derived afterwards, and when every position ends up fully cancelled the order itself moves to 'cancelled' — which is how this becomes a full cancel by arithmetic rather than by a second call. Positions are REQUIRED here, unlike on /ship and /return: cancelling an entire order by omitting a field is not something anybody should be able to do by accident; that is what POST /orders/{id}/cancel is for. Read GET /orders/{id}/shippable for the open quantity per position before calling.
      *
@@ -1761,14 +1782,14 @@ export class Orders {
      * @param {string} cancelledBy - Who cancelled, as the caller reported it — an operator, a desk, a system. Free text; this app does not resolve it against a user directory.
      * @param {string} reason - Why it was cancelled, free text. Mandatory when the tenant sets cancel_requires_reason — for those merchants an unexplained cancellation is refused with a 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersItemsCancel(id: string, positions: Models.OrderCancelPosition[], cancelledBy?: string, reason?: string): Promise<Models.Error>;
+    ordersItemsCancel(id: string, positions: Models.OrderCancelPosition[], cancelledBy?: string, reason?: string): Promise<Models.Order>;
     ordersItemsCancel(
         paramsOrFirst: { id: string, positions: Models.OrderCancelPosition[], cancelledBy?: string, reason?: string } | string,
         ...rest: [(Models.OrderCancelPosition[])?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Order> {
         let params: { id: string, positions: Models.OrderCancelPosition[], cancelledBy?: string, reason?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1826,9 +1847,9 @@ export class Orders {
      * @param {OrderPaymentStatus} params.status - The new value of the payment dimension. Whether the order is PAID, and the dimension this app does not decide: it is fed from outside through POST /orders/{id}/payment-status (the payments app or an ERP), and only seeded at place-time from payment.status. Orthogonal to the lifecycle — a completed order can still be open, and a paid one can still be pending.
      * @param {string} params.paymentId - The reference into the payment system. MERGED into the order's payment snapshot under 'payment_id' — the rest of the snapshot is left alone — and carried in the order.payment_status.changed event. Omitted leaves the snapshot untouched.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      */
-    ordersPaymentStatusUpdate(params: { id: string, status: OrderPaymentStatus, paymentId?: string }): Promise<Models.Error>;
+    ordersPaymentStatusUpdate(params: { id: string, status: OrderPaymentStatus, paymentId?: string }): Promise<Models.Order>;
     /**
      * Payment is the one status dimension this app does not decide for itself: it is FED IN from whatever took the money — the payments app, a PSP webhook relayed by a workflow, or a finance clerk marking an invoice settled. This route writes that word onto the order and records the change as an order.payment_status.changed event carrying the previous value, so the trail shows the sequence and not just the current state. Optionally attach the payment_id of the transaction it came from. It takes no money, refunds none and validates nothing about the amount — it records a fact somebody else established, and any of the seven words may follow any other. The other half of auto_complete_on = 'payment': an order that has shipped in full is completed by this call when the status becomes 'paid'.
      *
@@ -1836,14 +1857,14 @@ export class Orders {
      * @param {OrderPaymentStatus} status - The new value of the payment dimension. Whether the order is PAID, and the dimension this app does not decide: it is fed from outside through POST /orders/{id}/payment-status (the payments app or an ERP), and only seeded at place-time from payment.status. Orthogonal to the lifecycle — a completed order can still be open, and a paid one can still be pending.
      * @param {string} paymentId - The reference into the payment system. MERGED into the order's payment snapshot under 'payment_id' — the rest of the snapshot is left alone — and carried in the order.payment_status.changed event. Omitted leaves the snapshot untouched.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersPaymentStatusUpdate(id: string, status: OrderPaymentStatus, paymentId?: string): Promise<Models.Error>;
+    ordersPaymentStatusUpdate(id: string, status: OrderPaymentStatus, paymentId?: string): Promise<Models.Order>;
     ordersPaymentStatusUpdate(
         paramsOrFirst: { id: string, status: OrderPaymentStatus, paymentId?: string } | string,
         ...rest: [(OrderPaymentStatus)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Order> {
         let params: { id: string, status: OrderPaymentStatus, paymentId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1898,9 +1919,9 @@ export class Orders {
      * @param {string} params.reason - Why the goods are coming back, free text as the customer or the desk stated it. Also what /reject stores when it is given no resolution out of the published set.
      * @param {boolean} params.restock - The default restock flag for positions that carry none of their own — and the only way to say "put it all back into stock" when the positions are defaulted. It does not restock anything itself: it decides what the completion REPORTS for the orchestrator's inventories.restock call.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderReturn>}
      */
-    ordersReturn(params: { id: string, metadata?: object, positions?: Models.OrderReturnPosition[], reason?: string, restock?: boolean }): Promise<Models.Error>;
+    ordersReturn(params: { id: string, metadata?: object, positions?: Models.OrderReturnPosition[], reason?: string, restock?: boolean }): Promise<Models.OrderReturn>;
     /**
      * Open a return case: the customer has announced goods are coming back, and this is where that becomes a tracked thing with a return number of its own, drawn from the tenant's return range. Positions are guarded against what actually SHIPPED and has not already come back, so a return cannot exceed the goods that left. Each position carries a `restock` flag saying whether the item is expected to be sellable again — recorded now, acted on only when the return completes. Omitting `positions` registers everything still returnable, the 'the customer sent the whole delivery back' case. Nothing is booked yet: quantity_returned stays where it is and the order does not move — the return starts as 'registered' and travels through receive and complete or reject. Allowed on a completed order, refused on a cancelled one.
      *
@@ -1910,14 +1931,14 @@ export class Orders {
      * @param {string} reason - Why the goods are coming back, free text as the customer or the desk stated it. Also what /reject stores when it is given no resolution out of the published set.
      * @param {boolean} restock - The default restock flag for positions that carry none of their own — and the only way to say "put it all back into stock" when the positions are defaulted. It does not restock anything itself: it decides what the completion REPORTS for the orchestrator's inventories.restock call.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderReturn>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersReturn(id: string, metadata?: object, positions?: Models.OrderReturnPosition[], reason?: string, restock?: boolean): Promise<Models.Error>;
+    ordersReturn(id: string, metadata?: object, positions?: Models.OrderReturnPosition[], reason?: string, restock?: boolean): Promise<Models.OrderReturn>;
     ordersReturn(
         paramsOrFirst: { id: string, metadata?: object, positions?: Models.OrderReturnPosition[], reason?: string, restock?: boolean } | string,
         ...rest: [(object)?, (Models.OrderReturnPosition[])?, (string)?, (boolean)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderReturn> {
         let params: { id: string, metadata?: object, positions?: Models.OrderReturnPosition[], reason?: string, restock?: boolean };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1977,9 +1998,9 @@ export class Orders {
      * @param {string} params.rid - The return id (uuid). It must belong to the order in {id} — a return of another order is a 404, not a cross-order write.
      * @param {OrderReturnSettlement} params.resolution - How the return was settled. Omitted = settled without recording how.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderReturnCompleted>}
      */
-    ordersReturnsComplete(params: { id: string, rid: string, resolution?: OrderReturnSettlement }): Promise<Models.Error>;
+    ordersReturnsComplete(params: { id: string, rid: string, resolution?: OrderReturnSettlement }): Promise<Models.OrderReturnCompleted>;
     /**
      * Accept the return and close the case: the goods are taken back on the order's books and the settlement is recorded as one of the published words — refunded, credited, replaced and so on. This is the step a refund or a credit note hangs off, and the only step that moves quantity_returned. It does not refund money and does not put stock back itself: the answer's 'restock' array names what the orchestrator should hand to inventories.restock, and payment travels through /payment-status. Once completed the return is final — receive, complete and reject all refuse afterwards. The goods accounting moves here and nowhere else: quantity_returned is booked onto each position, completed_at is stamped by the SERVER, and positions flagged restock are reported back in the answer's 'restock' array for the orchestrator's inventories.restock call. 'resolution' is validated against the settlement words this app publishes (refund, partial_refund, replacement, repair, store_credit — see GET /orders/vocabularies/return-resolutions); anything else is refused rather than stored as a word no reader knows. It is checked before the positions are booked, so a rejected value leaves nothing behind.
      *
@@ -1987,14 +2008,14 @@ export class Orders {
      * @param {string} rid - The return id (uuid). It must belong to the order in {id} — a return of another order is a 404, not a cross-order write.
      * @param {OrderReturnSettlement} resolution - How the return was settled. Omitted = settled without recording how.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderReturnCompleted>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersReturnsComplete(id: string, rid: string, resolution?: OrderReturnSettlement): Promise<Models.Error>;
+    ordersReturnsComplete(id: string, rid: string, resolution?: OrderReturnSettlement): Promise<Models.OrderReturnCompleted>;
     ordersReturnsComplete(
         paramsOrFirst: { id: string, rid: string, resolution?: OrderReturnSettlement } | string,
         ...rest: [(string)?, (OrderReturnSettlement)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderReturnCompleted> {
         let params: { id: string, rid: string, resolution?: OrderReturnSettlement };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2044,9 +2065,9 @@ export class Orders {
      * @param {string} params.rid - The return id (uuid). It must belong to the order in {id} — a return of another order is a 404, not a cross-order write.
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderReturn>}
      */
-    ordersReturnsReceive(params: { id: string, rid: string, data: object }): Promise<Models.Error>;
+    ordersReturnsReceive(params: { id: string, rid: string, data: object }): Promise<Models.OrderReturn>;
     /**
      * The goods-in scan: the parcel is physically back, warehouse staff have it in their hands, and nobody has decided yet whether the customer gets their money. It moves the return from 'registered' to 'received' and stamps received_at, which is what separates 'announced' from 'here' on a returns worklist. It books nothing — quantity_returned is written by the complete step and by nothing else — so a return that arrives damaged can still be rejected afterwards. Only a registered return can be received; a second call, or one against a settled return, is a 422. This step is skippable: a return may be completed straight from 'registered' where a merchant does not scan goods in.
      *
@@ -2054,14 +2075,14 @@ export class Orders {
      * @param {string} rid - The return id (uuid). It must belong to the order in {id} — a return of another order is a 404, not a cross-order write.
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderReturn>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersReturnsReceive(id: string, rid: string, data: object): Promise<Models.Error>;
+    ordersReturnsReceive(id: string, rid: string, data: object): Promise<Models.OrderReturn>;
     ordersReturnsReceive(
         paramsOrFirst: { id: string, rid: string, data: object } | string,
         ...rest: [(string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderReturn> {
         let params: { id: string, rid: string, data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2115,9 +2136,9 @@ export class Orders {
      * @param {string} params.reason - Free-text fallback for 'resolution' — a sentence about this one return, not a value out of the set.
      * @param {OrderReturnRefusal} params.resolution - Why the return was refused.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderReturn>}
      */
-    ordersReturnsReject(params: { id: string, rid: string, reason?: string, resolution?: OrderReturnRefusal }): Promise<Models.Error>;
+    ordersReturnsReject(params: { id: string, rid: string, reason?: string, resolution?: OrderReturnRefusal }): Promise<Models.OrderReturn>;
     /**
      * Close the case against the customer: the goods came back used, outside the window, or were never covered in the first place. The return moves to 'rejected', rejected_at is stamped, and the refusal is recorded either as one of the published refusal words or as a sentence somebody wrote about this one return. The order is untouched — the quantities still count as shipped and not returned, which is the point: a rejected return must leave the books exactly as they were. Rejection is final, and it says nothing about where the physical goods go. Nothing is booked onto the positions. 'resolution' is validated against the refusal words (wear_and_tear, not_returnable); 'reason' stays free text — a sentence about this one return rather than a value out of a set — and is what is stored when no resolution is named.
      *
@@ -2126,14 +2147,14 @@ export class Orders {
      * @param {string} reason - Free-text fallback for 'resolution' — a sentence about this one return, not a value out of the set.
      * @param {OrderReturnRefusal} resolution - Why the return was refused.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderReturn>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersReturnsReject(id: string, rid: string, reason?: string, resolution?: OrderReturnRefusal): Promise<Models.Error>;
+    ordersReturnsReject(id: string, rid: string, reason?: string, resolution?: OrderReturnRefusal): Promise<Models.OrderReturn>;
     ordersReturnsReject(
         paramsOrFirst: { id: string, rid: string, reason?: string, resolution?: OrderReturnRefusal } | string,
         ...rest: [(string)?, (string)?, (OrderReturnRefusal)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderReturn> {
         let params: { id: string, rid: string, reason?: string, resolution?: OrderReturnRefusal };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2193,9 +2214,9 @@ export class Orders {
      * @param {string} params.trackingCode - The consignment number the carrier issued. Free text: every carrier formats it differently and this app stores whatever it is given.
      * @param {string} params.trackingUrl - Where a human can follow the parcel. Supplied by the caller — this app does not build it, because only the caller knows the carrier's tracking address.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderShipmentCreated>}
      */
-    ordersShip(params: { id: string, carrier?: string, metadata?: object, number?: string, positions?: Models.OrderShipmentPosition[], shippedAt?: string, trackingCode?: string, trackingUrl?: string }): Promise<Models.Error>;
+    ordersShip(params: { id: string, carrier?: string, metadata?: object, number?: string, positions?: Models.OrderShipmentPosition[], shippedAt?: string, trackingCode?: string, trackingUrl?: string }): Promise<Models.OrderShipmentCreated>;
     /**
      * Book goods out: which positions and how much of each, with the carrier and the tracking code that go to the customer. It draws a delivery-note number from the tenant's delivery range, books quantity_shipped onto every named position, re-derives the order's fulfillment_status from the arithmetic (unfulfilled → partial → fulfilled) and emits order.shipment.created. Omitting `positions` means everything still open, in full, which is the ordinary 'send the rest' case and the only one a UI without a line editor can express; the answer always names the quantities that actually went out. It does not print a label, buy postage or notify anybody — a shipping workflow reacts to the event. Whether a full shipment CLOSES the order is the tenant's call (setting auto_complete_on): 'shipment' completes it here, 'payment' leaves it in_fulfillment until payment_status becomes paid, 'manual' waits for orders.complete. The order.completed event follows the order, so it is only emitted when the order actually completed.
      *
@@ -2208,14 +2229,14 @@ export class Orders {
      * @param {string} trackingCode - The consignment number the carrier issued. Free text: every carrier formats it differently and this app stores whatever it is given.
      * @param {string} trackingUrl - Where a human can follow the parcel. Supplied by the caller — this app does not build it, because only the caller knows the carrier's tracking address.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderShipmentCreated>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersShip(id: string, carrier?: string, metadata?: object, number?: string, positions?: Models.OrderShipmentPosition[], shippedAt?: string, trackingCode?: string, trackingUrl?: string): Promise<Models.Error>;
+    ordersShip(id: string, carrier?: string, metadata?: object, number?: string, positions?: Models.OrderShipmentPosition[], shippedAt?: string, trackingCode?: string, trackingUrl?: string): Promise<Models.OrderShipmentCreated>;
     ordersShip(
         paramsOrFirst: { id: string, carrier?: string, metadata?: object, number?: string, positions?: Models.OrderShipmentPosition[], shippedAt?: string, trackingCode?: string, trackingUrl?: string } | string,
         ...rest: [(string)?, (object)?, (string)?, (Models.OrderShipmentPosition[])?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderShipmentCreated> {
         let params: { id: string, carrier?: string, metadata?: object, number?: string, positions?: Models.OrderShipmentPosition[], shippedAt?: string, trackingCode?: string, trackingUrl?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2288,21 +2309,21 @@ export class Orders {
      *
      * @param {string} params.id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderShippable>}
      */
-    ordersShippable(params: { id: string }): Promise<Models.Error>;
+    ordersShippable(params: { id: string }): Promise<Models.OrderShippable>;
     /**
      * What a shipment dialog needs before it can offer anything: the open quantity per position, and one boolean saying whether a shipment would be accepted at all. Reach for it to fill a picking screen or to decide whether a 'create shipment' button is enabled, instead of subtracting the quantities client-side. It changes nothing and books nothing — it is the question POST /orders/{id}/ship answers with an action. The read half of orders.ship. The open quantity per position and the two guards (cancelled/completed order, hold) are the SAME code the ship route runs, so what this answers and what that accepts cannot drift — a client subtracting the quantities itself eventually offers a shipment the server refuses, or one it should have refused. 'shippable' is false with a 'blocked_reason' when the order is held, cancelled, completed or has nothing open.
      *
      * @param {string} id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.OrderShippable>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersShippable(id: string): Promise<Models.Error>;
+    ordersShippable(id: string): Promise<Models.OrderShippable>;
     ordersShippable(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.OrderShippable> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2340,23 +2361,23 @@ export class Orders {
      * @param {string} params.id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      */
-    ordersUnhold(params: { id: string, data: object }): Promise<Models.Error>;
+    ordersUnhold(params: { id: string, data: object }): Promise<Models.Order>;
     /**
      * The whole of the release: the flag comes off, the reason is cleared, and an order.unheld event says the order may move again. Whatever the hold was blocking — shipping, and cancellation on tenants configured that way — is accepted from this call on. It restores nothing else and skips nothing: the order continues from exactly the status and quantities it had when it was held, and any shipping that was due meanwhile still has to be done by hand. An order that is not on hold answers 422 rather than pretending to release one, so this is safe to give to a worklist and not to a loop that calls it blindly.
      *
      * @param {string} id - The order id (uuid). This segment reaches a uuid column: an order NUMBER is not accepted here — filter GET /orders by ?number= to resolve one.
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Order>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    ordersUnhold(id: string, data: object): Promise<Models.Error>;
+    ordersUnhold(id: string, data: object): Promise<Models.Order>;
     ordersUnhold(
         paramsOrFirst: { id: string, data: object } | string,
         ...rest: [(object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Order> {
         let params: { id: string, data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

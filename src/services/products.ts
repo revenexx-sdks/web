@@ -227,9 +227,9 @@ Written only by `POST /products/{id}/completeness` and by `POST /products/{id}/f
 It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed by association type code, and the column lets that document round-trip instead of being dropped. The database enforces no shape on it, so what a reader finds is whatever the importer wrote; the example is the conventional form.
      * @param {string} params.taxClass - The tax class key the prices app resolves a VAT rate from. Free text here — the vocabulary belongs to the app that prices, and `POST /products/batch` exists to hand exactly this column to it in bulk.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Products>}
      */
-    productsCreate(params: { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, taxClass?: string }): Promise<Models.Error>;
+    productsCreate(params: { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, taxClass?: string }): Promise<Models.Products>;
     /**
      * Creates one product and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -270,14 +270,14 @@ Written only by `POST /products/{id}/completeness` and by `POST /products/{id}/f
 It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed by association type code, and the column lets that document round-trip instead of being dropped. The database enforces no shape on it, so what a reader finds is whatever the importer wrote; the example is the conventional form.
      * @param {string} taxClass - The tax class key the prices app resolves a VAT rate from. Free text here — the vocabulary belongs to the app that prices, and `POST /products/batch` exists to hand exactly this column to it in bulk.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Products>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCreate(sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, taxClass?: string): Promise<Models.Error>;
+    productsCreate(sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, taxClass?: string): Promise<Models.Products>;
     productsCreate(
         paramsOrFirst: { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, taxClass?: string } | string,
         ...rest: [(object)?, (object)?, (string)?, (boolean)?, (string)?, (string)?, (ProductsKind)?, (string)?, (object)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Products> {
         let params: { sku: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, taxClass?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -440,9 +440,9 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {boolean} params.enabled - Restrict to enabled or disabled products.
      * @param {string} params.familyId - Restrict to one family. A family id that does not exist is not an error here — it simply matches nothing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsGrid(params?: { limit?: number, offset?: number, order?: string, q?: string, kind?: Kind, enabled?: boolean, familyId?: string }): Promise<Models.Error>;
+    productsGrid(params?: { limit?: number, offset?: number, order?: string, q?: string, kind?: Kind, enabled?: boolean, familyId?: string }): Promise<{}>;
     /**
      * The list a merchant can actually scan, as opposed to `GET /products`, which answers SKUs and a jsonb blob. Every row arrives already flattened: its resolved display name and where that name came from, its family code, its stored completeness, and the value of every attribute the catalog marks `usable_in_grid` — no join, no second call. `q` is a case-insensitive substring of the stored `label` column, which falls back to the SKU, so one box finds a product by either. Soft-deleted products are excluded here, unlike `GET /products`.
      * 
@@ -456,14 +456,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {boolean} enabled - Restrict to enabled or disabled products.
      * @param {string} familyId - Restrict to one family. A family id that does not exist is not an error here — it simply matches nothing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsGrid(limit?: number, offset?: number, order?: string, q?: string, kind?: Kind, enabled?: boolean, familyId?: string): Promise<Models.Error>;
+    productsGrid(limit?: number, offset?: number, order?: string, q?: string, kind?: Kind, enabled?: boolean, familyId?: string): Promise<{}>;
     productsGrid(
         paramsOrFirst?: { limit?: number, offset?: number, order?: string, q?: string, kind?: Kind, enabled?: boolean, familyId?: string } | number,
         ...rest: [(number)?, (string)?, (string)?, (Kind)?, (boolean)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { limit?: number, offset?: number, order?: string, q?: string, kind?: Kind, enabled?: boolean, familyId?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -533,9 +533,9 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {string[]} params.ids - Product ids to name. At most 500.
      * @param {string[]} params.skus - Product SKUs to name. At most 500.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsLabels(params?: { ids?: string[], skus?: string[] }): Promise<Models.Error>;
+    productsLabels(params?: { ids?: string[], skus?: string[] }): Promise<{}>;
     /**
      * What is this product CALLED? A product's name is an attribute rather than a column, and which attribute it is, is per family — so no plain read can answer it. This resolves up to 500 products at once, by id and/or SKU: it reads families.label_attribute (falling back to the default_label_attribute setting, then to the conventional `name`) and looks the value up through the scoped attribute_values document — common, then locale_specific in the label_locales order, then the channel buckets.
      * 
@@ -544,14 +544,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {string[]} ids - Product ids to name. At most 500.
      * @param {string[]} skus - Product SKUs to name. At most 500.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsLabels(ids?: string[], skus?: string[]): Promise<Models.Error>;
+    productsLabels(ids?: string[], skus?: string[]): Promise<{}>;
     productsLabels(
         paramsOrFirst?: { ids?: string[], skus?: string[] } | string[],
         ...rest: [(string[])?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { ids?: string[], skus?: string[] };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -725,9 +725,9 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {number} params.position - Order in which the targets are shown, ascending.
      * @param {number} params.quantity - How many of the target belong to the source — the 4 in "this bundle contains 4 casters". Only meaningful when the association type carries `is_quantified`; null on an ordinary cross-sell.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductAssociations>}
      */
-    productsProductAssociationsCreate(params: { associationTypeId: string, productId: string, targetProductId: string, position?: number, quantity?: number }): Promise<Models.Error>;
+    productsProductAssociationsCreate(params: { associationTypeId: string, productId: string, targetProductId: string, position?: number, quantity?: number }): Promise<Models.ProductAssociations>;
     /**
      * Creates one product association and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -741,14 +741,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {number} position - Order in which the targets are shown, ascending.
      * @param {number} quantity - How many of the target belong to the source — the 4 in "this bundle contains 4 casters". Only meaningful when the association type carries `is_quantified`; null on an ordinary cross-sell.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductAssociations>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsProductAssociationsCreate(associationTypeId: string, productId: string, targetProductId: string, position?: number, quantity?: number): Promise<Models.Error>;
+    productsProductAssociationsCreate(associationTypeId: string, productId: string, targetProductId: string, position?: number, quantity?: number): Promise<Models.ProductAssociations>;
     productsProductAssociationsCreate(
         paramsOrFirst: { associationTypeId: string, productId: string, targetProductId: string, position?: number, quantity?: number } | string,
         ...rest: [(string)?, (string)?, (number)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ProductAssociations> {
         let params: { associationTypeId: string, productId: string, targetProductId: string, position?: number, quantity?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -819,9 +819,9 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      *
      * @param {string} params.id - The `product_associations` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/product_associations`. An id no product association of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsProductAssociationsDelete(params: { id: string }): Promise<Models.Error>;
+    productsProductAssociationsDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one product association by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -831,13 +831,13 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      *
      * @param {string} id - The `product_associations` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/product_associations`. An id no product association of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsProductAssociationsDelete(id: string): Promise<Models.Error>;
+    productsProductAssociationsDelete(id: string): Promise<{}>;
     productsProductAssociationsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -880,9 +880,9 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      *
      * @param {string} params.id - The `product_associations` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/product_associations`. An id no product association of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductAssociations>}
      */
-    productsProductAssociationsGet(params: { id: string }): Promise<Models.Error>;
+    productsProductAssociationsGet(params: { id: string }): Promise<Models.ProductAssociations>;
     /**
      * Reads one product association by its id — the whole row, every column, as it is stored.
      * 
@@ -894,13 +894,13 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      *
      * @param {string} id - The `product_associations` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/product_associations`. An id no product association of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductAssociations>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsProductAssociationsGet(id: string): Promise<Models.Error>;
+    productsProductAssociationsGet(id: string): Promise<Models.ProductAssociations>;
     productsProductAssociationsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ProductAssociations> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -946,9 +946,9 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {number} params.quantity - How many of the target belong to the source — the 4 in "this bundle contains 4 casters". Only meaningful when the association type carries `is_quantified`; null on an ordinary cross-sell.
      * @param {string} params.targetProductId - The product the relation points at — the accessory, the spare part, the cross-sell.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductAssociations>}
      */
-    productsProductAssociationsUpdate(params: { id: string, associationTypeId?: string, position?: number, productId?: string, quantity?: number, targetProductId?: string }): Promise<Models.Error>;
+    productsProductAssociationsUpdate(params: { id: string, associationTypeId?: string, position?: number, productId?: string, quantity?: number, targetProductId?: string }): Promise<Models.ProductAssociations>;
     /**
      * Updates one product association by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -963,14 +963,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {number} quantity - How many of the target belong to the source — the 4 in "this bundle contains 4 casters". Only meaningful when the association type carries `is_quantified`; null on an ordinary cross-sell.
      * @param {string} targetProductId - The product the relation points at — the accessory, the spare part, the cross-sell.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductAssociations>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsProductAssociationsUpdate(id: string, associationTypeId?: string, position?: number, productId?: string, quantity?: number, targetProductId?: string): Promise<Models.Error>;
+    productsProductAssociationsUpdate(id: string, associationTypeId?: string, position?: number, productId?: string, quantity?: number, targetProductId?: string): Promise<Models.ProductAssociations>;
     productsProductAssociationsUpdate(
         paramsOrFirst: { id: string, associationTypeId?: string, position?: number, productId?: string, quantity?: number, targetProductId?: string } | string,
         ...rest: [(string)?, (number)?, (string)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ProductAssociations> {
         let params: { id: string, associationTypeId?: string, position?: number, productId?: string, quantity?: number, targetProductId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1058,21 +1058,21 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      *
      * @param {string} params.name - The vocabulary name, as listed by GET /products/vocabularies.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsVocabulariesGet(params: { name: string }): Promise<Models.Error>;
+    productsVocabulariesGet(params: { name: string }): Promise<{}>;
     /**
      * One vocabulary with every value it admits, each with a title, a description and the badge tone a UI should paint it in. The value set is parsed out of the CHECK constraint in schema.json, so what is served IS what is enforced. Labels are curated on top and can only add words and colour — a permitted value nobody labelled still appears, titled from its own key.
      *
      * @param {string} name - The vocabulary name, as listed by GET /products/vocabularies.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsVocabulariesGet(name: string): Promise<Models.Error>;
+    productsVocabulariesGet(name: string): Promise<{}>;
     productsVocabulariesGet(
         paramsOrFirst: { name: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { name: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1113,9 +1113,9 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      *
      * @param {string} params.id - The `products` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products`. An id no product of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsDelete(params: { id: string }): Promise<Models.Error>;
+    productsDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one product by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -1125,13 +1125,13 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      *
      * @param {string} id - The `products` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products`. An id no product of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsDelete(id: string): Promise<Models.Error>;
+    productsDelete(id: string): Promise<{}>;
     productsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1172,9 +1172,9 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      *
      * @param {string} params.id - The `products` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products`. An id no product of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Products>}
      */
-    productsGet(params: { id: string }): Promise<Models.Error>;
+    productsGet(params: { id: string }): Promise<Models.Products>;
     /**
      * Reads one product by its id — the whole row, every column, as it is stored.
      * 
@@ -1184,13 +1184,13 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      *
      * @param {string} id - The `products` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products`. An id no product of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Products>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsGet(id: string): Promise<Models.Error>;
+    productsGet(id: string): Promise<Models.Products>;
     productsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Products> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1263,9 +1263,9 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {string} params.sku - The merchant's own article number — unique per tenant, and the value every integration (ERP, shop, feed, price list) joins on. The one identifier a person types, and the fallback this app shows when the catalog holds no name.
      * @param {string} params.taxClass - The tax class key the prices app resolves a VAT rate from. Free text here — the vocabulary belongs to the app that prices, and `POST /products/batch` exists to hand exactly this column to it in bulk.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Products>}
      */
-    productsUpdate(params: { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string }): Promise<Models.Error>;
+    productsUpdate(params: { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string }): Promise<Models.Products>;
     /**
      * Updates one product by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -1307,14 +1307,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {string} sku - The merchant's own article number — unique per tenant, and the value every integration (ERP, shop, feed, price list) joins on. The one identifier a person types, and the fallback this app shows when the catalog holds no name.
      * @param {string} taxClass - The tax class key the prices app resolves a VAT rate from. Free text here — the vocabulary belongs to the app that prices, and `POST /products/batch` exists to hand exactly this column to it in bulk.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Products>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsUpdate(id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string): Promise<Models.Error>;
+    productsUpdate(id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string): Promise<Models.Products>;
     productsUpdate(
         paramsOrFirst: { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string } | string,
         ...rest: [(object)?, (object)?, (string)?, (boolean)?, (string)?, (string)?, (ProductsKind)?, (string)?, (object)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Products> {
         let params: { id: string, attributeValues?: object, completeness?: object, deletedAt?: string, enabled?: boolean, familyId?: string, familyVariantId?: string, kind?: ProductsKind, parentId?: string, quantifiedAssociations?: object, sku?: string, taxClass?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1408,23 +1408,23 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {string} params.id - The `products` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products`. An id no product of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsCompleteness(params: { id: string, data: object }): Promise<Models.Error>;
+    productsCompleteness(params: { id: string, data: object }): Promise<{}>;
     /**
      * How much of what its family REQUIRES does this product actually carry — the number a merchandiser works down. products.completeness is jsonb that nothing had ever written. This computes it from family_attributes (is_required) against the product's own scoped attribute_values and stores the result. A product with no family answers 400 rather than an invented 0 % — it has nothing to be measured against.
      *
      * @param {string} id - The `products` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products`. An id no product of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCompleteness(id: string, data: object): Promise<Models.Error>;
+    productsCompleteness(id: string, data: object): Promise<{}>;
     productsCompleteness(
         paramsOrFirst: { id: string, data: object } | string,
         ...rest: [(object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string, data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1472,9 +1472,9 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {string} params.familyCode - Alternative to family_id — a `families.code` this tenant holds, from `GET /products/families`. No example: a code is tenant data, and any value published here names a family somebody does not have.
      * @param {string} params.familyId - The family to assign.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsFamilyAssign(params: { id: string, familyCode?: string, familyId?: string }): Promise<Models.Error>;
+    productsFamilyAssign(params: { id: string, familyCode?: string, familyId?: string }): Promise<{}>;
     /**
      * Names the family in the body — by `family_id` or by `family_code`, whichever the caller holds — and computes the product's completeness in the same call. The step every family-driven surface waits on: a product with no family has no required attributes, so its completeness cannot be computed and its family's label attribute never resolves. Assigning the family recomputes and STORES products.completeness immediately, so the metadata cannot go stale between the two operations.
      *
@@ -1482,14 +1482,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      * @param {string} familyCode - Alternative to family_id — a `families.code` this tenant holds, from `GET /products/families`. No example: a code is tenant data, and any value published here names a family somebody does not have.
      * @param {string} familyId - The family to assign.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyAssign(id: string, familyCode?: string, familyId?: string): Promise<Models.Error>;
+    productsFamilyAssign(id: string, familyCode?: string, familyId?: string): Promise<{}>;
     productsFamilyAssign(
         paramsOrFirst: { id: string, familyCode?: string, familyId?: string } | string,
         ...rest: [(string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string, familyCode?: string, familyId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Storage, Visibility } from "@revenexx/sdk";
+import { Client, Storage, AssetStoreVisibility } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -17,7 +17,7 @@ const result = await storage.assetUpdate({
     folderId: '', // optional
     name: '', // optional
     tags: [], // optional
-    visibility: Visibility.Public // optional
+    visibility: AssetStoreVisibility.Public // optional
 });
 
 console.log(result);

@@ -29,9 +29,9 @@ export class Messaging {
      * @param {string} params.subject - 
      * @param {number} params.limit - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    auditIndex(params?: { resourceType?: ResourceType, resourceId?: string, subject?: string, limit?: number }): Promise<Models.Error>;
+    auditIndex(params?: { resourceType?: ResourceType, resourceId?: string, subject?: string, limit?: number }): Promise<{}>;
     /**
      * Filterable by `resource_type`, `resource_id` and `subject` — the last one
      * being the human-readable name a row was recorded under (a template's key,
@@ -46,14 +46,14 @@ export class Messaging {
      * @param {string} subject - 
      * @param {number} limit - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    auditIndex(resourceType?: ResourceType, resourceId?: string, subject?: string, limit?: number): Promise<Models.Error>;
+    auditIndex(resourceType?: ResourceType, resourceId?: string, subject?: string, limit?: number): Promise<{}>;
     auditIndex(
         paramsOrFirst?: { resourceType?: ResourceType, resourceId?: string, subject?: string, limit?: number } | ResourceType,
         ...rest: [(string)?, (string)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { resourceType?: ResourceType, resourceId?: string, subject?: string, limit?: number };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('resourceType' in paramsOrFirst || 'resourceId' in paramsOrFirst || 'subject' in paramsOrFirst || 'limit' in paramsOrFirst))) {
@@ -106,22 +106,22 @@ export class Messaging {
      *
      * @param {string} params.eventTopic - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    bindingIndex(params?: { eventTopic?: string }): Promise<Models.Error>;
+    bindingIndex(params?: { eventTopic?: string }): Promise<{}>;
     /**
      * `?event_topic=` narrows to one topic, which is the question worth asking
      * of this list: "what does this event actually do".
      *
      * @param {string} eventTopic - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    bindingIndex(eventTopic?: string): Promise<Models.Error>;
+    bindingIndex(eventTopic?: string): Promise<{}>;
     bindingIndex(
         paramsOrFirst?: { eventTopic?: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { eventTopic?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -174,9 +174,9 @@ route speaks, and it outranks the tenant's own default
 (LocaleResolver). "No opinion" has to be expressible, or a route
 nobody made a language decision about silently makes one.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    bindingStore(params: { channel: string, eventTopic: string, recipient: string, templateKey: string, enabled?: boolean, fallbackOrder?: number, locale?: string }): Promise<Models.Error>;
+    bindingStore(params: { channel: string, eventTopic: string, recipient: string, templateKey: string, enabled?: boolean, fallbackOrder?: number, locale?: string }): Promise<{}>;
     /**
      * `recipient` is a template, not an address: `{{ customer.email }}` is
      * rendered against the event payload when the event arrives, which is the
@@ -198,14 +198,14 @@ route speaks, and it outranks the tenant's own default
 (LocaleResolver). "No opinion" has to be expressible, or a route
 nobody made a language decision about silently makes one.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    bindingStore(channel: string, eventTopic: string, recipient: string, templateKey: string, enabled?: boolean, fallbackOrder?: number, locale?: string): Promise<Models.Error>;
+    bindingStore(channel: string, eventTopic: string, recipient: string, templateKey: string, enabled?: boolean, fallbackOrder?: number, locale?: string): Promise<{}>;
     bindingStore(
         paramsOrFirst: { channel: string, eventTopic: string, recipient: string, templateKey: string, enabled?: boolean, fallbackOrder?: number, locale?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (boolean)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel: string, eventTopic: string, recipient: string, templateKey: string, enabled?: boolean, fallbackOrder?: number, locale?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -286,22 +286,22 @@ nobody made a language decision about silently makes one.
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    bindingDestroy(params: { id: string }): Promise<Models.Error>;
+    bindingDestroy(params: { id: string }): Promise<{}>;
     /**
      * The event it answered goes back to doing nothing. Prefer `enabled: false`
      * when the intent is to pause rather than to forget.
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    bindingDestroy(id: string): Promise<Models.Error>;
+    bindingDestroy(id: string): Promise<{}>;
     bindingDestroy(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -339,22 +339,22 @@ nobody made a language decision about silently makes one.
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    bindingShow(params: { id: string }): Promise<Models.Error>;
+    bindingShow(params: { id: string }): Promise<{}>;
     /**
      * 404 for a binding belonging to another tenant, not 403 — an id that
      * answered differently would say whether it exists.
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    bindingShow(id: string): Promise<Models.Error>;
+    bindingShow(id: string): Promise<{}>;
     bindingShow(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -406,9 +406,9 @@ nobody made a language decision about silently makes one.
      * @param {string} params.recipient - 
      * @param {string} params.templateKey - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    bindingUpdatePatch(params: { id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string }): Promise<Models.Error>;
+    bindingUpdatePatch(params: { id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string }): Promise<{}>;
     /**
      * Every field is optional; only what is sent is written. `enabled: false`
      * is how a binding is taken out of service without losing what it said —
@@ -429,14 +429,14 @@ nobody made a language decision about silently makes one.
      * @param {string} recipient - 
      * @param {string} templateKey - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    bindingUpdatePatch(id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string): Promise<Models.Error>;
+    bindingUpdatePatch(id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string): Promise<{}>;
     bindingUpdatePatch(
         paramsOrFirst: { id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string } | string,
         ...rest: [(string)?, (boolean)?, (string)?, (number)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -524,9 +524,9 @@ nobody made a language decision about silently makes one.
      * @param {string} params.recipient - 
      * @param {string} params.templateKey - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    bindingUpdate(params: { id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string }): Promise<Models.Error>;
+    bindingUpdate(params: { id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string }): Promise<{}>;
     /**
      * Every field is optional; only what is sent is written. `enabled: false`
      * is how a binding is taken out of service without losing what it said —
@@ -547,14 +547,14 @@ nobody made a language decision about silently makes one.
      * @param {string} recipient - 
      * @param {string} templateKey - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    bindingUpdate(id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string): Promise<Models.Error>;
+    bindingUpdate(id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string): Promise<{}>;
     bindingUpdate(
         paramsOrFirst: { id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string } | string,
         ...rest: [(string)?, (boolean)?, (string)?, (number)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string, channel?: string, enabled?: boolean, eventTopic?: string, fallbackOrder?: number, locale?: string, recipient?: string, templateKey?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -658,9 +658,9 @@ The override entries carry no `providers` catalogue, `enabled` flag or `markets`
 Those are properties of the channel, identical in every market, and repeating
 twenty-six providers' field specifications per market would be most of the response.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    channelCredentialIndex(params?: { market?: string, markets?: string }): Promise<Models.Error>;
+    channelCredentialIndex(params?: { market?: string, markets?: string }): Promise<{}>;
     /**
      * Answers per channel with: which fields the chosen provider wants and
      * which of them are SET (never their values — secrets go in and do not come
@@ -697,14 +697,14 @@ The override entries carry no `providers` catalogue, `enabled` flag or `markets`
 Those are properties of the channel, identical in every market, and repeating
 twenty-six providers' field specifications per market would be most of the response.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    channelCredentialIndex(market?: string, markets?: string): Promise<Models.Error>;
+    channelCredentialIndex(market?: string, markets?: string): Promise<{}>;
     channelCredentialIndex(
         paramsOrFirst?: { market?: string, markets?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { market?: string, markets?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -762,9 +762,9 @@ mirrored exactly). A code that does not match is refused with 422 rather than re
 point every market's traffic at one market's provider while looking at a screen that said
 they had not.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    channelCredentialDestroy(params: { channel: string, market?: string }): Promise<Models.Error>;
+    channelCredentialDestroy(params: { channel: string, market?: string }): Promise<{}>;
     /**
      * With `?market=`, only that market's override goes and the global
      * credentials stand — the market then sends over the global provider again,
@@ -786,14 +786,14 @@ mirrored exactly). A code that does not match is refused with 422 rather than re
 point every market's traffic at one market's provider while looking at a screen that said
 they had not.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    channelCredentialDestroy(channel: string, market?: string): Promise<Models.Error>;
+    channelCredentialDestroy(channel: string, market?: string): Promise<{}>;
     channelCredentialDestroy(
         paramsOrFirst: { channel: string, market?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel: string, market?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -865,9 +865,9 @@ point every market's traffic at one market's provider while looking at a screen 
 they had not.
      * @param {string} params.driver - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    channelCredentialUpdatePatch(params: { channel: string, market?: string, driver?: string }): Promise<Models.Error>;
+    channelCredentialUpdatePatch(params: { channel: string, market?: string, driver?: string }): Promise<{}>;
     /**
      * A PATCH in spirit whichever verb is used: only the fields present in the
      * body are written, and the answer says which of them actually CHANGED, so
@@ -903,14 +903,14 @@ point every market's traffic at one market's provider while looking at a screen 
 they had not.
      * @param {string} driver - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    channelCredentialUpdatePatch(channel: string, market?: string, driver?: string): Promise<Models.Error>;
+    channelCredentialUpdatePatch(channel: string, market?: string, driver?: string): Promise<{}>;
     channelCredentialUpdatePatch(
         paramsOrFirst: { channel: string, market?: string, driver?: string } | string,
         ...rest: [(string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel: string, market?: string, driver?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -988,9 +988,9 @@ point every market's traffic at one market's provider while looking at a screen 
 they had not.
      * @param {string} params.driver - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    channelCredentialUpdate(params: { channel: string, market?: string, driver?: string }): Promise<Models.Error>;
+    channelCredentialUpdate(params: { channel: string, market?: string, driver?: string }): Promise<{}>;
     /**
      * A PATCH in spirit whichever verb is used: only the fields present in the
      * body are written, and the answer says which of them actually CHANGED, so
@@ -1026,14 +1026,14 @@ point every market's traffic at one market's provider while looking at a screen 
 they had not.
      * @param {string} driver - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    channelCredentialUpdate(channel: string, market?: string, driver?: string): Promise<Models.Error>;
+    channelCredentialUpdate(channel: string, market?: string, driver?: string): Promise<{}>;
     channelCredentialUpdate(
         paramsOrFirst: { channel: string, market?: string, driver?: string } | string,
         ...rest: [(string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel: string, market?: string, driver?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1101,9 +1101,9 @@ mirrored exactly). A code that does not match is refused with 422 rather than re
 point every market's traffic at one market's provider while looking at a screen that said
 they had not.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    channelCredentialVerify(params: { channel: string, market?: string }): Promise<Models.Error>;
+    channelCredentialVerify(params: { channel: string, market?: string }): Promise<{}>;
     /**
      * The one thing that turns this screen from a form into a tool. Credentials
      * that only fail at send time cost a customer their first order
@@ -1129,14 +1129,14 @@ mirrored exactly). A code that does not match is refused with 422 rather than re
 point every market's traffic at one market's provider while looking at a screen that said
 they had not.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    channelCredentialVerify(channel: string, market?: string): Promise<Models.Error>;
+    channelCredentialVerify(channel: string, market?: string): Promise<{}>;
     channelCredentialVerify(
         paramsOrFirst: { channel: string, market?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel: string, market?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1181,9 +1181,9 @@ they had not.
      * release of the client.
      *
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    channelIndex(): Promise<Models.Error> {
+    channelIndex(): Promise<{}> {
 
         const apiPath = '/v1/messaging/channels';
         const apiPayload: Payload = {};
@@ -1212,9 +1212,9 @@ they had not.
      * on this one.
      *
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    configShow(): Promise<Models.Error> {
+    configShow(): Promise<{}> {
 
         const apiPath = '/v1/messaging/config';
         const apiPayload: Payload = {};
@@ -1268,9 +1268,9 @@ other key in the bag along with it.
      * @param {string[]} params.quietHours - 
      * @param {string} params.supportEmail - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    configUpdatePatch(params?: { defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string }): Promise<Models.Error>;
+    configUpdatePatch(params?: { defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string }): Promise<{}>;
     /**
      * Reaches every message this tenant sends, including templates saved months
      * ago — content placeholders resolve at send time, not at save time — which
@@ -1308,14 +1308,14 @@ other key in the bag along with it.
      * @param {string[]} quietHours - 
      * @param {string} supportEmail - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    configUpdatePatch(defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string): Promise<Models.Error>;
+    configUpdatePatch(defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string): Promise<{}>;
     configUpdatePatch(
         paramsOrFirst?: { defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string } | string,
         ...rest: [(string[])?, (string)?, (string[])?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1405,9 +1405,9 @@ other key in the bag along with it.
      * @param {string[]} params.quietHours - 
      * @param {string} params.supportEmail - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    configUpdate(params?: { defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string }): Promise<Models.Error>;
+    configUpdate(params?: { defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string }): Promise<{}>;
     /**
      * Reaches every message this tenant sends, including templates saved months
      * ago — content placeholders resolve at send time, not at save time — which
@@ -1445,14 +1445,14 @@ other key in the bag along with it.
      * @param {string[]} quietHours - 
      * @param {string} supportEmail - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    configUpdate(defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string): Promise<Models.Error>;
+    configUpdate(defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string): Promise<{}>;
     configUpdate(
         paramsOrFirst?: { defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string } | string,
         ...rest: [(string[])?, (string)?, (string[])?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { defaultLocale?: string, defaults?: string[], product?: string, quietHours?: string[], supportEmail?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1514,9 +1514,9 @@ other key in the bag along with it.
      *
      * @param {string} params.markets - Set to `all` for the unscoped read: every row whatever its markets, ignoring the `X-Revenexx-Market` header. The deliberate admin case, spelled in the query string so it is asked for rather than fallen into. No other value has any effect.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    layoutIndex(params?: { markets?: string }): Promise<Models.Error>;
+    layoutIndex(params?: { markets?: string }): Promise<{}>;
     /**
      * The order is the list's purpose: it is a picker, and the entry most
      * templates are actually on belongs at the top of it.
@@ -1526,13 +1526,13 @@ other key in the bag along with it.
      *
      * @param {string} markets - Set to `all` for the unscoped read: every row whatever its markets, ignoring the `X-Revenexx-Market` header. The deliberate admin case, spelled in the query string so it is asked for rather than fallen into. No other value has any effect.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    layoutIndex(markets?: string): Promise<Models.Error>;
+    layoutIndex(markets?: string): Promise<{}>;
     layoutIndex(
         paramsOrFirst?: { markets?: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { markets?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1576,9 +1576,9 @@ other key in the bag along with it.
      * from now, with nobody left who remembers typing the date.
      *
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    layoutStore(): Promise<Models.Error> {
+    layoutStore(): Promise<{}> {
 
         const apiPath = '/v1/messaging/layouts';
         const apiPayload: Payload = {};
@@ -1603,9 +1603,9 @@ other key in the bag along with it.
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    layoutDestroy(params: { id: string }): Promise<Models.Error>;
+    layoutDestroy(params: { id: string }): Promise<{}>;
     /**
      * Answers 200 with a body rather than the 204 the other resources use: the
      * count of reassigned templates is the part an operator needs, and a
@@ -1614,13 +1614,13 @@ other key in the bag along with it.
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    layoutDestroy(id: string): Promise<Models.Error>;
+    layoutDestroy(id: string): Promise<{}>;
     layoutDestroy(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1659,9 +1659,9 @@ other key in the bag along with it.
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    layoutShow(params: { id: string }): Promise<Models.Error>;
+    layoutShow(params: { id: string }): Promise<{}>;
     /**
      * Not market-filtered, deliberately: market scoping is a browsing concern,
      * and somebody holding an id may read the row. A template pinned to a
@@ -1669,13 +1669,13 @@ other key in the bag along with it.
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    layoutShow(id: string): Promise<Models.Error>;
+    layoutShow(id: string): Promise<{}>;
     layoutShow(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1728,9 +1728,9 @@ other key in the bag along with it.
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    layoutUpdate(params: { id: string }): Promise<Models.Error>;
+    layoutUpdate(params: { id: string }): Promise<{}>;
     /**
      * The change reaches every template on this layout, including ones saved
      * months ago and never opened since — which is exactly the change nobody
@@ -1752,13 +1752,13 @@ other key in the bag along with it.
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    layoutUpdate(id: string): Promise<Models.Error>;
+    layoutUpdate(id: string): Promise<{}>;
     layoutUpdate(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1798,9 +1798,9 @@ other key in the bag along with it.
      * @param {string} params.channel - 
      * @param {string} params.locale - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    libraryIndex(params?: { channel?: string, locale?: string }): Promise<Models.Error>;
+    libraryIndex(params?: { channel?: string, locale?: string }): Promise<{}>;
     /**
      * What the Cockpit's "start from a template" gallery is built from. These
      * are not the tenant's rows and cannot be edited here: provisioning clones
@@ -1809,14 +1809,14 @@ other key in the bag along with it.
      * @param {string} channel - 
      * @param {string} locale - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    libraryIndex(channel?: string, locale?: string): Promise<Models.Error>;
+    libraryIndex(channel?: string, locale?: string): Promise<{}>;
     libraryIndex(
         paramsOrFirst?: { channel?: string, locale?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel?: string, locale?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1864,9 +1864,9 @@ other key in the bag along with it.
      * @param {string} params.channel - 
      * @param {string} params.status - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    messageIndex(params?: { channel?: string, status?: string }): Promise<Models.Error>;
+    messageIndex(params?: { channel?: string, status?: string }): Promise<{}>;
     /**
      * `?channel=` and `?status=` narrow it; `?limit=` is clamped to 200 and
      * defaults to 50. `?channel=inapp` is the tenant's in-app inbox — the
@@ -1878,14 +1878,14 @@ other key in the bag along with it.
      * @param {string} channel - 
      * @param {string} status - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    messageIndex(channel?: string, status?: string): Promise<Models.Error>;
+    messageIndex(channel?: string, status?: string): Promise<{}>;
     messageIndex(
         paramsOrFirst?: { channel?: string, status?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel?: string, status?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1929,9 +1929,9 @@ other key in the bag along with it.
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    messageShow(params: { id: string }): Promise<Models.Error>;
+    messageShow(params: { id: string }): Promise<{}>;
     /**
      * Carries the render model it was sent with, so "why did this mail say
      *      * that" is answerable after the fact. That is also why the row is personal
@@ -1939,13 +1939,13 @@ other key in the bag along with it.
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    messageShow(id: string): Promise<Models.Error>;
+    messageShow(id: string): Promise<{}>;
     messageShow(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1997,9 +1997,9 @@ Not the only source. A tenant's `defaults`, its layout, and the template's own
 still resolve. Anything named here wins over all of them.
      * @param {string} params.locale - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    sendPreview(params: { channel: string, template: string, data?: object, locale?: string }): Promise<Models.Error>;
+    sendPreview(params: { channel: string, template: string, data?: object, locale?: string }): Promise<{}>;
     /**
      * Answers with the resolved subject, HTML and text exactly as a real send
      * would produce them, so an editor can show a faithful preview without a
@@ -2020,14 +2020,14 @@ Not the only source. A tenant's `defaults`, its layout, and the template's own
 still resolve. Anything named here wins over all of them.
      * @param {string} locale - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    sendPreview(channel: string, template: string, data?: object, locale?: string): Promise<Models.Error>;
+    sendPreview(channel: string, template: string, data?: object, locale?: string): Promise<{}>;
     sendPreview(
         paramsOrFirst: { channel: string, template: string, data?: object, locale?: string } | string,
         ...rest: [(string)?, (object)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel: string, template: string, data?: object, locale?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2103,9 +2103,9 @@ still resolve. Anything named here wins over all of them.
 channel-shaped, and the suppression and token rows it has to line
 up with are keyed that way.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    erasureStore(params: { address: string, channel: string }): Promise<Models.Error>;
+    erasureStore(params: { address: string, channel: string }): Promise<{}>;
     /**
      * Per (channel, address), because an address is channel-shaped and the rows
      * it has to line up with are keyed that way. Matching is done on the
@@ -2128,14 +2128,14 @@ up with are keyed that way.
 channel-shaped, and the suppression and token rows it has to line
 up with are keyed that way.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    erasureStore(address: string, channel: string): Promise<Models.Error>;
+    erasureStore(address: string, channel: string): Promise<{}>;
     erasureStore(
         paramsOrFirst: { address: string, channel: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { address: string, channel: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2186,9 +2186,9 @@ up with are keyed that way.
      *
      * @param {string} params.endpoint - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pushSubscriptionDestroy(params: { endpoint: string }): Promise<Models.Error>;
+    pushSubscriptionDestroy(params: { endpoint: string }): Promise<{}>;
     /**
      * By endpoint and not by id, because the browser knows its endpoint and has
      * never seen our id — this is called from a service worker reacting to
@@ -2196,13 +2196,13 @@ up with are keyed that way.
      *
      * @param {string} endpoint - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pushSubscriptionDestroy(endpoint: string): Promise<Models.Error>;
+    pushSubscriptionDestroy(endpoint: string): Promise<{}>;
     pushSubscriptionDestroy(
         paramsOrFirst: { endpoint: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { endpoint: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2248,9 +2248,9 @@ up with are keyed that way.
      *
      * @param {string} params.subscriberId - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pushSubscriptionIndex(params: { subscriberId: string }): Promise<Models.Error>;
+    pushSubscriptionIndex(params: { subscriberId: string }): Promise<{}>;
     /**
      * `subscriber_id` is required: this is not a list of everybody, and there
      * is no route that is. The caller is a storefront acting for one visitor
@@ -2262,13 +2262,13 @@ up with are keyed that way.
      *
      * @param {string} subscriberId - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pushSubscriptionIndex(subscriberId: string): Promise<Models.Error>;
+    pushSubscriptionIndex(subscriberId: string): Promise<{}>;
     pushSubscriptionIndex(
         paramsOrFirst: { subscriberId: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { subscriberId: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2320,9 +2320,9 @@ up with are keyed that way.
      * @param {string} params.subscriberId - 
      * @param {string} params.userAgent - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    pushSubscriptionStore(params: { endpoint: string, keys: object, subscriberId: string, userAgent?: string }): Promise<Models.Error>;
+    pushSubscriptionStore(params: { endpoint: string, keys: object, subscriberId: string, userAgent?: string }): Promise<{}>;
     /**
      * Send what `PushManager.subscribe()` handed back — the endpoint and the
      * two keys — plus the id you know that person by. The VAPID public key the
@@ -2340,14 +2340,14 @@ up with are keyed that way.
      * @param {string} subscriberId - 
      * @param {string} userAgent - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pushSubscriptionStore(endpoint: string, keys: object, subscriberId: string, userAgent?: string): Promise<Models.Error>;
+    pushSubscriptionStore(endpoint: string, keys: object, subscriberId: string, userAgent?: string): Promise<{}>;
     pushSubscriptionStore(
         paramsOrFirst: { endpoint: string, keys: object, subscriberId: string, userAgent?: string } | string,
         ...rest: [(object)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { endpoint: string, keys: object, subscriberId: string, userAgent?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2467,9 +2467,9 @@ client retrying a request it built ten minutes ago is asking for
 the same send, and refusing it turns a late retry into a lost
 message.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    sendSend(params: { channel: string, template: string, to: string, attachments?: object[], data?: object, draft?: boolean, locale?: string, market?: string, sendAt?: string }): Promise<Models.Error>;
+    sendSend(params: { channel: string, template: string, to: string, attachments?: object[], data?: object, draft?: boolean, locale?: string, market?: string, sendAt?: string }): Promise<{}>;
     /**
      * Renders a tenant template and dispatches it — now, at `send_at`, or at
      * the end of the tenant's quiet hours.
@@ -2533,14 +2533,14 @@ client retrying a request it built ten minutes ago is asking for
 the same send, and refusing it turns a late retry into a lost
 message.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    sendSend(channel: string, template: string, to: string, attachments?: object[], data?: object, draft?: boolean, locale?: string, market?: string, sendAt?: string): Promise<Models.Error>;
+    sendSend(channel: string, template: string, to: string, attachments?: object[], data?: object, draft?: boolean, locale?: string, market?: string, sendAt?: string): Promise<{}>;
     sendSend(
         paramsOrFirst: { channel: string, template: string, to: string, attachments?: object[], data?: object, draft?: boolean, locale?: string, market?: string, sendAt?: string } | string,
         ...rest: [(string)?, (string)?, (object[])?, (object)?, (boolean)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel: string, template: string, to: string, attachments?: object[], data?: object, draft?: boolean, locale?: string, market?: string, sendAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2664,9 +2664,9 @@ past today ends today — there is no data ahead of now, and a
 window with a future edge draws the series short against an axis
 claiming a month nobody has lived through.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    statsIndex(params?: { days?: number, from?: string, to?: string }): Promise<Models.Error>;
+    statsIndex(params?: { days?: number, from?: string, to?: string }): Promise<{}>;
     /**
      * Either `days` (a window ending now, default 30) or an explicit `from`/`to`
      * span. Both ends of the span or neither: `from` alone would be an open
@@ -2709,14 +2709,14 @@ past today ends today — there is no data ahead of now, and a
 window with a future edge draws the series short against an axis
 claiming a month nobody has lived through.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    statsIndex(days?: number, from?: string, to?: string): Promise<Models.Error>;
+    statsIndex(days?: number, from?: string, to?: string): Promise<{}>;
     statsIndex(
         paramsOrFirst?: { days?: number, from?: string, to?: string } | number,
         ...rest: [(string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { days?: number, from?: string, to?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2771,9 +2771,9 @@ claiming a month nobody has lived through.
      * @param {string} params.address - 
      * @param {number} params.limit - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    suppressionIndex(params?: { channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number }): Promise<Models.Error>;
+    suppressionIndex(params?: { channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number }): Promise<{}>;
     /**
      * Filterable by `channel`, `scope`, `reason` and `address`. The address
      * filter is looked up by FINGERPRINT rather than against the address
@@ -2787,14 +2787,14 @@ claiming a month nobody has lived through.
      * @param {string} address - 
      * @param {number} limit - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    suppressionIndex(channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number): Promise<Models.Error>;
+    suppressionIndex(channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number): Promise<{}>;
     suppressionIndex(
         paramsOrFirst?: { channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number } | string,
         ...rest: [(Scope)?, (Reason)?, (string)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2864,9 +2864,9 @@ claiming a month nobody has lived through.
      * @param {string} params.note - 
      * @param {Scope} params.scope - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    suppressionStore(params: { address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope }): Promise<Models.Error>;
+    suppressionStore(params: { address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope }): Promise<{}>;
     /**
      * 201 for a row this call created, 200 for an address that was already on
      * the list — so a client can tell whether it changed anything.
@@ -2885,14 +2885,14 @@ claiming a month nobody has lived through.
      * @param {string} note - 
      * @param {Scope} scope - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    suppressionStore(address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope): Promise<Models.Error>;
+    suppressionStore(address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope): Promise<{}>;
     suppressionStore(
         paramsOrFirst: { address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope } | string,
         ...rest: [(string)?, (Reason)?, (string)?, (string)?, (Scope)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2967,9 +2967,9 @@ claiming a month nobody has lived through.
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    suppressionDestroy(params: { id: string }): Promise<Models.Error>;
+    suppressionDestroy(params: { id: string }): Promise<{}>;
     /**
      * Audited, unlike most deletes in this service. Removing a row here is the
      * one operation that makes the service mail an address something decided
@@ -2978,13 +2978,13 @@ claiming a month nobody has lived through.
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    suppressionDestroy(id: string): Promise<Models.Error>;
+    suppressionDestroy(id: string): Promise<{}>;
     suppressionDestroy(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3023,9 +3023,9 @@ claiming a month nobody has lived through.
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    suppressionShow(params: { id: string }): Promise<Models.Error>;
+    suppressionShow(params: { id: string }): Promise<{}>;
     /**
      * `address` may be null: that is a person who has been erased
      * (POST /v1/privacy/erasures). The row survives as a hash, which is the
@@ -3033,13 +3033,13 @@ claiming a month nobody has lived through.
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    suppressionShow(id: string): Promise<Models.Error>;
+    suppressionShow(id: string): Promise<{}>;
     suppressionShow(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3081,9 +3081,9 @@ claiming a month nobody has lived through.
      * @param {string} params.channel - 
      * @param {string} params.markets - Set to `all` for the unscoped read: every row whatever its markets, ignoring the `X-Revenexx-Market` header. The deliberate admin case, spelled in the query string so it is asked for rather than fallen into. No other value has any effect.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    templateIndex(params?: { channel?: string, markets?: string }): Promise<Models.Error>;
+    templateIndex(params?: { channel?: string, markets?: string }): Promise<{}>;
     /**
      * `?channel=` narrows to one channel. Market-scoped as a BROWSING filter:
      * with `X-Revenexx-Market` the list is the global rows plus that market's,
@@ -3094,14 +3094,14 @@ claiming a month nobody has lived through.
      * @param {string} channel - 
      * @param {string} markets - Set to `all` for the unscoped read: every row whatever its markets, ignoring the `X-Revenexx-Market` header. The deliberate admin case, spelled in the query string so it is asked for rather than fallen into. No other value has any effect.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    templateIndex(channel?: string, markets?: string): Promise<Models.Error>;
+    templateIndex(channel?: string, markets?: string): Promise<{}>;
     templateIndex(
         paramsOrFirst?: { channel?: string, markets?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel?: string, markets?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3203,9 +3203,9 @@ wrong on an invoice nobody reads until the quarter closes.
 Nullable: it is not a fact about an e-mail template, and what an
 unset one means is decided on read (Template::whatsappCategory).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    templateStore(params: { channel: string, key: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, locale?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory }): Promise<Models.Error>;
+    templateStore(params: { channel: string, key: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, locale?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory }): Promise<{}>;
     /**
      * Send a `design` document and the service compiles it against the
      * template's layout — or send `body_html` and `body_text` yourself and skip
@@ -3271,14 +3271,14 @@ wrong on an invoice nobody reads until the quarter closes.
 Nullable: it is not a fact about an e-mail template, and what an
 unset one means is decided on read (Template::whatsappCategory).
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    templateStore(channel: string, key: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, locale?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory): Promise<Models.Error>;
+    templateStore(channel: string, key: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, locale?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory): Promise<{}>;
     templateStore(
         paramsOrFirst: { channel: string, key: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, locale?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory } | string,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (string[])?, (boolean)?, (string)?, (string)?, (string[])?, (MessageClass)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string[])?, (string[])?, (WhatsappCategory)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { channel: string, key: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, locale?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3415,9 +3415,9 @@ unset one means is decided on read (Template::whatsappCategory).
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    templateDestroy(params: { id: string }): Promise<Models.Error>;
+    templateDestroy(params: { id: string }): Promise<{}>;
     /**
      * Any binding still naming this template's key will find nothing when its
      * event next arrives. Audited under the KEY as well as the id: after the
@@ -3426,13 +3426,13 @@ unset one means is decided on read (Template::whatsappCategory).
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    templateDestroy(id: string): Promise<Models.Error>;
+    templateDestroy(id: string): Promise<{}>;
     templateDestroy(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3474,9 +3474,9 @@ unset one means is decided on read (Template::whatsappCategory).
      *
      * @param {string} params.id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    templateShow(params: { id: string }): Promise<Models.Error>;
+    templateShow(params: { id: string }): Promise<{}>;
     /**
      * What customers are receiving is the published snapshot; see
      * `GET /v1/templates/{id}/versions`, whose `meta.has_unpublished_changes`
@@ -3487,13 +3487,13 @@ unset one means is decided on read (Template::whatsappCategory).
      *
      * @param {string} id - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    templateShow(id: string): Promise<Models.Error>;
+    templateShow(id: string): Promise<{}>;
     templateShow(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3569,9 +3569,9 @@ move templates between categories on their own schedule, and a
 row that could not follow them would go on quoting a price that
 stopped being true.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    templateUpdatePatch(params: { id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory }): Promise<Models.Error>;
+    templateUpdatePatch(params: { id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory }): Promise<{}>;
     /**
      * Only the fields sent are written, and the change is audited only when
      * something actually changed — a PATCH that resent the same values records
@@ -3616,14 +3616,14 @@ move templates between categories on their own schedule, and a
 row that could not follow them would go on quoting a price that
 stopped being true.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    templateUpdatePatch(id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory): Promise<Models.Error>;
+    templateUpdatePatch(id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory): Promise<{}>;
     templateUpdatePatch(
         paramsOrFirst: { id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory } | string,
         ...rest: [(string)?, (string)?, (string)?, (string[])?, (boolean)?, (string)?, (string[])?, (MessageClass)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string[])?, (string[])?, (WhatsappCategory)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3780,9 +3780,9 @@ move templates between categories on their own schedule, and a
 row that could not follow them would go on quoting a price that
 stopped being true.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    templateUpdate(params: { id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory }): Promise<Models.Error>;
+    templateUpdate(params: { id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory }): Promise<{}>;
     /**
      * Only the fields sent are written, and the change is audited only when
      * something actually changed — a PATCH that resent the same values records
@@ -3827,14 +3827,14 @@ move templates between categories on their own schedule, and a
 row that could not follow them would go on quoting a price that
 stopped being true.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    templateUpdate(id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory): Promise<Models.Error>;
+    templateUpdate(id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory): Promise<{}>;
     templateUpdate(
         paramsOrFirst: { id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory } | string,
         ...rest: [(string)?, (string)?, (string)?, (string[])?, (boolean)?, (string)?, (string[])?, (MessageClass)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string[])?, (string[])?, (WhatsappCategory)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string, bodyHtml?: string, bodyText?: string, contentSid?: string, design?: string[], enabled?: boolean, layoutId?: string, markets?: string[], messageClass?: MessageClass, subject?: string, testMode?: boolean, title?: string, validFrom?: string, validUntil?: string, variableDefaults?: string[], variables?: string[], whatsappCategory?: WhatsappCategory };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -3955,9 +3955,9 @@ stopped being true.
      * @param {string} params.templateId - 
      * @param {string} params.note - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    templateVersionStore(params: { templateId: string, note?: string }): Promise<Models.Error>;
+    templateVersionStore(params: { templateId: string, note?: string }): Promise<{}>;
     /**
      * Answers 200 with the version already live when there was nothing to
      * publish, and 201 when a new one was written — so a client can tell
@@ -3966,14 +3966,14 @@ stopped being true.
      * @param {string} templateId - 
      * @param {string} note - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    templateVersionStore(templateId: string, note?: string): Promise<Models.Error>;
+    templateVersionStore(templateId: string, note?: string): Promise<{}>;
     templateVersionStore(
         paramsOrFirst: { templateId: string, note?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { templateId: string, note?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -4026,9 +4026,9 @@ stopped being true.
      *
      * @param {string} params.templateId - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    templateVersionIndex(params: { templateId: string }): Promise<Models.Error>;
+    templateVersionIndex(params: { templateId: string }): Promise<{}>;
     /**
      * Summaries only: version, subject, message class, layout, who published it
      * and when, and their note. The BODIES are deliberately absent — a compiled
@@ -4044,13 +4044,13 @@ stopped being true.
      *
      * @param {string} templateId - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    templateVersionIndex(templateId: string): Promise<Models.Error>;
+    templateVersionIndex(templateId: string): Promise<{}>;
     templateVersionIndex(
         paramsOrFirst: { templateId: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { templateId: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -4094,9 +4094,9 @@ stopped being true.
      * @param {string} params.templateId - 
      * @param {string} params.version - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    templateVersionShow(params: { templateId: string, version: string }): Promise<Models.Error>;
+    templateVersionShow(params: { templateId: string, version: string }): Promise<{}>;
     /**
      * Addressed by its VERSION NUMBER — the small integer on the history row,
      * not the snapshot's id — because that is the number an author has in front
@@ -4109,14 +4109,14 @@ stopped being true.
      * @param {string} templateId - 
      * @param {string} version - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    templateVersionShow(templateId: string, version: string): Promise<Models.Error>;
+    templateVersionShow(templateId: string, version: string): Promise<{}>;
     templateVersionShow(
         paramsOrFirst: { templateId: string, version: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { templateId: string, version: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -4162,9 +4162,9 @@ stopped being true.
      * @param {string} params.version - 
      * @param {boolean} params.publish - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    templateVersionRestore(params: { templateId: string, version: string, publish?: boolean }): Promise<Models.Error>;
+    templateVersionRestore(params: { templateId: string, version: string, publish?: boolean }): Promise<{}>;
     /**
      * `publish: true` makes it live in the same transaction — see
      * TemplatePublisher::restore for why that flag exists rather than asking
@@ -4174,14 +4174,14 @@ stopped being true.
      * @param {string} version - 
      * @param {boolean} publish - 
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    templateVersionRestore(templateId: string, version: string, publish?: boolean): Promise<Models.Error>;
+    templateVersionRestore(templateId: string, version: string, publish?: boolean): Promise<{}>;
     templateVersionRestore(
         paramsOrFirst: { templateId: string, version: string, publish?: boolean } | string,
         ...rest: [(string)?, (boolean)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { templateId: string, version: string, publish?: boolean };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

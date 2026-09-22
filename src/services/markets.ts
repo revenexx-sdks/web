@@ -30,9 +30,9 @@ export class Markets {
      * @param {number} params.offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
      * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, code, name, labels, currency, status, is_default, position, created_at, updated_at.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketList>}
      */
-    marketsList(params?: { id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    marketsList(params?: { id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketList>;
     /**
      * Every column is an exact-match filter and they combine with AND (?code=northwind); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing.
      *
@@ -50,14 +50,14 @@ export class Markets {
      * @param {number} offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
      * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, code, name, labels, currency, status, is_default, position, created_at, updated_at.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsList(id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    marketsList(id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketList>;
     marketsList(
         paramsOrFirst?: { id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (MarketsListStatus)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketList> {
         let params: { id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -160,9 +160,9 @@ export class Markets {
      * @param {number} params.position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
      * @param {MarketStatus} params.status - Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Market>}
      */
-    marketsCreate(params: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus }): Promise<Models.Error>;
+    marketsCreate(params: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus }): Promise<Models.Market>;
     /**
      * A market needs a 'code' and a 'name' — currency defaults to EUR, status to active. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
      *
@@ -174,14 +174,14 @@ export class Markets {
      * @param {number} position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
      * @param {MarketStatus} status - Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Market>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCreate(code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus): Promise<Models.Error>;
+    marketsCreate(code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus): Promise<Models.Market>;
     marketsCreate(
         paramsOrFirst: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus } | string,
         ...rest: [(string)?, (string)?, (boolean)?, (object)?, (number)?, (MarketStatus)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Market> {
         let params: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -301,21 +301,21 @@ export class Markets {
      *
      * @param {MarketsVocabularyName} params.name - Which vocabulary to read. The enum is exhaustive — these are every value set this app owns, and anything else is a 404.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketsVocabulary>}
      */
-    marketsVocabulary(params: { name: MarketsVocabularyName }): Promise<Models.Error>;
+    marketsVocabulary(params: { name: MarketsVocabularyName }): Promise<Models.MarketsVocabulary>;
     /**
      * One value set in full: every value the column may hold, in the order it may hold them, with the copy and the badge tone a client renders each one as. The values are not kept in a list beside the database, they are parsed out of the CHECK constraint in this app's own schema.json — so the set served here IS the set enforced on a write, and a select box built from it cannot offer a value the write would then refuse. A name outside the declared enum is a 404 rather than an empty list — an empty vocabulary and an unknown one mean different things to a select box.
      *
      * @param {MarketsVocabularyName} name - Which vocabulary to read. The enum is exhaustive — these are every value set this app owns, and anything else is a 404.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketsVocabulary>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsVocabulary(name: MarketsVocabularyName): Promise<Models.Error>;
+    marketsVocabulary(name: MarketsVocabularyName): Promise<Models.MarketsVocabulary>;
     marketsVocabulary(
         paramsOrFirst: { name: MarketsVocabularyName } | MarketsVocabularyName    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketsVocabulary> {
         let params: { name: MarketsVocabularyName };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('name' in paramsOrFirst))) {
@@ -352,21 +352,21 @@ export class Markets {
      *
      * @param {string} params.id - The market, by its primary key. A uuid — this route does not resolve a market code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketDeleted>}
      */
-    marketsDelete(params: { id: string }): Promise<Models.Error>;
+    marketsDelete(params: { id: string }): Promise<Models.MarketDeleted>;
     /**
      * Deleting a market takes its locales, currencies and tax classes with it: all three carry an ON DELETE CASCADE onto markets.id, so this is never refused for having children.
      *
      * @param {string} id - The market, by its primary key. A uuid — this route does not resolve a market code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketDeleted>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsDelete(id: string): Promise<Models.Error>;
+    marketsDelete(id: string): Promise<Models.MarketDeleted>;
     marketsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketDeleted> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -403,21 +403,21 @@ export class Markets {
      *
      * @param {string} params.id - The market, by its primary key. A uuid — this route does not resolve a market code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Market>}
      */
-    marketsGet(params: { id: string }): Promise<Models.Error>;
+    marketsGet(params: { id: string }): Promise<Models.Market>;
     /**
      * Resolved by uuid only — unlike /readiness, /clone, /backfill and /make-default, a market CODE here is a 400 rather than a lookup.
      *
      * @param {string} id - The market, by its primary key. A uuid — this route does not resolve a market code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Market>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsGet(id: string): Promise<Models.Error>;
+    marketsGet(id: string): Promise<Models.Market>;
     marketsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Market> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -461,9 +461,9 @@ export class Markets {
      * @param {number} params.position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
      * @param {MarketStatus} params.status - Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Market>}
      */
-    marketsUpdate(params: { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus }): Promise<Models.Error>;
+    marketsUpdate(params: { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus }): Promise<Models.Market>;
     /**
      * Partial: omitted fields keep their value.
      *
@@ -476,14 +476,14 @@ export class Markets {
      * @param {number} position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
      * @param {MarketStatus} status - Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Market>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsUpdate(id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus): Promise<Models.Error>;
+    marketsUpdate(id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus): Promise<Models.Market>;
     marketsUpdate(
         paramsOrFirst: { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus } | string,
         ...rest: [(string)?, (string)?, (boolean)?, (object)?, (string)?, (number)?, (MarketStatus)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Market> {
         let params: { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -560,9 +560,9 @@ export class Markets {
      * @param {boolean} params.locales - Take the source's locales for codes this market does not already carry. Default true.
      * @param {boolean} params.taxClasses - Take the source's tax classes for codes this market does not already carry. An existing code keeps ITS rate — a backfill never re-rates a class the merchant already set. Default true.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketBackfillResult>}
      */
-    marketsBackfill(params: { id: string, source: string, currencies?: boolean, locales?: boolean, taxClasses?: boolean }): Promise<Models.Error>;
+    marketsBackfill(params: { id: string, source: string, currencies?: boolean, locales?: boolean, taxClasses?: boolean }): Promise<Models.MarketBackfillResult>;
     /**
      * Repairs the market in the path out of a source market that is already right. The two are compared by CODE, collection by collection, and only the codes this market does not already carry are added — so a locale, a currency or a tax class it already holds is left exactly as the merchant left it, rate included, and is never overwritten. Both the path id and `source` are resolved by uuid OR by market code. Idempotent: running it twice adds nothing the second time.
      *
@@ -572,14 +572,14 @@ export class Markets {
      * @param {boolean} locales - Take the source's locales for codes this market does not already carry. Default true.
      * @param {boolean} taxClasses - Take the source's tax classes for codes this market does not already carry. An existing code keeps ITS rate — a backfill never re-rates a class the merchant already set. Default true.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketBackfillResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsBackfill(id: string, source: string, currencies?: boolean, locales?: boolean, taxClasses?: boolean): Promise<Models.Error>;
+    marketsBackfill(id: string, source: string, currencies?: boolean, locales?: boolean, taxClasses?: boolean): Promise<Models.MarketBackfillResult>;
     marketsBackfill(
         paramsOrFirst: { id: string, source: string, currencies?: boolean, locales?: boolean, taxClasses?: boolean } | string,
         ...rest: [(string)?, (boolean)?, (boolean)?, (boolean)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketBackfillResult> {
         let params: { id: string, source: string, currencies?: boolean, locales?: boolean, taxClasses?: boolean };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -647,9 +647,9 @@ export class Markets {
      * @param {string} params.name - Display name of the new market. Defaults to its code.
      * @param {MarketStatus} params.status - Status of the new market. Defaults to 'active'; clone it 'inactive' to build it out before it serves anyone.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCloneResult>}
      */
-    marketsClone(params: { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus }): Promise<Models.Error>;
+    marketsClone(params: { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus }): Promise<Models.MarketCloneResult>;
     /**
      * Creates a NEW market out of an existing one, taking its locales, its traded currencies and its tax classes with it in a single call. That is the difference between this and POST /markets: a plain create leaves a row that cannot serve anybody, while what comes back here is a market with a language to render in, a currency to price in and a rate to tax with. The path id is the SOURCE market, resolved by uuid OR by market code.
      *
@@ -662,14 +662,14 @@ export class Markets {
      * @param {string} name - Display name of the new market. Defaults to its code.
      * @param {MarketStatus} status - Status of the new market. Defaults to 'active'; clone it 'inactive' to build it out before it serves anyone.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCloneResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsClone(id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus): Promise<Models.Error>;
+    marketsClone(id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus): Promise<Models.MarketCloneResult>;
     marketsClone(
         paramsOrFirst: { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus } | string,
         ...rest: [(string)?, (boolean)?, (boolean)?, (boolean)?, (string)?, (string)?, (MarketStatus)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketCloneResult> {
         let params: { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -745,21 +745,21 @@ export class Markets {
      *
      * @param {string} params.id - The market. A uuid — this route does not accept a market code.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketContext>}
      */
-    marketsContext(params: { id: string }): Promise<Models.Error>;
+    marketsContext(params: { id: string }): Promise<Models.MarketContext>;
     /**
      * The storefront bootstrap: everything a frontend needs to render one market, resolved server-side so no client re-derives it — the market row, its locales, the currencies it trades in and its tax classes; WHICH locale to actually render in and where that answer came from; which key to read and write a translation under; whether the prices it will be handed are gross or net; and whether any of it is trustworthy. One call rather than five, and — more to the point — one place the resolution rules live, instead of a slightly different copy of them in every storefront. This one resolves the market by id only: unlike /readiness, /clone and /backfill, a market CODE here is a 400, not a lookup.
      *
      * @param {string} id - The market. A uuid — this route does not accept a market code.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketContext>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsContext(id: string): Promise<Models.Error>;
+    marketsContext(id: string): Promise<Models.MarketContext>;
     marketsContext(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketContext> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -797,23 +797,23 @@ export class Markets {
      * @param {string} params.id - The market to promote — a uuid or a market code.
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketMakeDefaultResponse>}
      */
-    marketsMakeDefault(params: { id: string, data: object }): Promise<Models.Error>;
+    marketsMakeDefault(params: { id: string, data: object }): Promise<Models.MarketMakeDefaultResponse>;
     /**
      * A tenant has ONE default market: it is what every call naming none falls back to. Moving the flag from a client was promote-then-demote, two PATCHes that leave two defaults when the second does not land and none when the first does. This is the one call instead — it promotes the market in the path and demotes whoever held the flag in the same operation, writing once per row that was actually wrong and not touching the rest. Accepts an id or a market CODE. Answers the market plus the codes it demoted; repeating the call writes nothing.
      *
      * @param {string} id - The market to promote — a uuid or a market code.
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketMakeDefaultResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsMakeDefault(id: string, data: object): Promise<Models.Error>;
+    marketsMakeDefault(id: string, data: object): Promise<Models.MarketMakeDefaultResponse>;
     marketsMakeDefault(
         paramsOrFirst: { id: string, data: object } | string,
         ...rest: [(object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketMakeDefaultResponse> {
         let params: { id: string, data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -859,21 +859,21 @@ export class Markets {
      *
      * @param {string} params.id - The market — a uuid or a market code.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketReadinessReport>}
      */
-    marketsReadiness(params: { id: string }): Promise<Models.Error>;
+    marketsReadiness(params: { id: string }): Promise<Models.MarketReadinessReport>;
     /**
      * Whether this market can actually trade, and if not, what is missing. Every check runs on every call and comes back with its own severity, so the answer is a diagnosis rather than a yes or a no: a market with no currency registered has nothing to price in and a market with no tax class has nothing to tax with, and both of those fail BLOCKING, which is what turns `ready` false. A check that is merely degraded — no locale of its own, while the tenant declares a fallback_locale that covers for it — fails as a warning and leaves the market serviceable. Resolves the market by uuid OR by market code.
      *
      * @param {string} id - The market — a uuid or a market code.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketReadinessReport>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsReadiness(id: string): Promise<Models.Error>;
+    marketsReadiness(id: string): Promise<Models.MarketReadinessReport>;
     marketsReadiness(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketReadinessReport> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -918,9 +918,9 @@ export class Markets {
      * @param {number} params.offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
      * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, is_default, position, created_at.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCurrencyList>}
      */
-    marketsCurrenciesList(params: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    marketsCurrenciesList(params: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketCurrencyList>;
     /**
      * Every column is an exact-match filter and they combine with AND (?code=EUR); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing. `market_id` is not among them: the owning market comes from the path and overwrites anything the query says. An unknown but well-formed market lists empty rather than 404 — the parent is filtered on, not verified.
      *
@@ -934,14 +934,14 @@ export class Markets {
      * @param {number} offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
      * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, is_default, position, created_at.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCurrencyList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCurrenciesList(marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    marketsCurrenciesList(marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketCurrencyList>;
     marketsCurrenciesList(
         paramsOrFirst: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (string)?, (boolean)?, (number)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketCurrencyList> {
         let params: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1021,9 +1021,9 @@ export class Markets {
      * @param {boolean} params.isDefault - The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
      * @param {number} params.position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCurrency>}
      */
-    marketsCurrenciesCreate(params: { marketId: string, code: string, isDefault?: boolean, position?: number }): Promise<Models.Error>;
+    marketsCurrenciesCreate(params: { marketId: string, code: string, isDefault?: boolean, position?: number }): Promise<Models.MarketCurrency>;
     /**
      * The owning market comes from the path and overrides anything in the body.
      *
@@ -1032,14 +1032,14 @@ export class Markets {
      * @param {boolean} isDefault - The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
      * @param {number} position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCurrency>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCurrenciesCreate(marketId: string, code: string, isDefault?: boolean, position?: number): Promise<Models.Error>;
+    marketsCurrenciesCreate(marketId: string, code: string, isDefault?: boolean, position?: number): Promise<Models.MarketCurrency>;
     marketsCurrenciesCreate(
         paramsOrFirst: { marketId: string, code: string, isDefault?: boolean, position?: number } | string,
         ...rest: [(string)?, (boolean)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketCurrency> {
         let params: { marketId: string, code: string, isDefault?: boolean, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1096,23 +1096,23 @@ export class Markets {
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The currency of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCurrencyDeleted>}
      */
-    marketsCurrenciesDelete(params: { marketId: string, id: string }): Promise<Models.Error>;
+    marketsCurrenciesDelete(params: { marketId: string, id: string }): Promise<Models.MarketCurrencyDeleted>;
     /**
      * Scoped to the market in the path — a row belonging to another market is a 404 here, and is never deleted.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The currency of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCurrencyDeleted>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCurrenciesDelete(marketId: string, id: string): Promise<Models.Error>;
+    marketsCurrenciesDelete(marketId: string, id: string): Promise<Models.MarketCurrencyDeleted>;
     marketsCurrenciesDelete(
         paramsOrFirst: { marketId: string, id: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketCurrencyDeleted> {
         let params: { marketId: string, id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1155,23 +1155,23 @@ export class Markets {
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The currency of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCurrency>}
      */
-    marketsCurrenciesGet(params: { marketId: string, id: string }): Promise<Models.Error>;
+    marketsCurrenciesGet(params: { marketId: string, id: string }): Promise<Models.MarketCurrency>;
     /**
      * Scoped strictly to the market in the path: a row belonging to another market is a 404 here, never a 200.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The currency of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCurrency>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCurrenciesGet(marketId: string, id: string): Promise<Models.Error>;
+    marketsCurrenciesGet(marketId: string, id: string): Promise<Models.MarketCurrency>;
     marketsCurrenciesGet(
         paramsOrFirst: { marketId: string, id: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketCurrency> {
         let params: { marketId: string, id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1217,9 +1217,9 @@ export class Markets {
      * @param {boolean} params.isDefault - The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
      * @param {number} params.position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCurrency>}
      */
-    marketsCurrenciesUpdate(params: { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number }): Promise<Models.Error>;
+    marketsCurrenciesUpdate(params: { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number }): Promise<Models.MarketCurrency>;
     /**
      * Partial: omitted fields keep their value.
      *
@@ -1229,14 +1229,14 @@ export class Markets {
      * @param {boolean} isDefault - The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
      * @param {number} position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketCurrency>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCurrenciesUpdate(marketId: string, id: string, code?: string, isDefault?: boolean, position?: number): Promise<Models.Error>;
+    marketsCurrenciesUpdate(marketId: string, id: string, code?: string, isDefault?: boolean, position?: number): Promise<Models.MarketCurrency>;
     marketsCurrenciesUpdate(
         paramsOrFirst: { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number } | string,
         ...rest: [(string)?, (string)?, (boolean)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketCurrency> {
         let params: { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1304,9 +1304,9 @@ export class Markets {
      * @param {number} params.offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
      * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, language, country, is_default, position, created_at.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketLocaleList>}
      */
-    marketsLocalesList(params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    marketsLocalesList(params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketLocaleList>;
     /**
      * Every column is an exact-match filter and they combine with AND (?code=de-DE); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing. `market_id` is not among them: the owning market comes from the path and overwrites anything the query says. An unknown but well-formed market lists empty rather than 404 — the parent is filtered on, not verified.
      *
@@ -1322,14 +1322,14 @@ export class Markets {
      * @param {number} offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
      * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, language, country, is_default, position, created_at.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketLocaleList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesList(marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    marketsLocalesList(marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketLocaleList>;
     marketsLocalesList(
         paramsOrFirst: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (boolean)?, (number)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketLocaleList> {
         let params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1421,9 +1421,9 @@ export class Markets {
      * @param {boolean} params.isDefault - The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
      * @param {number} params.position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketLocale>}
      */
-    marketsLocalesCreate(params: { marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number }): Promise<Models.Error>;
+    marketsLocalesCreate(params: { marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number }): Promise<Models.MarketLocale>;
     /**
      * The owning market comes from the path and overrides anything in the body.
      *
@@ -1434,14 +1434,14 @@ export class Markets {
      * @param {boolean} isDefault - The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
      * @param {number} position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketLocale>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesCreate(marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number): Promise<Models.Error>;
+    marketsLocalesCreate(marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number): Promise<Models.MarketLocale>;
     marketsLocalesCreate(
         paramsOrFirst: { marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number } | string,
         ...rest: [(string)?, (string)?, (string)?, (boolean)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketLocale> {
         let params: { marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1514,23 +1514,23 @@ export class Markets {
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The locale of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketLocaleDeleted>}
      */
-    marketsLocalesDelete(params: { marketId: string, id: string }): Promise<Models.Error>;
+    marketsLocalesDelete(params: { marketId: string, id: string }): Promise<Models.MarketLocaleDeleted>;
     /**
      * Scoped to the market in the path — a row belonging to another market is a 404 here, and is never deleted.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The locale of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketLocaleDeleted>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesDelete(marketId: string, id: string): Promise<Models.Error>;
+    marketsLocalesDelete(marketId: string, id: string): Promise<Models.MarketLocaleDeleted>;
     marketsLocalesDelete(
         paramsOrFirst: { marketId: string, id: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketLocaleDeleted> {
         let params: { marketId: string, id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1573,23 +1573,23 @@ export class Markets {
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The locale of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketLocale>}
      */
-    marketsLocalesGet(params: { marketId: string, id: string }): Promise<Models.Error>;
+    marketsLocalesGet(params: { marketId: string, id: string }): Promise<Models.MarketLocale>;
     /**
      * Scoped strictly to the market in the path: a row belonging to another market is a 404 here, never a 200.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The locale of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketLocale>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesGet(marketId: string, id: string): Promise<Models.Error>;
+    marketsLocalesGet(marketId: string, id: string): Promise<Models.MarketLocale>;
     marketsLocalesGet(
         paramsOrFirst: { marketId: string, id: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketLocale> {
         let params: { marketId: string, id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1637,9 +1637,9 @@ export class Markets {
      * @param {string} params.language - ISO 639-1 language code — the language half of `code`, stored separately so a client can group markets by language without parsing.
      * @param {number} params.position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketLocale>}
      */
-    marketsLocalesUpdate(params: { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number }): Promise<Models.Error>;
+    marketsLocalesUpdate(params: { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number }): Promise<Models.MarketLocale>;
     /**
      * Partial: omitted fields keep their value.
      *
@@ -1651,14 +1651,14 @@ export class Markets {
      * @param {string} language - ISO 639-1 language code — the language half of `code`, stored separately so a client can group markets by language without parsing.
      * @param {number} position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketLocale>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesUpdate(marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number): Promise<Models.Error>;
+    marketsLocalesUpdate(marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number): Promise<Models.MarketLocale>;
     marketsLocalesUpdate(
         paramsOrFirst: { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number } | string,
         ...rest: [(string)?, (string)?, (string)?, (boolean)?, (string)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketLocale> {
         let params: { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1738,9 +1738,9 @@ export class Markets {
      * @param {number} params.offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
      * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, name, labels, rate, is_default, position, created_at, updated_at.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketTaxClassList>}
      */
-    marketsTaxClassesList(params: { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    marketsTaxClassesList(params: { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketTaxClassList>;
     /**
      * Every column is an exact-match filter and they combine with AND (?code=standard); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing. `market_id` is not among them: the owning market comes from the path and overwrites anything the query says. An unknown but well-formed market lists empty rather than 404 — the parent is filtered on, not verified.
      *
@@ -1758,14 +1758,14 @@ export class Markets {
      * @param {number} offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
      * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, name, labels, rate, is_default, position, created_at, updated_at.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketTaxClassList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsTaxClassesList(marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    marketsTaxClassesList(marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketTaxClassList>;
     marketsTaxClassesList(
         paramsOrFirst: { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string)?, (number)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketTaxClassList> {
         let params: { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1868,9 +1868,9 @@ export class Markets {
      * @param {number} params.position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {number} params.rate - Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketTaxClass>}
      */
-    marketsTaxClassesCreate(params: { marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number }): Promise<Models.Error>;
+    marketsTaxClassesCreate(params: { marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number }): Promise<Models.MarketTaxClass>;
     /**
      * The owning market comes from the path and overrides anything in the body.
      *
@@ -1882,14 +1882,14 @@ export class Markets {
      * @param {number} position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {number} rate - Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketTaxClass>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsTaxClassesCreate(marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number): Promise<Models.Error>;
+    marketsTaxClassesCreate(marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number): Promise<Models.MarketTaxClass>;
     marketsTaxClassesCreate(
         paramsOrFirst: { marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number } | string,
         ...rest: [(string)?, (string)?, (boolean)?, (object)?, (number)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketTaxClass> {
         let params: { marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1964,23 +1964,23 @@ export class Markets {
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The tax class of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketTaxClassDeleted>}
      */
-    marketsTaxClassesDelete(params: { marketId: string, id: string }): Promise<Models.Error>;
+    marketsTaxClassesDelete(params: { marketId: string, id: string }): Promise<Models.MarketTaxClassDeleted>;
     /**
      * Refused with a 409 for as long as another app still points at this tax class by its code. A tax class is the source of record for a rate, and other apps name it by CODE with no foreign key behind it — a cross-app FK is what ADR-0055 forbids. So this asks the shipping app what still uses the code (shipping.tax-classes.usage) and answers 409 with the count and the first few names rather than leaving methods quoting a rate nobody defines. The check FAILS OPEN: a tenant without the shipping app, or an unreachable one, deletes as before, and the answer says which happened in 'usage_checked'. Matched on the code, which is shared across markets — the refusal message says so.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The tax class of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketTaxClassDeleted>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsTaxClassesDelete(marketId: string, id: string): Promise<Models.Error>;
+    marketsTaxClassesDelete(marketId: string, id: string): Promise<Models.MarketTaxClassDeleted>;
     marketsTaxClassesDelete(
         paramsOrFirst: { marketId: string, id: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketTaxClassDeleted> {
         let params: { marketId: string, id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2023,23 +2023,23 @@ export class Markets {
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The tax class of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketTaxClass>}
      */
-    marketsTaxClassesGet(params: { marketId: string, id: string }): Promise<Models.Error>;
+    marketsTaxClassesGet(params: { marketId: string, id: string }): Promise<Models.MarketTaxClass>;
     /**
      * Scoped strictly to the market in the path: a row belonging to another market is a 404 here, never a 200.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The tax class of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketTaxClass>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsTaxClassesGet(marketId: string, id: string): Promise<Models.Error>;
+    marketsTaxClassesGet(marketId: string, id: string): Promise<Models.MarketTaxClass>;
     marketsTaxClassesGet(
         paramsOrFirst: { marketId: string, id: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketTaxClass> {
         let params: { marketId: string, id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2088,9 +2088,9 @@ export class Markets {
      * @param {number} params.position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {number} params.rate - Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketTaxClass>}
      */
-    marketsTaxClassesUpdate(params: { marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number }): Promise<Models.Error>;
+    marketsTaxClassesUpdate(params: { marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number }): Promise<Models.MarketTaxClass>;
     /**
      * Partial: omitted fields keep their value.
      *
@@ -2103,14 +2103,14 @@ export class Markets {
      * @param {number} position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {number} rate - Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.MarketTaxClass>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsTaxClassesUpdate(marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number): Promise<Models.Error>;
+    marketsTaxClassesUpdate(marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number): Promise<Models.MarketTaxClass>;
     marketsTaxClassesUpdate(
         paramsOrFirst: { marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number } | string,
         ...rest: [(string)?, (string)?, (boolean)?, (object)?, (string)?, (number)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.MarketTaxClass> {
         let params: { marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

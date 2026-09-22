@@ -83,9 +83,9 @@ export class ShippingValueLists {
      * @param {number} params.position - Sort order in a select — the collection is returned in it.
      * @param {Tone} params.tone - Semantic badge colour for a UI listing the set. The client owns what each tone looks like.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingServiceLevelRow>}
      */
-    shippingServiceLevelsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.Error>;
+    shippingServiceLevelsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.ShippingServiceLevelRow>;
     /**
      * A service level is the class of service a carrier row represents, as one of the tenant's own codes. It is carried by `shipping_carriers.service_level` and reported on a rate as `carrier_service_level`; nothing in this app branches on it. A method never names one — it gets its level through the carrier it ships with. Reach for this when a merchant sells a class this app was not shipped with — a night courier, a two-man delivery, a same-day run. A create cannot omit `code` and `title`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` — that is the 409. The code is lowercase and becomes what a carrier stores; it cannot be changed afterwards, because every carrier carrying it would be orphaned. Creating one changes nothing on its own: a carrier has to be moved onto it before it means anything.
      *
@@ -98,14 +98,14 @@ export class ShippingValueLists {
      * @param {number} position - Sort order in a select — the collection is returned in it.
      * @param {Tone} tone - Semantic badge colour for a UI listing the set. The client owns what each tone looks like.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingServiceLevelRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingServiceLevelsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.Error>;
+    shippingServiceLevelsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.ShippingServiceLevelRow>;
     shippingServiceLevelsCreate(
         paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
         ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingServiceLevelRow> {
         let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -184,21 +184,21 @@ export class ShippingValueLists {
      *
      * @param {string} params.id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingServiceLevelsDelete(params: { id: string }): Promise<Models.Error>;
+    shippingServiceLevelsDelete(params: { id: string }): Promise<{}>;
     /**
      * There is no foreign key doing this: adding one to a table that starts empty would fail the migration of every existing tenant. The refusal lives in the handler instead.
      *
      * @param {string} id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingServiceLevelsDelete(id: string): Promise<Models.Error>;
+    shippingServiceLevelsDelete(id: string): Promise<{}>;
     shippingServiceLevelsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -235,21 +235,21 @@ export class ShippingValueLists {
      *
      * @param {string} params.id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingServiceLevelRow>}
      */
-    shippingServiceLevelsGet(params: { id: string }): Promise<Models.Error>;
+    shippingServiceLevelsGet(params: { id: string }): Promise<Models.ShippingServiceLevelRow>;
     /**
      * A service level is the class of service a carrier row represents, as one of the tenant's own codes. It is carried by `shipping_carriers.service_level` and reported on a rate as `carrier_service_level`; nothing in this app branches on it. A method never names one — it gets its level through the carrier it ships with. This reads one of them by ROW ID — which is what an editor holds after listing the set, and not what anything else in the platform stores. A caller holding the CODE (off a carrier row, or off a rate's `carrier_service_level`) cannot use this route: there is no `?code=` filter on the collection either, so read GET /shipping/vocabularies/service-levels, which is keyed the way the rest of the platform refers to these values.
      *
      * @param {string} id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingServiceLevelRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingServiceLevelsGet(id: string): Promise<Models.Error>;
+    shippingServiceLevelsGet(id: string): Promise<Models.ShippingServiceLevelRow>;
     shippingServiceLevelsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingServiceLevelRow> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -293,9 +293,9 @@ export class ShippingValueLists {
      * @param {string} params.title - What an operator reads in a select. The name a merchant renames; the code underneath never moves.
      * @param {Tone} params.tone - Semantic badge colour for a UI listing the set. The client owns what each tone looks like.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingServiceLevelRow>}
      */
-    shippingServiceLevelsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.Error>;
+    shippingServiceLevelsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.ShippingServiceLevelRow>;
     /**
      * A service level is the class of service a carrier row represents, as one of the tenant's own codes. It is carried by `shipping_carriers.service_level` and reported on a rate as `carrier_service_level`; nothing in this app branches on it. A method never names one — it gets its level through the carrier it ships with. This edits the DISPLAY half of one — title, description, their locale maps, badge tone, position, and the default flag. Everything a carrier or a filter joins on stays put: the code is immutable (a different one in the payload is a 400, not a silent no-op), and no carrier is moved onto or off this level by renaming it. Moving a row's `position` does not renumber its neighbours — the collection is returned in position order and ties fall back to whatever the database returns, so a deliberate order means writing every row's position.
      *
@@ -308,14 +308,14 @@ export class ShippingValueLists {
      * @param {string} title - What an operator reads in a select. The name a merchant renames; the code underneath never moves.
      * @param {Tone} tone - Semantic badge colour for a UI listing the set. The client owns what each tone looks like.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingServiceLevelRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingServiceLevelsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.Error>;
+    shippingServiceLevelsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.ShippingServiceLevelRow>;
     shippingServiceLevelsUpdate(
         paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
         ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingServiceLevelRow> {
         let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -389,23 +389,23 @@ export class ShippingValueLists {
      * @param {string} params.id - The row id.
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingServiceLevelRow>}
      */
-    shippingServiceLevelsMakeDefault(params: { id: string, data: object }): Promise<Models.Error>;
+    shippingServiceLevelsMakeDefault(params: { id: string, data: object }): Promise<Models.ShippingServiceLevelRow>;
     /**
      * The flag is a single answer, not a per-row opinion: it is what every fallback lands on, so two defaults leave the result to row order and none leaves it to the seeded value. This row takes it and whoever was holding it is demoted in the same call — there is no separate write to clear the old one, and no window in which both carry it. Only the rows whose flag is wrong are written, so repeating the call is free.
      *
      * @param {string} id - The row id.
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingServiceLevelRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingServiceLevelsMakeDefault(id: string, data: object): Promise<Models.Error>;
+    shippingServiceLevelsMakeDefault(id: string, data: object): Promise<Models.ShippingServiceLevelRow>;
     shippingServiceLevelsMakeDefault(
         paramsOrFirst: { id: string, data: object } | string,
         ...rest: [(object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingServiceLevelRow> {
         let params: { id: string, data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -474,21 +474,21 @@ export class ShippingValueLists {
      *
      * @param {ShippingVocabulariesGetName} params.name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingVocabulary>}
      */
-    shippingVocabulariesGet(params: { name: ShippingVocabulariesGetName }): Promise<Models.Error>;
+    shippingVocabulariesGet(params: { name: ShippingVocabulariesGetName }): Promise<Models.ShippingVocabulary>;
     /**
      * One vocabulary in full: every value it permits, each carrying the title to show, the description to explain it and the badge tone to draw it in — everything a select or a status chip needs, so nothing has to be labelled a second time in a client. Two sources, one guarantee: what is served is what is enforced, so no UI keeps a second copy. 'source: schema' means the values are read out of a CHECK constraint — a value added to the constraint appears here even before anyone labels it, titled from its own key, in constraint order. 'source: table' means the values are the TENANT's own rows (service-levels, weight-units), read per request and seeded on first use, so a merchant may add one without a release of this app; those values also carry labels/descriptions, is_system and is_default, and weight-units carries the conversion factor. 'closed' says the set is exhaustive either way, so a value outside it is stale data rather than a missing label. `title` and `description` — the vocabulary's and every value's — are either one string or a locale map keyed by locale: curated copy carries the map, a value titled from its own key carries the string. Names: carrier-statuses, matrix-bases, pricing-types, service-levels, weight-units.
      *
      * @param {ShippingVocabulariesGetName} name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingVocabulary>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingVocabulariesGet(name: ShippingVocabulariesGetName): Promise<Models.Error>;
+    shippingVocabulariesGet(name: ShippingVocabulariesGetName): Promise<Models.ShippingVocabulary>;
     shippingVocabulariesGet(
         paramsOrFirst: { name: ShippingVocabulariesGetName } | ShippingVocabulariesGetName    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingVocabulary> {
         let params: { name: ShippingVocabulariesGetName };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('name' in paramsOrFirst))) {
@@ -592,9 +592,9 @@ export class ShippingValueLists {
      * @param {number} params.position - Sort order in a select — the collection is returned in it.
      * @param {Tone} params.tone - Semantic badge colour for a UI listing the set. The client owns what each tone looks like.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingWeightUnitRow>}
      */
-    shippingWeightUnitsCreate(params: { code: string, factor: number, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.Error>;
+    shippingWeightUnitsCreate(params: { code: string, factor: number, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.ShippingWeightUnitRow>;
     /**
      * Reach for this when a merchant weighs goods in something this app was not shipped with — a tonne for pallet freight, a carat for jewellery — and wants a rate matrix keyed in it. `factor` is required and must be greater than 0: zero does not convert a weight, it divides by it, and a negative factor turns a parcel into a credit. The new unit is never the base — which unit anchors the others is decided at install, and moving it would silently reprice every weight matrix in the shop.
      *
@@ -608,14 +608,14 @@ export class ShippingValueLists {
      * @param {number} position - Sort order in a select — the collection is returned in it.
      * @param {Tone} tone - Semantic badge colour for a UI listing the set. The client owns what each tone looks like.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingWeightUnitRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingWeightUnitsCreate(code: string, factor: number, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.Error>;
+    shippingWeightUnitsCreate(code: string, factor: number, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.ShippingWeightUnitRow>;
     shippingWeightUnitsCreate(
         paramsOrFirst: { code: string, factor: number, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
         ...rest: [(number)?, (string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingWeightUnitRow> {
         let params: { code: string, factor: number, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -702,21 +702,21 @@ export class ShippingValueLists {
      *
      * @param {string} params.id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingWeightUnitsDelete(params: { id: string }): Promise<Models.Error>;
+    shippingWeightUnitsDelete(params: { id: string }): Promise<{}>;
     /**
      * The market check is best effort by design — the setting is per market and this request carries one, so another market may still name the unit. That case degrades to the market falling back to the flagged unit rather than failing its quotes.
      *
      * @param {string} id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingWeightUnitsDelete(id: string): Promise<Models.Error>;
+    shippingWeightUnitsDelete(id: string): Promise<{}>;
     shippingWeightUnitsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -753,21 +753,21 @@ export class ShippingValueLists {
      *
      * @param {string} params.id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingWeightUnitRow>}
      */
-    shippingWeightUnitsGet(params: { id: string }): Promise<Models.Error>;
+    shippingWeightUnitsGet(params: { id: string }): Promise<Models.ShippingWeightUnitRow>;
     /**
      * A weight unit is a code PLUS a factor — how many kilograms one of this unit weighs — and the factor is what prices parcels: a rate request expressed in one unit is converted through the two factors into the unit the market's tiers are keyed in. Exactly one row is the base (kg, factor 1), fixed at install. This reads one of them by ROW ID, which is what an editor holds after listing the set; a caller holding the CODE (a market's `weight_unit` setting, a rate request's `weight_unit`) has no filter for it here and should read GET /shipping/vocabularies/weight-units instead. Reading the factor back is NOT how a past quote is checked: a rate answer echoes the factors it applied in `basis.weight_unit_factor` and `basis.request_weight_unit_factor` precisely so it stays re-derivable after this row has been edited.
      *
      * @param {string} id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingWeightUnitRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingWeightUnitsGet(id: string): Promise<Models.Error>;
+    shippingWeightUnitsGet(id: string): Promise<Models.ShippingWeightUnitRow>;
     shippingWeightUnitsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingWeightUnitRow> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -812,9 +812,9 @@ export class ShippingValueLists {
      * @param {string} params.title - What an operator reads in a select. The name a merchant renames; the code underneath never moves.
      * @param {Tone} params.tone - Semantic badge colour for a UI listing the set. The client owns what each tone looks like.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingWeightUnitRow>}
      */
-    shippingWeightUnitsUpdate(params: { id: string, description?: string, descriptions?: object, factor?: number, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.Error>;
+    shippingWeightUnitsUpdate(params: { id: string, description?: string, descriptions?: object, factor?: number, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.ShippingWeightUnitRow>;
     /**
      * Everything but the code and the base flag. A factor sent for the BASE unit is refused rather than silently ignored: it reads as 1 because every other factor is relative to it, so changing it would rescale the whole table without touching another row.
      *
@@ -828,14 +828,14 @@ export class ShippingValueLists {
      * @param {string} title - What an operator reads in a select. The name a merchant renames; the code underneath never moves.
      * @param {Tone} tone - Semantic badge colour for a UI listing the set. The client owns what each tone looks like.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingWeightUnitRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingWeightUnitsUpdate(id: string, description?: string, descriptions?: object, factor?: number, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.Error>;
+    shippingWeightUnitsUpdate(id: string, description?: string, descriptions?: object, factor?: number, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.ShippingWeightUnitRow>;
     shippingWeightUnitsUpdate(
         paramsOrFirst: { id: string, description?: string, descriptions?: object, factor?: number, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
         ...rest: [(string)?, (object)?, (number)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingWeightUnitRow> {
         let params: { id: string, description?: string, descriptions?: object, factor?: number, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -914,23 +914,23 @@ export class ShippingValueLists {
      * @param {string} params.id - The row id.
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingWeightUnitRow>}
      */
-    shippingWeightUnitsMakeDefault(params: { id: string, data: object }): Promise<Models.Error>;
+    shippingWeightUnitsMakeDefault(params: { id: string, data: object }): Promise<Models.ShippingWeightUnitRow>;
     /**
      * The flag is a single answer, not a per-row opinion: it is what every fallback lands on, so two defaults leave the result to row order and none leaves it to the seeded value. This row takes it and whoever was holding it is demoted in the same call — there is no separate write to clear the old one, and no window in which both carry it. Only the rows whose flag is wrong are written, so repeating the call is free.
      *
      * @param {string} id - The row id.
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingWeightUnitRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingWeightUnitsMakeDefault(id: string, data: object): Promise<Models.Error>;
+    shippingWeightUnitsMakeDefault(id: string, data: object): Promise<Models.ShippingWeightUnitRow>;
     shippingWeightUnitsMakeDefault(
         paramsOrFirst: { id: string, data: object } | string,
         ...rest: [(object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingWeightUnitRow> {
         let params: { id: string, data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

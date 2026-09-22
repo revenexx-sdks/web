@@ -30,9 +30,9 @@ export class InventoriesLocations {
      * @param {string} params.createdAt - Exact-match filter on `created_at`. When the row was created.
      * @param {string} params.updatedAt - Exact-match filter on `updated_at`. When the row was last written.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    inventoriesLocationsList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<Models.Error>;
+    inventoriesLocationsList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * A location is WHERE stock is kept — a warehouse, a shop floor, a supplier that dropships, or a virtual bucket for pre-orders and quarantine. It holds no quantity of its own: what is at it is a stock level. `type` is descriptive and nothing branches on it; `priority` is the number that decides which location a reservation is served from, and `enabled` decides whether it is offered at all. This is the list a `location_code` is resolved against on every stock call, so it is the first thing to read when a receipt answers "unknown location". It answers no quantities at all — how much is at a location is GET /inventories/stock?location_id=…, and what may still be sold is POST /inventories/availability. Filter `?enabled=true` for the operational subset: availability and reserve only ever look at enabled locations, so a disabled one is invisible to a shop while keeping every row that points at it.
      *
@@ -51,14 +51,14 @@ export class InventoriesLocations {
      * @param {string} createdAt - Exact-match filter on `created_at`. When the row was created.
      * @param {string} updatedAt - Exact-match filter on `updated_at`. When the row was last written.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesLocationsList(limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<Models.Error>;
+    inventoriesLocationsList(limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     inventoriesLocationsList(
         paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
         ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (InventoriesLocationsListType)?, (number)?, (boolean)?, (string)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -167,9 +167,9 @@ export class InventoriesLocations {
      * @param {number} params.priority - Sourcing order for POST /inventories/reserve while `allocation_strategy` is 'priority': the enabled locations are walked ASCENDING and the first that can cover the item wins, so a LOWER number is preferred. Locations that tie keep the order the database returns them in — give every location a distinct priority if the order matters. Defaults to 0.
      * @param {LocationType} params.type - What kind of place holds the stock. 'warehouse' — own stock, the default. 'store' — a retail floor, the stock a click-and-collect order draws on. 'dropship' — a supplier ships it and this row tracks what they say they hold. 'virtual' — a bucket that is not a building (pre-orders, consignment, a quarantine shelf). Descriptive only: sourcing order comes from `priority`, and no route in this app treats one type differently from another. Defaults to 'warehouse'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Location>}
      */
-    inventoriesLocationsCreate(params: { code: string, name: string, address?: object, enabled?: boolean, labels?: object, metadata?: object, priority?: number, type?: LocationType }): Promise<Models.Error>;
+    inventoriesLocationsCreate(params: { code: string, name: string, address?: object, enabled?: boolean, labels?: object, metadata?: object, priority?: number, type?: LocationType }): Promise<Models.Location>;
     /**
      * Registers a new place stock can be kept, and `type` says what kind of place it is: a warehouse of your own, a store whose shop floor a click-and-collect order draws on, a dropship supplier whose stock this row only tracks, or a virtual bucket that is not a building at all — pre-orders, consignment, a quarantine shelf. A create cannot omit `code` and `name`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert. A new location starts EMPTY and creating one moves nothing: stock arrives through POST /inventories/receive, or is transferred by two adjustments, one negative at the old location and one positive here. Mind the two columns that are not decoration — `priority` decides where a reservation is served from before `type` ever does (nothing branches on `type`), and `enabled` defaults to true, so a location created for a warehouse that has not opened yet starts being offered by availability and reserve immediately.
      *
@@ -182,14 +182,14 @@ export class InventoriesLocations {
      * @param {number} priority - Sourcing order for POST /inventories/reserve while `allocation_strategy` is 'priority': the enabled locations are walked ASCENDING and the first that can cover the item wins, so a LOWER number is preferred. Locations that tie keep the order the database returns them in — give every location a distinct priority if the order matters. Defaults to 0.
      * @param {LocationType} type - What kind of place holds the stock. 'warehouse' — own stock, the default. 'store' — a retail floor, the stock a click-and-collect order draws on. 'dropship' — a supplier ships it and this row tracks what they say they hold. 'virtual' — a bucket that is not a building (pre-orders, consignment, a quarantine shelf). Descriptive only: sourcing order comes from `priority`, and no route in this app treats one type differently from another. Defaults to 'warehouse'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Location>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesLocationsCreate(code: string, name: string, address?: object, enabled?: boolean, labels?: object, metadata?: object, priority?: number, type?: LocationType): Promise<Models.Error>;
+    inventoriesLocationsCreate(code: string, name: string, address?: object, enabled?: boolean, labels?: object, metadata?: object, priority?: number, type?: LocationType): Promise<Models.Location>;
     inventoriesLocationsCreate(
         paramsOrFirst: { code: string, name: string, address?: object, enabled?: boolean, labels?: object, metadata?: object, priority?: number, type?: LocationType } | string,
         ...rest: [(string)?, (object)?, (boolean)?, (object)?, (object)?, (number)?, (LocationType)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Location> {
         let params: { code: string, name: string, address?: object, enabled?: boolean, labels?: object, metadata?: object, priority?: number, type?: LocationType };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -291,21 +291,21 @@ export class InventoriesLocations {
      *
      * @param {string} params.id - The location.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    inventoriesLocationsDelete(params: { id: string }): Promise<Models.Error>;
+    inventoriesLocationsDelete(params: { id: string }): Promise<{}>;
     /**
      * Deleting one takes every `stock_levels` row that points at it with it — the foreign key decides that, not this route. What the database does NOT clean up is everything else carrying the same id: `stock_movements.location_id` and `reservations.location_id` are plain uuid columns and not foreign keys, so those rows stay exactly where they are, pointing at a row that no longer exists, and nothing nulls the pointer. That asymmetry destroys the balances and keeps everything that refers to them, so the route REFUSES while anything still depends on the location and answers 409 with the count — taken here rather than left to whoever is about to click delete, because a client that pre-counts asks a second question whose answer disagrees the moment a receipt lands between the two calls. Two things block it. A stock row still carrying `on_hand`: the cascade would destroy recorded inventory and nothing in this app ever replays the ledger to rebuild a balance, so there is no undo. And a reservation still `active`: a promise to a customer must not outlive the row backing it — such a hold used to survive its stock row, after which /release lowered no `reserved` and still wrote its `release` booking, and /commit booked the whole quantity as a shortfall, neither of them an error. A stock row at zero does not block: it records no quantity. HISTORY never blocks, and is never deleted either — a movement is an accounting record and removing one would falsify it, so the bookings stay, naming a location that no longer resolves, BY DESIGN. A location that once had traffic and now holds nothing is exactly what a merchant closes. To get past the 409, adjust the stock to zero and release or commit the holds; where the location is merely out of service, PUT `enabled: false` keeps every row and can be undone.
      *
      * @param {string} id - The location.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesLocationsDelete(id: string): Promise<Models.Error>;
+    inventoriesLocationsDelete(id: string): Promise<{}>;
     inventoriesLocationsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -342,21 +342,21 @@ export class InventoriesLocations {
      *
      * @param {string} params.id - The location.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Location>}
      */
-    inventoriesLocationsGet(params: { id: string }): Promise<Models.Error>;
+    inventoriesLocationsGet(params: { id: string }): Promise<Models.Location>;
     /**
      * A location is WHERE stock is kept — a warehouse, a shop floor, a supplier that dropships, or a virtual bucket for pre-orders and quarantine. It holds no quantity of its own: what is at it is a stock level. `type` is descriptive and nothing branches on it; `priority` is the number that decides which location a reservation is served from, and `enabled` decides whether it is offered at all. This is the route that turns an id back into a place: `location_id` is on every stock row, every ledger booking and every reservation, and none of them carries the code or the name. Reading it also answers the two questions those rows raise — whether the location is still `enabled` (a disabled one is skipped by availability and reserve while its stock stays exactly where it is) and where its `priority` puts it when the allocation strategy picks somewhere to reserve from.
      *
      * @param {string} id - The location.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Location>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesLocationsGet(id: string): Promise<Models.Error>;
+    inventoriesLocationsGet(id: string): Promise<Models.Location>;
     inventoriesLocationsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Location> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -401,9 +401,9 @@ export class InventoriesLocations {
      * @param {number} params.priority - Sourcing order for POST /inventories/reserve while `allocation_strategy` is 'priority': the enabled locations are walked ASCENDING and the first that can cover the item wins, so a LOWER number is preferred. Locations that tie keep the order the database returns them in — give every location a distinct priority if the order matters. Defaults to 0.
      * @param {LocationType} params.type - What kind of place holds the stock. 'warehouse' — own stock, the default. 'store' — a retail floor, the stock a click-and-collect order draws on. 'dropship' — a supplier ships it and this row tracks what they say they hold. 'virtual' — a bucket that is not a building (pre-orders, consignment, a quarantine shelf). Descriptive only: sourcing order comes from `priority`, and no route in this app treats one type differently from another. Defaults to 'warehouse'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Location>}
      */
-    inventoriesLocationsUpdate(params: { id: string, address?: object, code?: string, enabled?: boolean, labels?: object, metadata?: object, name?: string, priority?: number, type?: LocationType }): Promise<Models.Error>;
+    inventoriesLocationsUpdate(params: { id: string, address?: object, code?: string, enabled?: boolean, labels?: object, metadata?: object, name?: string, priority?: number, type?: LocationType }): Promise<Models.Location>;
     /**
      * Partial update: send the fields that change. The one with consequences is `enabled` — setting it to false is how a location is taken out of service WITHOUT losing anything. Availability and reserve stop looking at it, so its stock stops being sellable, while every stock row, ledger booking and reservation that points at it survives untouched and comes back the moment it is enabled again. That is the reversible alternative to DELETE, which is not reversible at all. Changing `code` is the other sharp edge: rows keep their `location_id` so nothing moves, but every caller that names the old code in `location_code` starts getting 400 "unknown location". Two rows of this tenant may not share `code` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert.
      *
@@ -417,14 +417,14 @@ export class InventoriesLocations {
      * @param {number} priority - Sourcing order for POST /inventories/reserve while `allocation_strategy` is 'priority': the enabled locations are walked ASCENDING and the first that can cover the item wins, so a LOWER number is preferred. Locations that tie keep the order the database returns them in — give every location a distinct priority if the order matters. Defaults to 0.
      * @param {LocationType} type - What kind of place holds the stock. 'warehouse' — own stock, the default. 'store' — a retail floor, the stock a click-and-collect order draws on. 'dropship' — a supplier ships it and this row tracks what they say they hold. 'virtual' — a bucket that is not a building (pre-orders, consignment, a quarantine shelf). Descriptive only: sourcing order comes from `priority`, and no route in this app treats one type differently from another. Defaults to 'warehouse'.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Location>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesLocationsUpdate(id: string, address?: object, code?: string, enabled?: boolean, labels?: object, metadata?: object, name?: string, priority?: number, type?: LocationType): Promise<Models.Error>;
+    inventoriesLocationsUpdate(id: string, address?: object, code?: string, enabled?: boolean, labels?: object, metadata?: object, name?: string, priority?: number, type?: LocationType): Promise<Models.Location>;
     inventoriesLocationsUpdate(
         paramsOrFirst: { id: string, address?: object, code?: string, enabled?: boolean, labels?: object, metadata?: object, name?: string, priority?: number, type?: LocationType } | string,
         ...rest: [(object)?, (string)?, (boolean)?, (object)?, (object)?, (string)?, (number)?, (LocationType)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Location> {
         let params: { id: string, address?: object, code?: string, enabled?: boolean, labels?: object, metadata?: object, name?: string, priority?: number, type?: LocationType };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

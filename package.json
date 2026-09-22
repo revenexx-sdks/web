@@ -2,7 +2,7 @@
   "name": "@revenexx/sdk",
   "homepage": "https://revenexx.com",
   "description": "Revenexx Web SDK for browsers and SSR frameworks.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "files": [
     "dist",

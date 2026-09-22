@@ -12,6 +12,7 @@ const customersContacts = new CustomersContacts(client);
 const result = await customersContacts.customersContactsUpdate({
     id: '',
     email: 'einkauf@example.com', // optional
+    externalId: 'ASP000047', // optional
     firstName: 'Anna', // optional
     isPrimary: true, // optional
     jobTitle: 'Einkaufsleitung', // optional

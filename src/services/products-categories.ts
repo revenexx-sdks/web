@@ -190,9 +190,9 @@ export class ProductsCategories {
      * @param {string} params.rulesComputedAt - When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
      * @param {object} params.values - Whatever this catalog keeps on a category beyond the model — the keys belong to the tenant, not to this app, and nothing here reads them.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Categories>}
      */
-    productsCategoriesCreate(params: { code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object }): Promise<Models.Error>;
+    productsCategoriesCreate(params: { code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object }): Promise<Models.Categories>;
     /**
      * Creates one category and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -210,14 +210,14 @@ export class ProductsCategories {
      * @param {string} rulesComputedAt - When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
      * @param {object} values - Whatever this catalog keeps on a category beyond the model — the keys belong to the tenant, not to this app, and nothing here reads them.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Categories>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesCreate(code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object): Promise<Models.Error>;
+    productsCategoriesCreate(code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object): Promise<Models.Categories>;
     productsCategoriesCreate(
         paramsOrFirst: { code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object } | string,
         ...rest: [(object)?, (string)?, (string)?, (number)?, (CategoriesRuleMatch)?, (object)?, (string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Categories> {
         let params: { code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -298,21 +298,21 @@ export class ProductsCategories {
      *
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsCategoriesRulesRecomputeAll(params: { data: object }): Promise<Models.Error>;
+    productsCategoriesRulesRecomputeAll(params: { data: object }): Promise<{}>;
     /**
      * What the nightly `recompute-category-rules` schedule calls, and the call to reach for after a bulk import has changed what the rules select. Same sync as the single-category recompute, applied to every category with non-null rules. The whole run shares ONE budget: a category the budget no longer reaches is reported as `skipped` and picked up by the next run, and a failing category is reported in its result entry instead of aborting the run.
      *
      * @param {object} data - Request body
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesRulesRecomputeAll(data: object): Promise<Models.Error>;
+    productsCategoriesRulesRecomputeAll(data: object): Promise<{}>;
     productsCategoriesRulesRecomputeAll(
         paramsOrFirst: { data: object } | object    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { data: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst))) {
@@ -355,9 +355,9 @@ export class ProductsCategories {
      * @param {Models.CategoryRuleCondition[]} params.conditions - Between 1 and 25 conditions — a rule is a selector, not a query language. An empty list is a 400, not "everything".
      * @param {CategoryRuleMatch} params.ruleMatch - 'all' ANDs every condition (default), 'any' ORs them.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsCategoriesRulesPreview(params: { categoryId: string, conditions: Models.CategoryRuleCondition[], ruleMatch?: CategoryRuleMatch }): Promise<Models.Error>;
+    productsCategoriesRulesPreview(params: { categoryId: string, conditions: Models.CategoryRuleCondition[], ruleMatch?: CategoryRuleMatch }): Promise<{}>;
     /**
      * Dry-runs a rule: how many products it selects, plus a sample of up to ten, and it WRITES NOTHING. Evaluates the rule in the request body against the live catalog WITHOUT touching product_categories — this powers the cockpit's "matches N products" preview while an operator edits a rule. Soft-deleted products are excluded. Counting is delegated to the database, never enumerated: a rule that compiles to a single query is answered by one exact-count request whatever its match set. A rule that needs several queries (rule_match "any", or a repeated column such as a range) is combined in the app and stops at `cap` ids — check `capped` before showing `count` as a total.
      *
@@ -365,14 +365,14 @@ export class ProductsCategories {
      * @param {Models.CategoryRuleCondition[]} conditions - Between 1 and 25 conditions — a rule is a selector, not a query language. An empty list is a 400, not "everything".
      * @param {CategoryRuleMatch} ruleMatch - 'all' ANDs every condition (default), 'any' ORs them.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesRulesPreview(categoryId: string, conditions: Models.CategoryRuleCondition[], ruleMatch?: CategoryRuleMatch): Promise<Models.Error>;
+    productsCategoriesRulesPreview(categoryId: string, conditions: Models.CategoryRuleCondition[], ruleMatch?: CategoryRuleMatch): Promise<{}>;
     productsCategoriesRulesPreview(
         paramsOrFirst: { categoryId: string, conditions: Models.CategoryRuleCondition[], ruleMatch?: CategoryRuleMatch } | string,
         ...rest: [(Models.CategoryRuleCondition[])?, (CategoryRuleMatch)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { categoryId: string, conditions: Models.CategoryRuleCondition[], ruleMatch?: CategoryRuleMatch };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -426,9 +426,9 @@ export class ProductsCategories {
      * @param {string} params.categoryId - The `categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/categories`. An id no categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} params.cursor - The `cursor` a previous call returned, to continue that pass. Send `null` explicitly to restart from the beginning; omit the field to let the app decide (resume if a pass is in flight, otherwise start fresh). Anything that is not a string or null is a 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.CategoryRecomputeResult>}
      */
-    productsCategoriesRulesRecompute(params: { categoryId: string, cursor?: string }): Promise<Models.Error>;
+    productsCategoriesRulesRecompute(params: { categoryId: string, cursor?: string }): Promise<Models.CategoryRecomputeResult>;
     /**
      * Syncs one category's rule-derived memberships to what its stored rule selects today. Evaluates categories.rules (NOT the request body), then inserts the newly matching products as source='rule' rows and deletes the rule rows that no longer match. Manual (source='manual') memberships are never inserted, deleted or shadowed. Stamps categories.rules_computed_at.
      * 
@@ -437,14 +437,14 @@ export class ProductsCategories {
      * @param {string} categoryId - The `categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/categories`. An id no categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} cursor - The `cursor` a previous call returned, to continue that pass. Send `null` explicitly to restart from the beginning; omit the field to let the app decide (resume if a pass is in flight, otherwise start fresh). Anything that is not a string or null is a 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.CategoryRecomputeResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesRulesRecompute(categoryId: string, cursor?: string): Promise<Models.Error>;
+    productsCategoriesRulesRecompute(categoryId: string, cursor?: string): Promise<Models.CategoryRecomputeResult>;
     productsCategoriesRulesRecompute(
         paramsOrFirst: { categoryId: string, cursor?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.CategoryRecomputeResult> {
         let params: { categoryId: string, cursor?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -491,9 +491,9 @@ export class ProductsCategories {
      *
      * @param {string} params.id - The `categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/categories`. An id no categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsCategoriesDelete(params: { id: string }): Promise<Models.Error>;
+    productsCategoriesDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one category by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -503,13 +503,13 @@ export class ProductsCategories {
      *
      * @param {string} id - The `categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/categories`. An id no categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesDelete(id: string): Promise<Models.Error>;
+    productsCategoriesDelete(id: string): Promise<{}>;
     productsCategoriesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -552,9 +552,9 @@ export class ProductsCategories {
      *
      * @param {string} params.id - The `categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/categories`. An id no categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Categories>}
      */
-    productsCategoriesGet(params: { id: string }): Promise<Models.Error>;
+    productsCategoriesGet(params: { id: string }): Promise<Models.Categories>;
     /**
      * Reads one category by its id — the whole row, every column, as it is stored.
      * 
@@ -566,13 +566,13 @@ export class ProductsCategories {
      *
      * @param {string} id - The `categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/categories`. An id no categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Categories>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesGet(id: string): Promise<Models.Error>;
+    productsCategoriesGet(id: string): Promise<Models.Categories>;
     productsCategoriesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Categories> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -622,9 +622,9 @@ export class ProductsCategories {
      * @param {string} params.rulesComputedAt - When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
      * @param {object} params.values - Whatever this catalog keeps on a category beyond the model — the keys belong to the tenant, not to this app, and nothing here reads them.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Categories>}
      */
-    productsCategoriesUpdate(params: { id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object }): Promise<Models.Error>;
+    productsCategoriesUpdate(params: { id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object }): Promise<Models.Categories>;
     /**
      * Updates one category by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -643,14 +643,14 @@ export class ProductsCategories {
      * @param {string} rulesComputedAt - When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
      * @param {object} values - Whatever this catalog keeps on a category beyond the model — the keys belong to the tenant, not to this app, and nothing here reads them.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Categories>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesUpdate(id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object): Promise<Models.Error>;
+    productsCategoriesUpdate(id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object): Promise<Models.Categories>;
     productsCategoriesUpdate(
         paramsOrFirst: { id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object } | string,
         ...rest: [(string)?, (object)?, (string)?, (string)?, (number)?, (CategoriesRuleMatch)?, (object)?, (string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Categories> {
         let params: { id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -856,9 +856,9 @@ export class ProductsCategories {
      * @param {number} params.position - Sort order of this product inside the category.
      * @param {ProductCategoriesSource} params.source - How the membership came about: 'manual' is hand-picked, 'rule' was materialized by a category rule. The two never touch each other — a recompute only ever inserts and deletes `rule` rows, so a hand-picked membership survives every pass.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductCategories>}
      */
-    productsProductCategoriesCreate(params: { categoryId: string, productId: string, position?: number, source?: ProductCategoriesSource }): Promise<Models.Error>;
+    productsProductCategoriesCreate(params: { categoryId: string, productId: string, position?: number, source?: ProductCategoriesSource }): Promise<Models.ProductCategories>;
     /**
      * Creates one product category membership and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -871,14 +871,14 @@ export class ProductsCategories {
      * @param {number} position - Sort order of this product inside the category.
      * @param {ProductCategoriesSource} source - How the membership came about: 'manual' is hand-picked, 'rule' was materialized by a category rule. The two never touch each other — a recompute only ever inserts and deletes `rule` rows, so a hand-picked membership survives every pass.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductCategories>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsProductCategoriesCreate(categoryId: string, productId: string, position?: number, source?: ProductCategoriesSource): Promise<Models.Error>;
+    productsProductCategoriesCreate(categoryId: string, productId: string, position?: number, source?: ProductCategoriesSource): Promise<Models.ProductCategories>;
     productsProductCategoriesCreate(
         paramsOrFirst: { categoryId: string, productId: string, position?: number, source?: ProductCategoriesSource } | string,
         ...rest: [(string)?, (number)?, (ProductCategoriesSource)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ProductCategories> {
         let params: { categoryId: string, productId: string, position?: number, source?: ProductCategoriesSource };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -941,9 +941,9 @@ export class ProductsCategories {
      *
      * @param {string} params.id - The `product_categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/product_categories`. An id no product categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsProductCategoriesDelete(params: { id: string }): Promise<Models.Error>;
+    productsProductCategoriesDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one product category membership by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -953,13 +953,13 @@ export class ProductsCategories {
      *
      * @param {string} id - The `product_categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/product_categories`. An id no product categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsProductCategoriesDelete(id: string): Promise<Models.Error>;
+    productsProductCategoriesDelete(id: string): Promise<{}>;
     productsProductCategoriesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1002,9 +1002,9 @@ export class ProductsCategories {
      *
      * @param {string} params.id - The `product_categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/product_categories`. An id no product categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductCategories>}
      */
-    productsProductCategoriesGet(params: { id: string }): Promise<Models.Error>;
+    productsProductCategoriesGet(params: { id: string }): Promise<Models.ProductCategories>;
     /**
      * Reads one product category membership by its id — the whole row, every column, as it is stored.
      * 
@@ -1016,13 +1016,13 @@ export class ProductsCategories {
      *
      * @param {string} id - The `product_categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/product_categories`. An id no product categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductCategories>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsProductCategoriesGet(id: string): Promise<Models.Error>;
+    productsProductCategoriesGet(id: string): Promise<Models.ProductCategories>;
     productsProductCategoriesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ProductCategories> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1067,9 +1067,9 @@ export class ProductsCategories {
      * @param {string} params.productId - The product filed into the category. Deleting the product deletes the membership with it.
      * @param {ProductCategoriesSource} params.source - How the membership came about: 'manual' is hand-picked, 'rule' was materialized by a category rule. The two never touch each other — a recompute only ever inserts and deletes `rule` rows, so a hand-picked membership survives every pass.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductCategories>}
      */
-    productsProductCategoriesUpdate(params: { id: string, categoryId?: string, position?: number, productId?: string, source?: ProductCategoriesSource }): Promise<Models.Error>;
+    productsProductCategoriesUpdate(params: { id: string, categoryId?: string, position?: number, productId?: string, source?: ProductCategoriesSource }): Promise<Models.ProductCategories>;
     /**
      * Updates one product category membership by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -1083,14 +1083,14 @@ export class ProductsCategories {
      * @param {string} productId - The product filed into the category. Deleting the product deletes the membership with it.
      * @param {ProductCategoriesSource} source - How the membership came about: 'manual' is hand-picked, 'rule' was materialized by a category rule. The two never touch each other — a recompute only ever inserts and deletes `rule` rows, so a hand-picked membership survives every pass.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ProductCategories>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsProductCategoriesUpdate(id: string, categoryId?: string, position?: number, productId?: string, source?: ProductCategoriesSource): Promise<Models.Error>;
+    productsProductCategoriesUpdate(id: string, categoryId?: string, position?: number, productId?: string, source?: ProductCategoriesSource): Promise<Models.ProductCategories>;
     productsProductCategoriesUpdate(
         paramsOrFirst: { id: string, categoryId?: string, position?: number, productId?: string, source?: ProductCategoriesSource } | string,
         ...rest: [(string)?, (number)?, (string)?, (ProductCategoriesSource)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ProductCategories> {
         let params: { id: string, categoryId?: string, position?: number, productId?: string, source?: ProductCategoriesSource };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1150,9 +1150,9 @@ export class ProductsCategories {
      * @param {string} params.categoryId - The category to file the product into.
      * @param {number} params.position - Sort order inside the category. Default 0.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsCategoriesAssign(params: { id: string, categoryId: string, position?: number }): Promise<Models.Error>;
+    productsCategoriesAssign(params: { id: string, categoryId: string, position?: number }): Promise<{}>;
     /**
      * Files one product into one category by hand, and the membership is always `source: 'manual'` — a rule recompute never deletes or shadows it. product_categories holds 28 758 rows and had no write surface that named the product it was filing. This takes the product from the route and the category from the body, which is what a bulk 'add the selected products to …' needs. The membership is always source='manual', so a rule recompute never deletes or shadows it.
      *
@@ -1160,14 +1160,14 @@ export class ProductsCategories {
      * @param {string} categoryId - The category to file the product into.
      * @param {number} position - Sort order inside the category. Default 0.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesAssign(id: string, categoryId: string, position?: number): Promise<Models.Error>;
+    productsCategoriesAssign(id: string, categoryId: string, position?: number): Promise<{}>;
     productsCategoriesAssign(
         paramsOrFirst: { id: string, categoryId: string, position?: number } | string,
         ...rest: [(string)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string, categoryId: string, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

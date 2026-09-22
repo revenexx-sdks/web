@@ -26,9 +26,9 @@ export class ShippingMethods {
      * @param {string} params.carrier - Exact-match filter on `carrier`. The other half of that question: the methods still resolving their carrier through the legacy free-text CODE rather than a reference. Together with `?carrier_id=` this is how a merchant finds what a carrier is still holding before retiring it.
      * @param {string} params.taxClass - Exact-match filter on `tax_class`. The methods naming one tax class — the same question GET /shipping/tax-classes/{code}/usage counts, when the caller wants the rows rather than the count. Only a method's OWN class; a method falling back to the tenant setting does not match.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingMethodsList(params?: { limit?: number, offset?: number, order?: string, code?: string, enabled?: boolean, pricingType?: PricingType, carrierId?: string, carrier?: string, taxClass?: string }): Promise<Models.Error>;
+    shippingMethodsList(params?: { limit?: number, offset?: number, order?: string, code?: string, enabled?: boolean, pricingType?: PricingType, carrierId?: string, carrier?: string, taxClass?: string }): Promise<{}>;
     /**
      * Filterable by exact column value — `?code=`, `?enabled=`, `?pricing_type=`, `?carrier_id=`, `?carrier=` and `?tax_class=` are applied as equalities and echoed back in `filter`. `?carrier_id=` and `?carrier=` are the two halves of one question: the first finds the methods holding a reference, the second the ones still resolving through the legacy code text. A query key that names no column of this entity is SILENTLY IGNORED — `?status=` on this route is the trap, since carriers have a status and methods do not: the page comes back unfiltered, 200, with an empty `filter`.
      *
@@ -42,14 +42,14 @@ export class ShippingMethods {
      * @param {string} carrier - Exact-match filter on `carrier`. The other half of that question: the methods still resolving their carrier through the legacy free-text CODE rather than a reference. Together with `?carrier_id=` this is how a merchant finds what a carrier is still holding before retiring it.
      * @param {string} taxClass - Exact-match filter on `tax_class`. The methods naming one tax class — the same question GET /shipping/tax-classes/{code}/usage counts, when the caller wants the rows rather than the count. Only a method's OWN class; a method falling back to the tenant setting does not match.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingMethodsList(limit?: number, offset?: number, order?: string, code?: string, enabled?: boolean, pricingType?: PricingType, carrierId?: string, carrier?: string, taxClass?: string): Promise<Models.Error>;
+    shippingMethodsList(limit?: number, offset?: number, order?: string, code?: string, enabled?: boolean, pricingType?: PricingType, carrierId?: string, carrier?: string, taxClass?: string): Promise<{}>;
     shippingMethodsList(
         paramsOrFirst?: { limit?: number, offset?: number, order?: string, code?: string, enabled?: boolean, pricingType?: PricingType, carrierId?: string, carrier?: string, taxClass?: string } | number,
         ...rest: [(number)?, (string)?, (string)?, (boolean)?, (PricingType)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { limit?: number, offset?: number, order?: string, code?: string, enabled?: boolean, pricingType?: PricingType, carrierId?: string, carrier?: string, taxClass?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -145,9 +145,9 @@ export class ShippingMethods {
      * @param {number} params.quoteAbove - Above this MATRIX MEASURE the method carries no automatic price: it is still offered, flagged `quote_required` with a reason, and the storefront shows 'shipping on request'. For bulky or overweight freight priced by hand. Null = every measure is priced automatically.
      * @param {string} params.taxClass - This method's own tax class, as a CODE into the buyer market's tax classes (markets.tax_classes) — never a rate. First step of the tax chain: unset falls back to the tenant's shipping_tax_class setting, then the market default. Not a foreign key and it could not be (ADR-0055); GET /shipping/tax-classes/{code}/usage is the integrity question markets asks in its place.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingMethod>}
      */
-    shippingMethodsCreate(params: { code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string }): Promise<Models.Error>;
+    shippingMethodsCreate(params: { code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string }): Promise<Models.ShippingMethod>;
     /**
      * A shipping method is the line a buyer picks in the checkout: a pricing model ('fixed', 'free' or 'matrix'), the countries it may be offered into, a free-above threshold, and the carrier it ships with. The method owns the PRICE; the delivery promise — tracking template, cut-off, handling and transit days — is inherited from the carrier wherever the method states none of its own. A create cannot omit `code` and `name`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` — that is the 409. The new method is quoted by nobody until two further things are true: `enabled` defaults to FALSE, and a 'matrix' method has no tiers yet — until POST or PUT …/tiers gives it some it appears in `excluded` with 'matrix has no rate tiers configured' rather than in the rates. `carrier_id` and the legacy `carrier` code are both accepted and neither is verified against the carrier table here: an unmatched code is a plain carrier name on the rate, not an error.
      *
@@ -172,14 +172,14 @@ export class ShippingMethods {
      * @param {number} quoteAbove - Above this MATRIX MEASURE the method carries no automatic price: it is still offered, flagged `quote_required` with a reason, and the storefront shows 'shipping on request'. For bulky or overweight freight priced by hand. Null = every measure is priced automatically.
      * @param {string} taxClass - This method's own tax class, as a CODE into the buyer market's tax classes (markets.tax_classes) — never a rate. First step of the tax chain: unset falls back to the tenant's shipping_tax_class setting, then the market default. Not a foreign key and it could not be (ADR-0055); GET /shipping/tax-classes/{code}/usage is the integrity question markets asks in its place.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingMethod>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingMethodsCreate(code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string): Promise<Models.Error>;
+    shippingMethodsCreate(code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string): Promise<Models.ShippingMethod>;
     shippingMethodsCreate(
         paramsOrFirst: { code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string[])?, (string)?, (string)?, (boolean)?, (number)?, (number)?, (number)?, (object)?, (string)?, (ShippingMethodMatrixBasis)?, (object)?, (number)?, (number)?, (ShippingMethodPricingType)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingMethod> {
         let params: { code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -341,21 +341,21 @@ export class ShippingMethods {
      *
      * @param {string} params.id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingMethodsDelete(params: { id: string }): Promise<Models.Error>;
+    shippingMethodsDelete(params: { id: string }): Promise<{}>;
     /**
      * Deleting one takes every `shipping_rate_tiers` row that points at it with it — the foreign keys decide that, not this route. So the whole rate matrix goes with the method, which is also why this never answers a conflict and why there is no way to recover the table afterwards — for a method a checkout may still be holding in a session, `enabled: false` is the safer edit.
      *
      * @param {string} id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingMethodsDelete(id: string): Promise<Models.Error>;
+    shippingMethodsDelete(id: string): Promise<{}>;
     shippingMethodsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -392,21 +392,21 @@ export class ShippingMethods {
      *
      * @param {string} params.id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingMethod>}
      */
-    shippingMethodsGet(params: { id: string }): Promise<Models.Error>;
+    shippingMethodsGet(params: { id: string }): Promise<Models.ShippingMethod>;
     /**
      * A shipping method is the line a buyer picks in the checkout: a pricing model ('fixed', 'free' or 'matrix'), the countries it may be offered into, a free-above threshold, and the carrier it ships with. The method owns the PRICE; the delivery promise — tracking template, cut-off, handling and transit days — is inherited from the carrier wherever the method states none of its own. This is the CONFIGURATION of one, by row id — not what a buyer would be charged. A matrix method's prices are not in here at all: they are its rate tiers, GET /shipping/methods/{method_id}/tiers, and the price for a given basket is POST /shipping/rates, which is the only place free-above thresholds, country restrictions, the carrier's reach and tax are applied. A checkout that reads `price` off this row prices a matrix method at 0.
      *
      * @param {string} id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingMethod>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingMethodsGet(id: string): Promise<Models.Error>;
+    shippingMethodsGet(id: string): Promise<Models.ShippingMethod>;
     shippingMethodsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingMethod> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -463,9 +463,9 @@ export class ShippingMethods {
      * @param {number} params.quoteAbove - Above this MATRIX MEASURE the method carries no automatic price: it is still offered, flagged `quote_required` with a reason, and the storefront shows 'shipping on request'. For bulky or overweight freight priced by hand. Null = every measure is priced automatically.
      * @param {string} params.taxClass - This method's own tax class, as a CODE into the buyer market's tax classes (markets.tax_classes) — never a rate. First step of the tax chain: unset falls back to the tenant's shipping_tax_class setting, then the market default. Not a foreign key and it could not be (ADR-0055); GET /shipping/tax-classes/{code}/usage is the integrity question markets asks in its place.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingMethod>}
      */
-    shippingMethodsUpdate(params: { id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string }): Promise<Models.Error>;
+    shippingMethodsUpdate(params: { id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string }): Promise<Models.ShippingMethod>;
     /**
      * A shipping method is the line a buyer picks in the checkout: a pricing model ('fixed', 'free' or 'matrix'), the countries it may be offered into, a free-above threshold, and the carrier it ships with. The method owns the PRICE; the delivery promise — tracking template, cut-off, handling and transit days — is inherited from the carrier wherever the method states none of its own. A partial update — send only what changes, whether that is taking the method in or out of the checkout, its pricing, the countries it is restricted to or the delivery estimate it states of its own; a payload carrying no column at all is refused rather than answering a row it did not touch. Flipping `enabled` is what puts the method in front of a buyer or takes it away, and a disabled method is reported in the rate answer's `excluded` rather than hidden. Changing `pricing_type` away from 'matrix' does NOT delete the tier table — it stops being read, and changing back reinstates the old prices, so a method switched to 'fixed' and back quotes what it quoted before. Two rows of this tenant may not share `code` — that is the 409.
      *
@@ -491,14 +491,14 @@ export class ShippingMethods {
      * @param {number} quoteAbove - Above this MATRIX MEASURE the method carries no automatic price: it is still offered, flagged `quote_required` with a reason, and the storefront shows 'shipping on request'. For bulky or overweight freight priced by hand. Null = every measure is priced automatically.
      * @param {string} taxClass - This method's own tax class, as a CODE into the buyer market's tax classes (markets.tax_classes) — never a rate. First step of the tax chain: unset falls back to the tenant's shipping_tax_class setting, then the market default. Not a foreign key and it could not be (ADR-0055); GET /shipping/tax-classes/{code}/usage is the integrity question markets asks in its place.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingMethod>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingMethodsUpdate(id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string): Promise<Models.Error>;
+    shippingMethodsUpdate(id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string): Promise<Models.ShippingMethod>;
     shippingMethodsUpdate(
         paramsOrFirst: { id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string[])?, (string)?, (string)?, (boolean)?, (number)?, (number)?, (number)?, (object)?, (string)?, (ShippingMethodMatrixBasis)?, (object)?, (string)?, (number)?, (number)?, (ShippingMethodPricingType)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingMethod> {
         let params: { id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, taxClass?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -640,9 +640,9 @@ export class ShippingMethods {
      * @param {string} params.order - Sort as 'column.asc' | 'column.desc' — a bare 'column' sorts ascending. The column must be one this entity has; anything else is a 400 from the data plane.
      * @param {number} params.fromValue - Exact-match filter on `from_value`. The tier at exactly this threshold. (tenant_id, method_id, from_value) is unique, so this addresses one row of the matrix by what it MEANS rather than by an id a bulk replace has already thrown away.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingTiersList(params: { methodId: string, limit?: number, offset?: number, order?: string, fromValue?: number }): Promise<Models.Error>;
+    shippingTiersList(params: { methodId: string, limit?: number, offset?: number, order?: string, fromValue?: number }): Promise<{}>;
     /**
      * The rate matrix of one method — every `from_value` threshold with the price charged at or above it — lowest threshold first. Filterable by `?from_value=` — the unique index is (tenant_id, method_id, from_value), so that addresses one row of the matrix by the threshold it prices rather than by an id a bulk replace has already discarded. The applied filters are echoed in `filter`, which always carries the `method_id` taken from the path.
      *
@@ -652,14 +652,14 @@ export class ShippingMethods {
      * @param {string} order - Sort as 'column.asc' | 'column.desc' — a bare 'column' sorts ascending. The column must be one this entity has; anything else is a 400 from the data plane.
      * @param {number} fromValue - Exact-match filter on `from_value`. The tier at exactly this threshold. (tenant_id, method_id, from_value) is unique, so this addresses one row of the matrix by what it MEANS rather than by an id a bulk replace has already thrown away.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingTiersList(methodId: string, limit?: number, offset?: number, order?: string, fromValue?: number): Promise<Models.Error>;
+    shippingTiersList(methodId: string, limit?: number, offset?: number, order?: string, fromValue?: number): Promise<{}>;
     shippingTiersList(
         paramsOrFirst: { methodId: string, limit?: number, offset?: number, order?: string, fromValue?: number } | string,
         ...rest: [(number)?, (number)?, (string)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { methodId: string, limit?: number, offset?: number, order?: string, fromValue?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -719,9 +719,9 @@ export class ShippingMethods {
      * @param {number} params.position - Display order in the matrix editor (default 0; a bulk replace derives it from the array index). Pricing reads from_value, never this.
      * @param {number} params.price - What this tier costs, in the method's currency. Charged in full for the whole consignment — a matrix is a lookup table, not a rate per unit. Defaults to 0.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingRateTier>}
      */
-    shippingTiersCreate(params: { methodId: string, fromValue?: number, position?: number, price?: number }): Promise<Models.Error>;
+    shippingTiersCreate(params: { methodId: string, fromValue?: number, position?: number, price?: number }): Promise<Models.ShippingRateTier>;
     /**
      * A rate tier is one row of a matrix method's price table: a `from_value` threshold and the price charged at or above it. The bound is INCLUSIVE and the winning tier is the one with the highest `from_value` at or below the measured value, so a measure of exactly 10 is priced by the tier at 10. What the number measures is the method's `matrix_basis` — kilograms in the market's own weight unit, items, money in the method's currency, or a named attribute — and the last tier has no upper bound. This adds ONE row to the table of the method in the path, leaving the rest alone — the edit for a merchant who has added a heavier bracket. To lay a whole table down at once use PUT …/tiers (set semantics) or POST …/tiers/ladder (evenly stepped), and note that both of those DISCARD the ids of the rows they replace. Two rows of this tenant may not share the combination of `method_id` + `from_value` — that is the 409. `method_id` is taken from the path on every write, so a body naming a different method is ignored rather than obeyed.
      *
@@ -730,14 +730,14 @@ export class ShippingMethods {
      * @param {number} position - Display order in the matrix editor (default 0; a bulk replace derives it from the array index). Pricing reads from_value, never this.
      * @param {number} price - What this tier costs, in the method's currency. Charged in full for the whole consignment — a matrix is a lookup table, not a rate per unit. Defaults to 0.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingRateTier>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingTiersCreate(methodId: string, fromValue?: number, position?: number, price?: number): Promise<Models.Error>;
+    shippingTiersCreate(methodId: string, fromValue?: number, position?: number, price?: number): Promise<Models.ShippingRateTier>;
     shippingTiersCreate(
         paramsOrFirst: { methodId: string, fromValue?: number, position?: number, price?: number } | string,
         ...rest: [(number)?, (number)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingRateTier> {
         let params: { methodId: string, fromValue?: number, position?: number, price?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -791,23 +791,23 @@ export class ShippingMethods {
      * @param {string} params.methodId - The shipping method these tiers belong to. A method this tenant does not have is a 404, never an empty page.
      * @param {Models.ShippingRateTierReplaceItem[]} params.tiers - The complete new tier set (set semantics) — positions are derived from the array order. An empty array clears the matrix, and a matrix method with no tiers quotes nothing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingTiersReplace(params: { methodId: string, tiers: Models.ShippingRateTierReplaceItem[] }): Promise<Models.Error>;
+    shippingTiersReplace(params: { methodId: string, tiers: Models.ShippingRateTierReplaceItem[] }): Promise<{}>;
     /**
      * The write behind a table editor: a merchant edits the whole matrix on screen and saves it in one call, rather than diffing it into a row added here and a row deleted there. Set semantics, and it replaces EVERY tier the method had: the tiers this method has afterwards are exactly the ones handed in, positions derived from the array order. An empty `tiers` array clears the table — and a matrix method with no tiers quotes nothing, with a reason.
      *
      * @param {string} methodId - The shipping method these tiers belong to. A method this tenant does not have is a 404, never an empty page.
      * @param {Models.ShippingRateTierReplaceItem[]} tiers - The complete new tier set (set semantics) — positions are derived from the array order. An empty array clears the matrix, and a matrix method with no tiers quotes nothing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingTiersReplace(methodId: string, tiers: Models.ShippingRateTierReplaceItem[]): Promise<Models.Error>;
+    shippingTiersReplace(methodId: string, tiers: Models.ShippingRateTierReplaceItem[]): Promise<{}>;
     shippingTiersReplace(
         paramsOrFirst: { methodId: string, tiers: Models.ShippingRateTierReplaceItem[] } | string,
         ...rest: [(Models.ShippingRateTierReplaceItem[])?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { methodId: string, tiers: Models.ShippingRateTierReplaceItem[] };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -859,9 +859,9 @@ export class ShippingMethods {
      * @param {boolean} params.replace - Replace the whole table (default true) or append to it.
      * @param {number} params.stepPrice - Added to each subsequent tier (default 0). A negative value is allowed as long as no tier ends up below 0.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingTiersLadder(params: { methodId: string, basePrice: number, step: number, toValue: number, fromValue?: number, replace?: boolean, stepPrice?: number }): Promise<Models.Error>;
+    shippingTiersLadder(params: { methodId: string, basePrice: number, step: number, toValue: number, fromValue?: number, replace?: boolean, stepPrice?: number }): Promise<{}>;
     /**
      * The tier table a merchant describes in words — "0 to 30 kg, every 5 kg, €4.90 plus €2 a step" — without typing every row. Replaces the method's tiers by default (set replace=false to append).
      *
@@ -873,14 +873,14 @@ export class ShippingMethods {
      * @param {boolean} replace - Replace the whole table (default true) or append to it.
      * @param {number} stepPrice - Added to each subsequent tier (default 0). A negative value is allowed as long as no tier ends up below 0.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingTiersLadder(methodId: string, basePrice: number, step: number, toValue: number, fromValue?: number, replace?: boolean, stepPrice?: number): Promise<Models.Error>;
+    shippingTiersLadder(methodId: string, basePrice: number, step: number, toValue: number, fromValue?: number, replace?: boolean, stepPrice?: number): Promise<{}>;
     shippingTiersLadder(
         paramsOrFirst: { methodId: string, basePrice: number, step: number, toValue: number, fromValue?: number, replace?: boolean, stepPrice?: number } | string,
         ...rest: [(number)?, (number)?, (number)?, (number)?, (boolean)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { methodId: string, basePrice: number, step: number, toValue: number, fromValue?: number, replace?: boolean, stepPrice?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -958,23 +958,23 @@ export class ShippingMethods {
      * @param {string} params.methodId - The shipping method these tiers belong to. A method this tenant does not have is a 404, never an empty page.
      * @param {string} params.id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingTiersDelete(params: { methodId: string, id: string }): Promise<Models.Error>;
+    shippingTiersDelete(params: { methodId: string, id: string }): Promise<{}>;
     /**
      * A rate tier is one row of a matrix method's price table: a `from_value` threshold and the price charged at or above it. The bound is INCLUSIVE and the winning tier is the one with the highest `from_value` at or below the measured value, so a measure of exactly 10 is priced by the tier at 10. What the number measures is the method's `matrix_basis` — kilograms in the market's own weight unit, items, money in the method's currency, or a named attribute — and the last tier has no upper bound. Removing a tier in the MIDDLE of a table is harmless — the measures it used to cover fall to the highest remaining threshold below them. Removing the LOWEST one is not: a measure under the new lowest threshold matches no tier at all, and the method is then left out of POST /shipping/rates with 'no tier covers measure …' instead of being quoted at 0, so an entire band of baskets silently stops being offered this method. Deleting the last tier takes the method out of the checkout altogether. Rebuilding the table wholesale is PUT …/tiers or POST …/tiers/ladder; deleting the method deletes its tiers on its own.
      *
      * @param {string} methodId - The shipping method these tiers belong to. A method this tenant does not have is a 404, never an empty page.
      * @param {string} id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingTiersDelete(methodId: string, id: string): Promise<Models.Error>;
+    shippingTiersDelete(methodId: string, id: string): Promise<{}>;
     shippingTiersDelete(
         paramsOrFirst: { methodId: string, id: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { methodId: string, id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1017,23 +1017,23 @@ export class ShippingMethods {
      * @param {string} params.methodId - The shipping method these tiers belong to. A method this tenant does not have is a 404, never an empty page.
      * @param {string} params.id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingRateTier>}
      */
-    shippingTiersGet(params: { methodId: string, id: string }): Promise<Models.Error>;
+    shippingTiersGet(params: { methodId: string, id: string }): Promise<Models.ShippingRateTier>;
     /**
      * A rate tier is one row of a matrix method's price table: a `from_value` threshold and the price charged at or above it. The bound is INCLUSIVE and the winning tier is the one with the highest `from_value` at or below the measured value, so a measure of exactly 10 is priced by the tier at 10. What the number measures is the method's `matrix_basis` — kilograms in the market's own weight unit, items, money in the method's currency, or a named attribute — and the last tier has no upper bound. This reads one row of that table by id, under the method that owns it; a tier id belonging to another method is a 404 rather than somebody else's price. A tier id is not durable: PUT …/tiers and POST …/tiers/ladder replace the table by deleting and recreating it, so an id read before either of them names nothing afterwards. Where a caller wants a stable handle, address the row by what it MEANS — GET …/tiers?from_value=… — since (method_id, from_value) is unique.
      *
      * @param {string} methodId - The shipping method these tiers belong to. A method this tenant does not have is a 404, never an empty page.
      * @param {string} id - The row id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingRateTier>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingTiersGet(methodId: string, id: string): Promise<Models.Error>;
+    shippingTiersGet(methodId: string, id: string): Promise<Models.ShippingRateTier>;
     shippingTiersGet(
         paramsOrFirst: { methodId: string, id: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingRateTier> {
         let params: { methodId: string, id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1079,9 +1079,9 @@ export class ShippingMethods {
      * @param {number} params.position - Display order in the matrix editor (default 0; a bulk replace derives it from the array index). Pricing reads from_value, never this.
      * @param {number} params.price - What this tier costs, in the method's currency. Charged in full for the whole consignment — a matrix is a lookup table, not a rate per unit. Defaults to 0.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingRateTier>}
      */
-    shippingTiersUpdate(params: { methodId: string, id: string, fromValue?: number, position?: number, price?: number }): Promise<Models.Error>;
+    shippingTiersUpdate(params: { methodId: string, id: string, fromValue?: number, position?: number, price?: number }): Promise<Models.ShippingRateTier>;
     /**
      * A tier id is not stable across a bulk edit: `PUT …/tiers` and `POST …/tiers/ladder` replace the table by deleting and recreating it, so an id read before either of them is gone afterwards.
      *
@@ -1091,14 +1091,14 @@ export class ShippingMethods {
      * @param {number} position - Display order in the matrix editor (default 0; a bulk replace derives it from the array index). Pricing reads from_value, never this.
      * @param {number} price - What this tier costs, in the method's currency. Charged in full for the whole consignment — a matrix is a lookup table, not a rate per unit. Defaults to 0.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.ShippingRateTier>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingTiersUpdate(methodId: string, id: string, fromValue?: number, position?: number, price?: number): Promise<Models.Error>;
+    shippingTiersUpdate(methodId: string, id: string, fromValue?: number, position?: number, price?: number): Promise<Models.ShippingRateTier>;
     shippingTiersUpdate(
         paramsOrFirst: { methodId: string, id: string, fromValue?: number, position?: number, price?: number } | string,
         ...rest: [(string)?, (number)?, (number)?, (number)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.ShippingRateTier> {
         let params: { methodId: string, id: string, fromValue?: number, position?: number, price?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -1166,9 +1166,9 @@ export class ShippingMethods {
      * @param {number} params.weight - Total weight — measure for weight matrices. Read in weight_unit and converted to the unit the tiers are keyed in.
      * @param {string} params.weightUnit - The unit `weight` is expressed in, as a CODE into the tenant's own weight units (GET /shipping/weight-units). Omitted, it is the unit this market quotes in. A unit the tenant does not keep is a 400 — a mis-read weight prices the wrong bracket silently, and guessing is worse than refusing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    shippingRates(params?: { at?: string, attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, orderValueGross?: number, orderValueNet?: number, quantity?: number, weight?: number, weightUnit?: string }): Promise<Models.Error>;
+    shippingRates(params?: { at?: string, attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, orderValueGross?: number, orderValueNet?: number, quantity?: number, weight?: number, weightUnit?: string }): Promise<{}>;
     /**
      * The question a checkout asks, and the only route that answers a PRICE. Hand in the buyer context — the destination country, the order value, and whatever the matrix methods measure: a weight, a quantity or a named product attribute — and this comes back with the methods that may be offered and what each of them costs, free-above thresholds, country restrictions, the carrier's delivery promise and tax already applied. A method that does not apply is never an error: it moves to `excluded` with a reason. So is a tax rate that cannot be resolved — `tax.resolved: false` means the rates are UNKNOWN, not untaxed.
      *
@@ -1184,14 +1184,14 @@ export class ShippingMethods {
      * @param {number} weight - Total weight — measure for weight matrices. Read in weight_unit and converted to the unit the tiers are keyed in.
      * @param {string} weightUnit - The unit `weight` is expressed in, as a CODE into the tenant's own weight units (GET /shipping/weight-units). Omitted, it is the unit this market quotes in. A unit the tenant does not keep is a 400 — a mis-read weight prices the wrong bracket silently, and guessing is worse than refusing.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingRates(at?: string, attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, orderValueGross?: number, orderValueNet?: number, quantity?: number, weight?: number, weightUnit?: string): Promise<Models.Error>;
+    shippingRates(at?: string, attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, orderValueGross?: number, orderValueNet?: number, quantity?: number, weight?: number, weightUnit?: string): Promise<{}>;
     shippingRates(
         paramsOrFirst?: { at?: string, attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, orderValueGross?: number, orderValueNet?: number, quantity?: number, weight?: number, weightUnit?: string } | string,
         ...rest: [(object)?, (string)?, (string)?, (string)?, (number)?, (number)?, (number)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { at?: string, attributes?: object, country?: string, currency?: string, marketId?: string, orderValue?: number, orderValueGross?: number, orderValueNet?: number, quantity?: number, weight?: number, weightUnit?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

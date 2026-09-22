@@ -26,9 +26,9 @@ export class CartsIo {
      * @param {string} params.sessionKey - Guest owner of the cart this import creates — the storefront's own session key. Ignored when target_cart_id is sent.
      * @param {string} params.targetCartId - An existing ACTIVE cart to import into. The lines are added to it (merging identical product lines), unless the profile says `apply_mode: replace`, which clears it first. Without this a new cart is created and an owner is required.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.CartImport>}
      */
-    cartsImport(params?: { contactId?: string, csv?: string, name?: string, payload?: object, profileId?: string, sessionKey?: string, targetCartId?: string }): Promise<Models.Error>;
+    cartsImport(params?: { contactId?: string, csv?: string, name?: string, payload?: object, profileId?: string, sessionKey?: string, targetCartId?: string }): Promise<Models.CartImport>;
     /**
      * Reads a payload of lines into a cart — the bulk-order path a buyer pastes a spreadsheet into. With `target_cart_id` the lines land in that cart, which must be active, and the profile's `apply_mode` decides what happens to the lines already there: 'replace' clears them first, 'insert' and 'append' both add. Without a target a new cart is created, and an OWNER is then required — `contact_id` or `session_key` — because a cart with neither cannot exist. `profile_id` names an IMPORT profile; without one the payload is read ad hoc, as CSV when `csv` is present and as JSON otherwise. The lines fold into identical product lines exactly as carts.items.create does, so `imported_lines` counts the lines READ and the cart may have gained fewer rows than that. A payload that parses to no line at all is a 400 rather than a quiet no-op.
      *
@@ -40,14 +40,14 @@ export class CartsIo {
      * @param {string} sessionKey - Guest owner of the cart this import creates — the storefront's own session key. Ignored when target_cart_id is sent.
      * @param {string} targetCartId - An existing ACTIVE cart to import into. The lines are added to it (merging identical product lines), unless the profile says `apply_mode: replace`, which clears it first. Without this a new cart is created and an owner is required.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.CartImport>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    cartsImport(contactId?: string, csv?: string, name?: string, payload?: object, profileId?: string, sessionKey?: string, targetCartId?: string): Promise<Models.Error>;
+    cartsImport(contactId?: string, csv?: string, name?: string, payload?: object, profileId?: string, sessionKey?: string, targetCartId?: string): Promise<Models.CartImport>;
     cartsImport(
         paramsOrFirst?: { contactId?: string, csv?: string, name?: string, payload?: object, profileId?: string, sessionKey?: string, targetCartId?: string } | string,
         ...rest: [(string)?, (string)?, (object)?, (string)?, (string)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.CartImport> {
         let params: { contactId?: string, csv?: string, name?: string, payload?: object, profileId?: string, sessionKey?: string, targetCartId?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -126,9 +126,9 @@ export class CartsIo {
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    cartsIoProfilesList(params?: { id?: string, name?: string, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, applyMode?: CartIoApplyMode, isTemplate?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.Error>;
+    cartsIoProfilesList(params?: { id?: string, name?: string, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, applyMode?: CartIoApplyMode, isTemplate?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * The filters are what make this list usable: `?direction=export` is how a client offers the profiles that carts.export will accept, and `?is_template=true` separates the four bundled templates from what a merchant wrote. An unknown column is dropped rather than refused — `filter` echoes what was understood.
      *
@@ -145,14 +145,14 @@ export class CartsIo {
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    cartsIoProfilesList(id?: string, name?: string, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, applyMode?: CartIoApplyMode, isTemplate?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.Error>;
+    cartsIoProfilesList(id?: string, name?: string, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, applyMode?: CartIoApplyMode, isTemplate?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     cartsIoProfilesList(
         paramsOrFirst?: { id?: string, name?: string, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, applyMode?: CartIoApplyMode, isTemplate?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
         ...rest: [(string)?, (CartIoDirection)?, (CartIoEntity)?, (CartIoFormat)?, (CartIoApplyMode)?, (boolean)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id?: string, name?: string, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, applyMode?: CartIoApplyMode, isTemplate?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -251,9 +251,9 @@ export class CartsIo {
      * @param {object} params.mapping - Baseline-IO-compatible column mapping. An empty object (or null) is identity: the full canonical shape, every field under its own name.
      * @param {object} params.options - Free-form options carried with the profile. The four bundled templates put one human sentence under `description` and nothing else; no other key is read by this app, so anything a merchant needs alongside a profile can live here.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.IoProfile>}
      */
-    cartsIoProfilesCreate(params: { direction: CartIoDirection, name: string, applyMode?: CartIoApplyMode, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, options?: object }): Promise<Models.Error>;
+    cartsIoProfilesCreate(params: { direction: CartIoDirection, name: string, applyMode?: CartIoApplyMode, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, options?: object }): Promise<Models.IoProfile>;
     /**
      * Defines a new import/export profile. Two fields are required and have no default — `name`, which must be unique within the tenant, and `direction`, which fixes the one way this profile will ever run. Everything else defaults to the common case: whole carts, JSON, `apply_mode` 'insert', not a template. The uniqueness of the name is a unique index rather than a check in this app, so a reused name is a 409 no matter which route wrote the other one, including the four bundled templates. The shape is Baseline-IO-compatible, so a mapping written for another app's import reads the same way here. Creating a profile does not move any data: carts.export and carts.import are what execute one, and each refuses a profile pointed the wrong way.
      *
@@ -266,14 +266,14 @@ export class CartsIo {
      * @param {object} mapping - Baseline-IO-compatible column mapping. An empty object (or null) is identity: the full canonical shape, every field under its own name.
      * @param {object} options - Free-form options carried with the profile. The four bundled templates put one human sentence under `description` and nothing else; no other key is read by this app, so anything a merchant needs alongside a profile can live here.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.IoProfile>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    cartsIoProfilesCreate(direction: CartIoDirection, name: string, applyMode?: CartIoApplyMode, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, options?: object): Promise<Models.Error>;
+    cartsIoProfilesCreate(direction: CartIoDirection, name: string, applyMode?: CartIoApplyMode, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, options?: object): Promise<Models.IoProfile>;
     cartsIoProfilesCreate(
         paramsOrFirst: { direction: CartIoDirection, name: string, applyMode?: CartIoApplyMode, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, options?: object } | CartIoDirection,
         ...rest: [(string)?, (CartIoApplyMode)?, (CartIoEntity)?, (CartIoFormat)?, (boolean)?, (object)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.IoProfile> {
         let params: { direction: CartIoDirection, name: string, applyMode?: CartIoApplyMode, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, options?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('direction' in paramsOrFirst || 'name' in paramsOrFirst || 'applyMode' in paramsOrFirst || 'entity' in paramsOrFirst || 'format' in paramsOrFirst || 'isTemplate' in paramsOrFirst || 'mapping' in paramsOrFirst || 'options' in paramsOrFirst))) {
@@ -375,21 +375,21 @@ export class CartsIo {
      *
      * @param {string} params.id - The import/export profile, by its id — one of the ids `GET /carts/io/profiles` lists.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    cartsIoProfilesDelete(params: { id: string }): Promise<Models.Error>;
+    cartsIoProfilesDelete(params: { id: string }): Promise<{}>;
     /**
      * Removes a profile. Nothing in this app points at one — no cart and no line stores the profile it was imported through — so no foreign key holds the delete up and nothing is orphaned by it; what breaks is the caller still holding that `profile_id`, which answers 404 on its next run. Deleting one of the four bundled templates is not permanent either: the next carts.io.profiles.defaults, and the next install of this app, seeds it again by name, in the shape it ships with rather than the shape a merchant had edited it into.
      *
      * @param {string} id - The import/export profile, by its id — one of the ids `GET /carts/io/profiles` lists.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    cartsIoProfilesDelete(id: string): Promise<Models.Error>;
+    cartsIoProfilesDelete(id: string): Promise<{}>;
     cartsIoProfilesDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -426,21 +426,21 @@ export class CartsIo {
      *
      * @param {string} params.id - The import/export profile, by its id — one of the ids `GET /carts/io/profiles` lists.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.IoProfile>}
      */
-    cartsIoProfilesGet(params: { id: string }): Promise<Models.Error>;
+    cartsIoProfilesGet(params: { id: string }): Promise<Models.IoProfile>;
     /**
      * One profile by id — the id carts.export and carts.import name in `profile_id`. Read it to see what a run will do before starting one: `direction`, because a profile only ever runs the way it declares; `entity`, whole carts or bare lines; `format`, where json round-trips and csv carries line fields only; `mapping`, what the external columns are called; and `apply_mode`, which decides what an import does with the lines a target cart already has. `is_template` says whether this is one of the four the app ships with or something a merchant wrote. Reading a profile runs nothing and changes nothing.
      *
      * @param {string} id - The import/export profile, by its id — one of the ids `GET /carts/io/profiles` lists.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.IoProfile>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    cartsIoProfilesGet(id: string): Promise<Models.Error>;
+    cartsIoProfilesGet(id: string): Promise<Models.IoProfile>;
     cartsIoProfilesGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.IoProfile> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -485,9 +485,9 @@ export class CartsIo {
      * @param {string} params.name - What a merchant picks this profile by. Unique within the tenant — reusing a name is a 409.
      * @param {object} params.options - Free-form options carried with the profile. The four bundled templates put one human sentence under `description` and nothing else; no other key is read by this app, so anything a merchant needs alongside a profile can live here.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.IoProfile>}
      */
-    cartsIoProfilesUpdate(params: { id: string, applyMode?: CartIoApplyMode, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, name?: string, options?: object }): Promise<Models.Error>;
+    cartsIoProfilesUpdate(params: { id: string, applyMode?: CartIoApplyMode, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, name?: string, options?: object }): Promise<Models.IoProfile>;
     /**
      * Edits a profile in place, the four bundled templates included — seeding matches on name and never rewrites what it finds, so an edit made here survives every later call to carts.io.profiles.defaults and every reinstall of the app. The name stays unique in the tenant, so renaming onto another profile's name is a 409, and a payload carrying no updatable field answers 400 rather than storing nothing quietly. Runs that already happened are unaffected: a profile is read at the moment carts.export or carts.import executes and nothing is kept pointing back at it, so changing a mapping changes the next run and no earlier one.
      *
@@ -501,14 +501,14 @@ export class CartsIo {
      * @param {string} name - What a merchant picks this profile by. Unique within the tenant — reusing a name is a 409.
      * @param {object} options - Free-form options carried with the profile. The four bundled templates put one human sentence under `description` and nothing else; no other key is read by this app, so anything a merchant needs alongside a profile can live here.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.IoProfile>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    cartsIoProfilesUpdate(id: string, applyMode?: CartIoApplyMode, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, name?: string, options?: object): Promise<Models.Error>;
+    cartsIoProfilesUpdate(id: string, applyMode?: CartIoApplyMode, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, name?: string, options?: object): Promise<Models.IoProfile>;
     cartsIoProfilesUpdate(
         paramsOrFirst: { id: string, applyMode?: CartIoApplyMode, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, name?: string, options?: object } | string,
         ...rest: [(CartIoApplyMode)?, (CartIoDirection)?, (CartIoEntity)?, (CartIoFormat)?, (boolean)?, (object)?, (string)?, (object)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.IoProfile> {
         let params: { id: string, applyMode?: CartIoApplyMode, direction?: CartIoDirection, entity?: CartIoEntity, format?: CartIoFormat, isTemplate?: boolean, mapping?: object, name?: string, options?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -588,9 +588,9 @@ export class CartsIo {
      * @param {CartExportFormat} params.format - Format of an ad-hoc export, read only when no profile_id is sent. 'json' returns the whole `{cart, items}` document, 'csv' the lines alone. Default 'json'.
      * @param {string} params.profileId - The export profile to run — one of the ids `GET /carts/io/profiles?direction=export` lists. Omit it for an ad-hoc export in the canonical shape, which is what `format` is for.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.CartExport>}
      */
-    cartsExport(params: { id: string, format?: CartExportFormat, profileId?: string }): Promise<Models.Error>;
+    cartsExport(params: { id: string, format?: CartExportFormat, profileId?: string }): Promise<Models.CartExport>;
     /**
      * Renders one cart as a document somebody can take away. With `profile_id` the named EXPORT profile decides the format, the entity and the column names; handing it an import profile is a 400, because a profile only runs the way it declares. Without one the call runs ad hoc — JSON, unless `format: 'csv'` says otherwise. The JSON form is `{cart: {…}, items: […]}` and is exactly what carts.import takes back, so an export round-trips; the CSV form is the lines only, header first, and drops everything that lives on the cart rather than on a line. Nothing is stored and nothing about the cart changes — `filename` is a suggestion for a browser download, not a file this app keeps — and a cart of any status can be exported, including one already ordered.
      *
@@ -598,14 +598,14 @@ export class CartsIo {
      * @param {CartExportFormat} format - Format of an ad-hoc export, read only when no profile_id is sent. 'json' returns the whole `{cart, items}` document, 'csv' the lines alone. Default 'json'.
      * @param {string} profileId - The export profile to run — one of the ids `GET /carts/io/profiles?direction=export` lists. Omit it for an ad-hoc export in the canonical shape, which is what `format` is for.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.CartExport>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    cartsExport(id: string, format?: CartExportFormat, profileId?: string): Promise<Models.Error>;
+    cartsExport(id: string, format?: CartExportFormat, profileId?: string): Promise<Models.CartExport>;
     cartsExport(
         paramsOrFirst: { id: string, format?: CartExportFormat, profileId?: string } | string,
         ...rest: [(CartExportFormat)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.CartExport> {
         let params: { id: string, format?: CartExportFormat, profileId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

@@ -190,9 +190,9 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      * @param {AssetsSource} params.source - Where the bytes live: 'storage' is this platform's object store and needs `storage_asset_id`, 'external' is somebody else's host and needs `external_url`. The database enforces the pair, so neither half can be stored on its own.
      * @param {string} params.storageAssetId - The stable `ast_…` id of the storage object. It survives a rename or a folder move, which is exactly why it and not the delivery path is the identifier. Required when `source` is `storage`.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Assets>}
      */
-    productsAssetsCreate(params: { assetFamilyId: string, code: string, attributeValues?: object, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string }): Promise<Models.Error>;
+    productsAssetsCreate(params: { assetFamilyId: string, code: string, attributeValues?: object, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string }): Promise<Models.Assets>;
     /**
      * Creates one asset and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -227,14 +227,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      * @param {AssetsSource} source - Where the bytes live: 'storage' is this platform's object store and needs `storage_asset_id`, 'external' is somebody else's host and needs `external_url`. The database enforces the pair, so neither half can be stored on its own.
      * @param {string} storageAssetId - The stable `ast_…` id of the storage object. It survives a rename or a folder move, which is exactly why it and not the delivery path is the identifier. Required when `source` is `storage`.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Assets>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssetsCreate(assetFamilyId: string, code: string, attributeValues?: object, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string): Promise<Models.Error>;
+    productsAssetsCreate(assetFamilyId: string, code: string, attributeValues?: object, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string): Promise<Models.Assets>;
     productsAssetsCreate(
         paramsOrFirst: { assetFamilyId: string, code: string, attributeValues?: object, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string } | string,
         ...rest: [(string)?, (object)?, (string)?, (string)?, (AssetsSource)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Assets> {
         let params: { assetFamilyId: string, code: string, attributeValues?: object, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -312,9 +312,9 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      *
      * @param {string} params.id - The `assets` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/assets`. An id no asset of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      */
-    productsAssetsDelete(params: { id: string }): Promise<Models.Error>;
+    productsAssetsDelete(params: { id: string }): Promise<{}>;
     /**
      * Deletes one asset by id. It is a hard delete — the row is gone, and the answer is a confirmation rather than a result to branch on.
      * 
@@ -324,13 +324,13 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      *
      * @param {string} id - The `assets` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/assets`. An id no asset of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssetsDelete(id: string): Promise<Models.Error>;
+    productsAssetsDelete(id: string): Promise<{}>;
     productsAssetsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<{}> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -373,9 +373,9 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      *
      * @param {string} params.id - The `assets` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/assets`. An id no asset of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Assets>}
      */
-    productsAssetsGet(params: { id: string }): Promise<Models.Error>;
+    productsAssetsGet(params: { id: string }): Promise<Models.Assets>;
     /**
      * Reads one asset by its id — the whole row, every column, as it is stored.
      * 
@@ -387,13 +387,13 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      *
      * @param {string} id - The `assets` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/assets`. An id no asset of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Assets>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssetsGet(id: string): Promise<Models.Error>;
+    productsAssetsGet(id: string): Promise<Models.Assets>;
     productsAssetsGet(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Assets> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -460,9 +460,9 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      * @param {AssetsSource} params.source - Where the bytes live: 'storage' is this platform's object store and needs `storage_asset_id`, 'external' is somebody else's host and needs `external_url`. The database enforces the pair, so neither half can be stored on its own.
      * @param {string} params.storageAssetId - The stable `ast_…` id of the storage object. It survives a rename or a folder move, which is exactly why it and not the delivery path is the identifier. Required when `source` is `storage`.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Assets>}
      */
-    productsAssetsUpdate(params: { id: string, assetFamilyId?: string, attributeValues?: object, code?: string, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string }): Promise<Models.Error>;
+    productsAssetsUpdate(params: { id: string, assetFamilyId?: string, attributeValues?: object, code?: string, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string }): Promise<Models.Assets>;
     /**
      * Updates one asset by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -498,14 +498,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      * @param {AssetsSource} source - Where the bytes live: 'storage' is this platform's object store and needs `storage_asset_id`, 'external' is somebody else's host and needs `external_url`. The database enforces the pair, so neither half can be stored on its own.
      * @param {string} storageAssetId - The stable `ast_…` id of the storage object. It survives a rename or a folder move, which is exactly why it and not the delivery path is the identifier. Required when `source` is `storage`.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.Error>}
+     * @returns {Promise<Models.Assets>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssetsUpdate(id: string, assetFamilyId?: string, attributeValues?: object, code?: string, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string): Promise<Models.Error>;
+    productsAssetsUpdate(id: string, assetFamilyId?: string, attributeValues?: object, code?: string, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string): Promise<Models.Assets>;
     productsAssetsUpdate(
         paramsOrFirst: { id: string, assetFamilyId?: string, attributeValues?: object, code?: string, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string } | string,
         ...rest: [(string)?, (object)?, (string)?, (string)?, (string)?, (AssetsSource)?, (string)?]    
-    ): Promise<Models.Error> {
+    ): Promise<Models.Assets> {
         let params: { id: string, assetFamilyId?: string, attributeValues?: object, code?: string, deliveryPath?: string, externalUrl?: string, source?: AssetsSource, storageAssetId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
