@@ -28,6 +28,7 @@ const result = await prices.pricesListsCreate({
     organizationId: '', // optional
     priority: 1, // optional
     requiresAuth: true, // optional
+    segmentCode: 'wholesale', // optional
     status: PriceListStatus.Active, // optional
     taxBasis: PriceListTaxBasis.Net, // optional
     taxIncluded: true, // optional

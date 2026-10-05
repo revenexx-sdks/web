@@ -11,6 +11,8 @@ const inventoriesStock = new InventoriesStock(client);
 
 const result = await inventoriesStock.inventoriesStockUpdate({
     id: '',
+    availabilityCode: 'available', // optional
+    expectedAt: '2026-11-14', // optional
     locationId: '', // optional
     metadata: {
         "backorder": true

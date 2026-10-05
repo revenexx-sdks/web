@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Customers } from "@revenexx/sdk";
+import { Client, Customers, Factor } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -11,7 +11,7 @@ const customers = new Customers(client);
 
 const result = await customers.customersAuthMfaChallenge({
     userId: '',
-    factor: 'email' // optional
+    factor: Factor.Email // optional
 });
 
 console.log(result);

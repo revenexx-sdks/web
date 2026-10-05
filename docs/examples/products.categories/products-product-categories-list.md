@@ -1,5 +1,5 @@
 ```javascript
-import { Client, ProductsCategories, Source } from "@revenexx/sdk";
+import { Client, ProductsCategories, ProductsProductCategoriesListSource } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -17,8 +17,9 @@ const result = await productsCategories.productsProductCategoriesList({
     productId: '', // optional
     categoryId: '', // optional
     position: 1, // optional
-    source: Source.Manual, // optional
-    createdAt: '2026-01-01T12:00:00Z' // optional
+    source: ProductsProductCategoriesListSource.Manual, // optional
+    createdAt: '2026-01-01T12:00:00Z', // optional
+    updatedAt: '2026-01-01T12:00:00Z' // optional
 });
 
 console.log(result);

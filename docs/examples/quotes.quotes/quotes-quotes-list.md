@@ -19,7 +19,8 @@ const result = await quotesQuotes.quotesQuotesList({
     contactId: '', // optional
     ownerId: '', // optional
     cartId: '', // optional
-    number: '' // optional
+    number: '', // optional
+    externalId: 'ANG-20481' // optional
 });
 
 console.log(result);

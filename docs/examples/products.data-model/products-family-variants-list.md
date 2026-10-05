@@ -18,6 +18,11 @@ const result = await productsDataModel.productsFamilyVariantsList({
     code: 'clothing_by_colour_size', // optional
     labels: '{}', // optional
     axes: '[]', // optional
+    externalId: 'EC001234-VAR1', // optional
+    externalRefs: '{}', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: '{}', // optional
+    metadata: '{}', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z' // optional
 });

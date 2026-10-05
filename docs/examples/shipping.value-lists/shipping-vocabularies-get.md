@@ -10,7 +10,7 @@ const client = new Client()
 const shippingValueLists = new ShippingValueLists(client);
 
 const result = await shippingValueLists.shippingVocabulariesGet({
-    name: ShippingVocabulariesGetName.CarrierStatuses
+    name: ShippingVocabulariesGetName.Carrierstatuses
 });
 
 console.log(result);

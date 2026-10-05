@@ -2,6 +2,7 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+import { PagesSeedMode } from '../enums/pages-seed-mode';
 
 export class QuotesRanges {
     client: Client;
@@ -205,48 +206,69 @@ export class QuotesRanges {
     /**
      * Creates the `quote` range if it is missing. Idempotent, and what an integration calls first — the install event does not reliably fire on a marketplace install.
      *
+     * @param {object[]} params.library - The reusable blocks to create. Idempotent by label among live items. One without a label or without a block tree is reported under `skipped`.
      * @param {object[]} params.menus - The menus to create. One with no key or no label is reported under `skipped`.
+     * @param {PagesSeedMode} params.mode - `fill` (the default) adds what is missing and keeps everything that exists. `reset` replaces every section that is sent — pages, menus and library items go to the trash first, site settings are removed — and must be asked for by name.
      * @param {object[]} params.pages - The pages to create. One that has no `slug` or no `title` is reported under `skipped` rather than refused, so one bad entry never loses the rest.
+     * @param {object} params.settings - Site settings by key — the same values `PUT /pages/settings/site/{key}` stores. In fill only keys the tenant has not set are written; in reset every existing key is removed first. A key that is not a valid setting name, an empty value or one over 128 KiB is reported under `skipped`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.SeedResult>}
      */
-    quotesRangesDefaults(params?: { menus?: object[], pages?: object[] }): Promise<Models.SeedResult>;
+    quotesRangesDefaults(params?: { library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object }): Promise<Models.SeedResult>;
     /**
      * Creates the `quote` range if it is missing. Idempotent, and what an integration calls first — the install event does not reliably fire on a marketplace install.
      *
+     * @param {object[]} library - The reusable blocks to create. Idempotent by label among live items. One without a label or without a block tree is reported under `skipped`.
      * @param {object[]} menus - The menus to create. One with no key or no label is reported under `skipped`.
+     * @param {PagesSeedMode} mode - `fill` (the default) adds what is missing and keeps everything that exists. `reset` replaces every section that is sent — pages, menus and library items go to the trash first, site settings are removed — and must be asked for by name.
      * @param {object[]} pages - The pages to create. One that has no `slug` or no `title` is reported under `skipped` rather than refused, so one bad entry never loses the rest.
+     * @param {object} settings - Site settings by key — the same values `PUT /pages/settings/site/{key}` stores. In fill only keys the tenant has not set are written; in reset every existing key is removed first. A key that is not a valid setting name, an empty value or one over 128 KiB is reported under `skipped`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.SeedResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    quotesRangesDefaults(menus?: object[], pages?: object[]): Promise<Models.SeedResult>;
+    quotesRangesDefaults(library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object): Promise<Models.SeedResult>;
     quotesRangesDefaults(
-        paramsOrFirst?: { menus?: object[], pages?: object[] } | object[],
-        ...rest: [(object[])?]    
+        paramsOrFirst?: { library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object } | object[],
+        ...rest: [(object[])?, (PagesSeedMode)?, (object[])?, (object)?]    
     ): Promise<Models.SeedResult> {
-        let params: { menus?: object[], pages?: object[] };
+        let params: { library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object };
         
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('menus' in paramsOrFirst || 'pages' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { menus?: object[], pages?: object[] };
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('library' in paramsOrFirst || 'menus' in paramsOrFirst || 'mode' in paramsOrFirst || 'pages' in paramsOrFirst || 'settings' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object };
         } else {
             params = {
-                menus: paramsOrFirst as object[],
-                pages: rest[0] as object[]            
+                library: paramsOrFirst as object[],
+                menus: rest[0] as object[],
+                mode: rest[1] as PagesSeedMode,
+                pages: rest[2] as object[],
+                settings: rest[3] as object            
             };
         }
         
+        const library = params.library;
         const menus = params.menus;
+        const mode = params.mode;
         const pages = params.pages;
+        const settings = params.settings;
 
 
         const apiPath = '/v1/quotes/number-ranges/defaults';
         const apiPayload: Payload = {};
+        if (typeof library !== 'undefined') {
+            apiPayload['library'] = Client.toWireKeys(library, {"tree":{"wire":"tree","children":{"fragmentName":{"wire":"fragment_name","children":null},"propsI18n":{"wire":"props_i18n","children":null}}}});
+        }
         if (typeof menus !== 'undefined') {
             apiPayload['menus'] = menus;
         }
+        if (typeof mode !== 'undefined') {
+            apiPayload['mode'] = mode;
+        }
         if (typeof pages !== 'undefined') {
             apiPayload['pages'] = Client.toWireKeys(pages, {"blocks":{"wire":"blocks","children":{"fragmentName":{"wire":"fragment_name","children":null},"propsI18n":{"wire":"props_i18n","children":null}}}});
+        }
+        if (typeof settings !== 'undefined') {
+            apiPayload['settings'] = settings;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

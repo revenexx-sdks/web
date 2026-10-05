@@ -3,7 +3,7 @@ import { RevenexxException, Client, type Payload, UploadProgress } from '../clie
 import type { Models } from '../models';
 
 import { EntityType } from '../enums/entity-type';
-import { Kind } from '../enums/kind';
+import { ProductsListKind } from '../enums/products-list-kind';
 
 export class ProductsDataModel {
     client: Client;
@@ -426,10 +426,11 @@ export class ProductsDataModel {
      * @param {boolean} params.isQuantified - Exact match on `is_quantified`. Declares that a relation of this kind carries a quantity — a bundle, a bill of materials. `product_associations.quantity` is where that number goes, and it is meaningless without this flag.
      * @param {string} params.labels - Exact match on `labels`. What the relation is called in a product form, per language tag. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
+     * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAssociationTypesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, isTwoWay?: boolean, isQuantified?: boolean, labels?: string, createdAt?: string }): Promise<{}>;
+    productsAssociationTypesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, isTwoWay?: boolean, isQuantified?: boolean, labels?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * The KIND of relation two products can have — cross-sell, accessory, spare part, bill of materials. `is_two_way` declares the relation symmetric and `is_quantified` declares that it carries a quantity; both are declarations a client READS rather than behaviour this app performs — it stores one row per direction and never creates the mirror for you.
      * 
@@ -446,19 +447,20 @@ export class ProductsDataModel {
      * @param {boolean} isQuantified - Exact match on `is_quantified`. Declares that a relation of this kind carries a quantity — a bundle, a bill of materials. `product_associations.quantity` is where that number goes, and it is meaningless without this flag.
      * @param {string} labels - Exact match on `labels`. What the relation is called in a product form, per language tag. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
+     * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAssociationTypesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, isTwoWay?: boolean, isQuantified?: boolean, labels?: string, createdAt?: string): Promise<{}>;
+    productsAssociationTypesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, isTwoWay?: boolean, isQuantified?: boolean, labels?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsAssociationTypesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, isTwoWay?: boolean, isQuantified?: boolean, labels?: string, createdAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, isTwoWay?: boolean, isQuantified?: boolean, labels?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, isTwoWay?: boolean, isQuantified?: boolean, labels?: string, createdAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, isTwoWay?: boolean, isQuantified?: boolean, labels?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, isTwoWay?: boolean, isQuantified?: boolean, labels?: string, createdAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, isTwoWay?: boolean, isQuantified?: boolean, labels?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -469,7 +471,8 @@ export class ProductsDataModel {
                 isTwoWay: rest[4] as boolean,
                 isQuantified: rest[5] as boolean,
                 labels: rest[6] as string,
-                createdAt: rest[7] as string            
+                createdAt: rest[7] as string,
+                updatedAt: rest[8] as string            
             };
         }
         
@@ -482,6 +485,7 @@ export class ProductsDataModel {
         const isQuantified = params.isQuantified;
         const labels = params.labels;
         const createdAt = params.createdAt;
+        const updatedAt = params.updatedAt;
 
 
         const apiPath = '/v1/products/association_types';
@@ -512,6 +516,9 @@ export class ProductsDataModel {
         }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
+        }
+        if (typeof updatedAt !== 'undefined') {
+            apiPayload['updated_at'] = updatedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -831,11 +838,11 @@ export class ProductsDataModel {
      * @param {string} params.entityRef - Narrows entity_type to one reference entity / asset family, by its code.
      * @param {string} params.locale - Resolves labels and the storage path of every localizable field. Omitted: labels fall back to English and localizable fields report a null path.
      * @param {string} params.channel - Resolves the storage path of every scopable field, and narrows `required` to the channels the family requires the attribute in.
-     * @param {Kind} params.kind - The product kind the fields are for. 'model' locks the family's variant axes, which are set on the variants.
+     * @param {ProductsListKind} params.kind - The product kind the fields are for. 'model' locks the family's variant axes, which are set on the variants.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAttributeSchema(params?: { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind }): Promise<{}>;
+    productsAttributeSchema(params?: { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: ProductsListKind }): Promise<{}>;
     /**
      * Which fields does this family have — one ready-to-render list, not six joined tables. The catalog's SHAPE is tenant data: a product's properties are rows in `attributes`, grouped by `attribute_groups`, selected per family by `family_attributes`, with their permitted values in `attribute_options` and their variant axes in `family_variants`. Reading that shape used to mean five reads, a join, and a private `attributes.type` → input mapping in every client — and that mapping is the part that must live here, because the type list carries no CHECK by design and an integrator extends it. Answers one field list instead, ordered by group then by the family's own ordering. Without a family it answers every attribute declared for `entity_type`/`entity_ref` — the shape of a reference entity's records or an asset family, which have attributes but no family. Writes nothing.
      *
@@ -845,20 +852,20 @@ export class ProductsDataModel {
      * @param {string} entityRef - Narrows entity_type to one reference entity / asset family, by its code.
      * @param {string} locale - Resolves labels and the storage path of every localizable field. Omitted: labels fall back to English and localizable fields report a null path.
      * @param {string} channel - Resolves the storage path of every scopable field, and narrows `required` to the channels the family requires the attribute in.
-     * @param {Kind} kind - The product kind the fields are for. 'model' locks the family's variant axes, which are set on the variants.
+     * @param {ProductsListKind} kind - The product kind the fields are for. 'model' locks the family's variant axes, which are set on the variants.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeSchema(familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind): Promise<{}>;
+    productsAttributeSchema(familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: ProductsListKind): Promise<{}>;
     productsAttributeSchema(
-        paramsOrFirst?: { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind } | string,
-        ...rest: [(string)?, (EntityType)?, (string)?, (string)?, (string)?, (Kind)?]    
+        paramsOrFirst?: { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: ProductsListKind } | string,
+        ...rest: [(string)?, (EntityType)?, (string)?, (string)?, (string)?, (ProductsListKind)?]    
     ): Promise<{}> {
-        let params: { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind };
+        let params: { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: ProductsListKind };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: Kind };
+            params = (paramsOrFirst || {}) as { familyId?: string, familyCode?: string, entityType?: EntityType, entityRef?: string, locale?: string, channel?: string, kind?: ProductsListKind };
         } else {
             params = {
                 familyId: paramsOrFirst as string,
@@ -867,7 +874,7 @@ export class ProductsDataModel {
                 entityRef: rest[2] as string,
                 locale: rest[3] as string,
                 channel: rest[4] as string,
-                kind: rest[5] as Kind            
+                kind: rest[5] as ProductsListKind            
             };
         }
         
@@ -930,12 +937,17 @@ export class ProductsDataModel {
      * @param {string} params.code - Exact match on `code`. The group's stable identifier, and the value an `AttributeField` carries as its `group` — a SECTION of the product form, not a label. Unique per tenant and the key an import joins on.
      * @param {number} params.position - Exact match on `position`. Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
      * @param {string} params.labels - Exact match on `labels`. The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.externalId - Exact match on `external_id`. The key this section has in the system that owns the property model — the block a supplier's data sheet groups its fields under. Unique per tenant where set, and null for a section somebody created here to tidy up a form, which is most of them.
+     * @param {string} params.externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} params.sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.metadata - Exact match on `metadata`. Free-form jsonb this tenant owns — the extension point a section otherwise has none of. `source_data` is what the SOURCE said about the row; this is what you say about it. Nothing in this app reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAttributeGroupsList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, position?: number, labels?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    productsAttributeGroupsList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, position?: number, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * An attribute group is a SECTION of a product form — "Technical attributes", "Logistics" — and the thing every attribute is filed under. It carries a `position`, which is the order the sections appear in, and per-language `labels`, which is what an operator reads; the `code` is what an attribute joins on and is never shown. `GET /products/attribute-schema` already resolves a group's heading onto every field it returns, so these routes are for MANAGING the sections, not for rendering a form.
      * 
@@ -950,21 +962,26 @@ export class ProductsDataModel {
      * @param {string} code - Exact match on `code`. The group's stable identifier, and the value an `AttributeField` carries as its `group` — a SECTION of the product form, not a label. Unique per tenant and the key an import joins on.
      * @param {number} position - Exact match on `position`. Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
      * @param {string} labels - Exact match on `labels`. The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} externalId - Exact match on `external_id`. The key this section has in the system that owns the property model — the block a supplier's data sheet groups its fields under. Unique per tenant where set, and null for a section somebody created here to tidy up a form, which is most of them.
+     * @param {string} externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} metadata - Exact match on `metadata`. Free-form jsonb this tenant owns — the extension point a section otherwise has none of. `source_data` is what the SOURCE said about the row; this is what you say about it. Nothing in this app reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeGroupsList(limit?: number, offset?: number, order?: string, id?: string, code?: string, position?: number, labels?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
+    productsAttributeGroupsList(limit?: number, offset?: number, order?: string, id?: string, code?: string, position?: number, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsAttributeGroupsList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, position?: number, labels?: string, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, position?: number, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, position?: number, labels?: string, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, position?: number, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, position?: number, labels?: string, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, position?: number, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -974,8 +991,13 @@ export class ProductsDataModel {
                 code: rest[3] as string,
                 position: rest[4] as number,
                 labels: rest[5] as string,
-                createdAt: rest[6] as string,
-                updatedAt: rest[7] as string            
+                externalId: rest[6] as string,
+                externalRefs: rest[7] as string,
+                sourceSyncedAt: rest[8] as string,
+                sourceData: rest[9] as string,
+                metadata: rest[10] as string,
+                createdAt: rest[11] as string,
+                updatedAt: rest[12] as string            
             };
         }
         
@@ -986,6 +1008,11 @@ export class ProductsDataModel {
         const code = params.code;
         const position = params.position;
         const labels = params.labels;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
+        const sourceSyncedAt = params.sourceSyncedAt;
+        const sourceData = params.sourceData;
+        const metadata = params.metadata;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
 
@@ -1012,6 +1039,21 @@ export class ProductsDataModel {
         }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
+        }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
         }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
@@ -1040,12 +1082,17 @@ export class ProductsDataModel {
      * `code` is the only column the database refuses the row without; everything else has a default or is nullable. A second row with the same `code` answers 409.
      *
      * @param {string} params.code - The group's stable identifier, and the value an `AttributeField` carries as its `group` — a SECTION of the product form, not a label. Unique per tenant and the key an import joins on.
+     * @param {string} params.externalId - The key this section has in the system that owns the property model — the block a supplier's data sheet groups its fields under. Unique per tenant where set, and null for a section somebody created here to tidy up a form, which is most of them.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} params.labels - The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns — the extension point a section otherwise has none of. `source_data` is what the SOURCE said about the row; this is what you say about it. Nothing in this app reads it.
      * @param {number} params.position - Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AttributeGroups>}
      */
-    productsAttributeGroupsCreate(params: { code: string, labels?: object, position?: number }): Promise<Models.AttributeGroups>;
+    productsAttributeGroupsCreate(params: { code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.AttributeGroups>;
     /**
      * Creates one attribute group and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -1054,32 +1101,47 @@ export class ProductsDataModel {
      * `code` is the only column the database refuses the row without; everything else has a default or is nullable. A second row with the same `code` answers 409.
      *
      * @param {string} code - The group's stable identifier, and the value an `AttributeField` carries as its `group` — a SECTION of the product form, not a label. Unique per tenant and the key an import joins on.
+     * @param {string} externalId - The key this section has in the system that owns the property model — the block a supplier's data sheet groups its fields under. Unique per tenant where set, and null for a section somebody created here to tidy up a form, which is most of them.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} labels - The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English.
+     * @param {object} metadata - Free-form jsonb this tenant owns — the extension point a section otherwise has none of. `source_data` is what the SOURCE said about the row; this is what you say about it. Nothing in this app reads it.
      * @param {number} position - Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AttributeGroups>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeGroupsCreate(code: string, labels?: object, position?: number): Promise<Models.AttributeGroups>;
+    productsAttributeGroupsCreate(code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string): Promise<Models.AttributeGroups>;
     productsAttributeGroupsCreate(
-        paramsOrFirst: { code: string, labels?: object, position?: number } | string,
-        ...rest: [(object)?, (number)?]    
+        paramsOrFirst: { code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (object)?, (object)?, (object)?, (number)?, (object)?, (string)?]    
     ): Promise<Models.AttributeGroups> {
-        let params: { code: string, labels?: object, position?: number };
+        let params: { code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, labels?: object, position?: number };
+            params = (paramsOrFirst || {}) as { code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
-                labels: rest[0] as object,
-                position: rest[1] as number            
+                externalId: rest[0] as string,
+                externalRefs: rest[1] as object,
+                labels: rest[2] as object,
+                metadata: rest[3] as object,
+                position: rest[4] as number,
+                sourceData: rest[5] as object,
+                sourceSyncedAt: rest[6] as string            
             };
         }
         
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const labels = params.labels;
+        const metadata = params.metadata;
         const position = params.position;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof code === 'undefined') {
             throw new RevenexxException('Missing required parameter: "code"');
@@ -1090,11 +1152,26 @@ export class ProductsDataModel {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
         }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1241,12 +1318,17 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `attribute_groups` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_groups`. An id no attribute group of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} params.code - The group's stable identifier, and the value an `AttributeField` carries as its `group` — a SECTION of the product form, not a label. Unique per tenant and the key an import joins on.
+     * @param {string} params.externalId - The key this section has in the system that owns the property model — the block a supplier's data sheet groups its fields under. Unique per tenant where set, and null for a section somebody created here to tidy up a form, which is most of them.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} params.labels - The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns — the extension point a section otherwise has none of. `source_data` is what the SOURCE said about the row; this is what you say about it. Nothing in this app reads it.
      * @param {number} params.position - Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AttributeGroups>}
      */
-    productsAttributeGroupsUpdate(params: { id: string, code?: string, labels?: object, position?: number }): Promise<Models.AttributeGroups>;
+    productsAttributeGroupsUpdate(params: { id: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.AttributeGroups>;
     /**
      * Updates one attribute group by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -1256,34 +1338,49 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `attribute_groups` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_groups`. An id no attribute group of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} code - The group's stable identifier, and the value an `AttributeField` carries as its `group` — a SECTION of the product form, not a label. Unique per tenant and the key an import joins on.
+     * @param {string} externalId - The key this section has in the system that owns the property model — the block a supplier's data sheet groups its fields under. Unique per tenant where set, and null for a section somebody created here to tidy up a form, which is most of them.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} labels - The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English.
+     * @param {object} metadata - Free-form jsonb this tenant owns — the extension point a section otherwise has none of. `source_data` is what the SOURCE said about the row; this is what you say about it. Nothing in this app reads it.
      * @param {number} position - Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AttributeGroups>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeGroupsUpdate(id: string, code?: string, labels?: object, position?: number): Promise<Models.AttributeGroups>;
+    productsAttributeGroupsUpdate(id: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string): Promise<Models.AttributeGroups>;
     productsAttributeGroupsUpdate(
-        paramsOrFirst: { id: string, code?: string, labels?: object, position?: number } | string,
-        ...rest: [(string)?, (object)?, (number)?]    
+        paramsOrFirst: { id: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (string)?, (object)?, (object)?, (object)?, (number)?, (object)?, (string)?]    
     ): Promise<Models.AttributeGroups> {
-        let params: { id: string, code?: string, labels?: object, position?: number };
+        let params: { id: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, labels?: object, position?: number };
+            params = (paramsOrFirst || {}) as { id: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 code: rest[0] as string,
-                labels: rest[1] as object,
-                position: rest[2] as number            
+                externalId: rest[1] as string,
+                externalRefs: rest[2] as object,
+                labels: rest[3] as object,
+                metadata: rest[4] as object,
+                position: rest[5] as number,
+                sourceData: rest[6] as object,
+                sourceSyncedAt: rest[7] as string            
             };
         }
         
         const id = params.id;
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const labels = params.labels;
+        const metadata = params.metadata;
         const position = params.position;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
@@ -1294,11 +1391,26 @@ export class ProductsDataModel {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
         }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1330,11 +1442,17 @@ export class ProductsDataModel {
      * @param {number} params.position - Exact match on `position`. Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
      * @param {string} params.swatch - Exact match on `swatch`. A colour or texture chip for the picker. Null for an option that is not visual. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.labels - Exact match on `labels`. What the option is called, per language tag. Two tenants may label the same code differently; only the code is ever written into a record. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.externalId - Exact match on `external_id`. The key this option has in the system that owns the value list — an ETIM value, an eCl@ss value key. Unique per tenant where set. `code` is what a product stores when the option is picked; this is what the source calls the same choice, and holding the two apart is what stops a re-import founding a second option that means the same thing.
+     * @param {string} params.externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} params.sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.metadata - Exact match on `metadata`. Free-form jsonb this tenant owns, for whatever an integration has to remember about an option beyond its code, its label and its swatch. Nothing in this app reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
+     * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAttributeOptionsList(params?: { limit?: number, offset?: number, order?: string, id?: string, attributeId?: string, code?: string, position?: number, swatch?: string, labels?: string, createdAt?: string }): Promise<{}>;
+    productsAttributeOptionsList(params?: { limit?: number, offset?: number, order?: string, id?: string, attributeId?: string, code?: string, position?: number, swatch?: string, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * The permitted values of one select or multi-select attribute. A record stores the option's CODE and never its label, so renaming an option in every language leaves every product that picked it untouched, and `position` is the order it appears in the dropdown. `GET /products/attribute-schema` republishes these as a field's `options`, already resolved for a locale.
      * 
@@ -1351,20 +1469,26 @@ export class ProductsDataModel {
      * @param {number} position - Exact match on `position`. Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
      * @param {string} swatch - Exact match on `swatch`. A colour or texture chip for the picker. Null for an option that is not visual. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} labels - Exact match on `labels`. What the option is called, per language tag. Two tenants may label the same code differently; only the code is ever written into a record. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} externalId - Exact match on `external_id`. The key this option has in the system that owns the value list — an ETIM value, an eCl@ss value key. Unique per tenant where set. `code` is what a product stores when the option is picked; this is what the source calls the same choice, and holding the two apart is what stops a re-import founding a second option that means the same thing.
+     * @param {string} externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} metadata - Exact match on `metadata`. Free-form jsonb this tenant owns, for whatever an integration has to remember about an option beyond its code, its label and its swatch. Nothing in this app reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
+     * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeOptionsList(limit?: number, offset?: number, order?: string, id?: string, attributeId?: string, code?: string, position?: number, swatch?: string, labels?: string, createdAt?: string): Promise<{}>;
+    productsAttributeOptionsList(limit?: number, offset?: number, order?: string, id?: string, attributeId?: string, code?: string, position?: number, swatch?: string, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsAttributeOptionsList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, attributeId?: string, code?: string, position?: number, swatch?: string, labels?: string, createdAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, attributeId?: string, code?: string, position?: number, swatch?: string, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, attributeId?: string, code?: string, position?: number, swatch?: string, labels?: string, createdAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, attributeId?: string, code?: string, position?: number, swatch?: string, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, attributeId?: string, code?: string, position?: number, swatch?: string, labels?: string, createdAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, attributeId?: string, code?: string, position?: number, swatch?: string, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -1376,7 +1500,13 @@ export class ProductsDataModel {
                 position: rest[5] as number,
                 swatch: rest[6] as string,
                 labels: rest[7] as string,
-                createdAt: rest[8] as string            
+                externalId: rest[8] as string,
+                externalRefs: rest[9] as string,
+                sourceSyncedAt: rest[10] as string,
+                sourceData: rest[11] as string,
+                metadata: rest[12] as string,
+                createdAt: rest[13] as string,
+                updatedAt: rest[14] as string            
             };
         }
         
@@ -1389,7 +1519,13 @@ export class ProductsDataModel {
         const position = params.position;
         const swatch = params.swatch;
         const labels = params.labels;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
+        const sourceSyncedAt = params.sourceSyncedAt;
+        const sourceData = params.sourceData;
+        const metadata = params.metadata;
         const createdAt = params.createdAt;
+        const updatedAt = params.updatedAt;
 
 
         const apiPath = '/v1/products/attribute_options';
@@ -1421,8 +1557,26 @@ export class ProductsDataModel {
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
+        }
+        if (typeof updatedAt !== 'undefined') {
+            apiPayload['updated_at'] = updatedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1446,13 +1600,18 @@ export class ProductsDataModel {
      *
      * @param {string} params.attributeId - The select / multi-select attribute these are the permitted values of. Deleting the attribute deletes its options with it.
      * @param {string} params.code - The value actually STORED in a record's `attribute_values` when this option is picked — never the label. Unique within the attribute.
+     * @param {string} params.externalId - The key this option has in the system that owns the value list — an ETIM value, an eCl@ss value key. Unique per tenant where set. `code` is what a product stores when the option is picked; this is what the source calls the same choice, and holding the two apart is what stops a re-import founding a second option that means the same thing.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} params.labels - What the option is called, per language tag. Two tenants may label the same code differently; only the code is ever written into a record.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns, for whatever an integration has to remember about an option beyond its code, its label and its swatch. Nothing in this app reads it.
      * @param {number} params.position - Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {object} params.swatch - A colour or texture chip for the picker. Null for an option that is not visual.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AttributeOptions>}
      */
-    productsAttributeOptionsCreate(params: { attributeId: string, code: string, labels?: object, position?: number, swatch?: object }): Promise<Models.AttributeOptions>;
+    productsAttributeOptionsCreate(params: { attributeId: string, code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string, swatch?: object }): Promise<Models.AttributeOptions>;
     /**
      * Creates one attribute option and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -1462,36 +1621,51 @@ export class ProductsDataModel {
      *
      * @param {string} attributeId - The select / multi-select attribute these are the permitted values of. Deleting the attribute deletes its options with it.
      * @param {string} code - The value actually STORED in a record's `attribute_values` when this option is picked — never the label. Unique within the attribute.
+     * @param {string} externalId - The key this option has in the system that owns the value list — an ETIM value, an eCl@ss value key. Unique per tenant where set. `code` is what a product stores when the option is picked; this is what the source calls the same choice, and holding the two apart is what stops a re-import founding a second option that means the same thing.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} labels - What the option is called, per language tag. Two tenants may label the same code differently; only the code is ever written into a record.
+     * @param {object} metadata - Free-form jsonb this tenant owns, for whatever an integration has to remember about an option beyond its code, its label and its swatch. Nothing in this app reads it.
      * @param {number} position - Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {object} swatch - A colour or texture chip for the picker. Null for an option that is not visual.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AttributeOptions>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeOptionsCreate(attributeId: string, code: string, labels?: object, position?: number, swatch?: object): Promise<Models.AttributeOptions>;
+    productsAttributeOptionsCreate(attributeId: string, code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string, swatch?: object): Promise<Models.AttributeOptions>;
     productsAttributeOptionsCreate(
-        paramsOrFirst: { attributeId: string, code: string, labels?: object, position?: number, swatch?: object } | string,
-        ...rest: [(string)?, (object)?, (number)?, (object)?]    
+        paramsOrFirst: { attributeId: string, code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string, swatch?: object } | string,
+        ...rest: [(string)?, (string)?, (object)?, (object)?, (object)?, (number)?, (object)?, (string)?, (object)?]    
     ): Promise<Models.AttributeOptions> {
-        let params: { attributeId: string, code: string, labels?: object, position?: number, swatch?: object };
+        let params: { attributeId: string, code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string, swatch?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { attributeId: string, code: string, labels?: object, position?: number, swatch?: object };
+            params = (paramsOrFirst || {}) as { attributeId: string, code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string, swatch?: object };
         } else {
             params = {
                 attributeId: paramsOrFirst as string,
                 code: rest[0] as string,
-                labels: rest[1] as object,
-                position: rest[2] as number,
-                swatch: rest[3] as object            
+                externalId: rest[1] as string,
+                externalRefs: rest[2] as object,
+                labels: rest[3] as object,
+                metadata: rest[4] as object,
+                position: rest[5] as number,
+                sourceData: rest[6] as object,
+                sourceSyncedAt: rest[7] as string,
+                swatch: rest[8] as object            
             };
         }
         
         const attributeId = params.attributeId;
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const labels = params.labels;
+        const metadata = params.metadata;
         const position = params.position;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
         const swatch = params.swatch;
 
         if (typeof attributeId === 'undefined') {
@@ -1509,11 +1683,26 @@ export class ProductsDataModel {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
         }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         if (typeof swatch !== 'undefined') {
             apiPayload['swatch'] = swatch;
@@ -1664,13 +1853,18 @@ export class ProductsDataModel {
      * @param {string} params.id - The `attribute_options` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_options`. An id no attribute option of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} params.attributeId - The select / multi-select attribute these are the permitted values of. Deleting the attribute deletes its options with it.
      * @param {string} params.code - The value actually STORED in a record's `attribute_values` when this option is picked — never the label. Unique within the attribute.
+     * @param {string} params.externalId - The key this option has in the system that owns the value list — an ETIM value, an eCl@ss value key. Unique per tenant where set. `code` is what a product stores when the option is picked; this is what the source calls the same choice, and holding the two apart is what stops a re-import founding a second option that means the same thing.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} params.labels - What the option is called, per language tag. Two tenants may label the same code differently; only the code is ever written into a record.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns, for whatever an integration has to remember about an option beyond its code, its label and its swatch. Nothing in this app reads it.
      * @param {number} params.position - Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {object} params.swatch - A colour or texture chip for the picker. Null for an option that is not visual.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AttributeOptions>}
      */
-    productsAttributeOptionsUpdate(params: { id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object }): Promise<Models.AttributeOptions>;
+    productsAttributeOptionsUpdate(params: { id: string, attributeId?: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string, swatch?: object }): Promise<Models.AttributeOptions>;
     /**
      * Updates one attribute option by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -1681,38 +1875,53 @@ export class ProductsDataModel {
      * @param {string} id - The `attribute_options` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/attribute_options`. An id no attribute option of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} attributeId - The select / multi-select attribute these are the permitted values of. Deleting the attribute deletes its options with it.
      * @param {string} code - The value actually STORED in a record's `attribute_values` when this option is picked — never the label. Unique within the attribute.
+     * @param {string} externalId - The key this option has in the system that owns the value list — an ETIM value, an eCl@ss value key. Unique per tenant where set. `code` is what a product stores when the option is picked; this is what the source calls the same choice, and holding the two apart is what stops a re-import founding a second option that means the same thing.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} labels - What the option is called, per language tag. Two tenants may label the same code differently; only the code is ever written into a record.
+     * @param {object} metadata - Free-form jsonb this tenant owns, for whatever an integration has to remember about an option beyond its code, its label and its swatch. Nothing in this app reads it.
      * @param {number} position - Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {object} swatch - A colour or texture chip for the picker. Null for an option that is not visual.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AttributeOptions>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributeOptionsUpdate(id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object): Promise<Models.AttributeOptions>;
+    productsAttributeOptionsUpdate(id: string, attributeId?: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string, swatch?: object): Promise<Models.AttributeOptions>;
     productsAttributeOptionsUpdate(
-        paramsOrFirst: { id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object } | string,
-        ...rest: [(string)?, (string)?, (object)?, (number)?, (object)?]    
+        paramsOrFirst: { id: string, attributeId?: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string, swatch?: object } | string,
+        ...rest: [(string)?, (string)?, (string)?, (object)?, (object)?, (object)?, (number)?, (object)?, (string)?, (object)?]    
     ): Promise<Models.AttributeOptions> {
-        let params: { id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object };
+        let params: { id: string, attributeId?: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string, swatch?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, attributeId?: string, code?: string, labels?: object, position?: number, swatch?: object };
+            params = (paramsOrFirst || {}) as { id: string, attributeId?: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, position?: number, sourceData?: object, sourceSyncedAt?: string, swatch?: object };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 attributeId: rest[0] as string,
                 code: rest[1] as string,
-                labels: rest[2] as object,
-                position: rest[3] as number,
-                swatch: rest[4] as object            
+                externalId: rest[2] as string,
+                externalRefs: rest[3] as object,
+                labels: rest[4] as object,
+                metadata: rest[5] as object,
+                position: rest[6] as number,
+                sourceData: rest[7] as object,
+                sourceSyncedAt: rest[8] as string,
+                swatch: rest[9] as object            
             };
         }
         
         const id = params.id;
         const attributeId = params.attributeId;
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const labels = params.labels;
+        const metadata = params.metadata;
         const position = params.position;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
         const swatch = params.swatch;
 
         if (typeof id === 'undefined') {
@@ -1727,11 +1936,26 @@ export class ProductsDataModel {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
         }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         if (typeof swatch !== 'undefined') {
             apiPayload['swatch'] = swatch;
@@ -1775,12 +1999,17 @@ export class ProductsDataModel {
      * @param {string} params.config - Exact match on `config`. Type-specific settings; which keys apply depends on `type`. The ones this app reads: `units` (the unit list a measure attribute offers) and `reference_entity` (which entity a reference attribute draws its options from). The ones the cockpit edits alongside them: `unit`, `metric_family`, `decimals_allowed`, `asset_family`, `max_file_size`, `allowed_extensions`. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.labels - Exact match on `labels`. The field label a person sees, keyed by language tag. Resolution falls back to English and then to the code, so an untranslated attribute is still renderable. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {number} params.position - Exact match on `position`. Where the field sits inside its group. A family may override it for its own form through `family_attributes.position`; this is the attribute's default.
+     * @param {string} params.externalId - Exact match on `external_id`. The key this attribute has in the system that owns the property model — an ETIM feature, an eCl@ss property, a column of a supplier's data sheet. Unique per tenant where set. It is the half that survives a rename of `code`, so an import maps a source property onto an attribute once rather than on every run.
+     * @param {string} params.externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} params.sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.metadata - Exact match on `metadata`. Free-form jsonb this tenant owns. `validation` and `config` are read by this app and mean something to it; this is the pocket for everything else an integration has to remember about an attribute — a mapping note, an owning team, an export flag. Nothing here reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsAttributesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, entityType?: string, entityRef?: string, type?: string, groupId?: string, localizable?: boolean, scopable?: boolean, isUnique?: boolean, isFilterable?: boolean, usableInGrid?: boolean, validation?: string, config?: string, labels?: string, position?: number, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    productsAttributesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, entityType?: string, entityRef?: string, type?: string, groupId?: string, localizable?: boolean, scopable?: boolean, isUnique?: boolean, isFilterable?: boolean, usableInGrid?: boolean, validation?: string, config?: string, labels?: string, position?: number, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * An attribute is one property a record can carry, and in an attribute-driven PIM it is a ROW rather than a column: giving the catalog a "net weight" is a create here, not a migration. Its own flags decide everything downstream — `localizable` and `scopable` pick which of the four `attribute_values` buckets its values are written to, `type` picks the editor that renders it, `usable_in_grid` and `is_filterable` are what the product grid reads. `entity_type`/`entity_ref` say which kind of record carries it: a product, one reference entity's records, one asset family, or a category.
      * 
@@ -1806,21 +2035,26 @@ export class ProductsDataModel {
      * @param {string} config - Exact match on `config`. Type-specific settings; which keys apply depends on `type`. The ones this app reads: `units` (the unit list a measure attribute offers) and `reference_entity` (which entity a reference attribute draws its options from). The ones the cockpit edits alongside them: `unit`, `metric_family`, `decimals_allowed`, `asset_family`, `max_file_size`, `allowed_extensions`. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} labels - Exact match on `labels`. The field label a person sees, keyed by language tag. Resolution falls back to English and then to the code, so an untranslated attribute is still renderable. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {number} position - Exact match on `position`. Where the field sits inside its group. A family may override it for its own form through `family_attributes.position`; this is the attribute's default.
+     * @param {string} externalId - Exact match on `external_id`. The key this attribute has in the system that owns the property model — an ETIM feature, an eCl@ss property, a column of a supplier's data sheet. Unique per tenant where set. It is the half that survives a rename of `code`, so an import maps a source property onto an attribute once rather than on every run.
+     * @param {string} externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} metadata - Exact match on `metadata`. Free-form jsonb this tenant owns. `validation` and `config` are read by this app and mean something to it; this is the pocket for everything else an integration has to remember about an attribute — a mapping note, an owning team, an export flag. Nothing here reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, entityType?: string, entityRef?: string, type?: string, groupId?: string, localizable?: boolean, scopable?: boolean, isUnique?: boolean, isFilterable?: boolean, usableInGrid?: boolean, validation?: string, config?: string, labels?: string, position?: number, createdAt?: string, updatedAt?: string): Promise<{}>;
+    productsAttributesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, entityType?: string, entityRef?: string, type?: string, groupId?: string, localizable?: boolean, scopable?: boolean, isUnique?: boolean, isFilterable?: boolean, usableInGrid?: boolean, validation?: string, config?: string, labels?: string, position?: number, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsAttributesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, entityType?: string, entityRef?: string, type?: string, groupId?: string, localizable?: boolean, scopable?: boolean, isUnique?: boolean, isFilterable?: boolean, usableInGrid?: boolean, validation?: string, config?: string, labels?: string, position?: number, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (boolean)?, (boolean)?, (boolean)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, entityType?: string, entityRef?: string, type?: string, groupId?: string, localizable?: boolean, scopable?: boolean, isUnique?: boolean, isFilterable?: boolean, usableInGrid?: boolean, validation?: string, config?: string, labels?: string, position?: number, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (boolean)?, (boolean)?, (boolean)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, entityType?: string, entityRef?: string, type?: string, groupId?: string, localizable?: boolean, scopable?: boolean, isUnique?: boolean, isFilterable?: boolean, usableInGrid?: boolean, validation?: string, config?: string, labels?: string, position?: number, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, entityType?: string, entityRef?: string, type?: string, groupId?: string, localizable?: boolean, scopable?: boolean, isUnique?: boolean, isFilterable?: boolean, usableInGrid?: boolean, validation?: string, config?: string, labels?: string, position?: number, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, entityType?: string, entityRef?: string, type?: string, groupId?: string, localizable?: boolean, scopable?: boolean, isUnique?: boolean, isFilterable?: boolean, usableInGrid?: boolean, validation?: string, config?: string, labels?: string, position?: number, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, entityType?: string, entityRef?: string, type?: string, groupId?: string, localizable?: boolean, scopable?: boolean, isUnique?: boolean, isFilterable?: boolean, usableInGrid?: boolean, validation?: string, config?: string, labels?: string, position?: number, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -1841,8 +2075,13 @@ export class ProductsDataModel {
                 config: rest[14] as string,
                 labels: rest[15] as string,
                 position: rest[16] as number,
-                createdAt: rest[17] as string,
-                updatedAt: rest[18] as string            
+                externalId: rest[17] as string,
+                externalRefs: rest[18] as string,
+                sourceSyncedAt: rest[19] as string,
+                sourceData: rest[20] as string,
+                metadata: rest[21] as string,
+                createdAt: rest[22] as string,
+                updatedAt: rest[23] as string            
             };
         }
         
@@ -1864,6 +2103,11 @@ export class ProductsDataModel {
         const config = params.config;
         const labels = params.labels;
         const position = params.position;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
+        const sourceSyncedAt = params.sourceSyncedAt;
+        const sourceData = params.sourceData;
+        const metadata = params.metadata;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
 
@@ -1924,6 +2168,21 @@ export class ProductsDataModel {
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
         }
@@ -1955,19 +2214,24 @@ export class ProductsDataModel {
      * @param {object} params.config - Type-specific settings; which keys apply depends on `type`. The ones this app reads: `units` (the unit list a measure attribute offers) and `reference_entity` (which entity a reference attribute draws its options from). The ones the cockpit edits alongside them: `unit`, `metric_family`, `decimals_allowed`, `asset_family`, `max_file_size`, `allowed_extensions`.
      * @param {string} params.entityRef - Narrows `entity_type` to ONE reference entity or asset family, by its code — the attributes of `brand` rather than of every reference entity. Null for a plain product attribute.
      * @param {string} params.entityType - Which kind of record carries this attribute: 'product' for the catalog itself, 'reference_entity', 'asset' or 'category' for the other things in this app that have attributes. Deliberately carries no CHECK — a tenant that models a fifth kind is served on it too.
+     * @param {string} params.externalId - The key this attribute has in the system that owns the property model — an ETIM feature, an eCl@ss property, a column of a supplier's data sheet. Unique per tenant where set. It is the half that survives a rename of `code`, so an import maps a source property onto an attribute once rather than on every run.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} params.groupId - The `attribute_groups` row this attribute is filed under — the form section it appears in. Null is ungrouped, and an ungrouped field is rendered after every section that has a name.
      * @param {boolean} params.isFilterable - Offer this attribute as a filter in a product list. `GET /products/grid` reports exactly these attributes in its `filters` array, and nothing else reads the flag.
      * @param {boolean} params.isUnique - Declares that the value identifies the product — an EAN, a manufacturer part number. It is metadata a form and an importer read: no database index enforces it, because the value lives inside jsonb rather than in a column.
      * @param {object} params.labels - The field label a person sees, keyed by language tag. Resolution falls back to English and then to the code, so an untranslated attribute is still renderable.
      * @param {boolean} params.localizable - True → the record holds ONE VALUE PER LOCALE, under `attribute_values.locale_specific.<locale>.<code>`. False → one value, under `attribute_values.common.<code>`. This flag is what decides where a write goes.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns. `validation` and `config` are read by this app and mean something to it; this is the pocket for everything else an integration has to remember about an attribute — a mapping note, an owning team, an export flag. Nothing here reads it.
      * @param {number} params.position - Where the field sits inside its group. A family may override it for its own form through `family_attributes.position`; this is the attribute's default.
      * @param {boolean} params.scopable - True → one value PER CHANNEL, under `attribute_values.channel_specific.<channel>.<code>`. Set together with `localizable` it means one value per channel AND locale, in `channel_locale_specific`.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {boolean} params.usableInGrid - Show this attribute as a COLUMN in the product grid. `GET /products/grid` returns a column definition and a per-row value for exactly these.
      * @param {object} params.validation - Limits a value has to satisfy, as a flat object. The seven keys a client can act on are `min`, `max`, `min_length`, `max_length`, `pattern`, `min_items`, `max_items` — `GET /products/attribute-schema` republishes those and leaves anything else the tenant stored untouched.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Attributes>}
      */
-    productsAttributesCreate(params: { code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object }): Promise<Models.Attributes>;
+    productsAttributesCreate(params: { code: string, type: string, config?: object, entityRef?: string, entityType?: string, externalId?: string, externalRefs?: object, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, metadata?: object, position?: number, scopable?: boolean, sourceData?: object, sourceSyncedAt?: string, usableInGrid?: boolean, validation?: object }): Promise<Models.Attributes>;
     /**
      * Creates one attribute and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -1980,28 +2244,33 @@ export class ProductsDataModel {
      * @param {object} config - Type-specific settings; which keys apply depends on `type`. The ones this app reads: `units` (the unit list a measure attribute offers) and `reference_entity` (which entity a reference attribute draws its options from). The ones the cockpit edits alongside them: `unit`, `metric_family`, `decimals_allowed`, `asset_family`, `max_file_size`, `allowed_extensions`.
      * @param {string} entityRef - Narrows `entity_type` to ONE reference entity or asset family, by its code — the attributes of `brand` rather than of every reference entity. Null for a plain product attribute.
      * @param {string} entityType - Which kind of record carries this attribute: 'product' for the catalog itself, 'reference_entity', 'asset' or 'category' for the other things in this app that have attributes. Deliberately carries no CHECK — a tenant that models a fifth kind is served on it too.
+     * @param {string} externalId - The key this attribute has in the system that owns the property model — an ETIM feature, an eCl@ss property, a column of a supplier's data sheet. Unique per tenant where set. It is the half that survives a rename of `code`, so an import maps a source property onto an attribute once rather than on every run.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} groupId - The `attribute_groups` row this attribute is filed under — the form section it appears in. Null is ungrouped, and an ungrouped field is rendered after every section that has a name.
      * @param {boolean} isFilterable - Offer this attribute as a filter in a product list. `GET /products/grid` reports exactly these attributes in its `filters` array, and nothing else reads the flag.
      * @param {boolean} isUnique - Declares that the value identifies the product — an EAN, a manufacturer part number. It is metadata a form and an importer read: no database index enforces it, because the value lives inside jsonb rather than in a column.
      * @param {object} labels - The field label a person sees, keyed by language tag. Resolution falls back to English and then to the code, so an untranslated attribute is still renderable.
      * @param {boolean} localizable - True → the record holds ONE VALUE PER LOCALE, under `attribute_values.locale_specific.<locale>.<code>`. False → one value, under `attribute_values.common.<code>`. This flag is what decides where a write goes.
+     * @param {object} metadata - Free-form jsonb this tenant owns. `validation` and `config` are read by this app and mean something to it; this is the pocket for everything else an integration has to remember about an attribute — a mapping note, an owning team, an export flag. Nothing here reads it.
      * @param {number} position - Where the field sits inside its group. A family may override it for its own form through `family_attributes.position`; this is the attribute's default.
      * @param {boolean} scopable - True → one value PER CHANNEL, under `attribute_values.channel_specific.<channel>.<code>`. Set together with `localizable` it means one value per channel AND locale, in `channel_locale_specific`.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {boolean} usableInGrid - Show this attribute as a COLUMN in the product grid. `GET /products/grid` returns a column definition and a per-row value for exactly these.
      * @param {object} validation - Limits a value has to satisfy, as a flat object. The seven keys a client can act on are `min`, `max`, `min_length`, `max_length`, `pattern`, `min_items`, `max_items` — `GET /products/attribute-schema` republishes those and leaves anything else the tenant stored untouched.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Attributes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributesCreate(code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object): Promise<Models.Attributes>;
+    productsAttributesCreate(code: string, type: string, config?: object, entityRef?: string, entityType?: string, externalId?: string, externalRefs?: object, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, metadata?: object, position?: number, scopable?: boolean, sourceData?: object, sourceSyncedAt?: string, usableInGrid?: boolean, validation?: object): Promise<Models.Attributes>;
     productsAttributesCreate(
-        paramsOrFirst: { code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object } | string,
-        ...rest: [(string)?, (object)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (object)?, (boolean)?, (number)?, (boolean)?, (boolean)?, (object)?]    
+        paramsOrFirst: { code: string, type: string, config?: object, entityRef?: string, entityType?: string, externalId?: string, externalRefs?: object, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, metadata?: object, position?: number, scopable?: boolean, sourceData?: object, sourceSyncedAt?: string, usableInGrid?: boolean, validation?: object } | string,
+        ...rest: [(string)?, (object)?, (string)?, (string)?, (string)?, (object)?, (string)?, (boolean)?, (boolean)?, (object)?, (boolean)?, (object)?, (number)?, (boolean)?, (object)?, (string)?, (boolean)?, (object)?]    
     ): Promise<Models.Attributes> {
-        let params: { code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object };
+        let params: { code: string, type: string, config?: object, entityRef?: string, entityType?: string, externalId?: string, externalRefs?: object, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, metadata?: object, position?: number, scopable?: boolean, sourceData?: object, sourceSyncedAt?: string, usableInGrid?: boolean, validation?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, type: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, usableInGrid?: boolean, validation?: object };
+            params = (paramsOrFirst || {}) as { code: string, type: string, config?: object, entityRef?: string, entityType?: string, externalId?: string, externalRefs?: object, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, metadata?: object, position?: number, scopable?: boolean, sourceData?: object, sourceSyncedAt?: string, usableInGrid?: boolean, validation?: object };
         } else {
             params = {
                 code: paramsOrFirst as string,
@@ -2009,15 +2278,20 @@ export class ProductsDataModel {
                 config: rest[1] as object,
                 entityRef: rest[2] as string,
                 entityType: rest[3] as string,
-                groupId: rest[4] as string,
-                isFilterable: rest[5] as boolean,
-                isUnique: rest[6] as boolean,
-                labels: rest[7] as object,
-                localizable: rest[8] as boolean,
-                position: rest[9] as number,
-                scopable: rest[10] as boolean,
-                usableInGrid: rest[11] as boolean,
-                validation: rest[12] as object            
+                externalId: rest[4] as string,
+                externalRefs: rest[5] as object,
+                groupId: rest[6] as string,
+                isFilterable: rest[7] as boolean,
+                isUnique: rest[8] as boolean,
+                labels: rest[9] as object,
+                localizable: rest[10] as boolean,
+                metadata: rest[11] as object,
+                position: rest[12] as number,
+                scopable: rest[13] as boolean,
+                sourceData: rest[14] as object,
+                sourceSyncedAt: rest[15] as string,
+                usableInGrid: rest[16] as boolean,
+                validation: rest[17] as object            
             };
         }
         
@@ -2026,13 +2300,18 @@ export class ProductsDataModel {
         const config = params.config;
         const entityRef = params.entityRef;
         const entityType = params.entityType;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const groupId = params.groupId;
         const isFilterable = params.isFilterable;
         const isUnique = params.isUnique;
         const labels = params.labels;
         const localizable = params.localizable;
+        const metadata = params.metadata;
         const position = params.position;
         const scopable = params.scopable;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
         const usableInGrid = params.usableInGrid;
         const validation = params.validation;
 
@@ -2057,6 +2336,12 @@ export class ProductsDataModel {
         if (typeof entityType !== 'undefined') {
             apiPayload['entity_type'] = entityType;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof groupId !== 'undefined') {
             apiPayload['group_id'] = groupId;
         }
@@ -2072,11 +2357,20 @@ export class ProductsDataModel {
         if (typeof localizable !== 'undefined') {
             apiPayload['localizable'] = localizable;
         }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
         }
         if (typeof scopable !== 'undefined') {
             apiPayload['scopable'] = scopable;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         if (typeof type !== 'undefined') {
             apiPayload['type'] = type;
@@ -2235,20 +2529,25 @@ export class ProductsDataModel {
      * @param {object} params.config - Type-specific settings; which keys apply depends on `type`. The ones this app reads: `units` (the unit list a measure attribute offers) and `reference_entity` (which entity a reference attribute draws its options from). The ones the cockpit edits alongside them: `unit`, `metric_family`, `decimals_allowed`, `asset_family`, `max_file_size`, `allowed_extensions`.
      * @param {string} params.entityRef - Narrows `entity_type` to ONE reference entity or asset family, by its code — the attributes of `brand` rather than of every reference entity. Null for a plain product attribute.
      * @param {string} params.entityType - Which kind of record carries this attribute: 'product' for the catalog itself, 'reference_entity', 'asset' or 'category' for the other things in this app that have attributes. Deliberately carries no CHECK — a tenant that models a fifth kind is served on it too.
+     * @param {string} params.externalId - The key this attribute has in the system that owns the property model — an ETIM feature, an eCl@ss property, a column of a supplier's data sheet. Unique per tenant where set. It is the half that survives a rename of `code`, so an import maps a source property onto an attribute once rather than on every run.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} params.groupId - The `attribute_groups` row this attribute is filed under — the form section it appears in. Null is ungrouped, and an ungrouped field is rendered after every section that has a name.
      * @param {boolean} params.isFilterable - Offer this attribute as a filter in a product list. `GET /products/grid` reports exactly these attributes in its `filters` array, and nothing else reads the flag.
      * @param {boolean} params.isUnique - Declares that the value identifies the product — an EAN, a manufacturer part number. It is metadata a form and an importer read: no database index enforces it, because the value lives inside jsonb rather than in a column.
      * @param {object} params.labels - The field label a person sees, keyed by language tag. Resolution falls back to English and then to the code, so an untranslated attribute is still renderable.
      * @param {boolean} params.localizable - True → the record holds ONE VALUE PER LOCALE, under `attribute_values.locale_specific.<locale>.<code>`. False → one value, under `attribute_values.common.<code>`. This flag is what decides where a write goes.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns. `validation` and `config` are read by this app and mean something to it; this is the pocket for everything else an integration has to remember about an attribute — a mapping note, an owning team, an export flag. Nothing here reads it.
      * @param {number} params.position - Where the field sits inside its group. A family may override it for its own form through `family_attributes.position`; this is the attribute's default.
      * @param {boolean} params.scopable - True → one value PER CHANNEL, under `attribute_values.channel_specific.<channel>.<code>`. Set together with `localizable` it means one value per channel AND locale, in `channel_locale_specific`.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {string} params.type - Which editor the value asks for — 'text', 'select', 'metric', 'price', 'asset_collection', 'reference_entity'. Carries no CHECK on purpose: an integrator adds a type, and `GET /products/attribute-schema` maps an unknown one onto a text field rather than refusing to answer.
      * @param {boolean} params.usableInGrid - Show this attribute as a COLUMN in the product grid. `GET /products/grid` returns a column definition and a per-row value for exactly these.
      * @param {object} params.validation - Limits a value has to satisfy, as a flat object. The seven keys a client can act on are `min`, `max`, `min_length`, `max_length`, `pattern`, `min_items`, `max_items` — `GET /products/attribute-schema` republishes those and leaves anything else the tenant stored untouched.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Attributes>}
      */
-    productsAttributesUpdate(params: { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object }): Promise<Models.Attributes>;
+    productsAttributesUpdate(params: { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, externalId?: string, externalRefs?: object, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, metadata?: object, position?: number, scopable?: boolean, sourceData?: object, sourceSyncedAt?: string, type?: string, usableInGrid?: boolean, validation?: object }): Promise<Models.Attributes>;
     /**
      * Updates one attribute by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -2261,13 +2560,18 @@ export class ProductsDataModel {
      * @param {object} config - Type-specific settings; which keys apply depends on `type`. The ones this app reads: `units` (the unit list a measure attribute offers) and `reference_entity` (which entity a reference attribute draws its options from). The ones the cockpit edits alongside them: `unit`, `metric_family`, `decimals_allowed`, `asset_family`, `max_file_size`, `allowed_extensions`.
      * @param {string} entityRef - Narrows `entity_type` to ONE reference entity or asset family, by its code — the attributes of `brand` rather than of every reference entity. Null for a plain product attribute.
      * @param {string} entityType - Which kind of record carries this attribute: 'product' for the catalog itself, 'reference_entity', 'asset' or 'category' for the other things in this app that have attributes. Deliberately carries no CHECK — a tenant that models a fifth kind is served on it too.
+     * @param {string} externalId - The key this attribute has in the system that owns the property model — an ETIM feature, an eCl@ss property, a column of a supplier's data sheet. Unique per tenant where set. It is the half that survives a rename of `code`, so an import maps a source property onto an attribute once rather than on every run.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} groupId - The `attribute_groups` row this attribute is filed under — the form section it appears in. Null is ungrouped, and an ungrouped field is rendered after every section that has a name.
      * @param {boolean} isFilterable - Offer this attribute as a filter in a product list. `GET /products/grid` reports exactly these attributes in its `filters` array, and nothing else reads the flag.
      * @param {boolean} isUnique - Declares that the value identifies the product — an EAN, a manufacturer part number. It is metadata a form and an importer read: no database index enforces it, because the value lives inside jsonb rather than in a column.
      * @param {object} labels - The field label a person sees, keyed by language tag. Resolution falls back to English and then to the code, so an untranslated attribute is still renderable.
      * @param {boolean} localizable - True → the record holds ONE VALUE PER LOCALE, under `attribute_values.locale_specific.<locale>.<code>`. False → one value, under `attribute_values.common.<code>`. This flag is what decides where a write goes.
+     * @param {object} metadata - Free-form jsonb this tenant owns. `validation` and `config` are read by this app and mean something to it; this is the pocket for everything else an integration has to remember about an attribute — a mapping note, an owning team, an export flag. Nothing here reads it.
      * @param {number} position - Where the field sits inside its group. A family may override it for its own form through `family_attributes.position`; this is the attribute's default.
      * @param {boolean} scopable - True → one value PER CHANNEL, under `attribute_values.channel_specific.<channel>.<code>`. Set together with `localizable` it means one value per channel AND locale, in `channel_locale_specific`.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {string} type - Which editor the value asks for — 'text', 'select', 'metric', 'price', 'asset_collection', 'reference_entity'. Carries no CHECK on purpose: an integrator adds a type, and `GET /products/attribute-schema` maps an unknown one onto a text field rather than refusing to answer.
      * @param {boolean} usableInGrid - Show this attribute as a COLUMN in the product grid. `GET /products/grid` returns a column definition and a per-row value for exactly these.
      * @param {object} validation - Limits a value has to satisfy, as a flat object. The seven keys a client can act on are `min`, `max`, `min_length`, `max_length`, `pattern`, `min_items`, `max_items` — `GET /products/attribute-schema` republishes those and leaves anything else the tenant stored untouched.
@@ -2275,15 +2579,15 @@ export class ProductsDataModel {
      * @returns {Promise<Models.Attributes>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsAttributesUpdate(id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object): Promise<Models.Attributes>;
+    productsAttributesUpdate(id: string, code?: string, config?: object, entityRef?: string, entityType?: string, externalId?: string, externalRefs?: object, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, metadata?: object, position?: number, scopable?: boolean, sourceData?: object, sourceSyncedAt?: string, type?: string, usableInGrid?: boolean, validation?: object): Promise<Models.Attributes>;
     productsAttributesUpdate(
-        paramsOrFirst: { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object } | string,
-        ...rest: [(string)?, (object)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (object)?, (boolean)?, (number)?, (boolean)?, (string)?, (boolean)?, (object)?]    
+        paramsOrFirst: { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, externalId?: string, externalRefs?: object, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, metadata?: object, position?: number, scopable?: boolean, sourceData?: object, sourceSyncedAt?: string, type?: string, usableInGrid?: boolean, validation?: object } | string,
+        ...rest: [(string)?, (object)?, (string)?, (string)?, (string)?, (object)?, (string)?, (boolean)?, (boolean)?, (object)?, (boolean)?, (object)?, (number)?, (boolean)?, (object)?, (string)?, (string)?, (boolean)?, (object)?]    
     ): Promise<Models.Attributes> {
-        let params: { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object };
+        let params: { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, externalId?: string, externalRefs?: object, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, metadata?: object, position?: number, scopable?: boolean, sourceData?: object, sourceSyncedAt?: string, type?: string, usableInGrid?: boolean, validation?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, position?: number, scopable?: boolean, type?: string, usableInGrid?: boolean, validation?: object };
+            params = (paramsOrFirst || {}) as { id: string, code?: string, config?: object, entityRef?: string, entityType?: string, externalId?: string, externalRefs?: object, groupId?: string, isFilterable?: boolean, isUnique?: boolean, labels?: object, localizable?: boolean, metadata?: object, position?: number, scopable?: boolean, sourceData?: object, sourceSyncedAt?: string, type?: string, usableInGrid?: boolean, validation?: object };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -2291,16 +2595,21 @@ export class ProductsDataModel {
                 config: rest[1] as object,
                 entityRef: rest[2] as string,
                 entityType: rest[3] as string,
-                groupId: rest[4] as string,
-                isFilterable: rest[5] as boolean,
-                isUnique: rest[6] as boolean,
-                labels: rest[7] as object,
-                localizable: rest[8] as boolean,
-                position: rest[9] as number,
-                scopable: rest[10] as boolean,
-                type: rest[11] as string,
-                usableInGrid: rest[12] as boolean,
-                validation: rest[13] as object            
+                externalId: rest[4] as string,
+                externalRefs: rest[5] as object,
+                groupId: rest[6] as string,
+                isFilterable: rest[7] as boolean,
+                isUnique: rest[8] as boolean,
+                labels: rest[9] as object,
+                localizable: rest[10] as boolean,
+                metadata: rest[11] as object,
+                position: rest[12] as number,
+                scopable: rest[13] as boolean,
+                sourceData: rest[14] as object,
+                sourceSyncedAt: rest[15] as string,
+                type: rest[16] as string,
+                usableInGrid: rest[17] as boolean,
+                validation: rest[18] as object            
             };
         }
         
@@ -2309,13 +2618,18 @@ export class ProductsDataModel {
         const config = params.config;
         const entityRef = params.entityRef;
         const entityType = params.entityType;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const groupId = params.groupId;
         const isFilterable = params.isFilterable;
         const isUnique = params.isUnique;
         const labels = params.labels;
         const localizable = params.localizable;
+        const metadata = params.metadata;
         const position = params.position;
         const scopable = params.scopable;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
         const type = params.type;
         const usableInGrid = params.usableInGrid;
         const validation = params.validation;
@@ -2338,6 +2652,12 @@ export class ProductsDataModel {
         if (typeof entityType !== 'undefined') {
             apiPayload['entity_type'] = entityType;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof groupId !== 'undefined') {
             apiPayload['group_id'] = groupId;
         }
@@ -2353,11 +2673,20 @@ export class ProductsDataModel {
         if (typeof localizable !== 'undefined') {
             apiPayload['localizable'] = localizable;
         }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
         }
         if (typeof scopable !== 'undefined') {
             apiPayload['scopable'] = scopable;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         if (typeof type !== 'undefined') {
             apiPayload['type'] = type;
@@ -2397,12 +2726,17 @@ export class ProductsDataModel {
      * @param {string} params.labelAttribute - Exact match on `label_attribute`. Which attribute CODE carries the display name of a product in this family. A product's name is an attribute, not a column, and which attribute it is, is per family. Null falls back to the `default_label_attribute` setting and then to the conventional `name`.
      * @param {string} params.imageAttribute - Exact match on `image_attribute`. Which attribute code carries the product's main image — the one a grid thumbnail and a picker read.
      * @param {string} params.labels - Exact match on `labels`. What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.externalId - Exact match on `external_id`. The key this family has in the system that owns the classification — an ETIM class, an eCl@ss class, a supplier's article type. Unique per tenant where set, and what an import joins on to decide which family a delivered article belongs in.
+     * @param {string} params.externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} params.sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.metadata - Exact match on `metadata`. Free-form jsonb this tenant owns, for anything about a family this app does not model. `source_data` is the source's account of the row; this one is yours. Nothing here reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsFamiliesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labelAttribute?: string, imageAttribute?: string, labels?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    productsFamiliesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labelAttribute?: string, imageAttribute?: string, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * A family decides WHICH attributes a product has — the set is `family_attributes`, and every family-driven surface follows from it. It also names which attribute carries the display name (`label_attribute`) and which carries the main image. A product with no family has no required attributes at all, so its completeness cannot be measured and its name never resolves past the SKU; `POST /products/{id}/family` is the call that ends that state.
      * 
@@ -2418,21 +2752,26 @@ export class ProductsDataModel {
      * @param {string} labelAttribute - Exact match on `label_attribute`. Which attribute CODE carries the display name of a product in this family. A product's name is an attribute, not a column, and which attribute it is, is per family. Null falls back to the `default_label_attribute` setting and then to the conventional `name`.
      * @param {string} imageAttribute - Exact match on `image_attribute`. Which attribute code carries the product's main image — the one a grid thumbnail and a picker read.
      * @param {string} labels - Exact match on `labels`. What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} externalId - Exact match on `external_id`. The key this family has in the system that owns the classification — an ETIM class, an eCl@ss class, a supplier's article type. Unique per tenant where set, and what an import joins on to decide which family a delivered article belongs in.
+     * @param {string} externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} metadata - Exact match on `metadata`. Free-form jsonb this tenant owns, for anything about a family this app does not model. `source_data` is the source's account of the row; this one is yours. Nothing here reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamiliesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, labelAttribute?: string, imageAttribute?: string, labels?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
+    productsFamiliesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, labelAttribute?: string, imageAttribute?: string, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsFamiliesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labelAttribute?: string, imageAttribute?: string, labels?: string, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labelAttribute?: string, imageAttribute?: string, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labelAttribute?: string, imageAttribute?: string, labels?: string, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labelAttribute?: string, imageAttribute?: string, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, labelAttribute?: string, imageAttribute?: string, labels?: string, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, labelAttribute?: string, imageAttribute?: string, labels?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -2443,8 +2782,13 @@ export class ProductsDataModel {
                 labelAttribute: rest[4] as string,
                 imageAttribute: rest[5] as string,
                 labels: rest[6] as string,
-                createdAt: rest[7] as string,
-                updatedAt: rest[8] as string            
+                externalId: rest[7] as string,
+                externalRefs: rest[8] as string,
+                sourceSyncedAt: rest[9] as string,
+                sourceData: rest[10] as string,
+                metadata: rest[11] as string,
+                createdAt: rest[12] as string,
+                updatedAt: rest[13] as string            
             };
         }
         
@@ -2456,6 +2800,11 @@ export class ProductsDataModel {
         const labelAttribute = params.labelAttribute;
         const imageAttribute = params.imageAttribute;
         const labels = params.labels;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
+        const sourceSyncedAt = params.sourceSyncedAt;
+        const sourceData = params.sourceData;
+        const metadata = params.metadata;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
 
@@ -2486,6 +2835,21 @@ export class ProductsDataModel {
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
         }
@@ -2513,13 +2877,18 @@ export class ProductsDataModel {
      * `code` is the only column the database refuses the row without; everything else has a default or is nullable. A second row with the same `code` answers 409.
      *
      * @param {string} params.code - The family's stable identifier — which set of attributes a product of this family HAS. Unique per tenant, and the value `GET /products/attribute-schema?family_code=` resolves.
+     * @param {string} params.externalId - The key this family has in the system that owns the classification — an ETIM class, an eCl@ss class, a supplier's article type. Unique per tenant where set, and what an import joins on to decide which family a delivered article belongs in.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} params.imageAttribute - Which attribute code carries the product's main image — the one a grid thumbnail and a picker read.
      * @param {string} params.labelAttribute - Which attribute CODE carries the display name of a product in this family. A product's name is an attribute, not a column, and which attribute it is, is per family. Null falls back to the `default_label_attribute` setting and then to the conventional `name`.
      * @param {object} params.labels - What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns, for anything about a family this app does not model. `source_data` is the source's account of the row; this one is yours. Nothing here reads it.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Families>}
      */
-    productsFamiliesCreate(params: { code: string, imageAttribute?: string, labelAttribute?: string, labels?: object }): Promise<Models.Families>;
+    productsFamiliesCreate(params: { code: string, externalId?: string, externalRefs?: object, imageAttribute?: string, labelAttribute?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.Families>;
     /**
      * Creates one family and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -2528,35 +2897,50 @@ export class ProductsDataModel {
      * `code` is the only column the database refuses the row without; everything else has a default or is nullable. A second row with the same `code` answers 409.
      *
      * @param {string} code - The family's stable identifier — which set of attributes a product of this family HAS. Unique per tenant, and the value `GET /products/attribute-schema?family_code=` resolves.
+     * @param {string} externalId - The key this family has in the system that owns the classification — an ETIM class, an eCl@ss class, a supplier's article type. Unique per tenant where set, and what an import joins on to decide which family a delivered article belongs in.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} imageAttribute - Which attribute code carries the product's main image — the one a grid thumbnail and a picker read.
      * @param {string} labelAttribute - Which attribute CODE carries the display name of a product in this family. A product's name is an attribute, not a column, and which attribute it is, is per family. Null falls back to the `default_label_attribute` setting and then to the conventional `name`.
      * @param {object} labels - What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on.
+     * @param {object} metadata - Free-form jsonb this tenant owns, for anything about a family this app does not model. `source_data` is the source's account of the row; this one is yours. Nothing here reads it.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Families>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamiliesCreate(code: string, imageAttribute?: string, labelAttribute?: string, labels?: object): Promise<Models.Families>;
+    productsFamiliesCreate(code: string, externalId?: string, externalRefs?: object, imageAttribute?: string, labelAttribute?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.Families>;
     productsFamiliesCreate(
-        paramsOrFirst: { code: string, imageAttribute?: string, labelAttribute?: string, labels?: object } | string,
-        ...rest: [(string)?, (string)?, (object)?]    
+        paramsOrFirst: { code: string, externalId?: string, externalRefs?: object, imageAttribute?: string, labelAttribute?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (object)?, (string)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.Families> {
-        let params: { code: string, imageAttribute?: string, labelAttribute?: string, labels?: object };
+        let params: { code: string, externalId?: string, externalRefs?: object, imageAttribute?: string, labelAttribute?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, imageAttribute?: string, labelAttribute?: string, labels?: object };
+            params = (paramsOrFirst || {}) as { code: string, externalId?: string, externalRefs?: object, imageAttribute?: string, labelAttribute?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
-                imageAttribute: rest[0] as string,
-                labelAttribute: rest[1] as string,
-                labels: rest[2] as object            
+                externalId: rest[0] as string,
+                externalRefs: rest[1] as object,
+                imageAttribute: rest[2] as string,
+                labelAttribute: rest[3] as string,
+                labels: rest[4] as object,
+                metadata: rest[5] as object,
+                sourceData: rest[6] as object,
+                sourceSyncedAt: rest[7] as string            
             };
         }
         
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const imageAttribute = params.imageAttribute;
         const labelAttribute = params.labelAttribute;
         const labels = params.labels;
+        const metadata = params.metadata;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof code === 'undefined') {
             throw new RevenexxException('Missing required parameter: "code"');
@@ -2567,6 +2951,12 @@ export class ProductsDataModel {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof imageAttribute !== 'undefined') {
             apiPayload['image_attribute'] = imageAttribute;
         }
@@ -2575,6 +2965,15 @@ export class ProductsDataModel {
         }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -2721,13 +3120,18 @@ export class ProductsDataModel {
      *
      * @param {string} params.id - The `families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/families`. An id no familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} params.code - The family's stable identifier — which set of attributes a product of this family HAS. Unique per tenant, and the value `GET /products/attribute-schema?family_code=` resolves.
+     * @param {string} params.externalId - The key this family has in the system that owns the classification — an ETIM class, an eCl@ss class, a supplier's article type. Unique per tenant where set, and what an import joins on to decide which family a delivered article belongs in.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} params.imageAttribute - Which attribute code carries the product's main image — the one a grid thumbnail and a picker read.
      * @param {string} params.labelAttribute - Which attribute CODE carries the display name of a product in this family. A product's name is an attribute, not a column, and which attribute it is, is per family. Null falls back to the `default_label_attribute` setting and then to the conventional `name`.
      * @param {object} params.labels - What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns, for anything about a family this app does not model. `source_data` is the source's account of the row; this one is yours. Nothing here reads it.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Families>}
      */
-    productsFamiliesUpdate(params: { id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object }): Promise<Models.Families>;
+    productsFamiliesUpdate(params: { id: string, code?: string, externalId?: string, externalRefs?: object, imageAttribute?: string, labelAttribute?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.Families>;
     /**
      * Updates one family by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -2737,37 +3141,52 @@ export class ProductsDataModel {
      *
      * @param {string} id - The `families` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/families`. An id no familie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} code - The family's stable identifier — which set of attributes a product of this family HAS. Unique per tenant, and the value `GET /products/attribute-schema?family_code=` resolves.
+     * @param {string} externalId - The key this family has in the system that owns the classification — an ETIM class, an eCl@ss class, a supplier's article type. Unique per tenant where set, and what an import joins on to decide which family a delivered article belongs in.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} imageAttribute - Which attribute code carries the product's main image — the one a grid thumbnail and a picker read.
      * @param {string} labelAttribute - Which attribute CODE carries the display name of a product in this family. A product's name is an attribute, not a column, and which attribute it is, is per family. Null falls back to the `default_label_attribute` setting and then to the conventional `name`.
      * @param {object} labels - What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on.
+     * @param {object} metadata - Free-form jsonb this tenant owns, for anything about a family this app does not model. `source_data` is the source's account of the row; this one is yours. Nothing here reads it.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Families>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamiliesUpdate(id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object): Promise<Models.Families>;
+    productsFamiliesUpdate(id: string, code?: string, externalId?: string, externalRefs?: object, imageAttribute?: string, labelAttribute?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.Families>;
     productsFamiliesUpdate(
-        paramsOrFirst: { id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object } | string,
-        ...rest: [(string)?, (string)?, (string)?, (object)?]    
+        paramsOrFirst: { id: string, code?: string, externalId?: string, externalRefs?: object, imageAttribute?: string, labelAttribute?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (string)?, (object)?, (string)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.Families> {
-        let params: { id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object };
+        let params: { id: string, code?: string, externalId?: string, externalRefs?: object, imageAttribute?: string, labelAttribute?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, imageAttribute?: string, labelAttribute?: string, labels?: object };
+            params = (paramsOrFirst || {}) as { id: string, code?: string, externalId?: string, externalRefs?: object, imageAttribute?: string, labelAttribute?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 code: rest[0] as string,
-                imageAttribute: rest[1] as string,
-                labelAttribute: rest[2] as string,
-                labels: rest[3] as object            
+                externalId: rest[1] as string,
+                externalRefs: rest[2] as object,
+                imageAttribute: rest[3] as string,
+                labelAttribute: rest[4] as string,
+                labels: rest[5] as object,
+                metadata: rest[6] as object,
+                sourceData: rest[7] as object,
+                sourceSyncedAt: rest[8] as string            
             };
         }
         
         const id = params.id;
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const imageAttribute = params.imageAttribute;
         const labelAttribute = params.labelAttribute;
         const labels = params.labels;
+        const metadata = params.metadata;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
@@ -2778,6 +3197,12 @@ export class ProductsDataModel {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof imageAttribute !== 'undefined') {
             apiPayload['image_attribute'] = imageAttribute;
         }
@@ -2786,6 +3211,15 @@ export class ProductsDataModel {
         }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -2818,10 +3252,11 @@ export class ProductsDataModel {
      * @param {boolean} params.isRequired - Exact match on `is_required`. The attribute has to carry a value for a product of this family to count as complete. `POST /products/{id}/completeness` measures exactly these and nothing else.
      * @param {string} params.requiredChannels - Exact match on `required_channels`. Narrows `is_required` to named channels. NULL or an empty list means required EVERYWHERE, not nowhere — that is how every required link in the wild is stored, and reading an empty list as "nowhere" reports a fully configured family as demanding nothing. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
+     * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsFamilyAttributesList(params?: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, attributeId?: string, position?: number, isRequired?: boolean, requiredChannels?: string, createdAt?: string }): Promise<{}>;
+    productsFamilyAttributesList(params?: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, attributeId?: string, position?: number, isRequired?: boolean, requiredChannels?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * One link between a family and an attribute — the row that puts an attribute INTO a family's form. It carries the family's own ordering of that attribute, which overrides the attribute's default position, and `is_required`, which is the flag `POST /products/{id}/completeness` measures and nothing else reads. `required_channels` narrows "required" to named channels; null or empty means required EVERYWHERE, not nowhere.
      * 
@@ -2839,19 +3274,20 @@ export class ProductsDataModel {
      * @param {boolean} isRequired - Exact match on `is_required`. The attribute has to carry a value for a product of this family to count as complete. `POST /products/{id}/completeness` measures exactly these and nothing else.
      * @param {string} requiredChannels - Exact match on `required_channels`. Narrows `is_required` to named channels. NULL or an empty list means required EVERYWHERE, not nowhere — that is how every required link in the wild is stored, and reading an empty list as "nowhere" reports a fully configured family as demanding nothing. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
+     * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyAttributesList(limit?: number, offset?: number, order?: string, id?: string, familyId?: string, attributeId?: string, position?: number, isRequired?: boolean, requiredChannels?: string, createdAt?: string): Promise<{}>;
+    productsFamilyAttributesList(limit?: number, offset?: number, order?: string, id?: string, familyId?: string, attributeId?: string, position?: number, isRequired?: boolean, requiredChannels?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsFamilyAttributesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, attributeId?: string, position?: number, isRequired?: boolean, requiredChannels?: string, createdAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (number)?, (boolean)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, attributeId?: string, position?: number, isRequired?: boolean, requiredChannels?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (number)?, (boolean)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, attributeId?: string, position?: number, isRequired?: boolean, requiredChannels?: string, createdAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, attributeId?: string, position?: number, isRequired?: boolean, requiredChannels?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, attributeId?: string, position?: number, isRequired?: boolean, requiredChannels?: string, createdAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, attributeId?: string, position?: number, isRequired?: boolean, requiredChannels?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -2863,7 +3299,8 @@ export class ProductsDataModel {
                 position: rest[5] as number,
                 isRequired: rest[6] as boolean,
                 requiredChannels: rest[7] as string,
-                createdAt: rest[8] as string            
+                createdAt: rest[8] as string,
+                updatedAt: rest[9] as string            
             };
         }
         
@@ -2877,6 +3314,7 @@ export class ProductsDataModel {
         const isRequired = params.isRequired;
         const requiredChannels = params.requiredChannels;
         const createdAt = params.createdAt;
+        const updatedAt = params.updatedAt;
 
 
         const apiPath = '/v1/products/family_attributes';
@@ -2910,6 +3348,9 @@ export class ProductsDataModel {
         }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
+        }
+        if (typeof updatedAt !== 'undefined') {
+            apiPayload['updated_at'] = updatedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -3252,12 +3693,17 @@ export class ProductsDataModel {
      * @param {string} params.code - Exact match on `code`. The variant structure's stable identifier — how this family splits, not which product it splits. Unique per tenant.
      * @param {string} params.labels - Exact match on `labels`. What the variant structure is called, per language tag. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.axes - Exact match on `axes`. The attribute codes a product model splits its variants on. Two shapes are in the wild and both are read: a bare list of codes, or one entry per level, outermost first — `[{"level": 1, "axes": ["colour"]}, {"level": 2, "axes": ["size"]}]`. An attribute named here is READ-ONLY on the model and set on each variant, which is what `AttributeField.readonly_reason` reports. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.externalId - Exact match on `external_id`. The key this variant structure has in the system it came from. Unique per tenant where set, and usually null — few sources model how a family splits, so this is normally a structure somebody built here.
+     * @param {string} params.externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} params.sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.metadata - Exact match on `metadata`. Free-form jsonb this tenant owns, for anything about a variant structure this app does not model. Nothing here reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsFamilyVariantsList(params?: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, code?: string, labels?: string, axes?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    productsFamilyVariantsList(params?: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, code?: string, labels?: string, axes?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * A variant structure of a family: the attribute axes a product model splits its variants on — colour, then size. A product follows one through `family_variant_id`, and an attribute named as an axis becomes read-only on the model and is set on each variant instead, which is what `GET /products/attribute-schema` reports as `readonly_reason`. Two axis shapes are in the wild and both are read: a bare list of codes, or one entry per level.
      * 
@@ -3273,21 +3719,26 @@ export class ProductsDataModel {
      * @param {string} code - Exact match on `code`. The variant structure's stable identifier — how this family splits, not which product it splits. Unique per tenant.
      * @param {string} labels - Exact match on `labels`. What the variant structure is called, per language tag. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} axes - Exact match on `axes`. The attribute codes a product model splits its variants on. Two shapes are in the wild and both are read: a bare list of codes, or one entry per level, outermost first — `[{"level": 1, "axes": ["colour"]}, {"level": 2, "axes": ["size"]}]`. An attribute named here is READ-ONLY on the model and set on each variant, which is what `AttributeField.readonly_reason` reports. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} externalId - Exact match on `external_id`. The key this variant structure has in the system it came from. Unique per tenant where set, and usually null — few sources model how a family splits, so this is normally a structure somebody built here.
+     * @param {string} externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} metadata - Exact match on `metadata`. Free-form jsonb this tenant owns, for anything about a variant structure this app does not model. Nothing here reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyVariantsList(limit?: number, offset?: number, order?: string, id?: string, familyId?: string, code?: string, labels?: string, axes?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
+    productsFamilyVariantsList(limit?: number, offset?: number, order?: string, id?: string, familyId?: string, code?: string, labels?: string, axes?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsFamilyVariantsList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, code?: string, labels?: string, axes?: string, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, code?: string, labels?: string, axes?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, code?: string, labels?: string, axes?: string, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, code?: string, labels?: string, axes?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, code?: string, labels?: string, axes?: string, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, familyId?: string, code?: string, labels?: string, axes?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -3298,8 +3749,13 @@ export class ProductsDataModel {
                 code: rest[4] as string,
                 labels: rest[5] as string,
                 axes: rest[6] as string,
-                createdAt: rest[7] as string,
-                updatedAt: rest[8] as string            
+                externalId: rest[7] as string,
+                externalRefs: rest[8] as string,
+                sourceSyncedAt: rest[9] as string,
+                sourceData: rest[10] as string,
+                metadata: rest[11] as string,
+                createdAt: rest[12] as string,
+                updatedAt: rest[13] as string            
             };
         }
         
@@ -3311,6 +3767,11 @@ export class ProductsDataModel {
         const code = params.code;
         const labels = params.labels;
         const axes = params.axes;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
+        const sourceSyncedAt = params.sourceSyncedAt;
+        const sourceData = params.sourceData;
+        const metadata = params.metadata;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
 
@@ -3341,6 +3802,21 @@ export class ProductsDataModel {
         if (typeof axes !== 'undefined') {
             apiPayload['axes'] = axes;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
         }
@@ -3370,11 +3846,16 @@ export class ProductsDataModel {
      * @param {string} params.code - The variant structure's stable identifier — how this family splits, not which product it splits. Unique per tenant.
      * @param {string} params.familyId - The family this variant structure belongs to. A family may carry several, and a product names the one it follows through `family_variant_id`.
      * @param {object} params.axes - The attribute codes a product model splits its variants on. Two shapes are in the wild and both are read: a bare list of codes, or one entry per level, outermost first — `[{"level": 1, "axes": ["colour"]}, {"level": 2, "axes": ["size"]}]`. An attribute named here is READ-ONLY on the model and set on each variant, which is what `AttributeField.readonly_reason` reports.
+     * @param {string} params.externalId - The key this variant structure has in the system it came from. Unique per tenant where set, and usually null — few sources model how a family splits, so this is normally a structure somebody built here.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} params.labels - What the variant structure is called, per language tag.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns, for anything about a variant structure this app does not model. Nothing here reads it.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.FamilyVariants>}
      */
-    productsFamilyVariantsCreate(params: { code: string, familyId: string, axes?: object, labels?: object }): Promise<Models.FamilyVariants>;
+    productsFamilyVariantsCreate(params: { code: string, familyId: string, axes?: object, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.FamilyVariants>;
     /**
      * Creates one family variant and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -3385,33 +3866,48 @@ export class ProductsDataModel {
      * @param {string} code - The variant structure's stable identifier — how this family splits, not which product it splits. Unique per tenant.
      * @param {string} familyId - The family this variant structure belongs to. A family may carry several, and a product names the one it follows through `family_variant_id`.
      * @param {object} axes - The attribute codes a product model splits its variants on. Two shapes are in the wild and both are read: a bare list of codes, or one entry per level, outermost first — `[{"level": 1, "axes": ["colour"]}, {"level": 2, "axes": ["size"]}]`. An attribute named here is READ-ONLY on the model and set on each variant, which is what `AttributeField.readonly_reason` reports.
+     * @param {string} externalId - The key this variant structure has in the system it came from. Unique per tenant where set, and usually null — few sources model how a family splits, so this is normally a structure somebody built here.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} labels - What the variant structure is called, per language tag.
+     * @param {object} metadata - Free-form jsonb this tenant owns, for anything about a variant structure this app does not model. Nothing here reads it.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.FamilyVariants>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyVariantsCreate(code: string, familyId: string, axes?: object, labels?: object): Promise<Models.FamilyVariants>;
+    productsFamilyVariantsCreate(code: string, familyId: string, axes?: object, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.FamilyVariants>;
     productsFamilyVariantsCreate(
-        paramsOrFirst: { code: string, familyId: string, axes?: object, labels?: object } | string,
-        ...rest: [(string)?, (object)?, (object)?]    
+        paramsOrFirst: { code: string, familyId: string, axes?: object, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.FamilyVariants> {
-        let params: { code: string, familyId: string, axes?: object, labels?: object };
+        let params: { code: string, familyId: string, axes?: object, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, familyId: string, axes?: object, labels?: object };
+            params = (paramsOrFirst || {}) as { code: string, familyId: string, axes?: object, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 familyId: rest[0] as string,
                 axes: rest[1] as object,
-                labels: rest[2] as object            
+                externalId: rest[2] as string,
+                externalRefs: rest[3] as object,
+                labels: rest[4] as object,
+                metadata: rest[5] as object,
+                sourceData: rest[6] as object,
+                sourceSyncedAt: rest[7] as string            
             };
         }
         
         const code = params.code;
         const familyId = params.familyId;
         const axes = params.axes;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const labels = params.labels;
+        const metadata = params.metadata;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof code === 'undefined') {
             throw new RevenexxException('Missing required parameter: "code"');
@@ -3428,11 +3924,26 @@ export class ProductsDataModel {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof familyId !== 'undefined') {
             apiPayload['family_id'] = familyId;
         }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -3580,12 +4091,17 @@ export class ProductsDataModel {
      * @param {string} params.id - The `family_variants` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/family_variants`. An id no family variant of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {object} params.axes - The attribute codes a product model splits its variants on. Two shapes are in the wild and both are read: a bare list of codes, or one entry per level, outermost first — `[{"level": 1, "axes": ["colour"]}, {"level": 2, "axes": ["size"]}]`. An attribute named here is READ-ONLY on the model and set on each variant, which is what `AttributeField.readonly_reason` reports.
      * @param {string} params.code - The variant structure's stable identifier — how this family splits, not which product it splits. Unique per tenant.
+     * @param {string} params.externalId - The key this variant structure has in the system it came from. Unique per tenant where set, and usually null — few sources model how a family splits, so this is normally a structure somebody built here.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} params.familyId - The family this variant structure belongs to. A family may carry several, and a product names the one it follows through `family_variant_id`.
      * @param {object} params.labels - What the variant structure is called, per language tag.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns, for anything about a variant structure this app does not model. Nothing here reads it.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.FamilyVariants>}
      */
-    productsFamilyVariantsUpdate(params: { id: string, axes?: object, code?: string, familyId?: string, labels?: object }): Promise<Models.FamilyVariants>;
+    productsFamilyVariantsUpdate(params: { id: string, axes?: object, code?: string, externalId?: string, externalRefs?: object, familyId?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.FamilyVariants>;
     /**
      * Updates one family variant by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -3596,36 +4112,51 @@ export class ProductsDataModel {
      * @param {string} id - The `family_variants` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/family_variants`. An id no family variant of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {object} axes - The attribute codes a product model splits its variants on. Two shapes are in the wild and both are read: a bare list of codes, or one entry per level, outermost first — `[{"level": 1, "axes": ["colour"]}, {"level": 2, "axes": ["size"]}]`. An attribute named here is READ-ONLY on the model and set on each variant, which is what `AttributeField.readonly_reason` reports.
      * @param {string} code - The variant structure's stable identifier — how this family splits, not which product it splits. Unique per tenant.
+     * @param {string} externalId - The key this variant structure has in the system it came from. Unique per tenant where set, and usually null — few sources model how a family splits, so this is normally a structure somebody built here.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} familyId - The family this variant structure belongs to. A family may carry several, and a product names the one it follows through `family_variant_id`.
      * @param {object} labels - What the variant structure is called, per language tag.
+     * @param {object} metadata - Free-form jsonb this tenant owns, for anything about a variant structure this app does not model. Nothing here reads it.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.FamilyVariants>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsFamilyVariantsUpdate(id: string, axes?: object, code?: string, familyId?: string, labels?: object): Promise<Models.FamilyVariants>;
+    productsFamilyVariantsUpdate(id: string, axes?: object, code?: string, externalId?: string, externalRefs?: object, familyId?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.FamilyVariants>;
     productsFamilyVariantsUpdate(
-        paramsOrFirst: { id: string, axes?: object, code?: string, familyId?: string, labels?: object } | string,
-        ...rest: [(object)?, (string)?, (string)?, (object)?]    
+        paramsOrFirst: { id: string, axes?: object, code?: string, externalId?: string, externalRefs?: object, familyId?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(object)?, (string)?, (string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.FamilyVariants> {
-        let params: { id: string, axes?: object, code?: string, familyId?: string, labels?: object };
+        let params: { id: string, axes?: object, code?: string, externalId?: string, externalRefs?: object, familyId?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, axes?: object, code?: string, familyId?: string, labels?: object };
+            params = (paramsOrFirst || {}) as { id: string, axes?: object, code?: string, externalId?: string, externalRefs?: object, familyId?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 axes: rest[0] as object,
                 code: rest[1] as string,
-                familyId: rest[2] as string,
-                labels: rest[3] as object            
+                externalId: rest[2] as string,
+                externalRefs: rest[3] as object,
+                familyId: rest[4] as string,
+                labels: rest[5] as object,
+                metadata: rest[6] as object,
+                sourceData: rest[7] as object,
+                sourceSyncedAt: rest[8] as string            
             };
         }
         
         const id = params.id;
         const axes = params.axes;
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const familyId = params.familyId;
         const labels = params.labels;
+        const metadata = params.metadata;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
@@ -3639,11 +4170,26 @@ export class ProductsDataModel {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof familyId !== 'undefined') {
             apiPayload['family_id'] = familyId;
         }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

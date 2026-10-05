@@ -10,7 +10,7 @@ const client = new Client()
 const paymentsLedger = new PaymentsLedger(client);
 
 const result = await paymentsLedger.paymentsVocabulariesGet({
-    name: PaymentsVocabulariesGetName.DunningStages
+    name: PaymentsVocabulariesGetName.Dunningstages
 });
 
 console.log(result);

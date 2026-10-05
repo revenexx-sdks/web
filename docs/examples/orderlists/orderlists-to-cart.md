@@ -13,6 +13,7 @@ const result = await orderlists.orderlistsToCart({
     id: '',
     cartId: '', // optional
     currency: '', // optional
+    market: 'de', // optional
     mode: OrderListCartMode.Append // optional
 });
 

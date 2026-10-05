@@ -15,6 +15,10 @@ const result = await orderlists.orderlistsItemsCreate({
     categorySlug: 'office-supplies', // optional
     costCenterId: 'CC-100', // optional
     customSku: 'CUST-4711', // optional
+    externalId: 'MERKZETTEL-20481/7', // optional
+    externalRefs: {
+        "legacy_shop": "MERKZETTEL-20481\/7"
+    }, // optional
     image: 'https://cdn.example.com/catalog/acme-4711-blk.jpg', // optional
     metadata: {
         "erp_line_ref": "4711-01"
@@ -25,6 +29,14 @@ const result = await orderlists.orderlistsItemsCreate({
     productId: '', // optional
     quantity: 12, // optional
     sku: 'ACME-4711-BLK', // optional
+    sourceData: {
+        "etag": "W\/\"JzQ0O0c2\"",
+        "raw": {
+            "merkzettel_id": 20481
+        },
+        "system": "legacy_shop"
+    }, // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
     subcategorySlug: 'paper', // optional
     taxRate: 19, // optional
     unit: 'piece' // optional

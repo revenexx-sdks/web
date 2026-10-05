@@ -21,11 +21,12 @@ export class QuotesTrail {
      * @param {number} params.byteSize - How large it is, in bytes.
      * @param {string} params.contentType - The media type.
      * @param {QuotesTrailAttachDirection} params.direction - Who put it there.
+     * @param {object} params.metadata - Free-form data carried with the file — what a document management system needs to find it again.
      * @param {Visibility} params.visibility - Who sees it.
      * @throws {RevenexxException}
      * @returns {Promise<Models.QuoteAttachment>}
      */
-    quotesTrailAttach(params: { id: string, fileRef: string, filename: string, byteSize?: number, contentType?: string, direction?: QuotesTrailAttachDirection, visibility?: Visibility }): Promise<Models.QuoteAttachment>;
+    quotesTrailAttach(params: { id: string, fileRef: string, filename: string, byteSize?: number, contentType?: string, direction?: QuotesTrailAttachDirection, metadata?: object, visibility?: Visibility }): Promise<Models.QuoteAttachment>;
     /**
      * Records a drawing, a datasheet or a signed document against the quote. This app stores the reference and serves no bytes — the file itself lives in whatever storage the tenant uses.
      *
@@ -35,20 +36,21 @@ export class QuotesTrail {
      * @param {number} byteSize - How large it is, in bytes.
      * @param {string} contentType - The media type.
      * @param {QuotesTrailAttachDirection} direction - Who put it there.
+     * @param {object} metadata - Free-form data carried with the file — what a document management system needs to find it again.
      * @param {Visibility} visibility - Who sees it.
      * @throws {RevenexxException}
      * @returns {Promise<Models.QuoteAttachment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    quotesTrailAttach(id: string, fileRef: string, filename: string, byteSize?: number, contentType?: string, direction?: QuotesTrailAttachDirection, visibility?: Visibility): Promise<Models.QuoteAttachment>;
+    quotesTrailAttach(id: string, fileRef: string, filename: string, byteSize?: number, contentType?: string, direction?: QuotesTrailAttachDirection, metadata?: object, visibility?: Visibility): Promise<Models.QuoteAttachment>;
     quotesTrailAttach(
-        paramsOrFirst: { id: string, fileRef: string, filename: string, byteSize?: number, contentType?: string, direction?: QuotesTrailAttachDirection, visibility?: Visibility } | string,
-        ...rest: [(string)?, (string)?, (number)?, (string)?, (QuotesTrailAttachDirection)?, (Visibility)?]    
+        paramsOrFirst: { id: string, fileRef: string, filename: string, byteSize?: number, contentType?: string, direction?: QuotesTrailAttachDirection, metadata?: object, visibility?: Visibility } | string,
+        ...rest: [(string)?, (string)?, (number)?, (string)?, (QuotesTrailAttachDirection)?, (object)?, (Visibility)?]    
     ): Promise<Models.QuoteAttachment> {
-        let params: { id: string, fileRef: string, filename: string, byteSize?: number, contentType?: string, direction?: QuotesTrailAttachDirection, visibility?: Visibility };
+        let params: { id: string, fileRef: string, filename: string, byteSize?: number, contentType?: string, direction?: QuotesTrailAttachDirection, metadata?: object, visibility?: Visibility };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, fileRef: string, filename: string, byteSize?: number, contentType?: string, direction?: QuotesTrailAttachDirection, visibility?: Visibility };
+            params = (paramsOrFirst || {}) as { id: string, fileRef: string, filename: string, byteSize?: number, contentType?: string, direction?: QuotesTrailAttachDirection, metadata?: object, visibility?: Visibility };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -57,7 +59,8 @@ export class QuotesTrail {
                 byteSize: rest[2] as number,
                 contentType: rest[3] as string,
                 direction: rest[4] as QuotesTrailAttachDirection,
-                visibility: rest[5] as Visibility            
+                metadata: rest[5] as object,
+                visibility: rest[6] as Visibility            
             };
         }
         
@@ -67,6 +70,7 @@ export class QuotesTrail {
         const byteSize = params.byteSize;
         const contentType = params.contentType;
         const direction = params.direction;
+        const metadata = params.metadata;
         const visibility = params.visibility;
 
         if (typeof id === 'undefined') {
@@ -95,6 +99,9 @@ export class QuotesTrail {
         }
         if (typeof filename !== 'undefined') {
             apiPayload['filename'] = filename;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
         }
         if (typeof visibility !== 'undefined') {
             apiPayload['visibility'] = visibility;

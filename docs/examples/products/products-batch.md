@@ -10,6 +10,7 @@ const client = new Client()
 const products = new Products(client);
 
 const result = await products.productsBatch({
+    full: true, // optional
     ids: [], // optional
     skus: [] // optional
 });

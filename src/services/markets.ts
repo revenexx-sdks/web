@@ -17,12 +17,12 @@ export class Markets {
      * Every column is an exact-match filter and they combine with AND (?code=northwind); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing.
      *
      * @param {string} params.id - Exact match on `id`. Primary key. Note that OTHER apps do not store this: the market scope dimension is keyed on `code` (manifest `provides_scopes.slug_source = markets.code`), so a row elsewhere that is "in this market" carries the code, not this uuid. It is the item routes and /context that want this value.
-     * @param {string} params.code - Exact match on `code`. Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it re-keys that scope for everyone, so treat it as permanent. Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
+     * @param {string} params.code - Exact match on `code`. Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it would re-key that scope for everyone, so it is fixed once the market exists (an update that changes it is a 409). Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
      * @param {string} params.name - Exact match on `name`. Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
      * @param {string} params.labels - Exact match on `labels`. Exact whole-document equality on the jsonb: the value is a whole JSON document and has to match every key, so this is not a path or a containment query. Key order and whitespace are irrelevant — the comparison is semantic. A value that does not parse as JSON is refused with 400 `invalid_value` rather than answered with zero rows. Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {string} params.currency - Exact match on `currency`. Base currency this market quotes in — ISO 4217, and schema.json's own default is 'EUR'. This is the single currency prices are STATED in; the currencies collection under the market is the wider set it accepts. A base currency missing from that collection is a blocking readiness failure.
      * @param {MarketsListStatus} params.status - Exact match on `status`. Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
-     * @param {boolean} params.isDefault - Exact match on `is_default`. The tenant default market — what a call naming no market falls back to. Exactly one market holds it; move it with POST /markets/{id}/make-default rather than by writing this flag, which does not demote the market that currently holds it.
+     * @param {boolean} params.isDefault - Exact match on `is_default`. The tenant default market — what a call naming no market falls back to. Exactly one market holds it, and it is moved only with POST /markets/{id}/make-default: a create may set it only while the tenant has none, and an update cannot change it.
      * @param {number} params.position - Exact match on `position`. Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
      * @param {string} params.createdAt - Exact match on `created_at`. When the market row was inserted. Set by the database; never writable.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the market row was last written. Set by the database on every update; never writable.
@@ -37,12 +37,12 @@ export class Markets {
      * Every column is an exact-match filter and they combine with AND (?code=northwind); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing.
      *
      * @param {string} id - Exact match on `id`. Primary key. Note that OTHER apps do not store this: the market scope dimension is keyed on `code` (manifest `provides_scopes.slug_source = markets.code`), so a row elsewhere that is "in this market" carries the code, not this uuid. It is the item routes and /context that want this value.
-     * @param {string} code - Exact match on `code`. Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it re-keys that scope for everyone, so treat it as permanent. Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
+     * @param {string} code - Exact match on `code`. Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it would re-key that scope for everyone, so it is fixed once the market exists (an update that changes it is a 409). Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
      * @param {string} name - Exact match on `name`. Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
      * @param {string} labels - Exact match on `labels`. Exact whole-document equality on the jsonb: the value is a whole JSON document and has to match every key, so this is not a path or a containment query. Key order and whitespace are irrelevant — the comparison is semantic. A value that does not parse as JSON is refused with 400 `invalid_value` rather than answered with zero rows. Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {string} currency - Exact match on `currency`. Base currency this market quotes in — ISO 4217, and schema.json's own default is 'EUR'. This is the single currency prices are STATED in; the currencies collection under the market is the wider set it accepts. A base currency missing from that collection is a blocking readiness failure.
      * @param {MarketsListStatus} status - Exact match on `status`. Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
-     * @param {boolean} isDefault - Exact match on `is_default`. The tenant default market — what a call naming no market falls back to. Exactly one market holds it; move it with POST /markets/{id}/make-default rather than by writing this flag, which does not demote the market that currently holds it.
+     * @param {boolean} isDefault - Exact match on `is_default`. The tenant default market — what a call naming no market falls back to. Exactly one market holds it, and it is moved only with POST /markets/{id}/make-default: a create may set it only while the tenant has none, and an update cannot change it.
      * @param {number} position - Exact match on `position`. Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
      * @param {string} createdAt - Exact match on `created_at`. When the market row was inserted. Set by the database; never writable.
      * @param {string} updatedAt - Exact match on `updated_at`. When the market row was last written. Set by the database on every update; never writable.
@@ -152,10 +152,10 @@ export class Markets {
     /**
      * A market needs a 'code' and a 'name' — currency defaults to EUR, status to active. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
      *
-     * @param {string} params.code - Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it re-keys that scope for everyone, so treat it as permanent. Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
+     * @param {string} params.code - Market code — the market scope slug every other app stores. Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`). Fixed once the market exists: an update that changes it is refused with 409 `code_immutable`; the same value sent back is accepted and ignored.
      * @param {string} params.name - Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
-     * @param {string} params.currency - Base currency this market quotes in — ISO 4217, and schema.json's own default is 'EUR'. This is the single currency prices are STATED in; the currencies collection under the market is the wider set it accepts. A base currency missing from that collection is a blocking readiness failure.
-     * @param {boolean} params.isDefault - The tenant default market — what a call naming no market falls back to. Exactly one market holds it; move it with POST /markets/{id}/make-default rather than by writing this flag, which does not demote the market that currently holds it.
+     * @param {string} params.currency - Base currency, upper-case ISO 4217 (400 `invalid_currency` otherwise — it is not uppercased for you). Defaults to EUR.
+     * @param {boolean} params.isDefault - The tenant default flag. On a create, `true` is accepted only while the tenant has no default market (409 `default_exists` otherwise). On an update it cannot change — move it with POST /markets/{id}/make-default (400 `default_via_make_default`); the current value sent back is accepted and ignored.
      * @param {object} params.labels - Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {number} params.position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
      * @param {MarketStatus} params.status - Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
@@ -166,10 +166,10 @@ export class Markets {
     /**
      * A market needs a 'code' and a 'name' — currency defaults to EUR, status to active. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
      *
-     * @param {string} code - Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it re-keys that scope for everyone, so treat it as permanent. Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
+     * @param {string} code - Market code — the market scope slug every other app stores. Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`). Fixed once the market exists: an update that changes it is refused with 409 `code_immutable`; the same value sent back is accepted and ignored.
      * @param {string} name - Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
-     * @param {string} currency - Base currency this market quotes in — ISO 4217, and schema.json's own default is 'EUR'. This is the single currency prices are STATED in; the currencies collection under the market is the wider set it accepts. A base currency missing from that collection is a blocking readiness failure.
-     * @param {boolean} isDefault - The tenant default market — what a call naming no market falls back to. Exactly one market holds it; move it with POST /markets/{id}/make-default rather than by writing this flag, which does not demote the market that currently holds it.
+     * @param {string} currency - Base currency, upper-case ISO 4217 (400 `invalid_currency` otherwise — it is not uppercased for you). Defaults to EUR.
+     * @param {boolean} isDefault - The tenant default flag. On a create, `true` is accepted only while the tenant has no default market (409 `default_exists` otherwise). On an update it cannot change — move it with POST /markets/{id}/make-default (400 `default_via_make_default`); the current value sent back is accepted and ignored.
      * @param {object} labels - Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {number} position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
      * @param {MarketStatus} status - Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
@@ -348,7 +348,7 @@ export class Markets {
     }
 
     /**
-     * Deleting a market takes its locales, currencies and tax classes with it: all three carry an ON DELETE CASCADE onto markets.id, so this is never refused for having children.
+     * Deleting a market takes its locales, currencies and tax classes with it: all three carry an ON DELETE CASCADE onto markets.id, so this is never refused for having children. The tenant's default market is not deleted (409 `default_market`) — move the flag first.
      *
      * @param {string} params.id - The market, by its primary key. A uuid — this route does not resolve a market code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
@@ -356,7 +356,7 @@ export class Markets {
      */
     marketsDelete(params: { id: string }): Promise<Models.MarketDeleted>;
     /**
-     * Deleting a market takes its locales, currencies and tax classes with it: all three carry an ON DELETE CASCADE onto markets.id, so this is never refused for having children.
+     * Deleting a market takes its locales, currencies and tax classes with it: all three carry an ON DELETE CASCADE onto markets.id, so this is never refused for having children. The tenant's default market is not deleted (409 `default_market`) — move the flag first.
      *
      * @param {string} id - The market, by its primary key. A uuid — this route does not resolve a market code, so a segment that will not cast is a 400 before any row is read.
      * @throws {RevenexxException}
@@ -453,9 +453,9 @@ export class Markets {
      * Partial: omitted fields keep their value.
      *
      * @param {string} params.id - The market, by its primary key. A uuid — this route does not resolve a market code, so a segment that will not cast is a 400 before any row is read.
-     * @param {string} params.code - Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it re-keys that scope for everyone, so treat it as permanent. Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
-     * @param {string} params.currency - Base currency this market quotes in — ISO 4217, and schema.json's own default is 'EUR'. This is the single currency prices are STATED in; the currencies collection under the market is the wider set it accepts. A base currency missing from that collection is a blocking readiness failure.
-     * @param {boolean} params.isDefault - The tenant default market — what a call naming no market falls back to. Exactly one market holds it; move it with POST /markets/{id}/make-default rather than by writing this flag, which does not demote the market that currently holds it.
+     * @param {string} params.code - Market code — the market scope slug every other app stores. Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`). Fixed once the market exists: an update that changes it is refused with 409 `code_immutable`; the same value sent back is accepted and ignored.
+     * @param {string} params.currency - Base currency, upper-case ISO 4217 (400 `invalid_currency` otherwise — it is not uppercased for you). Defaults to EUR.
+     * @param {boolean} params.isDefault - The tenant default flag. On a create, `true` is accepted only while the tenant has no default market (409 `default_exists` otherwise). On an update it cannot change — move it with POST /markets/{id}/make-default (400 `default_via_make_default`); the current value sent back is accepted and ignored.
      * @param {object} params.labels - Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {string} params.name - Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
      * @param {number} params.position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
@@ -468,9 +468,9 @@ export class Markets {
      * Partial: omitted fields keep their value.
      *
      * @param {string} id - The market, by its primary key. A uuid — this route does not resolve a market code, so a segment that will not cast is a 400 before any row is read.
-     * @param {string} code - Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it re-keys that scope for everyone, so treat it as permanent. Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
-     * @param {string} currency - Base currency this market quotes in — ISO 4217, and schema.json's own default is 'EUR'. This is the single currency prices are STATED in; the currencies collection under the market is the wider set it accepts. A base currency missing from that collection is a blocking readiness failure.
-     * @param {boolean} isDefault - The tenant default market — what a call naming no market falls back to. Exactly one market holds it; move it with POST /markets/{id}/make-default rather than by writing this flag, which does not demote the market that currently holds it.
+     * @param {string} code - Market code — the market scope slug every other app stores. Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`). Fixed once the market exists: an update that changes it is refused with 409 `code_immutable`; the same value sent back is accepted and ignored.
+     * @param {string} currency - Base currency, upper-case ISO 4217 (400 `invalid_currency` otherwise — it is not uppercased for you). Defaults to EUR.
+     * @param {boolean} isDefault - The tenant default flag. On a create, `true` is accepted only while the tenant has no default market (409 `default_exists` otherwise). On an update it cannot change — move it with POST /markets/{id}/make-default (400 `default_via_make_default`); the current value sent back is accepted and ignored.
      * @param {object} labels - Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {string} name - Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
      * @param {number} position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
@@ -639,11 +639,11 @@ export class Markets {
      * Creates a NEW market out of an existing one, taking its locales, its traded currencies and its tax classes with it in a single call. That is the difference between this and POST /markets: a plain create leaves a row that cannot serve anybody, while what comes back here is a market with a language to render in, a currency to price in and a rate to tax with. The path id is the SOURCE market, resolved by uuid OR by market code.
      *
      * @param {string} params.id - The SOURCE market to copy — a uuid or a market code.
-     * @param {string} params.code - Code of the NEW market (unique per tenant).
+     * @param {string} params.code - Code of the NEW market (unique per tenant). Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`).
      * @param {boolean} params.copyCurrencies - Copy the source's traded currencies. Default true. The new market's own base currency is registered and marked default either way.
      * @param {boolean} params.copyLocales - Copy the source's locales. Default true. False leaves the new market with no language of its own, so the tenant fallback_locale is seeded instead — it is never left with none.
      * @param {boolean} params.copyTaxClasses - Copy the source's tax classes, rates and all. Default true. False leaves the market unable to tax anything, which readiness reports as blocking.
-     * @param {string} params.currency - Base currency of the new market (ISO 4217). Defaults to the source market's, and is registered and marked default on the new one either way.
+     * @param {string} params.currency - Base currency of the new market, upper-case ISO 4217 (400 `invalid_currency` — it is not uppercased for you). Defaults to the source market's, and is registered and marked default on the new one either way.
      * @param {string} params.name - Display name of the new market. Defaults to its code.
      * @param {MarketStatus} params.status - Status of the new market. Defaults to 'active'; clone it 'inactive' to build it out before it serves anyone.
      * @throws {RevenexxException}
@@ -654,11 +654,11 @@ export class Markets {
      * Creates a NEW market out of an existing one, taking its locales, its traded currencies and its tax classes with it in a single call. That is the difference between this and POST /markets: a plain create leaves a row that cannot serve anybody, while what comes back here is a market with a language to render in, a currency to price in and a rate to tax with. The path id is the SOURCE market, resolved by uuid OR by market code.
      *
      * @param {string} id - The SOURCE market to copy — a uuid or a market code.
-     * @param {string} code - Code of the NEW market (unique per tenant).
+     * @param {string} code - Code of the NEW market (unique per tenant). Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`).
      * @param {boolean} copyCurrencies - Copy the source's traded currencies. Default true. The new market's own base currency is registered and marked default either way.
      * @param {boolean} copyLocales - Copy the source's locales. Default true. False leaves the new market with no language of its own, so the tenant fallback_locale is seeded instead — it is never left with none.
      * @param {boolean} copyTaxClasses - Copy the source's tax classes, rates and all. Default true. False leaves the market unable to tax anything, which readiness reports as blocking.
-     * @param {string} currency - Base currency of the new market (ISO 4217). Defaults to the source market's, and is registered and marked default on the new one either way.
+     * @param {string} currency - Base currency of the new market, upper-case ISO 4217 (400 `invalid_currency` — it is not uppercased for you). Defaults to the source market's, and is registered and marked default on the new one either way.
      * @param {string} name - Display name of the new market. Defaults to its code.
      * @param {MarketStatus} status - Status of the new market. Defaults to 'active'; clone it 'inactive' to build it out before it serves anyone.
      * @throws {RevenexxException}
@@ -911,41 +911,43 @@ export class Markets {
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - Exact match on `id`. Primary key of this currency registration. The currency is named by `code` everywhere else.
      * @param {string} params.code - Exact match on `code`. ISO 4217 code, unique per market — one entry in the set of currencies this market TRADES in, as opposed to the single base currency on the market row that its prices are quoted in. The base currency must appear here or the market cannot serve; clone and backfill register it for you.
-     * @param {boolean} params.isDefault - Exact match on `is_default`. The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
+     * @param {boolean} params.isDefault - Exact match on `is_default`. The currency offered first to a buyer who states no preference. At most one per market — a write flagging one takes it from the others — and it should be the market's base currency — readiness reports it as a warning when it is not.
      * @param {number} params.position - Exact match on `position`. Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @param {string} params.createdAt - Exact match on `created_at`. When the currency was registered on this market. Set by the database; never writable.
+     * @param {string} params.updatedAt - Exact match on `updated_at`. When the currency registration was last written. Set by the database on every update; never writable. A currency is changed in place — its default flag and its position move — so this is the column that says when that last happened.
      * @param {number} params.limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} params.offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, is_default, position, created_at.
+     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, is_default, position, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrencyList>}
      */
-    marketsCurrenciesList(params: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketCurrencyList>;
+    marketsCurrenciesList(params: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketCurrencyList>;
     /**
      * Every column is an exact-match filter and they combine with AND (?code=EUR); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing. `market_id` is not among them: the owning market comes from the path and overwrites anything the query says. An unknown but well-formed market lists empty rather than 404 — the parent is filtered on, not verified.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - Exact match on `id`. Primary key of this currency registration. The currency is named by `code` everywhere else.
      * @param {string} code - Exact match on `code`. ISO 4217 code, unique per market — one entry in the set of currencies this market TRADES in, as opposed to the single base currency on the market row that its prices are quoted in. The base currency must appear here or the market cannot serve; clone and backfill register it for you.
-     * @param {boolean} isDefault - Exact match on `is_default`. The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
+     * @param {boolean} isDefault - Exact match on `is_default`. The currency offered first to a buyer who states no preference. At most one per market — a write flagging one takes it from the others — and it should be the market's base currency — readiness reports it as a warning when it is not.
      * @param {number} position - Exact match on `position`. Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @param {string} createdAt - Exact match on `created_at`. When the currency was registered on this market. Set by the database; never writable.
+     * @param {string} updatedAt - Exact match on `updated_at`. When the currency registration was last written. Set by the database on every update; never writable. A currency is changed in place — its default flag and its position move — so this is the column that says when that last happened.
      * @param {number} limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, is_default, position, created_at.
+     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, is_default, position, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrencyList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCurrenciesList(marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketCurrencyList>;
+    marketsCurrenciesList(marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketCurrencyList>;
     marketsCurrenciesList(
-        paramsOrFirst: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (number)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<Models.MarketCurrencyList> {
-        let params: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
@@ -954,9 +956,10 @@ export class Markets {
                 isDefault: rest[2] as boolean,
                 position: rest[3] as number,
                 createdAt: rest[4] as string,
-                limit: rest[5] as number,
-                offset: rest[6] as number,
-                order: rest[7] as string            
+                updatedAt: rest[5] as string,
+                limit: rest[6] as number,
+                offset: rest[7] as number,
+                order: rest[8] as string            
             };
         }
         
@@ -966,6 +969,7 @@ export class Markets {
         const isDefault = params.isDefault;
         const position = params.position;
         const createdAt = params.createdAt;
+        const updatedAt = params.updatedAt;
         const limit = params.limit;
         const offset = params.offset;
         const order = params.order;
@@ -990,6 +994,9 @@ export class Markets {
         }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
+        }
+        if (typeof updatedAt !== 'undefined') {
+            apiPayload['updated_at'] = updatedAt;
         }
         if (typeof limit !== 'undefined') {
             apiPayload['limit'] = limit;
@@ -1017,8 +1024,8 @@ export class Markets {
      * The owning market comes from the path and overrides anything in the body.
      *
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
-     * @param {string} params.code - ISO 4217 code, unique per market — one entry in the set of currencies this market TRADES in, as opposed to the single base currency on the market row that its prices are quoted in. The base currency must appear here or the market cannot serve; clone and backfill register it for you.
-     * @param {boolean} params.isDefault - The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
+     * @param {string} params.code - Upper-case ISO 4217 code (400 `invalid_currency` otherwise — it is not uppercased for you). Unique per market.
+     * @param {boolean} params.isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call.
      * @param {number} params.position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrency>}
@@ -1028,8 +1035,8 @@ export class Markets {
      * The owning market comes from the path and overrides anything in the body.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
-     * @param {string} code - ISO 4217 code, unique per market — one entry in the set of currencies this market TRADES in, as opposed to the single base currency on the market row that its prices are quoted in. The base currency must appear here or the market cannot serve; clone and backfill register it for you.
-     * @param {boolean} isDefault - The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
+     * @param {string} code - Upper-case ISO 4217 code (400 `invalid_currency` otherwise — it is not uppercased for you). Unique per market.
+     * @param {boolean} isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call.
      * @param {number} position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrency>}
@@ -1213,8 +1220,8 @@ export class Markets {
      *
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The currency of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
-     * @param {string} params.code - ISO 4217 code, unique per market — one entry in the set of currencies this market TRADES in, as opposed to the single base currency on the market row that its prices are quoted in. The base currency must appear here or the market cannot serve; clone and backfill register it for you.
-     * @param {boolean} params.isDefault - The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
+     * @param {string} params.code - Upper-case ISO 4217 code (400 `invalid_currency` otherwise — it is not uppercased for you). Unique per market.
+     * @param {boolean} params.isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call.
      * @param {number} params.position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrency>}
@@ -1225,8 +1232,8 @@ export class Markets {
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The currency of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
-     * @param {string} code - ISO 4217 code, unique per market — one entry in the set of currencies this market TRADES in, as opposed to the single base currency on the market row that its prices are quoted in. The base currency must appear here or the market cannot serve; clone and backfill register it for you.
-     * @param {boolean} isDefault - The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
+     * @param {string} code - Upper-case ISO 4217 code (400 `invalid_currency` otherwise — it is not uppercased for you). Unique per market.
+     * @param {boolean} isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call.
      * @param {number} position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrency>}
@@ -1297,16 +1304,17 @@ export class Markets {
      * @param {string} params.code - Exact match on `code`. Locale code, language-COUNTRY — the language a storefront renders this market in, and the key a translation is stored under. Unique per market. The app's own seeded value is the tenant's `fallback_locale` setting, whose declared default is de-DE.
      * @param {string} params.language - Exact match on `language`. ISO 639-1 language code — the language half of `code`, stored separately so a client can group markets by language without parsing.
      * @param {string} params.country - Exact match on `country`. ISO 3166-1 alpha-2 country code — the region half of `code`. It is a spelling of the language, not a shipping destination: a market may register de-AT without trading in Austria.
-     * @param {boolean} params.isDefault - Exact match on `is_default`. The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
+     * @param {boolean} params.isDefault - Exact match on `is_default`. The locale a storefront renders this market in when the request asks for none. At most one per market — a write flagging one takes it from the others; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
      * @param {number} params.position - Exact match on `position`. Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
      * @param {string} params.createdAt - Exact match on `created_at`. When the locale was registered on this market. Set by the database; never writable.
+     * @param {string} params.updatedAt - Exact match on `updated_at`. When the locale registration was last written. Set by the database on every update; never writable. A locale is changed in place — its default flag and its position move — so this is the column that says when that last happened.
      * @param {number} params.limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} params.offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, language, country, is_default, position, created_at.
+     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, language, country, is_default, position, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocaleList>}
      */
-    marketsLocalesList(params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketLocaleList>;
+    marketsLocalesList(params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketLocaleList>;
     /**
      * Every column is an exact-match filter and they combine with AND (?code=de-DE); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing. `market_id` is not among them: the owning market comes from the path and overwrites anything the query says. An unknown but well-formed market lists empty rather than 404 — the parent is filtered on, not verified.
      *
@@ -1315,25 +1323,26 @@ export class Markets {
      * @param {string} code - Exact match on `code`. Locale code, language-COUNTRY — the language a storefront renders this market in, and the key a translation is stored under. Unique per market. The app's own seeded value is the tenant's `fallback_locale` setting, whose declared default is de-DE.
      * @param {string} language - Exact match on `language`. ISO 639-1 language code — the language half of `code`, stored separately so a client can group markets by language without parsing.
      * @param {string} country - Exact match on `country`. ISO 3166-1 alpha-2 country code — the region half of `code`. It is a spelling of the language, not a shipping destination: a market may register de-AT without trading in Austria.
-     * @param {boolean} isDefault - Exact match on `is_default`. The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
+     * @param {boolean} isDefault - Exact match on `is_default`. The locale a storefront renders this market in when the request asks for none. At most one per market — a write flagging one takes it from the others; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
      * @param {number} position - Exact match on `position`. Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
      * @param {string} createdAt - Exact match on `created_at`. When the locale was registered on this market. Set by the database; never writable.
+     * @param {string} updatedAt - Exact match on `updated_at`. When the locale registration was last written. Set by the database on every update; never writable. A locale is changed in place — its default flag and its position move — so this is the column that says when that last happened.
      * @param {number} limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, language, country, is_default, position, created_at.
+     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, language, country, is_default, position, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocaleList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesList(marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketLocaleList>;
+    marketsLocalesList(marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketLocaleList>;
     marketsLocalesList(
-        paramsOrFirst: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (boolean)?, (number)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<Models.MarketLocaleList> {
-        let params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
@@ -1344,9 +1353,10 @@ export class Markets {
                 isDefault: rest[4] as boolean,
                 position: rest[5] as number,
                 createdAt: rest[6] as string,
-                limit: rest[7] as number,
-                offset: rest[8] as number,
-                order: rest[9] as string            
+                updatedAt: rest[7] as string,
+                limit: rest[8] as number,
+                offset: rest[9] as number,
+                order: rest[10] as string            
             };
         }
         
@@ -1358,6 +1368,7 @@ export class Markets {
         const isDefault = params.isDefault;
         const position = params.position;
         const createdAt = params.createdAt;
+        const updatedAt = params.updatedAt;
         const limit = params.limit;
         const offset = params.offset;
         const order = params.order;
@@ -1389,6 +1400,9 @@ export class Markets {
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
         }
+        if (typeof updatedAt !== 'undefined') {
+            apiPayload['updated_at'] = updatedAt;
+        }
         if (typeof limit !== 'undefined') {
             apiPayload['limit'] = limit;
         }
@@ -1415,44 +1429,44 @@ export class Markets {
      * The owning market comes from the path and overrides anything in the body.
      *
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
-     * @param {string} params.code - Locale code, language-COUNTRY — the language a storefront renders this market in, and the key a translation is stored under. Unique per market. The app's own seeded value is the tenant's `fallback_locale` setting, whose declared default is de-DE.
-     * @param {string} params.country - ISO 3166-1 alpha-2 country code — the region half of `code`. It is a spelling of the language, not a shipping destination: a market may register de-AT without trading in Austria.
-     * @param {string} params.language - ISO 639-1 language code — the language half of `code`, stored separately so a client can group markets by language without parsing.
-     * @param {boolean} params.isDefault - The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
+     * @param {string} params.code - Locale code, language-COUNTRY: ISO 639-1 lower case, a hyphen, ISO 3166-1 upper case — `de-DE` (400 `invalid_locale_code`). Unique per market.
+     * @param {string} params.country - The country half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
+     * @param {boolean} params.isDefault - Flag this locale as the market's default. The flag MOVES: every other locale of the market loses it in the same call.
+     * @param {string} params.language - The language half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
      * @param {number} params.position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocale>}
      */
-    marketsLocalesCreate(params: { marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number }): Promise<Models.MarketLocale>;
+    marketsLocalesCreate(params: { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number }): Promise<Models.MarketLocale>;
     /**
      * The owning market comes from the path and overrides anything in the body.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
-     * @param {string} code - Locale code, language-COUNTRY — the language a storefront renders this market in, and the key a translation is stored under. Unique per market. The app's own seeded value is the tenant's `fallback_locale` setting, whose declared default is de-DE.
-     * @param {string} country - ISO 3166-1 alpha-2 country code — the region half of `code`. It is a spelling of the language, not a shipping destination: a market may register de-AT without trading in Austria.
-     * @param {string} language - ISO 639-1 language code — the language half of `code`, stored separately so a client can group markets by language without parsing.
-     * @param {boolean} isDefault - The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
+     * @param {string} code - Locale code, language-COUNTRY: ISO 639-1 lower case, a hyphen, ISO 3166-1 upper case — `de-DE` (400 `invalid_locale_code`). Unique per market.
+     * @param {string} country - The country half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
+     * @param {boolean} isDefault - Flag this locale as the market's default. The flag MOVES: every other locale of the market loses it in the same call.
+     * @param {string} language - The language half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
      * @param {number} position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocale>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesCreate(marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number): Promise<Models.MarketLocale>;
+    marketsLocalesCreate(marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number): Promise<Models.MarketLocale>;
     marketsLocalesCreate(
-        paramsOrFirst: { marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number } | string,
-        ...rest: [(string)?, (string)?, (string)?, (boolean)?, (number)?]    
+        paramsOrFirst: { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (string)?, (number)?]    
     ): Promise<Models.MarketLocale> {
-        let params: { marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number };
+        let params: { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, code: string, country: string, language: string, isDefault?: boolean, position?: number };
+            params = (paramsOrFirst || {}) as { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
                 code: rest[0] as string,
                 country: rest[1] as string,
-                language: rest[2] as string,
-                isDefault: rest[3] as boolean,
+                isDefault: rest[2] as boolean,
+                language: rest[3] as string,
                 position: rest[4] as number            
             };
         }
@@ -1460,8 +1474,8 @@ export class Markets {
         const marketId = params.marketId;
         const code = params.code;
         const country = params.country;
-        const language = params.language;
         const isDefault = params.isDefault;
+        const language = params.language;
         const position = params.position;
 
         if (typeof marketId === 'undefined') {
@@ -1469,12 +1483,6 @@ export class Markets {
         }
         if (typeof code === 'undefined') {
             throw new RevenexxException('Missing required parameter: "code"');
-        }
-        if (typeof country === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "country"');
-        }
-        if (typeof language === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "language"');
         }
 
         const apiPath = '/v1/markets/{market_id}/locales'.replace('{market_id}', marketId);
@@ -1631,10 +1639,10 @@ export class Markets {
      *
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The locale of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
-     * @param {string} params.code - Locale code, language-COUNTRY — the language a storefront renders this market in, and the key a translation is stored under. Unique per market. The app's own seeded value is the tenant's `fallback_locale` setting, whose declared default is de-DE.
-     * @param {string} params.country - ISO 3166-1 alpha-2 country code — the region half of `code`. It is a spelling of the language, not a shipping destination: a market may register de-AT without trading in Austria.
-     * @param {boolean} params.isDefault - The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
-     * @param {string} params.language - ISO 639-1 language code — the language half of `code`, stored separately so a client can group markets by language without parsing.
+     * @param {string} params.code - Locale code, language-COUNTRY: ISO 639-1 lower case, a hyphen, ISO 3166-1 upper case — `de-DE` (400 `invalid_locale_code`). Unique per market.
+     * @param {string} params.country - The country half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
+     * @param {boolean} params.isDefault - Flag this locale as the market's default. The flag MOVES: every other locale of the market loses it in the same call.
+     * @param {string} params.language - The language half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
      * @param {number} params.position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocale>}
@@ -1645,10 +1653,10 @@ export class Markets {
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The locale of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
-     * @param {string} code - Locale code, language-COUNTRY — the language a storefront renders this market in, and the key a translation is stored under. Unique per market. The app's own seeded value is the tenant's `fallback_locale` setting, whose declared default is de-DE.
-     * @param {string} country - ISO 3166-1 alpha-2 country code — the region half of `code`. It is a spelling of the language, not a shipping destination: a market may register de-AT without trading in Austria.
-     * @param {boolean} isDefault - The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
-     * @param {string} language - ISO 639-1 language code — the language half of `code`, stored separately so a client can group markets by language without parsing.
+     * @param {string} code - Locale code, language-COUNTRY: ISO 639-1 lower case, a hyphen, ISO 3166-1 upper case — `de-DE` (400 `invalid_locale_code`). Unique per market.
+     * @param {string} country - The country half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
+     * @param {boolean} isDefault - Flag this locale as the market's default. The flag MOVES: every other locale of the market loses it in the same call.
+     * @param {string} language - The language half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
      * @param {number} position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocale>}
@@ -1730,7 +1738,7 @@ export class Markets {
      * @param {string} params.name - Exact match on `name`. Display name of the rate bucket, in the operator's own language.
      * @param {string} params.labels - Exact match on `labels`. Exact whole-document equality on the jsonb: the value is a whole JSON document and has to match every key, so this is not a path or a containment query. Key order and whitespace are irrelevant — the comparison is semantic. A value that does not parse as JSON is refused with 400 `invalid_value` rather than answered with zero rows. Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {number} params.rate - Exact match on `rate`. Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
-     * @param {boolean} params.isDefault - Exact match on `is_default`. The class applied to a line that names none. At most one per market. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+     * @param {boolean} params.isDefault - Exact match on `is_default`. The class applied to a line that names none. At most one per market — a write flagging one takes it from the others. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
      * @param {number} params.position - Exact match on `position`. Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {string} params.createdAt - Exact match on `created_at`. When the tax class was created on this market. Set by the database; never writable.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the tax class was last written. Set by the database on every update; never writable.
@@ -1750,7 +1758,7 @@ export class Markets {
      * @param {string} name - Exact match on `name`. Display name of the rate bucket, in the operator's own language.
      * @param {string} labels - Exact match on `labels`. Exact whole-document equality on the jsonb: the value is a whole JSON document and has to match every key, so this is not a path or a containment query. Key order and whitespace are irrelevant — the comparison is semantic. A value that does not parse as JSON is refused with 400 `invalid_value` rather than answered with zero rows. Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {number} rate - Exact match on `rate`. Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
-     * @param {boolean} isDefault - Exact match on `is_default`. The class applied to a line that names none. At most one per market. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+     * @param {boolean} isDefault - Exact match on `is_default`. The class applied to a line that names none. At most one per market — a write flagging one takes it from the others. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
      * @param {number} position - Exact match on `position`. Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {string} createdAt - Exact match on `created_at`. When the tax class was created on this market. Set by the database; never writable.
      * @param {string} updatedAt - Exact match on `updated_at`. When the tax class was last written. Set by the database on every update; never writable.
@@ -1863,7 +1871,7 @@ export class Markets {
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.code - Tax class code, unique per market — the rate bucket a product or a shipping method is assigned to ('standard', 'reduced', 'zero'). Other apps name a class by THIS and by nothing else: there is no foreign key behind it and there cannot be (ADR-0055), which is why the delete route asks the shipping app what still points at the code before removing it.
      * @param {string} params.name - Display name of the rate bucket, in the operator's own language.
-     * @param {boolean} params.isDefault - The class applied to a line that names none. At most one per market. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+     * @param {boolean} params.isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call.
      * @param {object} params.labels - Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {number} params.position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {number} params.rate - Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
@@ -1877,7 +1885,7 @@ export class Markets {
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} code - Tax class code, unique per market — the rate bucket a product or a shipping method is assigned to ('standard', 'reduced', 'zero'). Other apps name a class by THIS and by nothing else: there is no foreign key behind it and there cannot be (ADR-0055), which is why the delete route asks the shipping app what still points at the code before removing it.
      * @param {string} name - Display name of the rate bucket, in the operator's own language.
-     * @param {boolean} isDefault - The class applied to a line that names none. At most one per market. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+     * @param {boolean} isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call.
      * @param {object} labels - Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {number} position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {number} rate - Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
@@ -2082,7 +2090,7 @@ export class Markets {
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The tax class of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @param {string} params.code - Tax class code, unique per market — the rate bucket a product or a shipping method is assigned to ('standard', 'reduced', 'zero'). Other apps name a class by THIS and by nothing else: there is no foreign key behind it and there cannot be (ADR-0055), which is why the delete route asks the shipping app what still points at the code before removing it.
-     * @param {boolean} params.isDefault - The class applied to a line that names none. At most one per market. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+     * @param {boolean} params.isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call.
      * @param {object} params.labels - Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {string} params.name - Display name of the rate bucket, in the operator's own language.
      * @param {number} params.position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
@@ -2097,7 +2105,7 @@ export class Markets {
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The tax class of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
      * @param {string} code - Tax class code, unique per market — the rate bucket a product or a shipping method is assigned to ('standard', 'reduced', 'zero'). Other apps name a class by THIS and by nothing else: there is no foreign key behind it and there cannot be (ADR-0055), which is why the delete route asks the shipping app what still points at the code before removing it.
-     * @param {boolean} isDefault - The class applied to a line that names none. At most one per market. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+     * @param {boolean} isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call.
      * @param {object} labels - Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {string} name - Display name of the rate bucket, in the operator's own language.
      * @param {number} position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.

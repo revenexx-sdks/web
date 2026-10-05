@@ -3,4 +3,5 @@ export enum BudgetMovementResultStatus {
     Confirmed = 'confirmed',
     Withdrawn = 'withdrawn',
     Committed = 'committed',
+    Released = 'released',
 }

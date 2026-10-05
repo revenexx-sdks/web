@@ -16,6 +16,11 @@ const result = await shippingCarriers.shippingCarriersCreate({
     cutoffTime: '16:00', // optional
     etaDaysMax: 1, // optional
     etaDaysMin: 1, // optional
+    externalId: 'SPEDITEUR-014', // optional
+    externalRefs: {
+        "business-central": "SPEDITEUR-014",
+        "legacy_shop": "dhl"
+    }, // optional
     handlingDays: 1, // optional
     labels: {
         "de": "Acme Paketdienst",
@@ -27,6 +32,14 @@ const result = await shippingCarriers.shippingCarriersCreate({
     }, // optional
     position: 1, // optional
     serviceLevel: 'express', // optional
+    sourceData: {
+        "etag": "W\/\"JzQ0O0c2\"",
+        "raw": {
+            "Shipping_Agent_Service": "NEXTDAY"
+        },
+        "system": "business-central"
+    }, // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
     status: ShippingCarrierStatus.Active, // optional
     trackingUrlTemplate: 'https://track.example.com/parcels/{tracking_code}' // optional
 });

@@ -12,9 +12,9 @@ const markets = new Markets(client);
 const result = await markets.marketsLocalesCreate({
     marketId: '',
     code: 'de-DE',
-    country: 'DE',
-    language: 'de',
+    country: 'DE', // optional
     isDefault: true, // optional
+    language: 'de', // optional
     position: 0 // optional
 });
 

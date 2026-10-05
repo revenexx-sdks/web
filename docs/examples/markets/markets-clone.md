@@ -11,7 +11,7 @@ const markets = new Markets(client);
 
 const result = await markets.marketsClone({
     id: 'northwind',
-    code: 'northwind-b2b',
+    code: 'northwind_b2b',
     copyCurrencies: true, // optional
     copyLocales: true, // optional
     copyTaxClasses: true, // optional

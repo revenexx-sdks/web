@@ -24,12 +24,17 @@ export class ProductsReferences {
      * @param {string} params.code - Exact match on `code`. The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
      * @param {string} params.labels - Exact match on `labels`. What the entity is called, per language tag — the heading over its record list. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.image - Exact match on `image`. A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
+     * @param {string} params.externalId - Exact match on `external_id`. The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
+     * @param {string} params.externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} params.sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.metadata - Exact match on `metadata`. Free-form jsonb this tenant owns, for anything about a reference domain this app does not model. Nothing here reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsReferenceEntitiesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    productsReferenceEntitiesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * A domain of records the catalog POINTS AT instead of duplicating — brands, manufacturers, care instructions. Declaring one is how a brand comes to be edited in one place rather than on nine thousand products. A reference entity has attributes of its own (`attributes` rows with `entity_type: "reference_entity"` and this entity's code as `entity_ref`), which is what makes its records more than a label.
      * 
@@ -44,21 +49,26 @@ export class ProductsReferences {
      * @param {string} code - Exact match on `code`. The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
      * @param {string} labels - Exact match on `labels`. What the entity is called, per language tag — the heading over its record list. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} image - Exact match on `image`. A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
+     * @param {string} externalId - Exact match on `external_id`. The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
+     * @param {string} externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} metadata - Exact match on `metadata`. Free-form jsonb this tenant owns, for anything about a reference domain this app does not model. Nothing here reads it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntitiesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
+    productsReferenceEntitiesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsReferenceEntitiesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -68,8 +78,13 @@ export class ProductsReferences {
                 code: rest[3] as string,
                 labels: rest[4] as string,
                 image: rest[5] as string,
-                createdAt: rest[6] as string,
-                updatedAt: rest[7] as string            
+                externalId: rest[6] as string,
+                externalRefs: rest[7] as string,
+                sourceSyncedAt: rest[8] as string,
+                sourceData: rest[9] as string,
+                metadata: rest[10] as string,
+                createdAt: rest[11] as string,
+                updatedAt: rest[12] as string            
             };
         }
         
@@ -80,6 +95,11 @@ export class ProductsReferences {
         const code = params.code;
         const labels = params.labels;
         const image = params.image;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
+        const sourceSyncedAt = params.sourceSyncedAt;
+        const sourceData = params.sourceData;
+        const metadata = params.metadata;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
 
@@ -106,6 +126,21 @@ export class ProductsReferences {
         }
         if (typeof image !== 'undefined') {
             apiPayload['image'] = image;
+        }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
         }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
@@ -134,12 +169,17 @@ export class ProductsReferences {
      * `code` is the only column the database refuses the row without; everything else has a default or is nullable. A second row with the same `code` answers 409.
      *
      * @param {string} params.code - The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
+     * @param {string} params.externalId - The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} params.image - A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
      * @param {object} params.labels - What the entity is called, per language tag — the heading over its record list.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns, for anything about a reference domain this app does not model. Nothing here reads it.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntities>}
      */
-    productsReferenceEntitiesCreate(params: { code: string, image?: string, labels?: object }): Promise<Models.ReferenceEntities>;
+    productsReferenceEntitiesCreate(params: { code: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntities>;
     /**
      * Creates one reference entity and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -148,32 +188,47 @@ export class ProductsReferences {
      * `code` is the only column the database refuses the row without; everything else has a default or is nullable. A second row with the same `code` answers 409.
      *
      * @param {string} code - The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
+     * @param {string} externalId - The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} image - A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
      * @param {object} labels - What the entity is called, per language tag — the heading over its record list.
+     * @param {object} metadata - Free-form jsonb this tenant owns, for anything about a reference domain this app does not model. Nothing here reads it.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntities>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntitiesCreate(code: string, image?: string, labels?: object): Promise<Models.ReferenceEntities>;
+    productsReferenceEntitiesCreate(code: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntities>;
     productsReferenceEntitiesCreate(
-        paramsOrFirst: { code: string, image?: string, labels?: object } | string,
-        ...rest: [(string)?, (object)?]    
+        paramsOrFirst: { code: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.ReferenceEntities> {
-        let params: { code: string, image?: string, labels?: object };
+        let params: { code: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, image?: string, labels?: object };
+            params = (paramsOrFirst || {}) as { code: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
-                image: rest[0] as string,
-                labels: rest[1] as object            
+                externalId: rest[0] as string,
+                externalRefs: rest[1] as object,
+                image: rest[2] as string,
+                labels: rest[3] as object,
+                metadata: rest[4] as object,
+                sourceData: rest[5] as object,
+                sourceSyncedAt: rest[6] as string            
             };
         }
         
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const image = params.image;
         const labels = params.labels;
+        const metadata = params.metadata;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof code === 'undefined') {
             throw new RevenexxException('Missing required parameter: "code"');
@@ -184,11 +239,26 @@ export class ProductsReferences {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof image !== 'undefined') {
             apiPayload['image'] = image;
         }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -335,12 +405,17 @@ export class ProductsReferences {
      *
      * @param {string} params.id - The `reference_entities` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entities`. An id no reference entitie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} params.code - The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
+     * @param {string} params.externalId - The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} params.image - A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
      * @param {object} params.labels - What the entity is called, per language tag — the heading over its record list.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns, for anything about a reference domain this app does not model. Nothing here reads it.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntities>}
      */
-    productsReferenceEntitiesUpdate(params: { id: string, code?: string, image?: string, labels?: object }): Promise<Models.ReferenceEntities>;
+    productsReferenceEntitiesUpdate(params: { id: string, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntities>;
     /**
      * Updates one reference entity by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -350,34 +425,49 @@ export class ProductsReferences {
      *
      * @param {string} id - The `reference_entities` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entities`. An id no reference entitie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} code - The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
+     * @param {string} externalId - The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} image - A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
      * @param {object} labels - What the entity is called, per language tag — the heading over its record list.
+     * @param {object} metadata - Free-form jsonb this tenant owns, for anything about a reference domain this app does not model. Nothing here reads it.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntities>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntitiesUpdate(id: string, code?: string, image?: string, labels?: object): Promise<Models.ReferenceEntities>;
+    productsReferenceEntitiesUpdate(id: string, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntities>;
     productsReferenceEntitiesUpdate(
-        paramsOrFirst: { id: string, code?: string, image?: string, labels?: object } | string,
-        ...rest: [(string)?, (string)?, (object)?]    
+        paramsOrFirst: { id: string, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.ReferenceEntities> {
-        let params: { id: string, code?: string, image?: string, labels?: object };
+        let params: { id: string, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, image?: string, labels?: object };
+            params = (paramsOrFirst || {}) as { id: string, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 code: rest[0] as string,
-                image: rest[1] as string,
-                labels: rest[2] as object            
+                externalId: rest[1] as string,
+                externalRefs: rest[2] as object,
+                image: rest[3] as string,
+                labels: rest[4] as object,
+                metadata: rest[5] as object,
+                sourceData: rest[6] as object,
+                sourceSyncedAt: rest[7] as string            
             };
         }
         
         const id = params.id;
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const image = params.image;
         const labels = params.labels;
+        const metadata = params.metadata;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
@@ -388,11 +478,26 @@ export class ProductsReferences {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof image !== 'undefined') {
             apiPayload['image'] = image;
         }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -423,12 +528,16 @@ export class ProductsReferences {
      * @param {string} params.code - Exact match on `code`. The record's stable identifier — the value a product stores when it points at this record, the same way a select stores an option code. Unique within the entity.
      * @param {string} params.labels - Exact match on `labels`. What the record is called, per language tag — the text a picker shows while the code is what gets written. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.attributeValues - Exact match on `attribute_values`. Every attribute value the record carries, in ONE jsonb document — the core of an attribute-driven PIM. A record's properties are not columns here: they are rows in `attributes`, selected per family by `family_attributes`, and their values live under their attribute CODE inside this object. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.externalId - Exact match on `external_id`. The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
+     * @param {string} params.externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} params.sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsReferenceEntityRecordsList(params?: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    productsReferenceEntityRecordsList(params?: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * One record of a reference entity — one brand, one manufacturer. A product that points at it stores this record's CODE, exactly the way a select stores an option code, and the record's own properties live in its scoped `attribute_values` document. `GET /products/attribute-schema` offers these records as the `options` of any attribute that points at their entity, so a picker needs no second call.
      * 
@@ -444,21 +553,25 @@ export class ProductsReferences {
      * @param {string} code - Exact match on `code`. The record's stable identifier — the value a product stores when it points at this record, the same way a select stores an option code. Unique within the entity.
      * @param {string} labels - Exact match on `labels`. What the record is called, per language tag — the text a picker shows while the code is what gets written. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} attributeValues - Exact match on `attribute_values`. Every attribute value the record carries, in ONE jsonb document — the core of an attribute-driven PIM. A record's properties are not columns here: they are rows in `attributes`, selected per family by `family_attributes`, and their values live under their attribute CODE inside this object. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} externalId - Exact match on `external_id`. The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
+     * @param {string} externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntityRecordsList(limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
+    productsReferenceEntityRecordsList(limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsReferenceEntityRecordsList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -469,8 +582,12 @@ export class ProductsReferences {
                 code: rest[4] as string,
                 labels: rest[5] as string,
                 attributeValues: rest[6] as string,
-                createdAt: rest[7] as string,
-                updatedAt: rest[8] as string            
+                externalId: rest[7] as string,
+                externalRefs: rest[8] as string,
+                sourceSyncedAt: rest[9] as string,
+                sourceData: rest[10] as string,
+                createdAt: rest[11] as string,
+                updatedAt: rest[12] as string            
             };
         }
         
@@ -482,6 +599,10 @@ export class ProductsReferences {
         const code = params.code;
         const labels = params.labels;
         const attributeValues = params.attributeValues;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
+        const sourceSyncedAt = params.sourceSyncedAt;
+        const sourceData = params.sourceData;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
 
@@ -511,6 +632,18 @@ export class ProductsReferences {
         }
         if (typeof attributeValues !== 'undefined') {
             apiPayload['attribute_values'] = attributeValues;
+        }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
         }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
@@ -560,11 +693,15 @@ The value itself is whatever the attribute's `type` implies: a string, a number,
 Defaults to `{}`, and an empty object is a normal state — a record nobody has enriched yet. The declared type also admits an array only because every jsonb column of this app shares one mapping; an array is not meaningful here and every reader in this app treats a non-object as empty.
 
 Which attributes a record of this entity has comes from `attributes` rows with `entity_type: "reference_entity"` and `entity_ref` equal to the entity's code — `GET /products/attribute-schema?entity_type=reference_entity&entity_ref=brand` answers it in one call.
+     * @param {string} params.externalId - The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} params.labels - What the record is called, per language tag — the text a picker shows while the code is what gets written.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntityRecords>}
      */
-    productsReferenceEntityRecordsCreate(params: { code: string, referenceEntityId: string, attributeValues?: object, labels?: object }): Promise<Models.ReferenceEntityRecords>;
+    productsReferenceEntityRecordsCreate(params: { code: string, referenceEntityId: string, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntityRecords>;
     /**
      * Creates one reference entity record and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -594,33 +731,45 @@ The value itself is whatever the attribute's `type` implies: a string, a number,
 Defaults to `{}`, and an empty object is a normal state — a record nobody has enriched yet. The declared type also admits an array only because every jsonb column of this app shares one mapping; an array is not meaningful here and every reader in this app treats a non-object as empty.
 
 Which attributes a record of this entity has comes from `attributes` rows with `entity_type: "reference_entity"` and `entity_ref` equal to the entity's code — `GET /products/attribute-schema?entity_type=reference_entity&entity_ref=brand` answers it in one call.
+     * @param {string} externalId - The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} labels - What the record is called, per language tag — the text a picker shows while the code is what gets written.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntityRecords>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntityRecordsCreate(code: string, referenceEntityId: string, attributeValues?: object, labels?: object): Promise<Models.ReferenceEntityRecords>;
+    productsReferenceEntityRecordsCreate(code: string, referenceEntityId: string, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntityRecords>;
     productsReferenceEntityRecordsCreate(
-        paramsOrFirst: { code: string, referenceEntityId: string, attributeValues?: object, labels?: object } | string,
-        ...rest: [(string)?, (object)?, (object)?]    
+        paramsOrFirst: { code: string, referenceEntityId: string, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.ReferenceEntityRecords> {
-        let params: { code: string, referenceEntityId: string, attributeValues?: object, labels?: object };
+        let params: { code: string, referenceEntityId: string, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, referenceEntityId: string, attributeValues?: object, labels?: object };
+            params = (paramsOrFirst || {}) as { code: string, referenceEntityId: string, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 referenceEntityId: rest[0] as string,
                 attributeValues: rest[1] as object,
-                labels: rest[2] as object            
+                externalId: rest[2] as string,
+                externalRefs: rest[3] as object,
+                labels: rest[4] as object,
+                sourceData: rest[5] as object,
+                sourceSyncedAt: rest[6] as string            
             };
         }
         
         const code = params.code;
         const referenceEntityId = params.referenceEntityId;
         const attributeValues = params.attributeValues;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const labels = params.labels;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof code === 'undefined') {
             throw new RevenexxException('Missing required parameter: "code"');
@@ -637,11 +786,23 @@ Which attributes a record of this entity has comes from `attributes` rows with `
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
         }
         if (typeof referenceEntityId !== 'undefined') {
             apiPayload['reference_entity_id'] = referenceEntityId;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -808,12 +969,16 @@ Defaults to `{}`, and an empty object is a normal state — a record nobody has 
 
 Which attributes a record of this entity has comes from `attributes` rows with `entity_type: "reference_entity"` and `entity_ref` equal to the entity's code — `GET /products/attribute-schema?entity_type=reference_entity&entity_ref=brand` answers it in one call.
      * @param {string} params.code - The record's stable identifier — the value a product stores when it points at this record, the same way a select stores an option code. Unique within the entity.
+     * @param {string} params.externalId - The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} params.labels - What the record is called, per language tag — the text a picker shows while the code is what gets written.
      * @param {string} params.referenceEntityId - Which reference entity this record belongs to.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntityRecords>}
      */
-    productsReferenceEntityRecordsUpdate(params: { id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string }): Promise<Models.ReferenceEntityRecords>;
+    productsReferenceEntityRecordsUpdate(params: { id: string, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntityRecords>;
     /**
      * Updates one reference entity record by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -843,36 +1008,48 @@ Defaults to `{}`, and an empty object is a normal state — a record nobody has 
 
 Which attributes a record of this entity has comes from `attributes` rows with `entity_type: "reference_entity"` and `entity_ref` equal to the entity's code — `GET /products/attribute-schema?entity_type=reference_entity&entity_ref=brand` answers it in one call.
      * @param {string} code - The record's stable identifier — the value a product stores when it points at this record, the same way a select stores an option code. Unique within the entity.
+     * @param {string} externalId - The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} labels - What the record is called, per language tag — the text a picker shows while the code is what gets written.
      * @param {string} referenceEntityId - Which reference entity this record belongs to.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntityRecords>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntityRecordsUpdate(id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string): Promise<Models.ReferenceEntityRecords>;
+    productsReferenceEntityRecordsUpdate(id: string, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntityRecords>;
     productsReferenceEntityRecordsUpdate(
-        paramsOrFirst: { id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string } | string,
-        ...rest: [(object)?, (string)?, (object)?, (string)?]    
+        paramsOrFirst: { id: string, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(object)?, (string)?, (string)?, (object)?, (object)?, (string)?, (object)?, (string)?]    
     ): Promise<Models.ReferenceEntityRecords> {
-        let params: { id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string };
+        let params: { id: string, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, attributeValues?: object, code?: string, labels?: object, referenceEntityId?: string };
+            params = (paramsOrFirst || {}) as { id: string, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 attributeValues: rest[0] as object,
                 code: rest[1] as string,
-                labels: rest[2] as object,
-                referenceEntityId: rest[3] as string            
+                externalId: rest[2] as string,
+                externalRefs: rest[3] as object,
+                labels: rest[4] as object,
+                referenceEntityId: rest[5] as string,
+                sourceData: rest[6] as object,
+                sourceSyncedAt: rest[7] as string            
             };
         }
         
         const id = params.id;
         const attributeValues = params.attributeValues;
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const labels = params.labels;
         const referenceEntityId = params.referenceEntityId;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
@@ -886,11 +1063,23 @@ Which attributes a record of this entity has comes from `attributes` rows with `
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
         }
         if (typeof referenceEntityId !== 'undefined') {
             apiPayload['reference_entity_id'] = referenceEntityId;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

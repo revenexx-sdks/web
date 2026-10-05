@@ -2,6 +2,7 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+import { Factor } from '../enums/factor';
 
 export class Customers {
     client: Client;
@@ -81,45 +82,46 @@ export class Customers {
     }
 
     /**
-     * An email and a password go in; a session and the CONTACT behind it come back, so a storefront knows in one call both that the buyer is signed in and who they are. The session is minted server-side rather than handed back from the credential check, because the account route hides the session secret from non-privileged responses and a trusted BFF needs it. `permissions` carries the buyer's effective grants, so a BFF does not need a second call to decide what to render.
+     * An identifier — email address, username or customer number, as the shop allows — and a password go in; a session and the CONTACT behind it come back, so a storefront knows in one call both that the buyer is signed in and who they are. The session is minted server-side rather than handed back from the credential check, because the account route hides the session secret from non-privileged responses and a trusted BFF needs it. `permissions` carries the buyer's effective grants, so a BFF does not need a second call to decide what to render.
      *
-     * @param {string} params.email - The buyer's login address — the same one the contact carries.
      * @param {string} params.password - The password from registration or recovery. Wrong credentials are a 401; a correct one on an undecided application is a 403.
+     * @param {string} params.email - Deprecated alias of `identifier`, kept so every storefront written against the earlier contract keeps working. Read exactly like `identifier` — an address, a username or a customer number — and ignored when `identifier` is sent too.
+     * @param {string} params.identifier - Who is signing in: the buyer's email address, their username, or their company's customer number. Which of the three a shop accepts is the merchant's choice (`login_identifier_email`, `login_identifier_username`, `login_identifier_customer_number`); a shape the shop does not accept is a 403 `identifier_not_offered`. The shape is read from the value — anything holding an `@` is an address, only digits is a customer number, anything else a username. A customer number names a COMPANY and signs in as its primary contact, which makes it a shared account.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AuthLoginResponse>}
      */
-    customersAuthLogin(params: { email: string, password: string }): Promise<Models.AuthLoginResponse>;
+    customersAuthLogin(params: { password: string, email?: string, identifier?: string }): Promise<Models.AuthLoginResponse>;
     /**
-     * An email and a password go in; a session and the CONTACT behind it come back, so a storefront knows in one call both that the buyer is signed in and who they are. The session is minted server-side rather than handed back from the credential check, because the account route hides the session secret from non-privileged responses and a trusted BFF needs it. `permissions` carries the buyer's effective grants, so a BFF does not need a second call to decide what to render.
+     * An identifier — email address, username or customer number, as the shop allows — and a password go in; a session and the CONTACT behind it come back, so a storefront knows in one call both that the buyer is signed in and who they are. The session is minted server-side rather than handed back from the credential check, because the account route hides the session secret from non-privileged responses and a trusted BFF needs it. `permissions` carries the buyer's effective grants, so a BFF does not need a second call to decide what to render.
      *
-     * @param {string} email - The buyer's login address — the same one the contact carries.
      * @param {string} password - The password from registration or recovery. Wrong credentials are a 401; a correct one on an undecided application is a 403.
+     * @param {string} email - Deprecated alias of `identifier`, kept so every storefront written against the earlier contract keeps working. Read exactly like `identifier` — an address, a username or a customer number — and ignored when `identifier` is sent too.
+     * @param {string} identifier - Who is signing in: the buyer's email address, their username, or their company's customer number. Which of the three a shop accepts is the merchant's choice (`login_identifier_email`, `login_identifier_username`, `login_identifier_customer_number`); a shape the shop does not accept is a 403 `identifier_not_offered`. The shape is read from the value — anything holding an `@` is an address, only digits is a customer number, anything else a username. A customer number names a COMPANY and signs in as its primary contact, which makes it a shared account.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AuthLoginResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthLogin(email: string, password: string): Promise<Models.AuthLoginResponse>;
+    customersAuthLogin(password: string, email?: string, identifier?: string): Promise<Models.AuthLoginResponse>;
     customersAuthLogin(
-        paramsOrFirst: { email: string, password: string } | string,
-        ...rest: [(string)?]    
+        paramsOrFirst: { password: string, email?: string, identifier?: string } | string,
+        ...rest: [(string)?, (string)?]    
     ): Promise<Models.AuthLoginResponse> {
-        let params: { email: string, password: string };
+        let params: { password: string, email?: string, identifier?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { email: string, password: string };
+            params = (paramsOrFirst || {}) as { password: string, email?: string, identifier?: string };
         } else {
             params = {
-                email: paramsOrFirst as string,
-                password: rest[0] as string            
+                password: paramsOrFirst as string,
+                email: rest[0] as string,
+                identifier: rest[1] as string            
             };
         }
         
-        const email = params.email;
         const password = params.password;
+        const email = params.email;
+        const identifier = params.identifier;
 
-        if (typeof email === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "email"');
-        }
         if (typeof password === 'undefined') {
             throw new RevenexxException('Missing required parameter: "password"');
         }
@@ -128,6 +130,9 @@ export class Customers {
         const apiPayload: Payload = {};
         if (typeof email !== 'undefined') {
             apiPayload['email'] = email;
+        }
+        if (typeof identifier !== 'undefined') {
+            apiPayload['identifier'] = identifier;
         }
         if (typeof password !== 'undefined') {
             apiPayload['password'] = password;
@@ -213,18 +218,18 @@ export class Customers {
     }
 
     /**
-     * Sign in without a password: a link goes to the address, and `PUT /customers/auth/magic-link` turns it into a session. Creates the account when the address is new, which makes this a registration path as much as a sign-in one — and why an address nobody holds is not distinguished in the answer. The mail is this shop's own template through the messaging service; the secret is not in this response, only in the link.
+     * Sign in without a password: a link goes to the address, and `PUT /customers/auth/magic-link` turns it into a session. Only a buyer this shop holds, with a login, who may sign in is sent one. For anybody else — an address nobody holds, a contact with no login, a blocked buyer or company, an undecided application — nothing is created and nothing is sent, and the answer is the same 201 in the same shape, so it cannot be used to find out who is a customer. It never founds an account. The mail is this shop's own template through the messaging service; the secret is not in this response, only in the link.
      *
-     * @param {string} params.email - Who to send the link to. An address that has never been seen creates an account rather than failing.
+     * @param {string} params.email - Who to send the link to. An address that cannot sign in is answered exactly like one that can, and nothing is sent to it.
      * @param {string} params.url - Where the mailed link points. `userId`, `secret` and `expire` are appended as query parameters; the first two are what the confirm call takes.
      * @throws {RevenexxException}
      * @returns {Promise<Models.DefaultAuthMagicLinkResponse>}
      */
     customersAuthMagicLink(params: { email: string, url: string }): Promise<Models.DefaultAuthMagicLinkResponse>;
     /**
-     * Sign in without a password: a link goes to the address, and `PUT /customers/auth/magic-link` turns it into a session. Creates the account when the address is new, which makes this a registration path as much as a sign-in one — and why an address nobody holds is not distinguished in the answer. The mail is this shop's own template through the messaging service; the secret is not in this response, only in the link.
+     * Sign in without a password: a link goes to the address, and `PUT /customers/auth/magic-link` turns it into a session. Only a buyer this shop holds, with a login, who may sign in is sent one. For anybody else — an address nobody holds, a contact with no login, a blocked buyer or company, an undecided application — nothing is created and nothing is sent, and the answer is the same 201 in the same shape, so it cannot be used to find out who is a customer. It never founds an account. The mail is this shop's own template through the messaging service; the secret is not in this response, only in the link.
      *
-     * @param {string} email - Who to send the link to. An address that has never been seen creates an account rather than failing.
+     * @param {string} email - Who to send the link to. An address that cannot sign in is answered exactly like one that can, and nothing is sent to it.
      * @param {string} url - Where the mailed link points. `userId`, `secret` and `expire` are appended as query parameters; the first two are what the confirm call takes.
      * @throws {RevenexxException}
      * @returns {Promise<Models.DefaultAuthMagicLinkResponse>}
@@ -347,40 +352,43 @@ export class Customers {
     /**
      * The platform user, the customer record mirrored against it and the effective grants, in one call. The expected caller is a trusted storefront BFF holding the session on the buyer's behalf, which is why the ids travel in the body rather than in a browser-facing header. The grants are derived here on every call rather than returned from anywhere they could be cached, so a role changed a second ago is already reflected.
      *
+     * @param {string} params.sessionId - The session the storefront holds for that user — `session.$id` from the login. A revoked or expired one is a 401.
      * @param {string} params.userId - The platform user to resolve — `session.userId` from the login.
-     * @param {string} params.sessionId - Optional session to verify. Pass it to ask "is this session still alive?" (a revoked one is then a 401); omit it to only ask who a user is.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AuthMeResponse>}
      */
-    customersAuthMe(params: { userId: string, sessionId?: string }): Promise<Models.AuthMeResponse>;
+    customersAuthMe(params: { sessionId: string, userId: string }): Promise<Models.AuthMeResponse>;
     /**
      * The platform user, the customer record mirrored against it and the effective grants, in one call. The expected caller is a trusted storefront BFF holding the session on the buyer's behalf, which is why the ids travel in the body rather than in a browser-facing header. The grants are derived here on every call rather than returned from anywhere they could be cached, so a role changed a second ago is already reflected.
      *
+     * @param {string} sessionId - The session the storefront holds for that user — `session.$id` from the login. A revoked or expired one is a 401.
      * @param {string} userId - The platform user to resolve — `session.userId` from the login.
-     * @param {string} sessionId - Optional session to verify. Pass it to ask "is this session still alive?" (a revoked one is then a 401); omit it to only ask who a user is.
      * @throws {RevenexxException}
      * @returns {Promise<Models.AuthMeResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthMe(userId: string, sessionId?: string): Promise<Models.AuthMeResponse>;
+    customersAuthMe(sessionId: string, userId: string): Promise<Models.AuthMeResponse>;
     customersAuthMe(
-        paramsOrFirst: { userId: string, sessionId?: string } | string,
+        paramsOrFirst: { sessionId: string, userId: string } | string,
         ...rest: [(string)?]    
     ): Promise<Models.AuthMeResponse> {
-        let params: { userId: string, sessionId?: string };
+        let params: { sessionId: string, userId: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { userId: string, sessionId?: string };
+            params = (paramsOrFirst || {}) as { sessionId: string, userId: string };
         } else {
             params = {
-                userId: paramsOrFirst as string,
-                sessionId: rest[0] as string            
+                sessionId: paramsOrFirst as string,
+                userId: rest[0] as string            
             };
         }
         
-        const userId = params.userId;
         const sessionId = params.sessionId;
+        const userId = params.userId;
 
+        if (typeof sessionId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "sessionId"');
+        }
         if (typeof userId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "userId"');
         }
@@ -411,33 +419,33 @@ export class Customers {
      * Between the password and the finished session: the buyer has proved one thing and is asked for another. Created by user id, because the account route that creates challenges hides the code from whoever may call it — and answered with the half-finished session the sign-in is in the middle of, through `PUT /customers/auth/mfa/challenge`. Needs a platform build that returns the challenge code; without one there is no way to read what to send, and the call answers 502 rather than mailing an empty challenge.
      *
      * @param {string} params.userId - The platform user being challenged.
-     * @param {string} params.factor - Which factor to challenge. Defaults to `email`, the only one this route mails.
+     * @param {Factor} params.factor - Which factor to challenge. `email` (the default) is the only one this route sends; any other value is a 400 `factor_not_supported`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.DefaultAuthMfaChallengeResponse>}
      */
-    customersAuthMfaChallenge(params: { userId: string, factor?: string }): Promise<Models.DefaultAuthMfaChallengeResponse>;
+    customersAuthMfaChallenge(params: { userId: string, factor?: Factor }): Promise<Models.DefaultAuthMfaChallengeResponse>;
     /**
      * Between the password and the finished session: the buyer has proved one thing and is asked for another. Created by user id, because the account route that creates challenges hides the code from whoever may call it — and answered with the half-finished session the sign-in is in the middle of, through `PUT /customers/auth/mfa/challenge`. Needs a platform build that returns the challenge code; without one there is no way to read what to send, and the call answers 502 rather than mailing an empty challenge.
      *
      * @param {string} userId - The platform user being challenged.
-     * @param {string} factor - Which factor to challenge. Defaults to `email`, the only one this route mails.
+     * @param {Factor} factor - Which factor to challenge. `email` (the default) is the only one this route sends; any other value is a 400 `factor_not_supported`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.DefaultAuthMfaChallengeResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAuthMfaChallenge(userId: string, factor?: string): Promise<Models.DefaultAuthMfaChallengeResponse>;
+    customersAuthMfaChallenge(userId: string, factor?: Factor): Promise<Models.DefaultAuthMfaChallengeResponse>;
     customersAuthMfaChallenge(
-        paramsOrFirst: { userId: string, factor?: string } | string,
-        ...rest: [(string)?]    
+        paramsOrFirst: { userId: string, factor?: Factor } | string,
+        ...rest: [(Factor)?]    
     ): Promise<Models.DefaultAuthMfaChallengeResponse> {
-        let params: { userId: string, factor?: string };
+        let params: { userId: string, factor?: Factor };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { userId: string, factor?: string };
+            params = (paramsOrFirst || {}) as { userId: string, factor?: Factor };
         } else {
             params = {
                 userId: paramsOrFirst as string,
-                factor: rest[0] as string            
+                factor: rest[0] as Factor            
             };
         }
         
@@ -554,17 +562,17 @@ export class Customers {
     }
 
     /**
-     * The same token as the sign-in link, delivered as a short code instead — for a buyer on a phone, where leaving for a mail client and coming back loses the checkout they were in the middle of. Redeemed with `PUT /customers/auth/otp`.
+     * The same token as the sign-in link, delivered as a short code instead — for a buyer on a phone, where leaving for a mail client and coming back loses the checkout they were in the middle of. Redeemed with `PUT /customers/auth/otp`. Sent under the same rule as the link: only to a buyer who may sign in, and for anybody else nothing is created or sent while the answer looks exactly the same.
      *
-     * @param {string} params.email - Who to send the code to. As with the sign-in link, an unknown address creates an account rather than failing.
+     * @param {string} params.email - Who to send the code to. As with the sign-in link, an address that cannot sign in is answered exactly like one that can, and nothing is sent to it.
      * @throws {RevenexxException}
      * @returns {Promise<Models.DefaultAuthOtpResponse>}
      */
     customersAuthOtp(params: { email: string }): Promise<Models.DefaultAuthOtpResponse>;
     /**
-     * The same token as the sign-in link, delivered as a short code instead — for a buyer on a phone, where leaving for a mail client and coming back loses the checkout they were in the middle of. Redeemed with `PUT /customers/auth/otp`.
+     * The same token as the sign-in link, delivered as a short code instead — for a buyer on a phone, where leaving for a mail client and coming back loses the checkout they were in the middle of. Redeemed with `PUT /customers/auth/otp`. Sent under the same rule as the link: only to a buyer who may sign in, and for anybody else nothing is created or sent while the answer looks exactly the same.
      *
-     * @param {string} email - Who to send the code to. As with the sign-in link, an unknown address creates an account rather than failing.
+     * @param {string} email - Who to send the code to. As with the sign-in link, an address that cannot sign in is answered exactly like one that can, and nothing is sent to it.
      * @throws {RevenexxException}
      * @returns {Promise<Models.DefaultAuthOtpResponse>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -675,7 +683,7 @@ export class Customers {
     }
 
     /**
-     * Step one of two: a link goes to the address given, and `PUT /customers/auth/recovery` is what the buyer's browser comes back to. The identity service mints the token; the MAIL is this shop's own — the tenant's template, layout, language and sending domain, through the messaging service. The secret is NOT in this answer: it exists only inside the mailed link, which is the whole point of the two-step shape, and echoing it here would make the mail decorative. Nothing about the contact changes; the password only moves in step two.
+     * Step one of two: a link goes to the address given, and `PUT /customers/auth/recovery` is what the buyer's browser comes back to. The identity service mints the token; the MAIL is this shop's own — the tenant's template, layout, language and sending domain, through the messaging service. The secret is NOT in this answer: it exists only inside the mailed link, which is the whole point of the two-step shape, and echoing it here would make the mail decorative. One thing about the contact CAN change: a buyer this shop holds who carries no platform login — an address written straight into the record by an import — is given one here, because the alternative is telling the one person who cannot help themselves that no account exists, with no other way in. Nothing else about the contact moves, and the password only moves in step two.
      *
      * @param {string} params.email - Who to send the recovery mail to. An address nobody holds is not distinguished here — do not build an account-existence check on the answer.
      * @param {string} params.url - Where the mailed link points. `userId`, `secret` and `expire` are appended as query parameters — the first two are what the confirm call takes. Same shape the identity service's own mail used, so a storefront that already handles that link needs no change.
@@ -684,7 +692,7 @@ export class Customers {
      */
     customersAuthRecovery(params: { email: string, url: string }): Promise<Models.DefaultAuthRecoveryResponse>;
     /**
-     * Step one of two: a link goes to the address given, and `PUT /customers/auth/recovery` is what the buyer's browser comes back to. The identity service mints the token; the MAIL is this shop's own — the tenant's template, layout, language and sending domain, through the messaging service. The secret is NOT in this answer: it exists only inside the mailed link, which is the whole point of the two-step shape, and echoing it here would make the mail decorative. Nothing about the contact changes; the password only moves in step two.
+     * Step one of two: a link goes to the address given, and `PUT /customers/auth/recovery` is what the buyer's browser comes back to. The identity service mints the token; the MAIL is this shop's own — the tenant's template, layout, language and sending domain, through the messaging service. The secret is NOT in this answer: it exists only inside the mailed link, which is the whole point of the two-step shape, and echoing it here would make the mail decorative. One thing about the contact CAN change: a buyer this shop holds who carries no platform login — an address written straight into the record by an import — is given one here, because the alternative is telling the one person who cannot help themselves that no account exists, with no other way in. Nothing else about the contact moves, and the password only moves in step two.
      *
      * @param {string} email - Who to send the recovery mail to. An address nobody holds is not distinguished here — do not build an account-existence check on the answer.
      * @param {string} url - Where the mailed link points. `userId`, `secret` and `expire` are appended as query parameters — the first two are what the confirm call takes. Same shape the identity service's own mail used, so a storefront that already handles that link needs no change.
@@ -824,7 +832,7 @@ export class Customers {
      * @param {string} params.firstName - Given name. Optional: an ERP import often has only a mailbox.
      * @param {string} params.lastName - Family name. Optional for the same reason.
      * @param {string} params.locale - The language this person is written to in — BCP 47, and one of the store's configured locales. Null falls back to the store default. One of the store's own locales, or the call is a 400.
-     * @param {string} params.organizationId - JOIN an existing company — the invite shape. Neither b2b_registration_enabled nor b2c_registration_enabled applies to it.
+     * @param {string} params.organizationId - REFUSED when set: joining an existing company is an invitation, not a registration, so a value here answers 403 `join_requires_invitation` (400 `organization_ambiguous` beside `organization_name`). Send null or leave it out.
      * @param {string} params.organizationName - FOUND a new company, with this contact as its admin. This is what makes the registration a B2B one; leaving it out registers a standalone buyer.
      * @param {string} params.url - Where the welcome mail's button points — the buyer's first stop in this shop. Absent, the mail still goes out and simply carries no button. Ignored when the registration is an APPLICATION: there is no account to send anybody to yet.
      * @param {string} params.vatId - VAT identification number (USt-IdNr. in Germany) — the closest thing a B2B buyer has to a legal identity. Validated against the EU VIES service when the tenant's `organization_vat_id_required` setting is on, and stored verbatim otherwise, including for buyers outside the EU. Required when the tenant's `organization_vat_id_required` is on, and checked BEFORE the company is created so a bad one leaves no half-founded organization behind.
@@ -841,7 +849,7 @@ export class Customers {
      * @param {string} firstName - Given name. Optional: an ERP import often has only a mailbox.
      * @param {string} lastName - Family name. Optional for the same reason.
      * @param {string} locale - The language this person is written to in — BCP 47, and one of the store's configured locales. Null falls back to the store default. One of the store's own locales, or the call is a 400.
-     * @param {string} organizationId - JOIN an existing company — the invite shape. Neither b2b_registration_enabled nor b2c_registration_enabled applies to it.
+     * @param {string} organizationId - REFUSED when set: joining an existing company is an invitation, not a registration, so a value here answers 403 `join_requires_invitation` (400 `organization_ambiguous` beside `organization_name`). Send null or leave it out.
      * @param {string} organizationName - FOUND a new company, with this contact as its admin. This is what makes the registration a B2B one; leaving it out registers a standalone buyer.
      * @param {string} url - Where the welcome mail's button points — the buyer's first stop in this shop. Absent, the mail still goes out and simply carries no button. Ignored when the registration is an APPLICATION: there is no account to send anybody to yet.
      * @param {string} vatId - VAT identification number (USt-IdNr. in Germany) — the closest thing a B2B buyer has to a legal identity. Validated against the EU VIES service when the tenant's `organization_vat_id_required` setting is on, and stored verbatim otherwise, including for buyers outside the EU. Required when the tenant's `organization_vat_id_required` is on, and checked BEFORE the company is created so a bad one leaves no half-founded organization behind.

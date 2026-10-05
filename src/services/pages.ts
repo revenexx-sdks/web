@@ -3,6 +3,8 @@ import { RevenexxException, Client, type Payload, UploadProgress } from '../clie
 import type { Models } from '../models';
 
 import { PageStatus } from '../enums/page-status';
+import { Deleted } from '../enums/deleted';
+import { PagesSeedMode } from '../enums/pages-seed-mode';
 import { PagesVocabulariesGetName } from '../enums/pages-vocabularies-get-name';
 
 export class Pages {
@@ -200,43 +202,47 @@ export class Pages {
      * @param {string} params.id - The library item id.
      * @param {string} params.bundle - The block type this item instantiates. Changing it moves the item to a different part of the picker.
      * @param {string} params.label - What the item is called in the picker.
+     * @param {object} params.metadata - The item's own bag, replaced wholesale. This route is the only way to write it — the library item itself is made by the `make_reusable` editor step, which writes none — so an importer creates the item and then names it here.
      * @param {object} params.tree - A block and its whole subtree, serialized. Produced by the editor when a selection is made reusable or saved as a template, and instantiated back into real blocks when one is inserted.
      * @throws {RevenexxException}
      * @returns {Promise<Models.LibraryItem>}
      */
-    pagesLibraryUpdate(params: { id: string, bundle?: string, label?: string, tree?: object }): Promise<Models.LibraryItem>;
+    pagesLibraryUpdate(params: { id: string, bundle?: string, label?: string, metadata?: object, tree?: object }): Promise<Models.LibraryItem>;
     /**
      * The one write in this app whose blast radius is not a single page. Delivery expands a library reference against this row every time it serves, so replacing `tree` re-renders every page that points at the item — published ones included — without any of them being edited, republished or even touched. Nothing warns you first and no revision records it, because the pages did not change; the item did. Changing `label` or `bundle` only moves the item around the picker. Detaching one page from the item, so it keeps a copy of its own, is an editor mutation and not this route.
      *
      * @param {string} id - The library item id.
      * @param {string} bundle - The block type this item instantiates. Changing it moves the item to a different part of the picker.
      * @param {string} label - What the item is called in the picker.
+     * @param {object} metadata - The item's own bag, replaced wholesale. This route is the only way to write it — the library item itself is made by the `make_reusable` editor step, which writes none — so an importer creates the item and then names it here.
      * @param {object} tree - A block and its whole subtree, serialized. Produced by the editor when a selection is made reusable or saved as a template, and instantiated back into real blocks when one is inserted.
      * @throws {RevenexxException}
      * @returns {Promise<Models.LibraryItem>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesLibraryUpdate(id: string, bundle?: string, label?: string, tree?: object): Promise<Models.LibraryItem>;
+    pagesLibraryUpdate(id: string, bundle?: string, label?: string, metadata?: object, tree?: object): Promise<Models.LibraryItem>;
     pagesLibraryUpdate(
-        paramsOrFirst: { id: string, bundle?: string, label?: string, tree?: object } | string,
-        ...rest: [(string)?, (string)?, (object)?]    
+        paramsOrFirst: { id: string, bundle?: string, label?: string, metadata?: object, tree?: object } | string,
+        ...rest: [(string)?, (string)?, (object)?, (object)?]    
     ): Promise<Models.LibraryItem> {
-        let params: { id: string, bundle?: string, label?: string, tree?: object };
+        let params: { id: string, bundle?: string, label?: string, metadata?: object, tree?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, bundle?: string, label?: string, tree?: object };
+            params = (paramsOrFirst || {}) as { id: string, bundle?: string, label?: string, metadata?: object, tree?: object };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 bundle: rest[0] as string,
                 label: rest[1] as string,
-                tree: rest[2] as object            
+                metadata: rest[2] as object,
+                tree: rest[3] as object            
             };
         }
         
         const id = params.id;
         const bundle = params.bundle;
         const label = params.label;
+        const metadata = params.metadata;
         const tree = params.tree;
 
         if (typeof id === 'undefined') {
@@ -250,6 +256,9 @@ export class Pages {
         }
         if (typeof label !== 'undefined') {
             apiPayload['label'] = label;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
         }
         if (typeof tree !== 'undefined') {
             apiPayload['tree'] = Client.toWireKeys(tree, {"fragmentName":{"wire":"fragment_name","children":null},"propsI18n":{"wire":"props_i18n","children":null}});
@@ -515,40 +524,44 @@ export class Pages {
      * @param {string} params.id - The menu row id.
      * @param {Models.PageMenuItem[]} params.items - The ordered navigation tree. Replaces the stored one completely.
      * @param {string} params.label - What this menu is called for the people who edit it.
+     * @param {object} params.metadata - The menu's own bag, replaced wholesale. This route is the only way to write it — the upsert reads `menuKey`, `label` and `items` and nothing else — so a caller that seeds a menu by key names its metadata here afterwards.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Menu>}
      */
-    pagesMenusUpdate(params: { id: string, items?: Models.PageMenuItem[], label?: string }): Promise<Models.Menu>;
+    pagesMenusUpdate(params: { id: string, items?: Models.PageMenuItem[], label?: string, metadata?: object }): Promise<Models.Menu>;
     /**
      * The same write as the upsert, for a caller that already holds the row id — use this when editing a menu a person picked from a list, and the upsert when reconciling a theme's defaults. `menu_key` is deliberately not editable here: the key is the handle every theme reads the menu by, so changing it would empty whatever is rendering that key without anything reporting an error.
      *
      * @param {string} id - The menu row id.
      * @param {Models.PageMenuItem[]} items - The ordered navigation tree. Replaces the stored one completely.
      * @param {string} label - What this menu is called for the people who edit it.
+     * @param {object} metadata - The menu's own bag, replaced wholesale. This route is the only way to write it — the upsert reads `menuKey`, `label` and `items` and nothing else — so a caller that seeds a menu by key names its metadata here afterwards.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Menu>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesMenusUpdate(id: string, items?: Models.PageMenuItem[], label?: string): Promise<Models.Menu>;
+    pagesMenusUpdate(id: string, items?: Models.PageMenuItem[], label?: string, metadata?: object): Promise<Models.Menu>;
     pagesMenusUpdate(
-        paramsOrFirst: { id: string, items?: Models.PageMenuItem[], label?: string } | string,
-        ...rest: [(Models.PageMenuItem[])?, (string)?]    
+        paramsOrFirst: { id: string, items?: Models.PageMenuItem[], label?: string, metadata?: object } | string,
+        ...rest: [(Models.PageMenuItem[])?, (string)?, (object)?]    
     ): Promise<Models.Menu> {
-        let params: { id: string, items?: Models.PageMenuItem[], label?: string };
+        let params: { id: string, items?: Models.PageMenuItem[], label?: string, metadata?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, items?: Models.PageMenuItem[], label?: string };
+            params = (paramsOrFirst || {}) as { id: string, items?: Models.PageMenuItem[], label?: string, metadata?: object };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 items: rest[0] as Models.PageMenuItem[],
-                label: rest[1] as string            
+                label: rest[1] as string,
+                metadata: rest[2] as object            
             };
         }
         
         const id = params.id;
         const items = params.items;
         const label = params.label;
+        const metadata = params.metadata;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
@@ -561,6 +574,9 @@ export class Pages {
         }
         if (typeof label !== 'undefined') {
             apiPayload['label'] = label;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -577,7 +593,7 @@ export class Pages {
     }
 
     /**
-     * The EDITORIAL index — every live page of the tenant, whatever its status, newest change first. This is the list the Cockpit shows a person: drafts and archived pages are in it, and a row here says nothing about whether a visitor can see the page, because a published status without a published revision still delivers nothing. A storefront wants `GET /pages/delivery/pages` instead, which answers only what is actually servable. Soft-deleted pages are never returned and the predicate is this route's own, not something a caller can switch off.
+     * The EDITORIAL index — every live page of the tenant, whatever its status, newest change first. This is the list the Cockpit shows a person: drafts and archived pages are in it, and a row here says nothing about whether a visitor can see the page, because a published status without a published revision still delivers nothing. A storefront wants `GET /pages/delivery/pages` instead, which answers only what is actually servable. Soft-deleted pages are not returned unless `?deleted=only` asks for the trash instead: then ONLY soft-deleted pages come back, most recently deleted first, each carrying its `deleted_at`, and `POST /pages/pages/{id}/restore` brings one back. The two collections never mix in one answer.
      *
      * @param {number} params.limit - Page size (default 50, max 200).
      * @param {number} params.offset - Row offset for pagination (default 0).
@@ -585,12 +601,13 @@ export class Pages {
      * @param {string} params.bundle - Exact page type. The value set belongs to the active theme, so this app constrains it to a non-empty string and nothing more.
      * @param {PageStatus} params.status - Exact lifecycle status.
      * @param {string} params.q - Case-insensitive substring search over the page title. Runs in the query, so `page.total` counts the matches. Empty means no search.
+     * @param {Deleted} params.deleted - Send `only` for the trash: soft-deleted pages instead of live ones, default order `deleted_at.desc`. Every other filter, the search and `order` apply as on the live list. Any other value is refused with 400.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    pagesPagesList(params?: { limit?: number, offset?: number, order?: string, bundle?: string, status?: PageStatus, q?: string }): Promise<{}>;
+    pagesPagesList(params?: { limit?: number, offset?: number, order?: string, bundle?: string, status?: PageStatus, q?: string, deleted?: Deleted }): Promise<{}>;
     /**
-     * The EDITORIAL index — every live page of the tenant, whatever its status, newest change first. This is the list the Cockpit shows a person: drafts and archived pages are in it, and a row here says nothing about whether a visitor can see the page, because a published status without a published revision still delivers nothing. A storefront wants `GET /pages/delivery/pages` instead, which answers only what is actually servable. Soft-deleted pages are never returned and the predicate is this route's own, not something a caller can switch off.
+     * The EDITORIAL index — every live page of the tenant, whatever its status, newest change first. This is the list the Cockpit shows a person: drafts and archived pages are in it, and a row here says nothing about whether a visitor can see the page, because a published status without a published revision still delivers nothing. A storefront wants `GET /pages/delivery/pages` instead, which answers only what is actually servable. Soft-deleted pages are not returned unless `?deleted=only` asks for the trash instead: then ONLY soft-deleted pages come back, most recently deleted first, each carrying its `deleted_at`, and `POST /pages/pages/{id}/restore` brings one back. The two collections never mix in one answer.
      *
      * @param {number} limit - Page size (default 50, max 200).
      * @param {number} offset - Row offset for pagination (default 0).
@@ -598,19 +615,20 @@ export class Pages {
      * @param {string} bundle - Exact page type. The value set belongs to the active theme, so this app constrains it to a non-empty string and nothing more.
      * @param {PageStatus} status - Exact lifecycle status.
      * @param {string} q - Case-insensitive substring search over the page title. Runs in the query, so `page.total` counts the matches. Empty means no search.
+     * @param {Deleted} deleted - Send `only` for the trash: soft-deleted pages instead of live ones, default order `deleted_at.desc`. Every other filter, the search and `order` apply as on the live list. Any other value is refused with 400.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesPagesList(limit?: number, offset?: number, order?: string, bundle?: string, status?: PageStatus, q?: string): Promise<{}>;
+    pagesPagesList(limit?: number, offset?: number, order?: string, bundle?: string, status?: PageStatus, q?: string, deleted?: Deleted): Promise<{}>;
     pagesPagesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, bundle?: string, status?: PageStatus, q?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (PageStatus)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, bundle?: string, status?: PageStatus, q?: string, deleted?: Deleted } | number,
+        ...rest: [(number)?, (string)?, (string)?, (PageStatus)?, (string)?, (Deleted)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, bundle?: string, status?: PageStatus, q?: string };
+        let params: { limit?: number, offset?: number, order?: string, bundle?: string, status?: PageStatus, q?: string, deleted?: Deleted };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, bundle?: string, status?: PageStatus, q?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, bundle?: string, status?: PageStatus, q?: string, deleted?: Deleted };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -618,7 +636,8 @@ export class Pages {
                 order: rest[1] as string,
                 bundle: rest[2] as string,
                 status: rest[3] as PageStatus,
-                q: rest[4] as string            
+                q: rest[4] as string,
+                deleted: rest[5] as Deleted            
             };
         }
         
@@ -628,6 +647,7 @@ export class Pages {
         const bundle = params.bundle;
         const status = params.status;
         const q = params.q;
+        const deleted = params.deleted;
 
 
         const apiPath = '/v1/pages/pages';
@@ -649,6 +669,9 @@ export class Pages {
         }
         if (typeof q !== 'undefined') {
             apiPayload['q'] = q;
+        }
+        if (typeof deleted !== 'undefined') {
+            apiPayload['deleted'] = deleted;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -672,10 +695,11 @@ export class Pages {
      * @param {object} params.meta - The page's metadata bag (SEO and social fields). Stored and handed back untouched — this app reads no key of it, so the theme decides what goes in.
      * @param {string} params.slug - The path segment the storefront routes it under, without a leading slash. Unique per tenant among live pages; omit or send null for a page reached only by id. Nothing here derives one from the title.
      * @param {string} params.sourceLanguage - The language you are authoring in, and the fallback for every later translation. Omit to take the default_source_language setting for the request market.
+     * @param {string} params.templateId - Start from a template instead of an empty page: its blocks become the page's blocks, with new ids, in the template's `field_name` (or `content` when it has none), and the page takes the template's `page_bundle` as its type. Nothing is published — the page starts at default_page_status like any other. `GET /pages/templates?page_bundle=` lists the templates for a type, and `is_default` marks the one to offer first. Omit or send null for an empty page.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Page>}
      */
-    pagesPagesCreate(params: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string }): Promise<Models.Page>;
+    pagesPagesCreate(params: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string, templateId?: string }): Promise<Models.Page>;
     /**
      * Writes two rows, not one: the page itself and the translation row for its source language, so a page is never without the language it was authored in and `GET /pages/delivery/page?slug=` can match a localized URL from the first moment. Everything the caller leaves out comes from the tenant's settings, not from a literal in this app: `bundle` from default_page_bundle, `sourceLanguage` from default_source_language (resolved for the request's market), and the status of both the page and its source translation from default_page_status (draft | published).
      *
@@ -685,19 +709,20 @@ export class Pages {
      * @param {object} meta - The page's metadata bag (SEO and social fields). Stored and handed back untouched — this app reads no key of it, so the theme decides what goes in.
      * @param {string} slug - The path segment the storefront routes it under, without a leading slash. Unique per tenant among live pages; omit or send null for a page reached only by id. Nothing here derives one from the title.
      * @param {string} sourceLanguage - The language you are authoring in, and the fallback for every later translation. Omit to take the default_source_language setting for the request market.
+     * @param {string} templateId - Start from a template instead of an empty page: its blocks become the page's blocks, with new ids, in the template's `field_name` (or `content` when it has none), and the page takes the template's `page_bundle` as its type. Nothing is published — the page starts at default_page_status like any other. `GET /pages/templates?page_bundle=` lists the templates for a type, and `is_default` marks the one to offer first. Omit or send null for an empty page.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Page>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesPagesCreate(title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string): Promise<Models.Page>;
+    pagesPagesCreate(title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string, templateId?: string): Promise<Models.Page>;
     pagesPagesCreate(
-        paramsOrFirst: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string } | string,
-        ...rest: [(string)?, (object)?, (object)?, (string)?, (string)?]    
+        paramsOrFirst: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string, templateId?: string } | string,
+        ...rest: [(string)?, (object)?, (object)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.Page> {
-        let params: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string };
+        let params: { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string, templateId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string };
+            params = (paramsOrFirst || {}) as { title: string, bundle?: string, hostOptions?: object, meta?: object, slug?: string, sourceLanguage?: string, templateId?: string };
         } else {
             params = {
                 title: paramsOrFirst as string,
@@ -705,7 +730,8 @@ export class Pages {
                 hostOptions: rest[1] as object,
                 meta: rest[2] as object,
                 slug: rest[3] as string,
-                sourceLanguage: rest[4] as string            
+                sourceLanguage: rest[4] as string,
+                templateId: rest[5] as string            
             };
         }
         
@@ -715,6 +741,7 @@ export class Pages {
         const meta = params.meta;
         const slug = params.slug;
         const sourceLanguage = params.sourceLanguage;
+        const templateId = params.templateId;
 
         if (typeof title === 'undefined') {
             throw new RevenexxException('Missing required parameter: "title"');
@@ -737,6 +764,9 @@ export class Pages {
         if (typeof sourceLanguage !== 'undefined') {
             apiPayload['sourceLanguage'] = sourceLanguage;
         }
+        if (typeof templateId !== 'undefined') {
+            apiPayload['templateId'] = templateId;
+        }
         if (typeof title !== 'undefined') {
             apiPayload['title'] = title;
         }
@@ -755,7 +785,7 @@ export class Pages {
     }
 
     /**
-     * Writes a tombstone. The page leaves every list, every read and all delivery at once, and its slug is immediately free for another page — the unique index counts live rows only. Nothing is erased: the translations, blocks, edit state, revisions, comments and preview grants that hang off the page all keep their rows, because their `on delete cascade` belongs to a hard delete and this is not one. So a page can be brought back intact by clearing `deleted_at` — but not through this app, which publishes no route that does it.
+     * Writes a tombstone. The page leaves every list, every read and all delivery at once, and its slug is immediately free for another page — the unique index counts live rows only. Nothing is erased: the translations, blocks, edit state, revisions, comments and preview grants that hang off the page all keep their rows, because their `on delete cascade` belongs to a hard delete and this is not one. So a page comes back intact through `POST /pages/pages/{id}/restore`, and until then it is listed in the trash at `GET /pages/pages?deleted=only`.
      *
      * @param {string} params.id - The page id.
      * @throws {RevenexxException}
@@ -763,7 +793,7 @@ export class Pages {
      */
     pagesPagesDelete(params: { id: string }): Promise<{}>;
     /**
-     * Writes a tombstone. The page leaves every list, every read and all delivery at once, and its slug is immediately free for another page — the unique index counts live rows only. Nothing is erased: the translations, blocks, edit state, revisions, comments and preview grants that hang off the page all keep their rows, because their `on delete cascade` belongs to a hard delete and this is not one. So a page can be brought back intact by clearing `deleted_at` — but not through this app, which publishes no route that does it.
+     * Writes a tombstone. The page leaves every list, every read and all delivery at once, and its slug is immediately free for another page — the unique index counts live rows only. Nothing is erased: the translations, blocks, edit state, revisions, comments and preview grants that hang off the page all keep their rows, because their `on delete cascade` belongs to a hard delete and this is not one. So a page comes back intact through `POST /pages/pages/{id}/restore`, and until then it is listed in the trash at `GET /pages/pages?deleted=only`.
      *
      * @param {string} id - The page id.
      * @throws {RevenexxException}
@@ -945,6 +975,124 @@ export class Pages {
     }
 
     /**
+     * Creates a new page from what the source SHOWS: its blocks as they stand, which after a publish are the live tree, every language's title, its type, language, display options and metadata. An open draft on the source is not copied — it lives in the source's edit state, not in its blocks. Every block of the copy gets a new id, so editing the copy never touches the source, while a block that references a library item keeps referencing it. The copy is unpublished, has no revisions and no edit state, and starts at default_page_status. With an empty body (`{}`) its title is the source's plus a copy suffix in the source language and it has no slug, so it collides with nothing.
+     *
+     * @param {string} params.id - The page to copy.
+     * @param {string} params.slug - The path segment to route the copy under. Omit or send null for none — the source's slug stays the source's. One another live page or a live page's translation holds answers 409.
+     * @param {string} params.title - The copy's title in its source language. Omit for the source title plus `(Kopie)` / `(copy)`.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Page>}
+     */
+    pagesPagesDuplicate(params: { id: string, slug?: string, title?: string }): Promise<Models.Page>;
+    /**
+     * Creates a new page from what the source SHOWS: its blocks as they stand, which after a publish are the live tree, every language's title, its type, language, display options and metadata. An open draft on the source is not copied — it lives in the source's edit state, not in its blocks. Every block of the copy gets a new id, so editing the copy never touches the source, while a block that references a library item keeps referencing it. The copy is unpublished, has no revisions and no edit state, and starts at default_page_status. With an empty body (`{}`) its title is the source's plus a copy suffix in the source language and it has no slug, so it collides with nothing.
+     *
+     * @param {string} id - The page to copy.
+     * @param {string} slug - The path segment to route the copy under. Omit or send null for none — the source's slug stays the source's. One another live page or a live page's translation holds answers 409.
+     * @param {string} title - The copy's title in its source language. Omit for the source title plus `(Kopie)` / `(copy)`.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Page>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesPagesDuplicate(id: string, slug?: string, title?: string): Promise<Models.Page>;
+    pagesPagesDuplicate(
+        paramsOrFirst: { id: string, slug?: string, title?: string } | string,
+        ...rest: [(string)?, (string)?]    
+    ): Promise<Models.Page> {
+        let params: { id: string, slug?: string, title?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, slug?: string, title?: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                slug: rest[0] as string,
+                title: rest[1] as string            
+            };
+        }
+        
+        const id = params.id;
+        const slug = params.slug;
+        const title = params.title;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/pages/pages/{id}/duplicate'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof slug !== 'undefined') {
+            apiPayload['slug'] = slug;
+        }
+        if (typeof title !== 'undefined') {
+            apiPayload['title'] = title;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Clears the tombstone, and that is the whole restore: a soft delete never touched the translations, blocks, edit state, revisions, comments or preview grants, so the page returns to every list, read and delivery exactly as it was, including its published revision. Only the slug can have moved on — deleting freed it, so another live page may hold it now. Then the page stays in the trash and the call answers 409; free or change the other page's slug and restore again.
+     *
+     * @param {string} params.id - The deleted page, as the trash lists it.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Page>}
+     */
+    pagesPagesRestore(params: { id: string }): Promise<Models.Page>;
+    /**
+     * Clears the tombstone, and that is the whole restore: a soft delete never touched the translations, blocks, edit state, revisions, comments or preview grants, so the page returns to every list, read and delivery exactly as it was, including its published revision. Only the slug can have moved on — deleting freed it, so another live page may hold it now. Then the page stays in the trash and the call answers 409; free or change the other page's slug and restore again.
+     *
+     * @param {string} id - The deleted page, as the trash lists it.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Page>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesPagesRestore(id: string): Promise<Models.Page>;
+    pagesPagesRestore(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.Page> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/pages/pages/{id}/restore'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
      * One entry per publication, newest first, which is the order a history is read in and the one this route sorts by unless `order` says otherwise. The `snapshot` — the whole published page, in every language — is deliberately not in the index: it is page-sized, and nothing that renders a history needs it.
      *
      * @param {string} params.id - The page whose history to read.
@@ -1046,50 +1194,71 @@ export class Pages {
     }
 
     /**
-     * The target of a theme activation hook: hand it the theme's default pages and menus and it creates whatever is missing. Idempotent by `slug` and by menu key — a slug or a key the tenant already holds is skipped rather than rewritten, so re-running after a theme update adds only the new ones and never overwrites what an editor has since changed. A seeded page is published on the spot, immediately servable by delivery: the default_page_status setting deliberately does not apply, because a theme that activates with invisible pages looks broken.
+     * The target of a theme install: hand it the theme's default pages, menus, library items and site settings. In `fill` mode — the default — it creates whatever is missing and leaves everything else alone: idempotent by page `slug`, menu key, library item label and setting key, so re-running after a theme update adds only the new ones and never overwrites what an editor has since changed, and a setting the tenant has set keeps its value. In `reset` mode every section the body carries REPLACES the tenant's own content of that kind: the live pages, menus or library items are soft-deleted first, exactly as their delete does it — so they wait in the trash and can be restored — and the site settings are removed, then the section is seeded as in fill. A section the body leaves out is not touched in either mode, and nothing reaches beyond the calling tenant. A seeded page is published on the spot, immediately servable by delivery: the default_page_status setting deliberately does not apply, because a theme that activates with invisible pages looks broken.
      *
+     * @param {object[]} params.library - The reusable blocks to create. Idempotent by label among live items. One without a label or without a block tree is reported under `skipped`.
      * @param {object[]} params.menus - The menus to create. One with no key or no label is reported under `skipped`.
+     * @param {PagesSeedMode} params.mode - `fill` (the default) adds what is missing and keeps everything that exists. `reset` replaces every section that is sent — pages, menus and library items go to the trash first, site settings are removed — and must be asked for by name.
      * @param {object[]} params.pages - The pages to create. One that has no `slug` or no `title` is reported under `skipped` rather than refused, so one bad entry never loses the rest.
+     * @param {object} params.settings - Site settings by key — the same values `PUT /pages/settings/site/{key}` stores. In fill only keys the tenant has not set are written; in reset every existing key is removed first. A key that is not a valid setting name, an empty value or one over 128 KiB is reported under `skipped`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.SeedResult>}
      */
-    pagesSeed(params?: { menus?: object[], pages?: object[] }): Promise<Models.SeedResult>;
+    pagesSeed(params?: { library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object }): Promise<Models.SeedResult>;
     /**
-     * The target of a theme activation hook: hand it the theme's default pages and menus and it creates whatever is missing. Idempotent by `slug` and by menu key — a slug or a key the tenant already holds is skipped rather than rewritten, so re-running after a theme update adds only the new ones and never overwrites what an editor has since changed. A seeded page is published on the spot, immediately servable by delivery: the default_page_status setting deliberately does not apply, because a theme that activates with invisible pages looks broken.
+     * The target of a theme install: hand it the theme's default pages, menus, library items and site settings. In `fill` mode — the default — it creates whatever is missing and leaves everything else alone: idempotent by page `slug`, menu key, library item label and setting key, so re-running after a theme update adds only the new ones and never overwrites what an editor has since changed, and a setting the tenant has set keeps its value. In `reset` mode every section the body carries REPLACES the tenant's own content of that kind: the live pages, menus or library items are soft-deleted first, exactly as their delete does it — so they wait in the trash and can be restored — and the site settings are removed, then the section is seeded as in fill. A section the body leaves out is not touched in either mode, and nothing reaches beyond the calling tenant. A seeded page is published on the spot, immediately servable by delivery: the default_page_status setting deliberately does not apply, because a theme that activates with invisible pages looks broken.
      *
+     * @param {object[]} library - The reusable blocks to create. Idempotent by label among live items. One without a label or without a block tree is reported under `skipped`.
      * @param {object[]} menus - The menus to create. One with no key or no label is reported under `skipped`.
+     * @param {PagesSeedMode} mode - `fill` (the default) adds what is missing and keeps everything that exists. `reset` replaces every section that is sent — pages, menus and library items go to the trash first, site settings are removed — and must be asked for by name.
      * @param {object[]} pages - The pages to create. One that has no `slug` or no `title` is reported under `skipped` rather than refused, so one bad entry never loses the rest.
+     * @param {object} settings - Site settings by key — the same values `PUT /pages/settings/site/{key}` stores. In fill only keys the tenant has not set are written; in reset every existing key is removed first. A key that is not a valid setting name, an empty value or one over 128 KiB is reported under `skipped`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.SeedResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesSeed(menus?: object[], pages?: object[]): Promise<Models.SeedResult>;
+    pagesSeed(library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object): Promise<Models.SeedResult>;
     pagesSeed(
-        paramsOrFirst?: { menus?: object[], pages?: object[] } | object[],
-        ...rest: [(object[])?]    
+        paramsOrFirst?: { library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object } | object[],
+        ...rest: [(object[])?, (PagesSeedMode)?, (object[])?, (object)?]    
     ): Promise<Models.SeedResult> {
-        let params: { menus?: object[], pages?: object[] };
+        let params: { library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object };
         
-        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('menus' in paramsOrFirst || 'pages' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { menus?: object[], pages?: object[] };
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('library' in paramsOrFirst || 'menus' in paramsOrFirst || 'mode' in paramsOrFirst || 'pages' in paramsOrFirst || 'settings' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object };
         } else {
             params = {
-                menus: paramsOrFirst as object[],
-                pages: rest[0] as object[]            
+                library: paramsOrFirst as object[],
+                menus: rest[0] as object[],
+                mode: rest[1] as PagesSeedMode,
+                pages: rest[2] as object[],
+                settings: rest[3] as object            
             };
         }
         
+        const library = params.library;
         const menus = params.menus;
+        const mode = params.mode;
         const pages = params.pages;
+        const settings = params.settings;
 
 
         const apiPath = '/v1/pages/seed';
         const apiPayload: Payload = {};
+        if (typeof library !== 'undefined') {
+            apiPayload['library'] = Client.toWireKeys(library, {"tree":{"wire":"tree","children":{"fragmentName":{"wire":"fragment_name","children":null},"propsI18n":{"wire":"props_i18n","children":null}}}});
+        }
         if (typeof menus !== 'undefined') {
             apiPayload['menus'] = menus;
         }
+        if (typeof mode !== 'undefined') {
+            apiPayload['mode'] = mode;
+        }
         if (typeof pages !== 'undefined') {
             apiPayload['pages'] = Client.toWireKeys(pages, {"blocks":{"wire":"blocks","children":{"fragmentName":{"wire":"fragment_name","children":null},"propsI18n":{"wire":"props_i18n","children":null}}}});
+        }
+        if (typeof settings !== 'undefined') {
+            apiPayload['settings'] = settings;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1099,6 +1268,403 @@ export class Pages {
 
         return this.client.call(
             'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Every site setting the tenant has set, ordered by key — what a theme styles the whole storefront with: its appearance, its design tokens, its custom CSS. Not paged: a tenant holds a handful of keys, and this is the whole set in one read. A key nobody set is simply absent here; `GET /pages/delivery/site-settings` is the read that answers it as `null`.
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    pagesSettingsSiteList(): Promise<{}> {
+
+        const apiPath = '/v1/pages/settings/site';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Takes the value away, so the key reads as unset again — absent from the list, `null` on delivery, which is where a theme falls back to its own default. Not a tombstone: there is nothing to restore, and setting the key again starts afresh.
+     *
+     * @param {string} params.key - The setting key: a lower-case letter, then letters and digits, 64 characters at most. The storefront themes read `appearance`, `design` and `customCss`.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    pagesSettingsSiteDelete(params: { key: string }): Promise<{}>;
+    /**
+     * Takes the value away, so the key reads as unset again — absent from the list, `null` on delivery, which is where a theme falls back to its own default. Not a tombstone: there is nothing to restore, and setting the key again starts afresh.
+     *
+     * @param {string} key - The setting key: a lower-case letter, then letters and digits, 64 characters at most. The storefront themes read `appearance`, `design` and `customCss`.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesSettingsSiteDelete(key: string): Promise<{}>;
+    pagesSettingsSiteDelete(
+        paramsOrFirst: { key: string } | string    
+    ): Promise<{}> {
+        let params: { key: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { key: string };
+        } else {
+            params = {
+                key: paramsOrFirst as string            
+            };
+        }
+        
+        const key = params.key;
+
+        if (typeof key === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "key"');
+        }
+
+        const apiPath = '/v1/pages/settings/site/{key}'.replace('{key}', key);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'delete',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * One key, with who set it and when. A key the tenant never set answers 404 rather than an empty value, so an editor can tell "not set" from "set to nothing".
+     *
+     * @param {string} params.key - The setting key: a lower-case letter, then letters and digits, 64 characters at most. The storefront themes read `appearance`, `design` and `customCss`.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.SiteSetting>}
+     */
+    pagesSettingsSiteGet(params: { key: string }): Promise<Models.SiteSetting>;
+    /**
+     * One key, with who set it and when. A key the tenant never set answers 404 rather than an empty value, so an editor can tell "not set" from "set to nothing".
+     *
+     * @param {string} key - The setting key: a lower-case letter, then letters and digits, 64 characters at most. The storefront themes read `appearance`, `design` and `customCss`.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.SiteSetting>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesSettingsSiteGet(key: string): Promise<Models.SiteSetting>;
+    pagesSettingsSiteGet(
+        paramsOrFirst: { key: string } | string    
+    ): Promise<Models.SiteSetting> {
+        let params: { key: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { key: string };
+        } else {
+            params = {
+                key: paramsOrFirst as string            
+            };
+        }
+        
+        const key = params.key;
+
+        if (typeof key === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "key"');
+        }
+
+        const apiPath = '/v1/pages/settings/site/{key}'.replace('{key}', key);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Stores the value under the key, creating the key or replacing its value — both answer 200 with the stored row, because after either call the key holds exactly what was sent. The value is replaced whole, never merged, and it is not checked against what a theme expects: this app stores JSON and the theme reading the key decides its shape. It reaches every storefront of the tenant at once, through `GET /pages/delivery/site-settings`.
+     *
+     * @param {string} params.key - The setting key: a lower-case letter, then letters and digits, 64 characters at most. The storefront themes read `appearance`, `design` and `customCss`.
+     * @param {object} params.value - The value, as JSON. `appearance` and `design` hold objects, `customCss` a string; any other key holds whatever the theme reading it expects. At most 128 KiB serialized.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.SiteSetting>}
+     */
+    pagesSettingsSitePut(params: { key: string, value: object }): Promise<Models.SiteSetting>;
+    /**
+     * Stores the value under the key, creating the key or replacing its value — both answer 200 with the stored row, because after either call the key holds exactly what was sent. The value is replaced whole, never merged, and it is not checked against what a theme expects: this app stores JSON and the theme reading the key decides its shape. It reaches every storefront of the tenant at once, through `GET /pages/delivery/site-settings`.
+     *
+     * @param {string} key - The setting key: a lower-case letter, then letters and digits, 64 characters at most. The storefront themes read `appearance`, `design` and `customCss`.
+     * @param {object} value - The value, as JSON. `appearance` and `design` hold objects, `customCss` a string; any other key holds whatever the theme reading it expects. At most 128 KiB serialized.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.SiteSetting>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesSettingsSitePut(key: string, value: object): Promise<Models.SiteSetting>;
+    pagesSettingsSitePut(
+        paramsOrFirst: { key: string, value: object } | string,
+        ...rest: [(object)?]    
+    ): Promise<Models.SiteSetting> {
+        let params: { key: string, value: object };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { key: string, value: object };
+        } else {
+            params = {
+                key: paramsOrFirst as string,
+                value: rest[0] as object            
+            };
+        }
+        
+        const key = params.key;
+        const value = params.value;
+
+        if (typeof key === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "key"');
+        }
+        if (typeof value === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "value"');
+        }
+
+        const apiPath = '/v1/pages/settings/site/{key}'.replace('{key}', key);
+        const apiPayload: Payload = {};
+        if (typeof value !== 'undefined') {
+            apiPayload['value'] = value;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Which records render with which page: one entry per product or category that has a page of its own as its template. Every other record renders with the theme's default template, so an absent record is not an error. Filter by `resource_type` for one kind of record, by `page_slug` for everything one page is the template of.
+     *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. A column this entity does not have, or any other shape, is refused with 400.
+     * @param {string} params.resourceType - Exact record type — the assignments of every product, say.
+     * @param {string} params.pageSlug - Exact page slug — which records render with this page.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    pagesTemplateAssignmentsList(params?: { limit?: number, offset?: number, order?: string, resourceType?: string, pageSlug?: string }): Promise<{}>;
+    /**
+     * Which records render with which page: one entry per product or category that has a page of its own as its template. Every other record renders with the theme's default template, so an absent record is not an error. Filter by `resource_type` for one kind of record, by `page_slug` for everything one page is the template of.
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. A column this entity does not have, or any other shape, is refused with 400.
+     * @param {string} resourceType - Exact record type — the assignments of every product, say.
+     * @param {string} pageSlug - Exact page slug — which records render with this page.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesTemplateAssignmentsList(limit?: number, offset?: number, order?: string, resourceType?: string, pageSlug?: string): Promise<{}>;
+    pagesTemplateAssignmentsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, resourceType?: string, pageSlug?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string, resourceType?: string, pageSlug?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, resourceType?: string, pageSlug?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string,
+                resourceType: rest[2] as string,
+                pageSlug: rest[3] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+        const resourceType = params.resourceType;
+        const pageSlug = params.pageSlug;
+
+
+        const apiPath = '/v1/pages/template-assignments';
+        const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
+        if (typeof resourceType !== 'undefined') {
+            apiPayload['resource_type'] = resourceType;
+        }
+        if (typeof pageSlug !== 'undefined') {
+            apiPayload['page_slug'] = pageSlug;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Takes the page away from the record, which then renders with the theme's default template again. The page itself is not touched. Not a tombstone: the assignment is gone, and assigning a page again starts afresh.
+     *
+     * @param {string} params.resourceType - The kind of record: `product`, `category`, … Lower case.
+     * @param {string} params.resourceId - The record's id in the app that owns it. This app never looks it up.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    pagesTemplateAssignmentsDelete(params: { resourceType: string, resourceId: string }): Promise<{}>;
+    /**
+     * Takes the page away from the record, which then renders with the theme's default template again. The page itself is not touched. Not a tombstone: the assignment is gone, and assigning a page again starts afresh.
+     *
+     * @param {string} resourceType - The kind of record: `product`, `category`, … Lower case.
+     * @param {string} resourceId - The record's id in the app that owns it. This app never looks it up.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesTemplateAssignmentsDelete(resourceType: string, resourceId: string): Promise<{}>;
+    pagesTemplateAssignmentsDelete(
+        paramsOrFirst: { resourceType: string, resourceId: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<{}> {
+        let params: { resourceType: string, resourceId: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { resourceType: string, resourceId: string };
+        } else {
+            params = {
+                resourceType: paramsOrFirst as string,
+                resourceId: rest[0] as string            
+            };
+        }
+        
+        const resourceType = params.resourceType;
+        const resourceId = params.resourceId;
+
+        if (typeof resourceType === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "resourceType"');
+        }
+        if (typeof resourceId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "resourceId"');
+        }
+
+        const apiPath = '/v1/pages/template-assignments/{resource_type}/{resource_id}'.replace('{resource_type}', resourceType).replace('{resource_id}', resourceId);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'delete',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Makes a page the template one record renders with, replacing any page assigned before — the record is the address, so a second PUT moves it rather than adding another. The page is named by its slug and has to be a live page when the call is made; it need not be published yet, but the storefront only uses it once it is. Answers 200 with the stored assignment either way.
+     *
+     * @param {string} params.resourceType - The kind of record: `product`, `category`, … Lower case.
+     * @param {string} params.resourceId - The record's id in the app that owns it. This app never looks it up.
+     * @param {string} params.pageSlug - The slug of the page that renders as this record's template.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.TemplateAssignment>}
+     */
+    pagesTemplateAssignmentsPut(params: { resourceType: string, resourceId: string, pageSlug: string }): Promise<Models.TemplateAssignment>;
+    /**
+     * Makes a page the template one record renders with, replacing any page assigned before — the record is the address, so a second PUT moves it rather than adding another. The page is named by its slug and has to be a live page when the call is made; it need not be published yet, but the storefront only uses it once it is. Answers 200 with the stored assignment either way.
+     *
+     * @param {string} resourceType - The kind of record: `product`, `category`, … Lower case.
+     * @param {string} resourceId - The record's id in the app that owns it. This app never looks it up.
+     * @param {string} pageSlug - The slug of the page that renders as this record's template.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.TemplateAssignment>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesTemplateAssignmentsPut(resourceType: string, resourceId: string, pageSlug: string): Promise<Models.TemplateAssignment>;
+    pagesTemplateAssignmentsPut(
+        paramsOrFirst: { resourceType: string, resourceId: string, pageSlug: string } | string,
+        ...rest: [(string)?, (string)?]    
+    ): Promise<Models.TemplateAssignment> {
+        let params: { resourceType: string, resourceId: string, pageSlug: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { resourceType: string, resourceId: string, pageSlug: string };
+        } else {
+            params = {
+                resourceType: paramsOrFirst as string,
+                resourceId: rest[0] as string,
+                pageSlug: rest[1] as string            
+            };
+        }
+        
+        const resourceType = params.resourceType;
+        const resourceId = params.resourceId;
+        const pageSlug = params.pageSlug;
+
+        if (typeof resourceType === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "resourceType"');
+        }
+        if (typeof resourceId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "resourceId"');
+        }
+        if (typeof pageSlug === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "pageSlug"');
+        }
+
+        const apiPath = '/v1/pages/template-assignments/{resource_type}/{resource_id}'.replace('{resource_type}', resourceType).replace('{resource_id}', resourceId);
+        const apiPayload: Payload = {};
+        if (typeof pageSlug !== 'undefined') {
+            apiPayload['pageSlug'] = pageSlug;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'put',
             uri,
             apiHeaders,
             apiPayload

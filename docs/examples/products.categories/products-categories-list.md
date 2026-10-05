@@ -23,6 +23,11 @@ const result = await productsCategories.productsCategoriesList({
     rules: '{}', // optional
     ruleMatch: RuleMatch.All, // optional
     rulesComputedAt: '2026-01-01T12:00:00Z', // optional
+    externalId: 'EG000024', // optional
+    externalRefs: '{}', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: '{}', // optional
+    metadata: '{}', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z' // optional
 });

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Procurement, Condition, Effect, ApproverType } from "@revenexx/sdk";
+import { Client, Procurement, ConditionEnum, Effect, ApproverType } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,7 +10,7 @@ const client = new Client()
 const procurement = new Procurement(client);
 
 const result = await procurement.procurementApprovalRulesCreate({
-    condition: Condition.Always,
+    condition: ConditionEnum.Always,
     effect: Effect.PendingOrder,
     name: '',
     active: true, // optional

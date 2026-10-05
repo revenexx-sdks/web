@@ -18,6 +18,10 @@ const result = await productsReferences.productsReferenceEntityRecordsList({
     code: 'acme_tools', // optional
     labels: '{}', // optional
     attributeValues: '{}', // optional
+    externalId: 'MFR-0815', // optional
+    externalRefs: '{}', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: '{}', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z' // optional
 });

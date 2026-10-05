@@ -18,6 +18,7 @@ const result = await customersOrganizations.customersAddressesUpdate({
     externalId: 'R_ADD000005', // optional
     isDefault: true, // optional
     name: 'Anna Berger', // optional
+    name2: 'Abteilung Einkauf', // optional
     organizationId: '', // optional
     phone: '+49 30 5550123', // optional
     region: 'Berlin', // optional

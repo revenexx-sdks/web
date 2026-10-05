@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Products, Kind } from "@revenexx/sdk";
+import { Client, Products, ProductsListKind } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -15,7 +15,7 @@ const result = await products.productsList({
     order: 'created_at.desc', // optional
     id: '', // optional
     sku: 'ACME-4711-BLK', // optional
-    kind: Kind.Simple, // optional
+    kind: ProductsListKind.Simple, // optional
     parentId: '', // optional
     familyId: '', // optional
     familyVariantId: '', // optional
@@ -25,6 +25,10 @@ const result = await products.productsList({
     label: 'Akku-Bohrschrauber 18V', // optional
     quantifiedAssociations: '{}', // optional
     completeness: '{}', // optional
+    externalId: 'ART-4711', // optional
+    externalRefs: '{}', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: '{}', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z', // optional
     deletedAt: '2026-01-01T12:00:00Z' // optional

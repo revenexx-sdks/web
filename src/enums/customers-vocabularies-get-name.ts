@@ -1,13 +1,17 @@
 export enum CustomersVocabulariesGetName {
     Addresstypes = 'address-types',
     Contacteventkinds = 'contact-event-kinds',
+    Contactpointkinds = 'contact-point-kinds',
     Contactstatuses = 'contact-statuses',
+    Creditlimitmodes = 'credit-limit-modes',
     Lifecyclestages = 'lifecycle-stages',
     Locales = 'locales',
+    Orderapprovalmodes = 'order-approval-modes',
     Organizationstatuses = 'organization-statuses',
     Paymentterms = 'payment-terms',
     Registrationstatuses = 'registration-statuses',
     Roles = 'roles',
     Rulematches = 'rule-matches',
     Segmentsources = 'segment-sources',
+    Shippingadvice = 'shipping-advice',
 }

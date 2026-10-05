@@ -19,7 +19,13 @@ const result = await productsDataModel.productsAttributeOptionsList({
     position: 1, // optional
     swatch: '{}', // optional
     labels: '{}', // optional
-    createdAt: '2026-01-01T12:00:00Z' // optional
+    externalId: 'EV000456', // optional
+    externalRefs: '{}', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: '{}', // optional
+    metadata: '{}', // optional
+    createdAt: '2026-01-01T12:00:00Z', // optional
+    updatedAt: '2026-01-01T12:00:00Z' // optional
 });
 
 console.log(result);

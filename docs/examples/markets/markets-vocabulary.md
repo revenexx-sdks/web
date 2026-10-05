@@ -10,7 +10,7 @@ const client = new Client()
 const markets = new Markets(client);
 
 const result = await markets.marketsVocabulary({
-    name: MarketsVocabularyName.MarketStatuses
+    name: MarketsVocabularyName.Marketstatuses
 });
 
 console.log(result);

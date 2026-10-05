@@ -22,6 +22,10 @@ const result = await inventoriesLocations.inventoriesLocationsList({
     enabled: true, // optional
     address: '{}', // optional
     metadata: '{}', // optional
+    externalId: 'LAGER-01', // optional
+    externalRefs: '{}', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: '{}', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z' // optional
 });

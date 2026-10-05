@@ -16,6 +16,7 @@ const result = await quotesTrail.quotesTrailAttach({
     byteSize: 1, // optional
     contentType: '', // optional
     direction: QuotesTrailAttachDirection.Buyer, // optional
+    metadata: {}, // optional
     visibility: Visibility.Internal // optional
 });
 

@@ -18,6 +18,7 @@ const result = await shippingMethods.shippingMethodsList({
     pricingType: PricingType.Matrix, // optional
     carrierId: '8a4d1c7e-2b93-4f61-b0d2-6c5a9e3f1a44', // optional
     carrier: 'acme-parcel', // optional
+    externalId: 'VERSANDART-02', // optional
     taxClass: 'reduced' // optional
 });
 

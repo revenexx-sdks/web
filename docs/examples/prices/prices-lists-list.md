@@ -23,11 +23,14 @@ const result = await prices.pricesListsList({
     requiresAuth: true, // optional
     contactId: '', // optional
     organizationId: '', // optional
+    segmentCode: 'wholesale', // optional
     channelId: '', // optional
     validFrom: '2026-01-01T12:00:00Z', // optional
     validUntil: '2026-01-01T12:00:00Z', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z', // optional
+    externalId: 'VKPL-2026', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
     limit: 1, // optional
     offset: 1, // optional
     order: 'created_at.desc' // optional

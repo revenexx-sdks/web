@@ -1,5 +1,5 @@
 ```javascript
-import { Client, QuotesRanges } from "@revenexx/sdk";
+import { Client, QuotesRanges, PagesSeedMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,8 +10,11 @@ const client = new Client()
 const quotesRanges = new QuotesRanges(client);
 
 const result = await quotesRanges.quotesRangesDefaults({
+    library: [], // optional
     menus: [], // optional
-    pages: [] // optional
+    mode: PagesSeedMode.Fill, // optional
+    pages: [], // optional
+    settings: {} // optional
 });
 
 console.log(result);

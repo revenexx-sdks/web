@@ -17,6 +17,11 @@ const result = await productsReferences.productsReferenceEntitiesList({
     code: 'brand', // optional
     labels: '{}', // optional
     image: 'reference-entities/brand.svg', // optional
+    externalId: 'REG-BRAND', // optional
+    externalRefs: '{}', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: '{}', // optional
+    metadata: '{}', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z' // optional
 });

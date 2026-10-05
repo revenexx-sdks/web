@@ -1,5 +1,5 @@
 ```javascript
-import { Client, CustomersContacts, CustomersContactsCreateRegistrationStatus, ContactStatus } from "@revenexx/sdk";
+import { Client, CustomersContacts, OrderApprovalMode, ContactStatus } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -19,9 +19,9 @@ const result = await customersContacts.customersContactsUpdate({
     lastName: 'Berger', // optional
     locale: 'de-DE', // optional
     orderApprovalLimit: 25000, // optional
+    orderApprovalMode: OrderApprovalMode.Limited, // optional
     organizationId: '', // optional
     phone: '+49 30 5550123', // optional
-    registrationStatus: CustomersContactsCreateRegistrationStatus.Pending, // optional
     role: 'buyer', // optional
     status: ContactStatus.Invited // optional
 });

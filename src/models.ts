@@ -14,14 +14,23 @@ import { ApprovalRuleUpdateRequestApproverType } from "./enums/approval-rule-upd
 import { ApprovalRuleUpdateRequestCondition } from "./enums/approval-rule-update-request-condition"
 import { ApprovalRuleUpdateRequestEffect } from "./enums/approval-rule-update-request-effect"
 import { AssetsSource } from "./enums/assets-source"
+import { AssignmentRoleTone } from "./enums/assignment-role-tone"
+import { AssignmentRoleCreateRequestTone } from "./enums/assignment-role-create-request-tone"
+import { AssignmentRoleUpdateRequestTone } from "./enums/assignment-role-update-request-tone"
 import { AttachRequestDirection } from "./enums/attach-request-direction"
 import { AttachRequestVisibility } from "./enums/attach-request-visibility"
 import { AttributeValueBucket } from "./enums/attribute-value-bucket"
 import { AuthMailSource } from "./enums/auth-mail-source"
+import { AuthMfaChallengeRequestFactor } from "./enums/auth-mfa-challenge-request-factor"
 import { RecoveryMailSource } from "./enums/recovery-mail-source"
 import { RegistrationStatus } from "./enums/registration-status"
+import { AvailabilityStateTone } from "./enums/availability-state-tone"
+import { BannerDraftLayout } from "./enums/banner-draft-layout"
+import { BannerDraftUpdateRequestLayout } from "./enums/banner-draft-update-request-layout"
 import { BudgetChangeReason } from "./enums/budget-change-reason"
 import { BudgetMovementResultStatus } from "./enums/budget-movement-result-status"
+import { BudgetReleaseScope } from "./enums/budget-release-scope"
+import { BudgetReleaseStatus } from "./enums/budget-release-status"
 import { CartStatus } from "./enums/cart-status"
 import { CartMergeStrategy } from "./enums/cart-merge-strategy"
 import { CartPriceSnapshotMode } from "./enums/cart-price-snapshot-mode"
@@ -49,19 +58,45 @@ import { ChannelVocabularyTone } from "./enums/channel-vocabulary-tone"
 import { ChannelVocabularyName } from "./enums/channel-vocabulary-name"
 import { ChannelVocabularySource } from "./enums/channel-vocabulary-source"
 import { ChannelVocabularyRefName } from "./enums/channel-vocabulary-ref-name"
+import { ConsentRecordAction } from "./enums/consent-record-action"
+import { ConsentRecordSurface } from "./enums/consent-record-surface"
+import { ConsentRecordCreateRequestAction } from "./enums/consent-record-create-request-action"
+import { ConsentRecordCreateRequestSurface } from "./enums/consent-record-create-request-surface"
+import { ConsentVocabularySource } from "./enums/consent-vocabulary-source"
+import { ContactOrderApprovalMode } from "./enums/contact-order-approval-mode"
 import { ContactRegistrationStatus } from "./enums/contact-registration-status"
 import { ContactStatus } from "./enums/contact-status"
 import { ContactActivityKind } from "./enums/contact-activity-kind"
+import { OrderApprovalMode } from "./enums/order-approval-mode"
 import { ContactCreateRequestRegistrationStatus } from "./enums/contact-create-request-registration-status"
 import { ContactEventKindTone } from "./enums/contact-event-kind-tone"
 import { ContactEventKindCreateRequestTone } from "./enums/contact-event-kind-create-request-tone"
 import { ContactEventKindUpdateRequestTone } from "./enums/contact-event-kind-update-request-tone"
 import { ContactPermissionsPermissions } from "./enums/contact-permissions-permissions"
-import { ContactUpdateRequestRegistrationStatus } from "./enums/contact-update-request-registration-status"
+import { ContactPointKindTone } from "./enums/contact-point-kind-tone"
+import { ContactPointKindCreateRequestTone } from "./enums/contact-point-kind-create-request-tone"
+import { ContactPointKindUpdateRequestTone } from "./enums/contact-point-kind-update-request-tone"
+import { CookieKind } from "./enums/cookie-kind"
+import { CookieCreateRequestKind } from "./enums/cookie-create-request-kind"
+import { CookieUpdateRequestKind } from "./enums/cookie-update-request-kind"
 import { CostCenterBudgetType } from "./enums/cost-center-budget-type"
+import { CostCenterCreateRequestBudgetType } from "./enums/cost-center-create-request-budget-type"
 import { CostCenterRestrictionType } from "./enums/cost-center-restriction-type"
 import { CostCenterRestrictionCreateRequestType } from "./enums/cost-center-restriction-create-request-type"
 import { CostCenterRestrictionUpdateRequestType } from "./enums/cost-center-restriction-update-request-type"
+import { CostCenterUpdateRequestBudgetType } from "./enums/cost-center-update-request-budget-type"
+import { CostCentersVocabularyTone } from "./enums/cost-centers-vocabulary-tone"
+import { CostCentersVocabularyName } from "./enums/cost-centers-vocabulary-name"
+import { CostCentersVocabularySource } from "./enums/cost-centers-vocabulary-source"
+import { CostCentersVocabularySummaryName } from "./enums/cost-centers-vocabulary-summary-name"
+import { DirectOrderStatus } from "./enums/direct-order-status"
+import { DocumentSource } from "./enums/document-source"
+import { DocumentVisibility } from "./enums/document-visibility"
+import { DocumentKindTone } from "./enums/document-kind-tone"
+import { DocumentVocabularyDefaultTone } from "./enums/document-vocabulary-default-tone"
+import { DocumentVocabularyName } from "./enums/document-vocabulary-name"
+import { DocumentVocabularySource } from "./enums/document-vocabulary-source"
+import { DocumentVocabularyTone } from "./enums/document-vocabulary-tone"
 import { PaymentFeeType } from "./enums/payment-fee-type"
 import { PaymentMethodKind } from "./enums/payment-method-kind"
 import { EvaluateRequestConditions } from "./enums/evaluate-request-conditions"
@@ -72,6 +107,7 @@ import { FormSubmissionPruneRequestStatus } from "./enums/form-submission-prune-
 import { FormsVocabularyTone } from "./enums/forms-vocabulary-tone"
 import { FormsVocabularyName } from "./enums/forms-vocabulary-name"
 import { FormsVocabularySummaryName } from "./enums/forms-vocabulary-summary-name"
+import { InventoryReceiveWarningCode } from "./enums/inventory-receive-warning-code"
 import { InventoryVocabularyDefaultTone } from "./enums/inventory-vocabulary-default-tone"
 import { InventoryVocabularySource } from "./enums/inventory-vocabulary-source"
 import { CartIoApplyMode } from "./enums/cart-io-apply-mode"
@@ -79,6 +115,7 @@ import { CartIoDirection } from "./enums/cart-io-direction"
 import { CartIoEntity } from "./enums/cart-io-entity"
 import { IoProfileResourceApplyMode } from "./enums/io-profile-resource-apply-mode"
 import { IoProfileResourceDirection } from "./enums/io-profile-resource-direction"
+import { InventoryUnorderableReason } from "./enums/inventory-unorderable-reason"
 import { LifecycleStageTone } from "./enums/lifecycle-stage-tone"
 import { LifecycleStageCreateRequestTone } from "./enums/lifecycle-stage-create-request-tone"
 import { LifecycleStageUpdateRequestTone } from "./enums/lifecycle-stage-update-request-tone"
@@ -89,12 +126,8 @@ import { MarketLocaleFallback } from "./enums/market-locale-fallback"
 import { MarketLocaleGranularity } from "./enums/market-locale-granularity"
 import { MarketPricingSource } from "./enums/market-pricing-source"
 import { MarketTaxBasis } from "./enums/market-tax-basis"
-import { MarketReadinessBlocking } from "./enums/market-readiness-blocking"
-import { MarketReadinessWarnings } from "./enums/market-readiness-warnings"
 import { MarketReadinessCheckId } from "./enums/market-readiness-check-id"
 import { MarketReadinessSeverity } from "./enums/market-readiness-severity"
-import { MarketReadinessReportBlocking } from "./enums/market-readiness-report-blocking"
-import { MarketReadinessReportWarnings } from "./enums/market-readiness-report-warnings"
 import { MarketsVocabularyTone } from "./enums/markets-vocabulary-tone"
 import { MarketsVocabularyName } from "./enums/markets-vocabulary-name"
 import { MarketsVocabularySource } from "./enums/markets-vocabulary-source"
@@ -105,29 +138,34 @@ import { OrderPaymentStatus } from "./enums/order-payment-status"
 import { OrderStatus } from "./enums/order-status"
 import { OrderCancellationScope } from "./enums/order-cancellation-scope"
 import { OrderCommentVisibility } from "./enums/order-comment-visibility"
-import { OrderCustomerRollupRequestStatuses } from "./enums/order-customer-rollup-request-statuses"
-import { OrderCustomerRollupResponseStatuses } from "./enums/order-customer-rollup-response-statuses"
 import { OrderDiscountTarget } from "./enums/order-discount-target"
 import { OrderDiscountEffectKind } from "./enums/order-discount-effect-kind"
 import { OrderDiscountPlacement } from "./enums/order-discount-placement"
+import { OrderDiscountSource } from "./enums/order-discount-source"
 import { OrderDiscountValueType } from "./enums/order-discount-value-type"
 import { OrderItemType } from "./enums/order-item-type"
 import { OrderListKindTone } from "./enums/order-list-kind-tone"
 import { OrderListKindRowTone } from "./enums/order-list-kind-row-tone"
+import { OrderListSkipReason } from "./enums/order-list-skip-reason"
 import { OrderListCartMode } from "./enums/order-list-cart-mode"
 import { OrderListVocabularyDefaultTone } from "./enums/order-list-vocabulary-default-tone"
 import { OrderListVocabularyName } from "./enums/order-list-vocabulary-name"
 import { OrderListVocabularySource } from "./enums/order-list-vocabulary-source"
 import { OrderListVocabularyTone } from "./enums/order-list-vocabulary-tone"
+import { OrderReturnRefundMode } from "./enums/order-return-refund-mode"
 import { OrderReturnStatus } from "./enums/order-return-status"
 import { OrderReturnSettlement } from "./enums/order-return-settlement"
-import { OrderReturnRefusal } from "./enums/order-return-refusal"
 import { OrderVocabularyTone } from "./enums/order-vocabulary-tone"
+import { OrderReturnRefusal } from "./enums/order-return-refusal"
 import { OrderVocabularyName } from "./enums/order-vocabulary-name"
 import { OrderVocabularySource } from "./enums/order-vocabulary-source"
 import { OrderVocabularySummaryName } from "./enums/order-vocabulary-summary-name"
 import { OrderResolutionStage } from "./enums/order-resolution-stage"
+import { OrganizationCreditLimitMode } from "./enums/organization-credit-limit-mode"
+import { OrganizationShippingAdvice } from "./enums/organization-shipping-advice"
 import { OrganizationStatus } from "./enums/organization-status"
+import { CreditLimitMode } from "./enums/credit-limit-mode"
+import { ShippingAdvice } from "./enums/shipping-advice"
 import { PageStatus } from "./enums/page-status"
 import { PagesVocabularyApp } from "./enums/pages-vocabulary-app"
 import { PagesVocabularyTone } from "./enums/pages-vocabulary-tone"
@@ -161,6 +199,11 @@ import { PriceVocabularyTone } from "./enums/price-vocabulary-tone"
 import { PriceVocabularyName } from "./enums/price-vocabulary-name"
 import { PriceVocabularySource } from "./enums/price-vocabulary-source"
 import { PriceVocabularyRefName } from "./enums/price-vocabulary-ref-name"
+import { ProcurementVocabularyDefaultTone } from "./enums/procurement-vocabulary-default-tone"
+import { ProcurementVocabularyName } from "./enums/procurement-vocabulary-name"
+import { ProcurementVocabularySource } from "./enums/procurement-vocabulary-source"
+import { ProcurementVocabularySummaryName } from "./enums/procurement-vocabulary-summary-name"
+import { ProcurementVocabularyValueTone } from "./enums/procurement-vocabulary-value-tone"
 import { ProductCategoriesSource } from "./enums/product-categories-source"
 import { ProductGridColumnSource } from "./enums/product-grid-column-source"
 import { ProductLabelSource } from "./enums/product-label-source"
@@ -212,6 +255,11 @@ import { PurchaseRequestEventName } from "./enums/purchase-request-event-name"
 import { PurchaseRequestItemType } from "./enums/purchase-request-item-type"
 import { PurchaseRequestItemCreateRequestType } from "./enums/purchase-request-item-create-request-type"
 import { PurchaseRequestItemUpdateRequestType } from "./enums/purchase-request-item-update-request-type"
+import { PurposeLegalBasis } from "./enums/purpose-legal-basis"
+import { PurposeCreateRequestGoogleSignals } from "./enums/purpose-create-request-google-signals"
+import { PurposeCreateRequestLegalBasis } from "./enums/purpose-create-request-legal-basis"
+import { PurposeUpdateRequestGoogleSignals } from "./enums/purpose-update-request-google-signals"
+import { PurposeUpdateRequestLegalBasis } from "./enums/purpose-update-request-legal-basis"
 import { QuoteOrigin } from "./enums/quote-origin"
 import { QuoteStatus } from "./enums/quote-status"
 import { QuoteAttachmentDirection } from "./enums/quote-attachment-direction"
@@ -229,6 +277,10 @@ import { PriceOnRequestReason } from "./enums/price-on-request-reason"
 import { PriceTaxBasis } from "./enums/price-tax-basis"
 import { PriceTaxBasisSource } from "./enums/price-tax-basis-source"
 import { RoleCatalogResponseSource } from "./enums/role-catalog-response-source"
+import { SalesRepVocabularyDefaultTone } from "./enums/sales-rep-vocabulary-default-tone"
+import { SalesRepVocabularySource } from "./enums/sales-rep-vocabulary-source"
+import { SeedRequestMode } from "./enums/seed-request-mode"
+import { SeedResultMode } from "./enums/seed-result-mode"
 import { SegmentRuleMatch } from "./enums/segment-rule-match"
 import { SegmentMemberSource } from "./enums/segment-member-source"
 import { SegmentRuleOperator } from "./enums/segment-rule-operator"
@@ -265,7 +317,19 @@ import { StockMovementType } from "./enums/stock-movement-type"
 import { StoreAssetRequestVisibility } from "./enums/store-asset-request-visibility"
 import { SubmitItemType } from "./enums/submit-item-type"
 import { SubmitResultOutcome } from "./enums/submit-result-outcome"
+import { TagManagerContainerCheckReason } from "./enums/tag-manager-container-check-reason"
+import { TagManagerMarketingTagKind } from "./enums/tag-manager-marketing-tag-kind"
+import { TagManagerMarketingTagLoad } from "./enums/tag-manager-marketing-tag-load"
+import { TagManagerMarketingTagInputKind } from "./enums/tag-manager-marketing-tag-input-kind"
+import { TagManagerMarketingTagInputLoad } from "./enums/tag-manager-marketing-tag-input-load"
+import { TagManagerTriggerKind } from "./enums/tag-manager-trigger-kind"
+import { TagManagerTriggerInputKind } from "./enums/tag-manager-trigger-input-kind"
+import { TagManagerVariableKind } from "./enums/tag-manager-variable-kind"
+import { TagManagerVariableInputKind } from "./enums/tag-manager-variable-input-kind"
 import { ValidationFailedResponseStatus } from "./enums/validation-failed-response-status"
+import { VendorLegalBasisOverride } from "./enums/vendor-legal-basis-override"
+import { VendorCreateRequestLegalBasisOverride } from "./enums/vendor-create-request-legal-basis-override"
+import { VendorUpdateRequestLegalBasisOverride } from "./enums/vendor-update-request-legal-basis-override"
 import { VocabularyDefaultTone } from "./enums/vocabulary-default-tone"
 import { VocabularySource } from "./enums/vocabulary-source"
 import { VocabularyTone } from "./enums/vocabulary-tone"
@@ -402,6 +466,14 @@ export namespace Models {
          */
         expired_at?: string | null;
         /**
+         * The key this quote has in the system that OWNS it — an ERP or a CPQ that raised the offer and mirrors it here. Not `number`: that one this app mints and a person reads out on the phone. Unique per tenant where it is set, so a second run of an import updates the quote it wrote rather than founding another. Null on a quote that started here, which is the ordinary case.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this quote, keyed by system name — a second ERP, a CPQ, the procurement platform the request came through. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the quote up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * What the buyer pays before tax: `quoted_total` plus `shipping_amount`. The one figure the list, the Cockpit and the storefront all show, so they cannot disagree about what a quote with freight is worth.
          */
         grand_total?: number;
@@ -478,6 +550,14 @@ export namespace Models {
          */
         shipping_tax_rate?: number | null;
         /**
+         * What the source said about this quote, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody prices the quote.
+         */
+        source_data?: object | null;
+        /**
+         * When this quote was last confirmed against its source. What a delta run asks for changes since, and what tells an operator a feed has gone quiet — pricing it here does not touch it, because it says when the SOURCE was last seen and not when the row changed. Null on a quote no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * Where the quote stands. `requested` is a buyer's ask nobody has picked up; `in_review` is on somebody's desk; `quoted` carries prices and a deadline; `accepted`, `declined`, `rejected` and `expired` are final. `partially_accepted` is NOT final — some positions are ordered and the rest are still open, and the buyer may come back for them.
          */
         status?: AcceptResultStatus;
@@ -528,6 +608,10 @@ export namespace Models {
          */
         external_id?: string | null;
         /**
+         * Every other system that knows this address, keyed by system name. A GLN belongs here rather than in a column of its own — the next standard identifier then costs no migration. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Primary key of the address.
          */
         id?: string;
@@ -536,9 +620,17 @@ export namespace Models {
          */
         is_default?: boolean;
         /**
+         * Free-form jsonb this tenant owns. Where an ERP's dispatch instructions live — shipping agent, tour code, service zone — until they earn a column of their own.
+         */
+        metadata?: object | null;
+        /**
          * Recipient line on the label — the person or department the parcel is addressed to.
          */
         name?: string | null;
+        /**
+         * The second recipient line: a department beneath a person, an attention line, a c/o. What `street2` is for the street, this is for the recipient — and it is a line of its own rather than more text in `name`, because a label prints two lines and an ERP delivers two fields. Null when there is none.
+         */
+        name2?: string | null;
         /**
          * Owning company — a company address, shared by everyone in it. Exactly one of organization_id / contact_id is set.
          */
@@ -552,9 +644,17 @@ export namespace Models {
          */
         region?: string | null;
         /**
-         * Street and house number, on one line, as the local post expects it.
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit.
          */
-        street?: string;
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
+         * Street and house number, on one line, as the local post expects it. OPTIONAL, because a deliverable address does not always have one: a German PO box is addressed by its number, its postcode and its town, and an ERP that holds thousands of them would otherwise have every one of them refused. The postcode and the town stay required — a PO box has both.
+         */
+        street?: string | null;
         /**
          * The second address line: building, floor, gate, c/o. Null when there is none.
          */
@@ -578,7 +678,7 @@ export namespace Models {
     }
 
     /**
-     * An address needs an owner: &#039;organization_id&#039; or &#039;contact_id&#039;.
+     * An address needs an owner: 'organization_id' or 'contact_id' — or both, when the contact belongs to that organization.
      */
     export type AddressCreateRequest = {
         /**
@@ -598,6 +698,10 @@ export namespace Models {
          */
         country: string;
         /**
+         * When the address was created. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
+         */
+        created_at?: string;
+        /**
          * Id of this address in the system it came from — an ERP address number. Nullable and unique per tenant where it is set. It is also the id a line-based order export has to hand back, because the receiving system names a delivery or invoice address by it rather than by its street. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
          */
         external_id?: string | null;
@@ -609,6 +713,10 @@ export namespace Models {
          * Recipient line on the label — the person or department the parcel is addressed to.
          */
         name?: string | null;
+        /**
+         * The second recipient line: a department beneath a person, an attention line, a c/o. What `street2` is for the street, this is for the recipient — and it is a line of its own rather than more text in `name`, because a label prints two lines and an ERP delivers two fields. Null when there is none.
+         */
+        name2?: string | null;
         /**
          * Owning company — a company address, shared by everyone in it. Exactly one of organization_id / contact_id is set.
          */
@@ -622,9 +730,9 @@ export namespace Models {
          */
         region?: string | null;
         /**
-         * Street and house number, on one line, as the local post expects it.
+         * Street and house number, on one line, as the local post expects it. OPTIONAL, because a deliverable address does not always have one: a German PO box is addressed by its number, its postcode and its town, and an ERP that holds thousands of them would otherwise have every one of them refused. The postcode and the town stay required — a PO box has both.
          */
-        street: string;
+        street?: string;
         /**
          * The second address line: building, floor, gate, c/o. Null when there is none.
          */
@@ -640,7 +748,7 @@ export namespace Models {
     }
 
     /**
-     * One value of the address types set. What an address is used for. Billing and shipping are what a checkout needs; a works entrance or a central accounts office is the tenant&#039;s own.
+     * One value of the address types set. What an address is used for. Billing and shipping are what a checkout needs; a works entrance or a central accounts office is the tenant's own.
      */
     export type AddressTypeRow = {
         /**
@@ -770,7 +878,7 @@ export namespace Models {
     }
 
     /**
-     * Partial update — omitted fields keep their current value.
+     * Partial update — omitted fields keep their current value. The owner (`organization_id`, `contact_id`) is fixed once created.
      */
     export type AddressUpdateRequest = {
         /**
@@ -802,6 +910,10 @@ export namespace Models {
          */
         name?: string | null;
         /**
+         * The second recipient line: a department beneath a person, an attention line, a c/o. What `street2` is for the street, this is for the recipient — and it is a line of its own rather than more text in `name`, because a label prints two lines and an ERP delivers two fields. Null when there is none.
+         */
+        name2?: string | null;
+        /**
          * Owning company — a company address, shared by everyone in it. Exactly one of organization_id / contact_id is set.
          */
         organization_id?: string | null;
@@ -814,7 +926,7 @@ export namespace Models {
          */
         region?: string | null;
         /**
-         * Street and house number, on one line, as the local post expects it.
+         * Street and house number, on one line, as the local post expects it. OPTIONAL, because a deliverable address does not always have one: a German PO box is addressed by its number, its postcode and its town, and an ERP that holds thousands of them would otherwise have every one of them refused. The postcode and the town stay required — a PO box has both.
          */
         street?: string;
         /**
@@ -1066,7 +1178,7 @@ export namespace Models {
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `asset_families` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `asset_families` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type AssetFamiliesFilter = {
         /**
@@ -1285,6 +1397,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         delivery_path?: string | null;
         /**
+         * The key this asset has in the DAM that owns it, and what a media import upserts on. Neither of the other two ids can serve: `code` is unique only within its asset family, and `storage_asset_id` names the BYTES in this platform's store rather than the record in somebody else's system. Unique per tenant where set.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Absolute URL of an externally hosted file. Required when `source` is `external`, and accepted only when the tenant has `allow_external_media` on and the host is on its `external_media_allowed_hosts` list — `POST /products/assets` is the only place an external URL can enter the catalog, so it is the only place those are enforced.
          */
         external_url?: string | null;
@@ -1297,6 +1417,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         source?: string;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * The stable `ast_…` id of the storage object. It survives a rename or a folder move, which is exactly why it and not the delivery path is the identifier. Required when `source` is `storage`.
          */
         storage_asset_id?: string | null;
@@ -1307,7 +1435,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     }
 
     /**
-     * An asset is bound to its bytes on creation: source &#039;storage&#039; needs `storage_asset_id`, source &#039;external&#039; needs `external_url` AND an explicit `source` — the column defaults to &#039;storage&#039;, so an `external_url` on its own is refused by the database with a bare &quot;a value is not allowed here&quot;.
+     * An asset is bound to its bytes on creation: source 'storage' needs `storage_asset_id`, source 'external' needs `external_url` AND an explicit `source` — the column defaults to 'storage', so an `external_url` on its own is refused by the database with a bare "a value is not allowed here".
      */
     export type AssetsCreateRequest = {
         /**
@@ -1346,6 +1474,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         delivery_path?: string | null;
         /**
+         * The key this asset has in the DAM that owns it, and what a media import upserts on. Neither of the other two ids can serve: `code` is unique only within its asset family, and `storage_asset_id` names the BYTES in this platform's store rather than the record in somebody else's system. Unique per tenant where set.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Absolute URL of an externally hosted file. Required when `source` is `external`, and accepted only when the tenant has `allow_external_media` on and the host is on its `external_media_allowed_hosts` list — `POST /products/assets` is the only place an external URL can enter the catalog, so it is the only place those are enforced.
          */
         external_url?: string | null;
@@ -1354,13 +1490,21 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         source?: AssetsSource;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * The stable `ast_…` id of the storage object. It survives a rename or a folder move, which is exactly why it and not the delivery path is the identifier. Required when `source` is `storage`.
          */
         storage_asset_id?: string | null;
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `assets` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `assets` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type AssetsFilter = {
         /**
@@ -1384,6 +1528,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         delivery_path?: string;
         /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
+        /**
          * The literal `?external_url=` value this call was understood to carry.
          */
         external_url?: string;
@@ -1395,6 +1547,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          * The literal `?source=` value this call was understood to carry.
          */
         source?: string;
+        /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
         /**
          * The literal `?storage_asset_id=` value this call was understood to carry.
          */
@@ -1450,6 +1610,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         delivery_path?: string | null;
         /**
+         * The key this asset has in the DAM that owns it, and what a media import upserts on. Neither of the other two ids can serve: `code` is unique only within its asset family, and `storage_asset_id` names the BYTES in this platform's store rather than the record in somebody else's system. Unique per tenant where set.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Absolute URL of an externally hosted file. Required when `source` is `external`, and accepted only when the tenant has `allow_external_media` on and the host is on its `external_media_allowed_hosts` list — `POST /products/assets` is the only place an external URL can enter the catalog, so it is the only place those are enforced.
          */
         external_url?: string | null;
@@ -1458,9 +1626,333 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         source?: AssetsSource;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * The stable `ast_…` id of the storage object. It survives a rename or a folder move, which is exactly why it and not the delivery path is the identifier. Required when `source` is `storage`.
          */
         storage_asset_id?: string | null;
+    }
+
+    /**
+     * One rep carrying one customer. The pair is the row and the pair is unique: a rep carries many organizations, an organization may have several reps, and the same pair cannot be recorded twice. Exactly the shape the IntelliShop predecessor used, uniqueness included.
+     */
+    export type Assignment = {
+        /**
+         * When the row was created. Server-set: it is in no request body, and a value sent for it is ignored.
+         */
+        created_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Whether this is THE responsible rep for this customer. At most one coverage row per organization carries it, which a partial unique index enforces — and that is exactly the fact this app had no way to state before: a source system carries one responsible salesperson per customer while this table is many-to-many, so "the responsible one" and "also covers them" needed telling apart. It is NOT set by a write: promoting one rep has to demote the incumbent in the same call, so `POST /sales-reps/assignments/{id}/make-primary` moves it and a create or an edit that carries it is refused. Defaults to false, because coverage is recorded before anybody decides who leads it.
+         */
+        is_primary?: boolean;
+        /**
+         * WHICH customer, as the customers app knows the organization. Nothing here checks that the organization exists — it lives in another app, and a call on every write would fail a whole import for one organization somebody archived.
+         */
+        organization_id?: string;
+        /**
+         * WHICH rep this row is about, by their `code` rather than by their row id. The code is what an ERP already holds, so an import can write this row before it has ever read an id out of this app. There is no foreign key behind it: the check is a membership test against the rep table on every write, and a code that names no rep is refused with 400 `unknown_rep`. It is also why a rep's code cannot be renamed and why a rep carrying rows here cannot be deleted.
+         */
+        rep_code?: string;
+        /**
+         * WHAT this rep does for this customer, as one of the roles this tenant keeps (GET /sales-reps/assignment-roles, or GET /sales-reps/vocabularies/assignment-roles for the same set with the words a person reads for it). Deliberately not free text and deliberately not an enum of this app's: a code the tenant does not keep is refused with 400 naming the ones they do, and the set itself is a table they extend, because what a merchant's own sales desks are called is theirs to state. NULL is the ordinary case rather than a gap — a source system delivers one responsible salesperson per debtor and no role whatever, so an imported assignment honestly carries none. It answers a different question from `is_primary`: this says what the rep DOES, that says which of several reps is the responsible one.
+         */
+        role?: string | null;
+        /**
+         * The tenant this row belongs to — the store slug, not an id. Set by the platform from the authenticated context, never by a caller; a write that carries it is ignored, and no request can read another tenant's rows by sending a different one.
+         */
+        tenant_id?: string;
+    }
+
+    /**
+     * Record that one rep carries one customer. Two fields are owed, and the pair is the row: recording the same pair again is refused with 409 rather than answered as a no-op, so a caller that retried knows which of the two happened. `role` is optional and is checked against the roles this tenant keeps. `is_primary` is not a field here at all — promoting a rep has to demote the incumbent in the same call, so `POST /sales-reps/assignments/{id}/make-primary` does it.
+     */
+    export type AssignmentCreateRequest = {
+        /**
+         * WHICH customer, as the customers app knows the organization. Nothing here checks that the organization exists — it lives in another app, and a call on every write would fail a whole import for one organization somebody archived.
+         */
+        organization_id: string;
+        /**
+         * WHICH rep this row is about, by their `code` rather than by their row id. The code is what an ERP already holds, so an import can write this row before it has ever read an id out of this app. There is no foreign key behind it: the check is a membership test against the rep table on every write, and a code that names no rep is refused with 400 `unknown_rep`. It is also why a rep's code cannot be renamed and why a rep carrying rows here cannot be deleted.
+         */
+        rep_code: string;
+        /**
+         * WHAT this rep does for this customer, as one of the roles this tenant keeps (GET /sales-reps/assignment-roles, or GET /sales-reps/vocabularies/assignment-roles for the same set with the words a person reads for it). Deliberately not free text and deliberately not an enum of this app's: a code the tenant does not keep is refused with 400 naming the ones they do, and the set itself is a table they extend, because what a merchant's own sales desks are called is theirs to state. NULL is the ordinary case rather than a gap — a source system delivers one responsible salesperson per debtor and no role whatever, so an imported assignment honestly carries none. It answers a different question from `is_primary`: this says what the rep DOES, that says which of several reps is the responsible one. Optional: omit it and the row carries none, which is what an import that knows no role writes.
+         */
+        role?: string | null;
+    }
+
+    /**
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `assignments` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched". Every value is a string, whatever the column's type: this is the query string, not the parsed row.
+     */
+    export type AssignmentFilter = {
+        /**
+         * The literal `?created_at=` value this call was understood to carry.
+         */
+        created_at?: string;
+        /**
+         * The literal `?id=` value this call was understood to carry.
+         */
+        id?: string;
+        /**
+         * The literal `?is_primary=` value this call was understood to carry.
+         */
+        is_primary?: string;
+        /**
+         * The literal `?organization_id=` value this call was understood to carry.
+         */
+        organization_id?: string;
+        /**
+         * The literal `?rep_code=` value this call was understood to carry.
+         */
+        rep_code?: string;
+        /**
+         * The literal `?role=` value this call was understood to carry.
+         */
+        role?: string;
+    }
+
+    /**
+     * No payload — send {}.
+     */
+    export type AssignmentMakePrimaryRequest = {
+    }
+
+    /**
+     * The assignment as it now stands, plus whoever lost the flag.
+     */
+    export type AssignmentMakePrimaryResponse = {
+        /**
+         * One rep carrying one customer. The pair is the row and the pair is unique: a rep carries many organizations, an organization may have several reps, and the same pair cannot be recorded twice. Exactly the shape the IntelliShop predecessor used, uniqueness included.
+         */
+        assignment?: Assignment;
+        /**
+         * The codes of the reps that lost the flag for this customer — empty when this assignment already held it, and empty when the customer had no responsible rep at all. Either way nothing else changed.
+         */
+        demoted?: string[];
+    }
+
+    /**
+     * One of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table rather than a fixed list because what those desks are called is the merchant's to state, and a constraint would have cost a release of this app per merchant.
+     */
+    export type AssignmentRole = {
+        /**
+         * The role as STORED, and what a coverage row's `role` carries. Lowercase letters, digits, '-' and '_', starting with a letter — the shape every vocabulary code on this platform has, so a client may use it as a key. It should be treated as permanent even though the edit route accepts it: nothing in the database points at it, so renaming it leaves every coverage row that named the old value carrying a code the vocabulary no longer resolves.
+         */
+        code?: string;
+        /**
+         * When the row was created. Server-set: it is in no request body, and a value sent for it is ignored.
+         */
+        created_at?: string;
+        /**
+         * What this role means, in the merchant's own words — the sentence an operator reads under the choice when they are deciding which one a rep has. Optional, one language, with the per-language forms in `descriptions`.
+         */
+        description?: string | null;
+        /**
+         * The description per language tag, on the same rule as `labels`. Answered and NOT filterable.
+         */
+        descriptions?: object | null;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say.
+         */
+        is_default?: boolean;
+        /**
+         * True for a role this app seeded, false for one the tenant added. It means "we put it there" and licenses nothing — a seeded role may be renamed, re-toned, reordered or removed exactly like any other, and nothing here treats the two differently.
+         */
+        is_system?: boolean;
+        /**
+         * The title per language tag, as the tenant stored it. `title` is the same text in their working language, so a client reading one tag can ignore this. It is a jsonb column: answered, and NOT a query parameter — see the note on `metadata`.
+         */
+        labels?: object | null;
+        /**
+         * Where this role sits in the order a select offers the roles, ascending, ties broken by the code. It is presentation and nothing branches on it: a rep is not more senior for sorting first.
+         */
+        position?: number;
+        /**
+         * The tenant this row belongs to — the store slug, not an id. Set by the platform from the authenticated context, never by a caller; a write that carries it is ignored, and no request can read another tenant's rows by sending a different one.
+         */
+        tenant_id?: string;
+        /**
+         * What this role is called, as a person reads it — the text a list or a badge shows. At least one character. It carries one language; the per-language forms are in `labels`.
+         */
+        title?: string;
+        /**
+         * The semantic badge colour a screen renders this role in. The client owns what each tone looks like; this only says what the role MEANS — that the desk which visits the customer reads differently from the one that answers the phone. Defaults to neutral.
+         */
+        tone?: AssignmentRoleTone;
+        /**
+         * When the row was last written. Server-set — every route that changes this row stamps it.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Add one role to the set this tenant keeps. `code` and `title` are owed; the code is what a coverage row stores and should be treated as permanent, because nothing in the database points at it. Creating a role changes nothing on its own — a coverage row has to name it before it means anything.
+     */
+    export type AssignmentRoleCreateRequest = {
+        /**
+         * The role as STORED, and what a coverage row's `role` carries. Lowercase letters, digits, '-' and '_', starting with a letter — the shape every vocabulary code on this platform has, so a client may use it as a key. It should be treated as permanent even though the edit route accepts it: nothing in the database points at it, so renaming it leaves every coverage row that named the old value carrying a code the vocabulary no longer resolves.
+         */
+        code: string;
+        /**
+         * What this role means, in the merchant's own words — the sentence an operator reads under the choice when they are deciding which one a rep has. Optional, one language, with the per-language forms in `descriptions`.
+         */
+        description?: string | null;
+        /**
+         * The description per language tag, on the same rule as `labels`. Answered and NOT filterable.
+         */
+        descriptions?: object | null;
+        /**
+         * Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say. Defaults to false, and no role this app seeds carries it.
+         */
+        is_default?: boolean;
+        /**
+         * True for a role this app seeded, false for one the tenant added. It means "we put it there" and licenses nothing — a seeded role may be renamed, re-toned, reordered or removed exactly like any other, and nothing here treats the two differently. Send false or leave it out: it means this app seeded the row, and a tenant claiming it changes nothing but the truth of the flag.
+         */
+        is_system?: boolean;
+        /**
+         * The title per language tag, as the tenant stored it. `title` is the same text in their working language, so a client reading one tag can ignore this. It is a jsonb column: answered, and NOT a query parameter — see the note on `metadata`.
+         */
+        labels?: object | null;
+        /**
+         * Where this role sits in the order a select offers the roles, ascending, ties broken by the code. It is presentation and nothing branches on it: a rep is not more senior for sorting first. Defaults to 0.
+         */
+        position?: number;
+        /**
+         * What this role is called, as a person reads it — the text a list or a badge shows. At least one character. It carries one language; the per-language forms are in `labels`.
+         */
+        title: string;
+        /**
+         * The semantic badge colour a screen renders this role in. The client owns what each tone looks like; this only says what the role MEANS — that the desk which visits the customer reads differently from the one that answers the phone. Defaults to neutral. Defaults to neutral.
+         */
+        tone?: AssignmentRoleCreateRequestTone;
+    }
+
+    /**
+     * No payload — send {}.
+     */
+    export type AssignmentRoleDefaultsRequest = {
+    }
+
+    /**
+     * What the seeding did, per vocabulary — keyed by the vocabulary name rather than flattened, so a caller can tell which set a code came from.
+     */
+    export type AssignmentRoleDefaultsResponse = {
+        /**
+         * The assignment roles this call considered.
+         */
+        assignmentroles?: object;
+    }
+
+    /**
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `assignment_roles` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched". Every value is a string, whatever the column's type: this is the query string, not the parsed row.
+     */
+    export type AssignmentRoleFilter = {
+        /**
+         * The literal `?code=` value this call was understood to carry.
+         */
+        code?: string;
+        /**
+         * The literal `?created_at=` value this call was understood to carry.
+         */
+        created_at?: string;
+        /**
+         * The literal `?description=` value this call was understood to carry.
+         */
+        description?: string;
+        /**
+         * The literal `?id=` value this call was understood to carry.
+         */
+        id?: string;
+        /**
+         * The literal `?is_default=` value this call was understood to carry.
+         */
+        is_default?: string;
+        /**
+         * The literal `?is_system=` value this call was understood to carry.
+         */
+        is_system?: string;
+        /**
+         * The literal `?position=` value this call was understood to carry.
+         */
+        position?: string;
+        /**
+         * The literal `?title=` value this call was understood to carry.
+         */
+        title?: string;
+        /**
+         * The literal `?tone=` value this call was understood to carry.
+         */
+        tone?: string;
+        /**
+         * The literal `?updated_at=` value this call was understood to carry.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value, and a body carrying no field at all is refused. The safe edits are the readable ones: `title`, `labels`, `description`, `descriptions`, `tone`, `position`. `code` is the one to leave alone, because a coverage row stores it and nothing points at it, so moving it orphans every row that named the old value.
+     */
+    export type AssignmentRoleUpdateRequest = {
+        /**
+         * The role as STORED, and what a coverage row's `role` carries. Lowercase letters, digits, '-' and '_', starting with a letter — the shape every vocabulary code on this platform has, so a client may use it as a key. It should be treated as permanent even though the edit route accepts it: nothing in the database points at it, so renaming it leaves every coverage row that named the old value carrying a code the vocabulary no longer resolves.
+         */
+        code?: string;
+        /**
+         * What this role means, in the merchant's own words — the sentence an operator reads under the choice when they are deciding which one a rep has. Optional, one language, with the per-language forms in `descriptions`.
+         */
+        description?: string | null;
+        /**
+         * The description per language tag, on the same rule as `labels`. Answered and NOT filterable.
+         */
+        descriptions?: object | null;
+        /**
+         * Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say. Defaults to false, and no role this app seeds carries it.
+         */
+        is_default?: boolean;
+        /**
+         * True for a role this app seeded, false for one the tenant added. It means "we put it there" and licenses nothing — a seeded role may be renamed, re-toned, reordered or removed exactly like any other, and nothing here treats the two differently. Send false or leave it out: it means this app seeded the row, and a tenant claiming it changes nothing but the truth of the flag.
+         */
+        is_system?: boolean;
+        /**
+         * The title per language tag, as the tenant stored it. `title` is the same text in their working language, so a client reading one tag can ignore this. It is a jsonb column: answered, and NOT a query parameter — see the note on `metadata`.
+         */
+        labels?: object | null;
+        /**
+         * Where this role sits in the order a select offers the roles, ascending, ties broken by the code. It is presentation and nothing branches on it: a rep is not more senior for sorting first. Defaults to 0.
+         */
+        position?: number;
+        /**
+         * What this role is called, as a person reads it — the text a list or a badge shows. At least one character. It carries one language; the per-language forms are in `labels`.
+         */
+        title?: string;
+        /**
+         * The semantic badge colour a screen renders this role in. The client owns what each tone looks like; this only says what the role MEANS — that the desk which visits the customer reads differently from the one that answers the phone. Defaults to neutral. Defaults to neutral.
+         */
+        tone?: AssignmentRoleUpdateRequestTone;
+    }
+
+    /**
+     * Correct WHAT a rep does for a customer. `role` is the only field this route applies — sending `rep_code` or `organization_id` changed is refused rather than ignored, because that is a different pair, and sending `is_primary` is refused because moving that flag has to demote the incumbent in the same call. `null` (or an empty string, which is how a form clears a select) takes the role off again. A body carrying no field at all is refused rather than answered as a no-op.
+     */
+    export type AssignmentUpdateRequest = {
+        /**
+         * WHAT this rep does for this customer, as one of the roles this tenant keeps (GET /sales-reps/assignment-roles, or GET /sales-reps/vocabularies/assignment-roles for the same set with the words a person reads for it). Deliberately not free text and deliberately not an enum of this app's: a code the tenant does not keep is refused with 400 naming the ones they do, and the set itself is a table they extend, because what a merchant's own sales desks are called is theirs to state. NULL is the ordinary case rather than a gap — a source system delivers one responsible salesperson per debtor and no role whatever, so an imported assignment honestly carries none. It answers a different question from `is_primary`: this says what the rep DOES, that says which of several reps is the responsible one.
+         */
+        role?: string | null;
     }
 
     /**
@@ -1491,6 +1983,10 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          * What the relation is called in a product form, per language tag.
          */
         labels?: object | null;
+        /**
+         * When the row was last written. Server-set — it is not part of any request body.
+         */
+        updated_at?: string;
     }
 
     /**
@@ -1516,7 +2012,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `association_types` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `association_types` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type AssociationTypesFilter = {
         /**
@@ -1543,6 +2039,10 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          * The literal `?labels=` value this call was understood to carry.
          */
         labels?: string;
+        /**
+         * The literal `?updated_at=` value this call was understood to carry.
+         */
+        updated_at?: string;
     }
 
     export type DefaultAssociationTypesFilter = AssociationTypesFilter & {
@@ -1597,13 +2097,17 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         filename: string;
         /**
+         * Free-form data carried with the file — what a document management system needs to find it again.
+         */
+        metadata?: object;
+        /**
          * Who sees it.
          */
         visibility?: AttachRequestVisibility;
     }
 
     /**
-     * One renderable field. A superset of the manifest&#039;s `Field`: the three additions (`localized`, `channel_scoped`, `storage`) carry what a static manifest never has to say, because a manifest&#039;s fields are columns and these are keys inside one.
+     * One renderable field. A superset of the manifest's `Field`: the three additions (`localized`, `channel_scoped`, `storage`) carry what a static manifest never has to say, because a manifest's fields are columns and these are keys inside one.
      */
     export type AttributeField = {
         /**
@@ -1763,6 +2267,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         created_at?: string;
         /**
+         * The key this section has in the system that owns the property model — the block a supplier's data sheet groups its fields under. Unique per tenant where set, and null for a section somebody created here to tidy up a form, which is most of them.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The row's own id, generated by the database. A client never sends one; it reads one back and uses it in the path of every later call.
          */
         id?: string;
@@ -1771,9 +2283,21 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         labels?: object | null;
         /**
+         * Free-form jsonb this tenant owns — the extension point a section otherwise has none of. `source_data` is what the SOURCE said about the row; this is what you say about it. Nothing in this app reads it.
+         */
+        metadata?: object | null;
+        /**
          * Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
          */
         position?: number;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * When the row was last written. Server-set — it is not part of any request body.
          */
@@ -1789,17 +2313,37 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         code: string;
         /**
+         * The key this section has in the system that owns the property model — the block a supplier's data sheet groups its fields under. Unique per tenant where set, and null for a section somebody created here to tidy up a form, which is most of them.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English.
          */
         labels?: object | null;
         /**
+         * Free-form jsonb this tenant owns — the extension point a section otherwise has none of. `source_data` is what the SOURCE said about the row; this is what you say about it. Nothing in this app reads it.
+         */
+        metadata?: object | null;
+        /**
          * Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
          */
         position?: number;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `attribute_groups` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `attribute_groups` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type AttributeGroupsFilter = {
         /**
@@ -1811,6 +2355,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         created_at?: string;
         /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
+        /**
          * The literal `?id=` value this call was understood to carry.
          */
         id?: string;
@@ -1819,9 +2371,21 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         labels?: string;
         /**
+         * The literal `?metadata=` value this call was understood to carry.
+         */
+        metadata?: string;
+        /**
          * The literal `?position=` value this call was understood to carry.
          */
         position?: string;
+        /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
         /**
          * The literal `?updated_at=` value this call was understood to carry.
          */
@@ -1842,13 +2406,33 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         code?: string;
         /**
+         * The key this section has in the system that owns the property model — the block a supplier's data sheet groups its fields under. Unique per tenant where set, and null for a section somebody created here to tidy up a form, which is most of them.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The section heading a person sees, keyed by language tag. The code is never shown to an operator; a tag nobody translated falls back to the next filled one, then to English.
          */
         labels?: object | null;
         /**
+         * Free-form jsonb this tenant owns — the extension point a section otherwise has none of. `source_data` is what the SOURCE said about the row; this is what you say about it. Nothing in this app reads it.
+         */
+        metadata?: object | null;
+        /**
          * Where this section sits in a form, ascending. Sections that tie keep the order the database returns them in.
          */
         position?: number;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -1868,6 +2452,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         created_at?: string;
         /**
+         * The key this option has in the system that owns the value list — an ETIM value, an eCl@ss value key. Unique per tenant where set. `code` is what a product stores when the option is picked; this is what the source calls the same choice, and holding the two apart is what stops a re-import founding a second option that means the same thing.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The row's own id, generated by the database. A client never sends one; it reads one back and uses it in the path of every later call.
          */
         id?: string;
@@ -1876,13 +2468,29 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         labels?: object | null;
         /**
+         * Free-form jsonb this tenant owns, for whatever an integration has to remember about an option beyond its code, its label and its swatch. Nothing in this app reads it.
+         */
+        metadata?: object | null;
+        /**
          * Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
          */
         position?: number;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * A colour or texture chip for the picker. Null for an option that is not visual.
          */
         swatch?: object | null;
+        /**
+         * When the row was last written. Server-set — it is not part of any request body.
+         */
+        updated_at?: string;
     }
 
     /**
@@ -1898,13 +2506,33 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         code: string;
         /**
+         * The key this option has in the system that owns the value list — an ETIM value, an eCl@ss value key. Unique per tenant where set. `code` is what a product stores when the option is picked; this is what the source calls the same choice, and holding the two apart is what stops a re-import founding a second option that means the same thing.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * What the option is called, per language tag. Two tenants may label the same code differently; only the code is ever written into a record.
          */
         labels?: object | null;
         /**
+         * Free-form jsonb this tenant owns, for whatever an integration has to remember about an option beyond its code, its label and its swatch. Nothing in this app reads it.
+         */
+        metadata?: object | null;
+        /**
          * Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
          */
         position?: number;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * A colour or texture chip for the picker. Null for an option that is not visual.
          */
@@ -1912,7 +2540,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `attribute_options` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `attribute_options` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type AttributeOptionsFilter = {
         /**
@@ -1928,6 +2556,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         created_at?: string;
         /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
+        /**
          * The literal `?id=` value this call was understood to carry.
          */
         id?: string;
@@ -1936,13 +2572,29 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         labels?: string;
         /**
+         * The literal `?metadata=` value this call was understood to carry.
+         */
+        metadata?: string;
+        /**
          * The literal `?position=` value this call was understood to carry.
          */
         position?: string;
         /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
+        /**
          * The literal `?swatch=` value this call was understood to carry.
          */
         swatch?: string;
+        /**
+         * The literal `?updated_at=` value this call was understood to carry.
+         */
+        updated_at?: string;
     }
 
     export type DefaultAttributeOptionsFilter = AttributeOptionsFilter & {
@@ -1963,13 +2615,33 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         code?: string;
         /**
+         * The key this option has in the system that owns the value list — an ETIM value, an eCl@ss value key. Unique per tenant where set. `code` is what a product stores when the option is picked; this is what the source calls the same choice, and holding the two apart is what stops a re-import founding a second option that means the same thing.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * What the option is called, per language tag. Two tenants may label the same code differently; only the code is ever written into a record.
          */
         labels?: object | null;
         /**
+         * Free-form jsonb this tenant owns, for whatever an integration has to remember about an option beyond its code, its label and its swatch. Nothing in this app reads it.
+         */
+        metadata?: object | null;
+        /**
          * Order in the dropdown, ascending. Options that tie keep the order the database returns them in, so give every option a position if the order matters.
          */
         position?: number;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * A colour or texture chip for the picker. Null for an option that is not visual.
          */
@@ -2041,6 +2713,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         entity_type?: string;
         /**
+         * The key this attribute has in the system that owns the property model — an ETIM feature, an eCl@ss property, a column of a supplier's data sheet. Unique per tenant where set. It is the half that survives a rename of `code`, so an import maps a source property onto an attribute once rather than on every run.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The `attribute_groups` row this attribute is filed under — the form section it appears in. Null is ungrouped, and an ungrouped field is rendered after every section that has a name.
          */
         group_id?: string | null;
@@ -2065,6 +2745,10 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         localizable?: boolean;
         /**
+         * Free-form jsonb this tenant owns. `validation` and `config` are read by this app and mean something to it; this is the pocket for everything else an integration has to remember about an attribute — a mapping note, an owning team, an export flag. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
          * Where the field sits inside its group. A family may override it for its own form through `family_attributes.position`; this is the attribute's default.
          */
         position?: number;
@@ -2072,6 +2756,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          * True → one value PER CHANNEL, under `attribute_values.channel_specific.<channel>.<code>`. Set together with `localizable` it means one value per channel AND locale, in `channel_locale_specific`.
          */
         scopable?: boolean;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * Which editor the value asks for — 'text', 'select', 'metric', 'price', 'asset_collection', 'reference_entity'. Carries no CHECK on purpose: an integrator adds a type, and `GET /products/attribute-schema` maps an unknown one onto a text field rather than refusing to answer.
          */
@@ -2111,6 +2803,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         entity_type?: string;
         /**
+         * The key this attribute has in the system that owns the property model — an ETIM feature, an eCl@ss property, a column of a supplier's data sheet. Unique per tenant where set. It is the half that survives a rename of `code`, so an import maps a source property onto an attribute once rather than on every run.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The `attribute_groups` row this attribute is filed under — the form section it appears in. Null is ungrouped, and an ungrouped field is rendered after every section that has a name.
          */
         group_id?: string | null;
@@ -2131,6 +2831,10 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         localizable?: boolean;
         /**
+         * Free-form jsonb this tenant owns. `validation` and `config` are read by this app and mean something to it; this is the pocket for everything else an integration has to remember about an attribute — a mapping note, an owning team, an export flag. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
          * Where the field sits inside its group. A family may override it for its own form through `family_attributes.position`; this is the attribute's default.
          */
         position?: number;
@@ -2138,6 +2842,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          * True → one value PER CHANNEL, under `attribute_values.channel_specific.<channel>.<code>`. Set together with `localizable` it means one value per channel AND locale, in `channel_locale_specific`.
          */
         scopable?: boolean;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * Which editor the value asks for — 'text', 'select', 'metric', 'price', 'asset_collection', 'reference_entity'. Carries no CHECK on purpose: an integrator adds a type, and `GET /products/attribute-schema` maps an unknown one onto a text field rather than refusing to answer.
          */
@@ -2153,7 +2865,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `attributes` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `attributes` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type AttributesFilter = {
         /**
@@ -2176,6 +2888,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          * The literal `?entity_type=` value this call was understood to carry.
          */
         entity_type?: string;
+        /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
         /**
          * The literal `?group_id=` value this call was understood to carry.
          */
@@ -2201,6 +2921,10 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         localizable?: string;
         /**
+         * The literal `?metadata=` value this call was understood to carry.
+         */
+        metadata?: string;
+        /**
          * The literal `?position=` value this call was understood to carry.
          */
         position?: string;
@@ -2208,6 +2932,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          * The literal `?scopable=` value this call was understood to carry.
          */
         scopable?: string;
+        /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
         /**
          * The literal `?type=` value this call was understood to carry.
          */
@@ -2252,6 +2984,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         entity_type?: string;
         /**
+         * The key this attribute has in the system that owns the property model — an ETIM feature, an eCl@ss property, a column of a supplier's data sheet. Unique per tenant where set. It is the half that survives a rename of `code`, so an import maps a source property onto an attribute once rather than on every run.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The `attribute_groups` row this attribute is filed under — the form section it appears in. Null is ungrouped, and an ungrouped field is rendered after every section that has a name.
          */
         group_id?: string | null;
@@ -2272,6 +3012,10 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         localizable?: boolean;
         /**
+         * Free-form jsonb this tenant owns. `validation` and `config` are read by this app and mean something to it; this is the pocket for everything else an integration has to remember about an attribute — a mapping note, an owning team, an export flag. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
          * Where the field sits inside its group. A family may override it for its own form through `family_attributes.position`; this is the attribute's default.
          */
         position?: number;
@@ -2279,6 +3023,14 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          * True → one value PER CHANNEL, under `attribute_values.channel_specific.<channel>.<code>`. Set together with `localizable` it means one value per channel AND locale, in `channel_locale_specific`.
          */
         scopable?: boolean;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * Which editor the value asks for — 'text', 'select', 'metric', 'price', 'asset_collection', 'reference_entity'. Carries no CHECK on purpose: an integrator adds a type, and `GET /products/attribute-schema` maps an unknown one onto a text field rather than refusing to answer.
          */
@@ -2354,7 +3106,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     }
 
     /**
-     * The token, secret included. Nothing was sent anywhere — delivering it is the caller&#039;s job, and the point of the route is that it can be done over a back channel instead of through the external system.
+     * The token, secret included. Nothing was sent anywhere — delivering it is the caller's job, and the point of the route is that it can be done over a back channel instead of through the external system.
      */
     export type AuthHandoffResponse = {
         /**
@@ -2380,9 +3132,13 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      */
     export type AuthLoginRequest = {
         /**
-         * The buyer's login address — the same one the contact carries.
+         * Deprecated alias of `identifier`, kept so every storefront written against the earlier contract keeps working. Read exactly like `identifier` — an address, a username or a customer number — and ignored when `identifier` is sent too.
          */
-        email: string;
+        email?: string;
+        /**
+         * Who is signing in: the buyer's email address, their username, or their company's customer number. Which of the three a shop accepts is the merchant's choice (`login_identifier_email`, `login_identifier_username`, `login_identifier_customer_number`); a shape the shop does not accept is a 403 `identifier_not_offered`. The shape is read from the value — anything holding an `@` is an address, only digits is a customer number, anything else a username. A customer number names a COMPANY and signs in as its primary contact, which makes it a shared account.
+         */
+        identifier?: string;
         /**
          * The password from registration or recovery. Wrong credentials are a 401; a correct one on an undecided application is a 403.
          */
@@ -2448,7 +3204,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      */
     export type AuthMagicLinkConfirmResponse = {
         /**
-         * The customer record behind the login. Null when no contact is mirrored against the platform user yet — a sign-in link creates the account, not the customer.
+         * The customer record behind the login. Null when no contact is mirrored against the platform user — a link is only sent to a contact, so this is a login that lost its contact since.
          */
         contact?: Contact;
         /**
@@ -2466,7 +3222,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      */
     export type AuthMagicLinkRequest = {
         /**
-         * Who to send the link to. An address that has never been seen creates an account rather than failing.
+         * Who to send the link to. An address that cannot sign in is answered exactly like one that can, and nothing is sent to it.
          */
         email: string;
         /**
@@ -2480,6 +3236,10 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      */
     export type AuthMagicLinkResponse = {
         /**
+         * When the token was created.
+         */
+        $createdAt?: string;
+        /**
          * The token that was created.
          */
         $id?: string;
@@ -2492,7 +3252,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         mail?: AuthMailSource;
         /**
-         * The platform user it belongs to — new when the address was.
+         * The platform user it belongs to. For an address that cannot sign in, a value that names nobody.
          */
         userId?: string;
     }
@@ -2507,9 +3267,9 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      */
     export type AuthMeRequest = {
         /**
-         * Optional session to verify. Pass it to ask "is this session still alive?" (a revoked one is then a 401); omit it to only ask who a user is.
+         * The session the storefront holds for that user — `session.$id` from the login. A revoked or expired one is a 401.
          */
-        session_id?: string | null;
+        session_id: string;
         /**
          * The platform user to resolve — `session.userId` from the login.
          */
@@ -2529,7 +3289,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         permissions?: ContactPermissions;
         /**
-         * The platform identity record, forwarded verbatim from the identity service. This app neither reshapes nor validates it, so treat unknown fields as forward-compatible; the ones named here are the ones this app itself writes and reads.
+         * The platform identity record, as far as a storefront needs it: exactly the fields named here and nothing else the identity service holds — never its password hash, hash options, preferences or delivery targets.
          */
         user?: object;
     }
@@ -2557,7 +3317,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     }
 
     /**
-     * The identity service&#039;s answer, forwarded verbatim.
+     * The identity service's answer, forwarded verbatim.
      */
     export type AuthMfaChallengeConfirmResponse = {
         /**
@@ -2576,9 +3336,9 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      */
     export type AuthMfaChallengeRequest = {
         /**
-         * Which factor to challenge. Defaults to `email`, the only one this route mails.
+         * Which factor to challenge. `email` (the default) is the only one this route sends; any other value is a 400 `factor_not_supported`.
          */
-        factor?: string | null;
+        factor?: AuthMfaChallengeRequestFactor;
         /**
          * The platform user being challenged.
          */
@@ -2649,7 +3409,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      */
     export type AuthOtpRequest = {
         /**
-         * Who to send the code to. As with the sign-in link, an unknown address creates an account rather than failing.
+         * Who to send the code to. As with the sign-in link, an address that cannot sign in is answered exactly like one that can, and nothing is sent to it.
          */
         email: string;
     }
@@ -2658,6 +3418,10 @@ Which attributes an asset of this family has comes from `attributes` rows with `
      * The token, minus the code. The code is in the mail and nowhere else.
      */
     export type AuthOtpResponse = {
+        /**
+         * When the token was created.
+         */
+        $createdAt?: string;
         /**
          * The token that was created.
          */
@@ -2700,7 +3464,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     }
 
     /**
-     * The identity service&#039;s answer, forwarded verbatim: the spent recovery token. The new password is already in effect when this arrives.
+     * The identity service's answer, forwarded verbatim: the spent recovery token. The new password is already in effect when this arrives.
      */
     export type AuthRecoveryConfirmResponse = {
         /**
@@ -2733,7 +3497,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     }
 
     /**
-     * The identity service&#039;s recovery token, minus its secret, plus which mail the customer got. The secret is stripped deliberately — it travels only in the mailed link, and a caller that had both would not need the mail at all. `mail` is `tenant` when this shop&#039;s own template went out and `platform` when the messaging service could not be reached and the identity service&#039;s built-in mail is the copy the buyer has; the link is the same either way.
+     * The identity service's recovery token, minus its secret, plus which mail the customer got. The secret is stripped deliberately — it travels only in the mailed link, and a caller that had both would not need the mail at all. `mail` is `tenant` when this shop's own template went out and `platform` when the messaging service could not be reached and the identity service's built-in mail is the copy the buyer has; the link is the same either way.
      */
     export type AuthRecoveryResponse = {
         /**
@@ -2780,7 +3544,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         locale?: string | null;
         /**
-         * JOIN an existing company — the invite shape. Neither b2b_registration_enabled nor b2c_registration_enabled applies to it.
+         * REFUSED when set: joining an existing company is an invitation, not a registration, so a value here answers 403 `join_requires_invitation` (400 `organization_ambiguous` beside `organization_name`). Send null or leave it out.
          */
         organization_id?: string | null;
         /**
@@ -2876,7 +3640,7 @@ Which attributes an asset of this family has comes from `attributes` rows with `
     }
 
     /**
-     * The identity service&#039;s answer, forwarded verbatim: the spent verification token.
+     * The identity service's answer, forwarded verbatim: the spent verification token.
      */
     export type AuthVerificationConfirmResponse = {
         /**
@@ -2934,6 +3698,291 @@ Which attributes an asset of this family has comes from `attributes` rows with `
         [key: string]: any;
         [__default]: true;
     };
+
+    /**
+     * 
+     */
+    export type AvailabilityState = {
+        /**
+         * The value a stock row's `availability_code` stores, and the key the vocabulary serves it under. Lowercase letters, digits, '-' and '_' (CHECK `code ~ '^[a-z][a-z0-9_-]*$'`), unique per tenant. Treat it as permanent: nothing in the database points at it, so renaming it here leaves every stock row carrying the old one, and the honest move is a new code plus an update of the rows that name it.
+         */
+        code?: string;
+        /**
+         * When the row was created. Server-set: it is in no request body, and a value sent for it is ignored.
+         */
+        created_at?: string;
+        /**
+         * One sentence a screen can put under the title, in the tenant's working language — what this state means for a buyer looking at the article. Optional; a state with none is served with a null description rather than an invented one.
+         */
+        description?: string | null;
+        /**
+         * The description per language tag, on the same rule as `labels`: the tag if it is there, else `description`. Keys are language tags, values plain strings.
+         */
+        descriptions?: object | null;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say.
+         */
+        is_default?: boolean;
+        /**
+         * True for the four states this app seeds on install, false for anything the tenant added. It means "we put it there" and nothing more: a seeded state may be renamed, re-toned, reordered, corrected or deleted exactly like an added one, and the flag is there so a screen can say where a value came from.
+         */
+        is_system?: boolean;
+        /**
+         * The title per language tag, for a shop that has to render it in the reader's language. Falls back to `title` when a tag is missing. Keys are language tags, values plain strings.
+         */
+        labels?: object | null;
+        /**
+         * Whether an item in this state may still be ordered — the reason this set is a table and not a list of names. A code on its own tells a storefront nothing it can act on: it has to be matched against a list the theme keeps, and that list is wrong the first time a merchant adds a code. This flag travels with the value, so a shop asks the vocabulary whether to offer the order button instead of asking itself. POST /inventories/availability reads it: a state that says false takes the order button away from every item the governing row puts in that state, whatever the quantity says, and that call reports it as `unorderable_reason: 'state'`. It stays the merchant's policy about the STATE — it moves no stock and books no movement, and the per-location `state_orderable` in that answer is this flag, held apart from the verdict.
+         */
+        orderable?: boolean;
+        /**
+         * Where this state sits in a select or a legend: the set is served ASCENDING, so a lower number comes first, and states that tie fall back to their code. It is presentation only — nothing sorts stock by it.
+         */
+        position?: number;
+        /**
+         * The tenant this row belongs to, as a slug. Set by the platform, never by a caller — it is the row-level security scope, not a field, and every row a request can reach is inside it already.
+         */
+        tenant_id?: string;
+        /**
+         * What a person reads for this state, in the tenant's working language. At least one character (CHECK `length(title) > 0`). A value nobody titled is served with its own code made readable, so this is a better label rather than the only one.
+         */
+        title?: string;
+        /**
+         * Semantic badge colour for this state — what it MEANS, not what it looks like: 'success' for sellable, 'info' for on its way, 'warning' for not right now, 'danger' for gone for good, 'neutral' for anything else. The client owns the palette. One of five (CHECK `tone in ('neutral', 'info', 'success', 'warning', 'danger')`), defaulting to 'neutral'.
+         */
+        tone?: AvailabilityStateTone;
+        /**
+         * When this state was last edited — a rename, a re-tone, a corrected `orderable`.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * A state needs a code to be stored under and a title to be read by.
+     */
+    export type AvailabilityStateCreateRequest = {
+        /**
+         * The value a stock row's `availability_code` stores, and the key the vocabulary serves it under. Lowercase letters, digits, '-' and '_' (CHECK `code ~ '^[a-z][a-z0-9_-]*$'`), unique per tenant. Treat it as permanent: nothing in the database points at it, so renaming it here leaves every stock row carrying the old one, and the honest move is a new code plus an update of the rows that name it.
+         */
+        code: string;
+        /**
+         * One sentence a screen can put under the title, in the tenant's working language — what this state means for a buyer looking at the article. Optional; a state with none is served with a null description rather than an invented one.
+         */
+        description?: string | null;
+        /**
+         * The description per language tag, on the same rule as `labels`: the tag if it is there, else `description`. Keys are language tags, values plain strings.
+         */
+        descriptions?: object | null;
+        /**
+         * Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say. Defaults to false, and nothing enforces that at most one state carries it.
+         */
+        is_default?: boolean;
+        /**
+         * True for the four states this app seeds on install, false for anything the tenant added. It means "we put it there" and nothing more: a seeded state may be renamed, re-toned, reordered, corrected or deleted exactly like an added one, and the flag is there so a screen can say where a value came from. Send false, or leave it out: it marks the states this app seeded, and setting it on your own would only make one harder to tell apart.
+         */
+        is_system?: boolean;
+        /**
+         * The title per language tag, for a shop that has to render it in the reader's language. Falls back to `title` when a tag is missing. Keys are language tags, values plain strings.
+         */
+        labels?: object | null;
+        /**
+         * Whether an item in this state may still be ordered — the reason this set is a table and not a list of names. A code on its own tells a storefront nothing it can act on: it has to be matched against a list the theme keeps, and that list is wrong the first time a merchant adds a code. This flag travels with the value, so a shop asks the vocabulary whether to offer the order button instead of asking itself. POST /inventories/availability reads it: a state that says false takes the order button away from every item the governing row puts in that state, whatever the quantity says, and that call reports it as `unorderable_reason: 'state'`. It stays the merchant's policy about the STATE — it moves no stock and books no movement, and the per-location `state_orderable` in that answer is this flag, held apart from the verdict. Defaults to true, so a state created without an answer is one a shop keeps selling in — set it deliberately.
+         */
+        orderable?: boolean;
+        /**
+         * Where this state sits in a select or a legend: the set is served ASCENDING, so a lower number comes first, and states that tie fall back to their code. It is presentation only — nothing sorts stock by it. Defaults to 0.
+         */
+        position?: number;
+        /**
+         * What a person reads for this state, in the tenant's working language. At least one character (CHECK `length(title) > 0`). A value nobody titled is served with its own code made readable, so this is a better label rather than the only one.
+         */
+        title: string;
+        /**
+         * Semantic badge colour for this state — what it MEANS, not what it looks like: 'success' for sellable, 'info' for on its way, 'warning' for not right now, 'danger' for gone for good, 'neutral' for anything else. The client owns the palette. One of five (CHECK `tone in ('neutral', 'info', 'success', 'warning', 'danger')`), defaulting to 'neutral'. Defaults to 'neutral'.
+         */
+        tone?: AvailabilityStateTone;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value.
+     */
+    export type AvailabilityStateUpdateRequest = {
+        /**
+         * The value a stock row's `availability_code` stores, and the key the vocabulary serves it under. Lowercase letters, digits, '-' and '_' (CHECK `code ~ '^[a-z][a-z0-9_-]*$'`), unique per tenant. Treat it as permanent: nothing in the database points at it, so renaming it here leaves every stock row carrying the old one, and the honest move is a new code plus an update of the rows that name it.
+         */
+        code?: string;
+        /**
+         * One sentence a screen can put under the title, in the tenant's working language — what this state means for a buyer looking at the article. Optional; a state with none is served with a null description rather than an invented one.
+         */
+        description?: string | null;
+        /**
+         * The description per language tag, on the same rule as `labels`: the tag if it is there, else `description`. Keys are language tags, values plain strings.
+         */
+        descriptions?: object | null;
+        /**
+         * Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say. Defaults to false, and nothing enforces that at most one state carries it.
+         */
+        is_default?: boolean;
+        /**
+         * True for the four states this app seeds on install, false for anything the tenant added. It means "we put it there" and nothing more: a seeded state may be renamed, re-toned, reordered, corrected or deleted exactly like an added one, and the flag is there so a screen can say where a value came from. Send false, or leave it out: it marks the states this app seeded, and setting it on your own would only make one harder to tell apart.
+         */
+        is_system?: boolean;
+        /**
+         * The title per language tag, for a shop that has to render it in the reader's language. Falls back to `title` when a tag is missing. Keys are language tags, values plain strings.
+         */
+        labels?: object | null;
+        /**
+         * Whether an item in this state may still be ordered — the reason this set is a table and not a list of names. A code on its own tells a storefront nothing it can act on: it has to be matched against a list the theme keeps, and that list is wrong the first time a merchant adds a code. This flag travels with the value, so a shop asks the vocabulary whether to offer the order button instead of asking itself. POST /inventories/availability reads it: a state that says false takes the order button away from every item the governing row puts in that state, whatever the quantity says, and that call reports it as `unorderable_reason: 'state'`. It stays the merchant's policy about the STATE — it moves no stock and books no movement, and the per-location `state_orderable` in that answer is this flag, held apart from the verdict. Defaults to true, so a state created without an answer is one a shop keeps selling in — set it deliberately.
+         */
+        orderable?: boolean;
+        /**
+         * Where this state sits in a select or a legend: the set is served ASCENDING, so a lower number comes first, and states that tie fall back to their code. It is presentation only — nothing sorts stock by it. Defaults to 0.
+         */
+        position?: number;
+        /**
+         * What a person reads for this state, in the tenant's working language. At least one character (CHECK `length(title) > 0`). A value nobody titled is served with its own code made readable, so this is a better label rather than the only one.
+         */
+        title?: string;
+        /**
+         * Semantic badge colour for this state — what it MEANS, not what it looks like: 'success' for sellable, 'info' for on its way, 'warning' for not right now, 'danger' for gone for good, 'neutral' for anything else. The client owns the palette. One of five (CHECK `tone in ('neutral', 'info', 'success', 'warning', 'danger')`), defaulting to 'neutral'. Defaults to 'neutral'.
+         */
+        tone?: AvailabilityStateTone;
+    }
+
+    /**
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `availability_states` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
+     */
+    export type AvailabilityStatesFilter = {
+        /**
+         * The literal `?code=` value this call was understood to carry.
+         */
+        code?: string;
+        /**
+         * The literal `?created_at=` value this call was understood to carry.
+         */
+        created_at?: string;
+        /**
+         * The literal `?description=` value this call was understood to carry.
+         */
+        description?: string;
+        /**
+         * The literal `?descriptions=` value this call was understood to carry.
+         */
+        descriptions?: string;
+        /**
+         * The literal `?id=` value this call was understood to carry.
+         */
+        id?: string;
+        /**
+         * The literal `?is_default=` value this call was understood to carry.
+         */
+        is_default?: string;
+        /**
+         * The literal `?is_system=` value this call was understood to carry.
+         */
+        is_system?: string;
+        /**
+         * The literal `?labels=` value this call was understood to carry.
+         */
+        labels?: string;
+        /**
+         * The literal `?orderable=` value this call was understood to carry.
+         */
+        orderable?: string;
+        /**
+         * The literal `?position=` value this call was understood to carry.
+         */
+        position?: string;
+        /**
+         * The literal `?title=` value this call was understood to carry.
+         */
+        title?: string;
+        /**
+         * The literal `?tone=` value this call was understood to carry.
+         */
+        tone?: string;
+        /**
+         * The literal `?updated_at=` value this call was understood to carry.
+         */
+        updated_at?: string;
+    }
+
+    export type DefaultAvailabilityStatesFilter = AvailabilityStatesFilter & {
+        [key: string]: any;
+        [__default]: true;
+    };
+
+    /**
+     * The banner draft for one market ('' = the shop): every label of the first and second layer per language. A draft changes nothing a visitor sees until it is published.
+     */
+    export type BannerDraft = {
+        /**
+         * When the row was created. Server-set.
+         */
+        created_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one; it reads one back and puts it in the path of later calls.
+         */
+        id?: string;
+        /**
+         * The shop's imprint, linked from the first layer.
+         */
+        imprint_url?: string | null;
+        /**
+         * True when this market has no draft of its own and the shop's is answered. Saving for the market creates its own.
+         */
+        inherited?: boolean;
+        /**
+         * The layout this draft asks for — box, bar or modal — or null to follow the `banner_layout` setting.
+         */
+        layout?: BannerDraftLayout;
+        /**
+         * The market this row belongs to, by code — '' (empty) is the shop as a whole. Taken from the `x-revenexx-market` header of the call that wrote it, never from a body.
+         */
+        market?: string;
+        /**
+         * The shop's privacy policy, linked from the first layer.
+         */
+        privacy_url?: string | null;
+        /**
+         * The tenant this row belongs to. Set by the platform from the authenticated context, never by a caller.
+         */
+        tenant_id?: string;
+        /**
+         * The banner's labels per language: { "de": { "title": …, "body": …, "accept_all": …, "reject_all": …, "settings": …, "save": … } }. Required per language before publishing: title, body, accept_all, reject_all, settings, save. Optional: preferences_title, preferences_body, object, load_once, gate_text, privacy_link, cookie_details, always_active, close.
+         */
+        texts?: object;
+        /**
+         * When the row was last written. Server-set — every route that changes the row stamps it.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Save the draft for the market in `x-revenexx-market` ('' = the shop). A market's first save starts from a copy of the shop's draft. Nothing a visitor sees changes until the next publish.
+     */
+    export type BannerDraftUpdateRequest = {
+        /**
+         * The shop's imprint, linked from the first layer.
+         */
+        imprint_url?: string | null;
+        /**
+         * The layout this draft asks for — box, bar or modal — or null to follow the `banner_layout` setting.
+         */
+        layout?: BannerDraftUpdateRequestLayout;
+        /**
+         * The shop's privacy policy, linked from the first layer.
+         */
+        privacy_url?: string | null;
+        /**
+         * The banner's labels per language: { "de": { "title": …, "body": …, "accept_all": …, "reject_all": …, "settings": …, "save": … } }. Required per language before publishing: title, body, accept_all, reject_all, settings, save. Optional: preferences_title, preferences_body, object, load_once, gate_text, privacy_link, cookie_details, always_active, close.
+         */
+        texts?: object;
+    }
 
     /**
      * 
@@ -3204,9 +4253,17 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         changes?: BudgetChange[];
         /**
+         * Present (true) only on the answer to a dry run: nothing was written, and `changes` is empty.
+         */
+        dry_run?: boolean;
+        /**
          * 
          */
         idempotent?: boolean;
+        /**
+         * release only: the cancellation key the release is recorded under.
+         */
+        key?: string;
         /**
          * 
          */
@@ -3216,9 +4273,147 @@ Which attributes an asset of this family has comes from `attributes` rows with `
          */
         purchase_request_id?: string | null;
         /**
+         * release only: what was given back, per cost centre. A centre the order booked nothing on, or only on a closed period, is absent.
+         */
+        released?: object[];
+        /**
+         * The cost centres this movement passed by. tracking_only: nothing was moved or recorded for it. period_closed (release only, RAD-125): the budget the order was booked on has closed, so nothing was given back — a zero cancellation entry records it, and `amount` is what was withheld. Empty when every centre named was monetary (or, on confirm/withdraw, when no allocations were named).
+         */
+        skipped?: object[];
+        /**
          * 
          */
         status?: BudgetMovementResultStatus;
+    }
+
+    /**
+     * 
+     */
+    export type BudgetRelease = {
+        /**
+         * 
+         */
+        allocations?: object | null;
+        /**
+         * 
+         */
+        attempts?: number;
+        /**
+         * 
+         */
+        cancellation_id?: string | null;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        direct_order_id?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        item_id?: string | null;
+        /**
+         * 
+         */
+        key?: string;
+        /**
+         * 
+         */
+        last_attempt_at?: string | null;
+        /**
+         * 
+         */
+        last_error?: string | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        order_id?: string;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        purchase_request_id?: string | null;
+        /**
+         * 
+         */
+        quantity?: number | null;
+        /**
+         * 
+         */
+        released?: object | null;
+        /**
+         * 
+         */
+        released_at?: string | null;
+        /**
+         * 
+         */
+        scope?: BudgetReleaseScope;
+        /**
+         * 
+         */
+        settle_note?: string | null;
+        /**
+         * 
+         */
+        settled_at?: string | null;
+        /**
+         * 
+         */
+        settled_by_contact_id?: string | null;
+        /**
+         * 
+         */
+        skipped?: object | null;
+        /**
+         * 
+         */
+        status?: BudgetReleaseStatus;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type BudgetReleaseResult = {
+        /**
+         * 
+         */
+        budget_release?: BudgetRelease;
+    }
+
+    /**
+     * Why the refused release is given up on — the budget then stays booked for the cancelled order. Who is settling is NOT in this body — it is the acting identity the platform establishes.
+     */
+    export type BudgetReleaseSettleRequest = {
+        /**
+         * Required free-text reason, kept on the record.
+         */
+        note: string;
     }
 
     /**
@@ -3382,7 +4577,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     /**
      * Lifecycle of a `baseline.bulk_jobs` row:
 `pending → running → completed`, or `partial` (finished with
-`counts.rejected &gt; 0`), `failed`, or `canceled`.
+`counts.rejected > 0`), `failed`, or `canceled`.
 
      */
     export type BulkJobStatus = {
@@ -3481,7 +4676,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * The first sweep: active carts nobody has touched since their market&#039;s window become abandoned. Nothing else in the platform ever stamps abandoned_at, so without this the abandonment funnel is empty by construction rather than empty because nobody abandons carts.
+     * The first sweep: active carts nobody has touched since their market's window become abandoned. Nothing else in the platform ever stamps abandoned_at, so without this the abandonment funnel is empty by construction rather than empty because nobody abandons carts.
      */
     export type CartAbandonSweep = {
         /**
@@ -3661,7 +4856,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * What this app ASKED inventories for, and what it answered. This app holds no stock: inventories picks the location, applies the backorder policy and owns the hold&#039;s expiry.
+     * What this app ASKED inventories for, and what it answered. This app holds no stock: inventories picks the location, applies the backorder policy and owns the hold's expiry.
      */
     export type CartConversionReservation = {
         /**
@@ -3699,7 +4894,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * A cart needs an owner: &#039;contact_id&#039; (customer) or &#039;session_key&#039; (guest).
+     * A cart needs an owner: 'contact_id' (customer) or 'session_key' (guest).
      */
     export type CartCreateRequest = {
         /**
@@ -3779,7 +4974,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * Import into an existing cart (&#039;target_cart_id&#039;) or a new cart (owner &#039;contact_id&#039;/&#039;session_key&#039; required).
+     * Import into an existing cart ('target_cart_id') or a new cart (owner 'contact_id'/'session_key' required).
      */
     export type CartImportRequest = {
         /**
@@ -3923,7 +5118,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * An item needs an identity: &#039;name&#039; or &#039;sku&#039;.
+     * An item needs an identity: 'name' or 'sku'.
      */
     export type CartItemCreateRequest<CartItemSnapshot extends Models.CartItemSnapshot = Models.DefaultCartItemSnapshot> = {
         /**
@@ -3981,7 +5176,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * The product as the buyer was shown it when this line was added — the cart&#039;s own copy, so it stays honest when the catalogue moves underneath it. Free-form apart from the price: conversion reads `unit_price` (or `price` as a fallback) and nothing else. A snapshot without a readable price leaves the line alone in both price modes, which is deliberate — a missing snapshot must never be read as &quot;free&quot;.
+     * The product as the buyer was shown it when this line was added — the cart's own copy, so it stays honest when the catalogue moves underneath it. Free-form apart from the price: conversion reads `unit_price` (or `price` as a fallback) and nothing else. A snapshot without a readable price leaves the line alone in both price modes, which is deliberate — a missing snapshot must never be read as "free".
      */
     export type CartItemSnapshot = {
         /**
@@ -4322,6 +5517,42 @@ response carries no `tenant_id` (the listing envelope does) and no
     /**
      * 
      */
+    export type Catalog = {
+        /**
+         * The catalogue version this app ships.
+         */
+        catalog_version?: string;
+        /**
+         * Every category the catalogue uses, for grouping.
+         */
+        categories?: string[];
+        /**
+         * Every catalogue vendor.
+         */
+        vendors?: object[];
+    }
+
+    /**
+     * 
+     */
+    export type CatalogAdoptRequest = {
+        /**
+         * The catalogue key.
+         */
+        key: string;
+        /**
+         * Purpose codes to file the vendor under instead of the catalogue's.
+         */
+        purposes?: string[];
+        /**
+         * Take the current catalogue entry for a vendor already adopted.
+         */
+        refresh?: boolean;
+    }
+
+    /**
+     * 
+     */
     export type Categories = {
         /**
          * The category's stable identifier — what an import and a storefront join on, and what survives a rename of the label. Unique per tenant.
@@ -4332,6 +5563,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         created_at?: string;
         /**
+         * The key this category has in the system that owns the classification — an ETIM or eCl@ss group, a BMEcat catalogue group, the ERP's own product group. Unique per tenant where set. `code` stays this app's identifier and a merchant may rename it; this is what the source calls the same node, which is what keeps the next import pointing at it.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The row's own id, generated by the database. A client never sends one; it reads one back and uses it in the path of every later call.
          */
         id?: string;
@@ -4339,6 +5578,10 @@ response carries no `tenant_id` (the listing envelope does) and no
          * The category name a person sees, per language tag. The catalog reads by name, not by code — a locale left blank falls back to the next filled one.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns for the INTEGRATION's account of this node — kept apart from `values`, which is the catalog's own pocket and the one a merchant edits, so a sync and a person never overwrite each other. Nothing in this app reads either.
+         */
+        metadata?: object | null;
         /**
          * The category this one hangs under. Null is a root of the tree. Deleting a parent lifts its children to the root rather than deleting them, so a mis-click never takes a subtree with it.
          */
@@ -4364,6 +5607,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         rules_computed_at?: string | null;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * When the row was last written. Server-set — it is not part of any request body.
          */
         updated_at?: string;
@@ -4382,9 +5633,21 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         code: string;
         /**
+         * The key this category has in the system that owns the classification — an ETIM or eCl@ss group, a BMEcat catalogue group, the ERP's own product group. Unique per tenant where set. `code` stays this app's identifier and a merchant may rename it; this is what the source calls the same node, which is what keeps the next import pointing at it.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The category name a person sees, per language tag. The catalog reads by name, not by code — a locale left blank falls back to the next filled one.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns for the INTEGRATION's account of this node — kept apart from `values`, which is the catalog's own pocket and the one a merchant edits, so a sync and a person never overwrite each other. Nothing in this app reads either.
+         */
+        metadata?: object | null;
         /**
          * The category this one hangs under. Null is a root of the tree. Deleting a parent lifts its children to the root rather than deleting them, so a mis-click never takes a subtree with it.
          */
@@ -4410,13 +5673,21 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         rules_computed_at?: string | null;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * Whatever this catalog keeps on a category beyond the model — the keys belong to the tenant, not to this app, and nothing here reads them.
          */
         values?: object | null;
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `categories` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `categories` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type CategoriesFilter = {
         /**
@@ -4428,6 +5699,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         created_at?: string;
         /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
+        /**
          * The literal `?id=` value this call was understood to carry.
          */
         id?: string;
@@ -4435,6 +5714,10 @@ response carries no `tenant_id` (the listing envelope does) and no
          * The literal `?labels=` value this call was understood to carry.
          */
         labels?: string;
+        /**
+         * The literal `?metadata=` value this call was understood to carry.
+         */
+        metadata?: string;
         /**
          * The literal `?parent_id=` value this call was understood to carry.
          */
@@ -4460,6 +5743,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         rules_computed_at?: string;
         /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
+        /**
          * The literal `?updated_at=` value this call was understood to carry.
          */
         updated_at?: string;
@@ -4483,9 +5774,21 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         code?: string;
         /**
+         * The key this category has in the system that owns the classification — an ETIM or eCl@ss group, a BMEcat catalogue group, the ERP's own product group. Unique per tenant where set. `code` stays this app's identifier and a merchant may rename it; this is what the source calls the same node, which is what keeps the next import pointing at it.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The category name a person sees, per language tag. The catalog reads by name, not by code — a locale left blank falls back to the next filled one.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns for the INTEGRATION's account of this node — kept apart from `values`, which is the catalog's own pocket and the one a merchant edits, so a sync and a person never overwrite each other. Nothing in this app reads either.
+         */
+        metadata?: object | null;
         /**
          * The category this one hangs under. Null is a root of the tree. Deleting a parent lifts its children to the root rather than deleting them, so a mis-click never takes a subtree with it.
          */
@@ -4510,6 +5813,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          * When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
          */
         rules_computed_at?: string | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * Whatever this catalog keeps on a category beyond the model — the keys belong to the tenant, not to this app, and nothing here reads them.
          */
@@ -5273,7 +6584,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * A Typesense collection definition, passed through from Typesense. `name` is rewritten back to the tenant&#039;s public collection name.
+     * A Typesense collection definition, passed through from Typesense. `name` is rewritten back to the tenant's public collection name.
      */
     export type Collection<CollectionField extends Models.CollectionField = Models.DefaultCollectionField> = {
         /**
@@ -5349,7 +6660,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * 
+     * order_id is required unless dry_run is true.
      */
     export type CommitRequest = {
         /**
@@ -5365,19 +6676,27 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         currency?: string | null;
         /**
+         * true runs the pre-flight (currency, no active budget, tracking-only centres) and answers as the real call would — same status, skipped and refusal — while writing nothing and claiming no key. The purchase request / order id may then be omitted.
+         */
+        dry_run?: boolean;
+        /**
          * 
          */
         note?: string | null;
         /**
          * 
          */
-        order_id: string;
+        order_id?: string | null;
     }
 
     /**
      * 
      */
     export type ConfirmRequest = {
+        /**
+         * Optional: the request's allocations (the reserve's shape; an empty array is the same as none, and only cost_center_id is read), used only to classify its cost centres by budget type. A request holding no reservation whose every centre is tracking-only is then settled with nothing written; one naming a monetary centre, or naming none, is refused with 409 as before. Amounts are read from the ledger, never from here.
+         */
+        allocations?: object[];
         /**
          * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
          */
@@ -5397,6 +6716,264 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
+     * 
+     */
+    export type ConsentExport = {
+        /**
+         * The same rows as CSV, header first.
+         */
+        csv?: string;
+        /**
+         * The start applied.
+         */
+        from?: string | null;
+        /**
+         * Whether another call is needed.
+         */
+        has_more?: boolean;
+        /**
+         * The rows.
+         */
+        items?: ConsentRecord[];
+        /**
+         * The market filter applied.
+         */
+        market?: string | null;
+        /**
+         * The offset for that call.
+         */
+        next_offset?: number | null;
+        /**
+         * Rows in this answer.
+         */
+        returned?: number;
+        /**
+         * The end applied.
+         */
+        to?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type ConsentHistory = {
+        /**
+         * The consent id.
+         */
+        consent_id?: string;
+        /**
+         * Oldest first.
+         */
+        items?: ConsentRecord[];
+    }
+
+    /**
+     * One decision of one browser, pointing at the version it was shown under. Append-only; it holds no IP address, no full user agent and no query string.
+     */
+    export type ConsentRecord = {
+        /**
+         * What the visitor did: accept_all, reject_all, custom, vendor_grant, withdraw or renew.
+         */
+        action?: ConsentRecordAction;
+        /**
+         * The visitor's clock when they decided, kept as a hint — a record retried on a later page view carries it.
+         */
+        client_ts?: string | null;
+        /**
+         * The random uuid v4 in the visitor's own `rvx_consent` cookie. It chains one browser's decisions and nothing else — it is never handed to a tag, and a full withdrawal mints a new one.
+         */
+        consent_id?: string;
+        /**
+         * The signed-in B2B contact, taken from the identity the gateway injected — never from the body. Set to null on an erasure request; the rest of the record stays.
+         */
+        contact_id?: string | null;
+        /**
+         * When the row was created. Server-set.
+         */
+        created_at?: string;
+        /**
+         * What was decided, explicit for every purpose of the shown version ({ purposes: { statistics: "granted", marketing: "denied" }, vendors: { youtube: "granted" } }). A consent purpose left out is stored denied; a legitimate-interest one runs until objected.
+         */
+        decisions?: object;
+        /**
+         * When the decision lapses: the received time plus the version's consent lifetime. Retention of the newest record counts from here.
+         */
+        expires_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one; it reads one back and puts it in the path of later calls.
+         */
+        id?: string;
+        /**
+         * The legal basis of every purpose (and every overriding vendor) when the decision was made, so the record stays readable after the merchant changes one.
+         */
+        legal_bases?: object;
+        /**
+         * The language the visitor was shown.
+         */
+        locale?: string;
+        /**
+         * The market this row belongs to, by code — '' (empty) is the shop as a whole. Taken from the `x-revenexx-market` header of the call that wrote it, never from a body.
+         */
+        market?: string;
+        /**
+         * The path the decision was made on, without query or fragment, so no campaign id is ever stored.
+         */
+        page_path?: string | null;
+        /**
+         * That version's number.
+         */
+        policy_number?: number;
+        /**
+         * That version's hash, copied in, so the record alone proves which text it points at.
+         */
+        policy_sha256?: string;
+        /**
+         * The published version the visitor was shown.
+         */
+        policy_version_id?: string;
+        /**
+         * When the server received the decision. This is the authoritative time.
+         */
+        recorded_at?: string;
+        /**
+         * Where they did it: first_layer, preferences, privacy_link or content_gate.
+         */
+        surface?: ConsentRecordSurface;
+        /**
+         * The tenant this row belongs to. Set by the platform from the authenticated context, never by a caller.
+         */
+        tenant_id?: string;
+        /**
+         * The browser family and major version only — never the full user agent.
+         */
+        user_agent_class?: string | null;
+    }
+
+    /**
+     * One decision, as the storefront module sends it. At most 4 KB. Every stored field is chosen by the app: nothing of the request is kept as it arrived, so an address or a full user agent cannot reach a record.
+     */
+    export type ConsentRecordCreateRequest = {
+        /**
+         * What the visitor did: accept_all, reject_all, custom, vendor_grant, withdraw or renew.
+         */
+        action: ConsentRecordCreateRequestAction;
+        /**
+         * The visitor's clock when they decided, kept as a hint — a record retried on a later page view carries it.
+         */
+        client_ts?: string | null;
+        /**
+         * The random uuid v4 in the visitor's own `rvx_consent` cookie. It chains one browser's decisions and nothing else — it is never handed to a tag, and a full withdrawal mints a new one.
+         */
+        consent_id: string;
+        /**
+         * What was decided. Purposes and vendors by code, each granted, denied or objected. A consent purpose left out is stored denied.
+         */
+        decisions?: object;
+        /**
+         * The language the visitor was shown; one the version holds.
+         */
+        locale: string;
+        /**
+         * The page the decision was made on. Any query or fragment is cut off before storing.
+         */
+        page_path?: string | null;
+        /**
+         * The published version the visitor was shown.
+         */
+        policy_version_id: string;
+        /**
+         * Where they did it: first_layer, preferences, privacy_link or content_gate.
+         */
+        surface: ConsentRecordCreateRequestSurface;
+        /**
+         * The browser as family and major version. A longer value is reduced to that; a full user agent is never stored.
+         */
+        user_agent_class?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type ConsentSummary = {
+        /**
+         * Records per action.
+         */
+        actions?: object;
+        /**
+         * The start applied.
+         */
+        from?: string | null;
+        /**
+         * The market counted.
+         */
+        market?: string;
+        /**
+         * Per purpose code: granted, denied, objected and the granted rate.
+         */
+        purposes?: object;
+        /**
+         * Records counted.
+         */
+        records?: number;
+        /**
+         * The end applied.
+         */
+        to?: string | null;
+        /**
+         * True when the count stopped at 10,000 records.
+         */
+        truncated?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type ConsentVocabulary = {
+        /**
+         * This app.
+         */
+        app?: string;
+        /**
+         * Always true — the values are the complete set.
+         */
+        closed?: boolean;
+        /**
+         * Per language tag.
+         */
+        description?: object;
+        /**
+         * The set.
+         */
+        name?: string;
+        /**
+         * The set ships with the app.
+         */
+        source?: ConsentVocabularySource;
+        /**
+         * Per language tag.
+         */
+        title?: object;
+        /**
+         * Every value.
+         */
+        values?: object[];
+    }
+
+    /**
+     * 
+     */
+    export type ConsentVocabularyIndex = {
+        /**
+         * This app.
+         */
+        app?: string;
+        /**
+         * Every set, named and titled.
+         */
+        vocabularies?: object[];
+    }
+
+    /**
      * A PERSON, and the unit that logs in: one platform user, one email, one role inside its organization. A contact without an organization is a standalone buyer, not an error.
      */
     export type Contact = {
@@ -5405,13 +6982,17 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         created_at?: string;
         /**
-         * Login identity and the unique key of a person within the tenant. Changing it changes the platform login with it. Two people at the same company therefore need two addresses — a shared purchasing mailbox is one contact, not several.
+         * One of the things this person can sign in with, unique within the tenant where it is set. Changing it changes the platform login with it. It is OPTIONAL: B2B buyers without an address of their own are a routine case, and they sign in by username instead. Two people sharing one address is still not possible — a shared purchasing mailbox is one contact, not several.
          */
-        email?: string;
+        email?: string | null;
         /**
          * Id of this person in the system the record came from — an ERP contact number, a CRM id. Nullable, because a contact created in the shop has none and never will, and unique per tenant where it is set, which is what lets a repeated import find the row it wrote last time instead of adding a second one. Distinct from `external_user_id`, which points at the platform account: this one points OUT of the platform.
          */
         external_id?: string | null;
+        /**
+         * Every other system that knows this person, keyed by system name. `external_id` is the leading one; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * Id of the platform USER this contact is mirrored as — the account that actually holds the password and the sessions. Written by the mirror and ignored on every write a caller sends.
          */
@@ -5441,9 +7022,17 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         locale?: string | null;
         /**
-         * Amount ceiling for this person, in the market's currency: with the `orders.approve` permission it is the most they may sign off. Null means no ceiling. An amount, never a grant — the grant comes from the role.
+         * Free-form jsonb this tenant owns — the extension point for anything about a person that this app does not model. `source_data` is what the SOURCE said; this is what you say.
+         */
+        metadata?: object | null;
+        /**
+         * Amount ceiling for this person, in the market's currency: with the `orders.approve` permission it is the most they may sign off. Set exactly when `order_approval_mode` is 'limited', and then above 0; null otherwise. An amount, never a grant — the grant comes from the role.
          */
         order_approval_limit?: number | null;
+        /**
+         * How far `orders.approve` reaches for this person: 'none' (no order — the default), 'limited' (up to `order_approval_limit`) or 'unlimited'. Meaningful only with a role that grants `orders.approve`; the grant comes from the role, the reach from here.
+         */
+        order_approval_mode?: ContactOrderApprovalMode;
         /**
          * The company this person belongs to. NULL is a legitimate state, not a defect: a standalone buyer with no company behind them. Deleting the organization sets this null and keeps the person.
          */
@@ -5473,6 +7062,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         role?: string;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * Whether this person may act: 'invited' has been created but has not accepted, 'active' works, 'blocked' cannot log in. A create through the API defaults to 'invited'; a self-registration in an open store lands 'active'.
          */
         status?: ContactStatus;
@@ -5484,6 +7081,10 @@ response carries no `tenant_id` (the listing envelope does) and no
          * When any column of this row last changed.
          */
         updated_at?: string;
+        /**
+         * What this person types instead of an address, unique within the tenant where it is set. Free text the shop assigns or the buyer chooses — a customer number with a name behind it, a works login, whatever the trade already says. It exists because an address is not something every B2B buyer has, and because a customer number alone names a company rather than a person.
+         */
+        username?: string | null;
     }
 
     /**
@@ -5517,7 +7118,11 @@ response carries no `tenant_id` (the listing envelope does) and no
      */
     export type ContactCreateRequest = {
         /**
-         * Login identity and the unique key of a person within the tenant. Changing it changes the platform login with it. Two people at the same company therefore need two addresses — a shared purchasing mailbox is one contact, not several.
+         * When this person record was created in this app. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
+         */
+        created_at?: string;
+        /**
+         * One of the things this person can sign in with, unique within the tenant where it is set. Changing it changes the platform login with it. It is OPTIONAL: B2B buyers without an address of their own are a routine case, and they sign in by username instead. Two people sharing one address is still not possible — a shared purchasing mailbox is one contact, not several.
          */
         email: string;
         /**
@@ -5545,9 +7150,13 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         locale?: string | null;
         /**
-         * Amount ceiling for this person, in the market's currency: with the `orders.approve` permission it is the most they may sign off. Null means no ceiling. An amount, never a grant — the grant comes from the role.
+         * Amount ceiling for this person, in the market's currency: with the `orders.approve` permission it is the most they may sign off. Set exactly when `order_approval_mode` is 'limited', and then above 0; null otherwise. An amount, never a grant — the grant comes from the role. Required with `order_approval_mode` 'limited' and refused with any other mode (400 `limited_mode_requires_limit` / `limit_requires_limited_mode`).
          */
         order_approval_limit?: number | null;
+        /**
+         * How far `orders.approve` reaches for this person: 'none' (no order — the default), 'limited' (up to `order_approval_limit`) or 'unlimited'. Meaningful only with a role that grants `orders.approve`; the grant comes from the role, the reach from here. Default 'none'. Leaving 'limited' without sending `order_approval_limit` clears the amount.
+         */
+        order_approval_mode?: OrderApprovalMode;
         /**
          * The company this person belongs to. NULL is a legitimate state, not a defect: a standalone buyer with no company behind them. Deleting the organization sets this null and keeps the person. Membership is mirrored to the platform team.
          */
@@ -5557,7 +7166,7 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         phone?: string | null;
         /**
-         * Where this person's own application stands: 'approved' (the default, and what an open store creates), 'pending' while a merchant has yet to decide, 'rejected' once they declined. Only the approve/reject routes move it; it is ignored on an ordinary update. On CREATE only, and only to file the contact as an application: 'pending' creates the platform user disabled and routes the contact through approve/reject. Ignored on update.
+         * Where this person's own application stands: 'approved' (the default, and what an open store creates), 'pending' while a merchant has yet to decide, 'rejected' once they declined. Only the approve/reject routes move it; it is ignored on an ordinary update. On CREATE only, and only to file the contact as an application: 'pending' creates the platform user disabled and routes the contact through approve/reject.
          */
         registration_status?: ContactCreateRequestRegistrationStatus;
         /**
@@ -5571,7 +7180,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * One entry on a customer&#039;s timeline: an activity somebody logged (call, visit, note) or a registration decision this app recorded. Append-only — nothing here is ever edited.
+     * One entry on a customer's timeline: an activity somebody logged (call, visit, note) or a registration decision this app recorded. Append-only — nothing here is ever edited.
      */
     export type ContactEvent = {
         /**
@@ -5621,7 +7230,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * One value of the activity types set. What kind of entry lands on a customer timeline. &#039;system&#039; is the app&#039;s own decision trail and a caller may not file one, whatever the set says.
+     * One value of the activity types set. What kind of entry lands on a customer timeline. 'system' is the app's own decision trail and a caller may not file one, whatever the set says.
      */
     export type ContactEventKind = {
         /**
@@ -5753,9 +7362,37 @@ response carries no `tenant_id` (the listing envelope does) and no
     /**
      * 
      */
+    export type ContactIdentityRequest = {
+        /**
+         * Who ordered the repair, for the timeline entry. An automated sweep names itself here.
+         */
+        created_by?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type ContactIdentityResponse = {
+        /**
+         * The contact the login belongs to.
+         */
+        contact_id?: string;
+        /**
+         * False when the contact already had one — the call changed nothing.
+         */
+        created?: boolean;
+        /**
+         * The platform login, as it now stands on the contact.
+         */
+        user_id?: string;
+    }
+
+    /**
+     * 
+     */
     export type ContactInviteRequest = {
         /**
-         * Who did the inviting, as the recipient should read it. Absent, the company name is used — "Beispiel GmbH invited you" reads better than the name of somebody they have never heard of.
+         * Who did the inviting, as the recipient should read it. Absent, the company name is used — "Beispiel GmbH invited you" reads better than the name of somebody they have never heard of. Ignored on a buyer's call: the mail then names the buyer, because a name in the shop's own mail is a claim the shop makes.
          */
         invited_by?: string | null;
         /**
@@ -5861,7 +7498,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * A contact&#039;s effective grants, derived from its role on every read — nothing here is stored, so a role change can never leave a stale grant behind. Carried here so a BFF does not need a second call to decide what to render.
+     * A contact's effective grants, derived from its role on every read — nothing here is stored, so a role change can never leave a stale grant behind. Carried here so a BFF does not need a second call to decide what to render.
      */
     export type ContactPermissions = {
         /**
@@ -5873,9 +7510,13 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         contact_id?: string | null;
         /**
-         * Amount ceiling in the market's currency; null means no ceiling. Only meaningful together with the 'orders.approve' permission.
+         * Amount ceiling in the market's currency, set only when order_approval_mode is 'limited' — null otherwise, and never a stand-in for 'no ceiling'.
          */
         order_approval_limit?: number | null;
+        /**
+         * How far 'orders.approve' reaches: 'none', 'limited' (up to order_approval_limit) or 'unlimited'. Read this, not the null limit, to know whether there is a ceiling.
+         */
+        order_approval_mode?: OrderApprovalMode;
         /**
          * The organization the role applies inside. Null for a standalone (B2C) contact — a role with no company to hold it in.
          */
@@ -5891,11 +7532,291 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * Partial update — omitted fields keep their current value. external_user_id is mirror-managed and ignored, and so are the registration_* columns: registration state is only ever changed by the approve/reject routes.
+     * WHERE one kind of document goes for one company — the invoice to accounts payable, the order confirmation to the buyer, the shipping notice to goods-in, the dunning letter to whoever settles it. One flagged point per kind is the one to use.
+     */
+    export type ContactPoint = {
+        /**
+         * The postal address this point belongs to, for the one case an ERP has it: a mail address carried ON a delivery address, so the notice about a shipment goes to whoever receives it there. Null is the ordinary case and means the point is the company's rather than one address's. It has to be an address of the same company (or of one of its people), and deleting the address takes the point with it.
+         */
+        address_id?: string | null;
+        /**
+         * When the point was created.
+         */
+        created_at?: string;
+        /**
+         * The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that `addresses` has never had a column for this: a mail address per document had nowhere to live before these rows.
+         */
+        email?: string | null;
+        /**
+         * The key this point has in the system that owns it — an ERP's own id for a document sending address. Unique per tenant where set, so a repeated import updates this row instead of adding a second one. Null for a point somebody typed in here.
+         */
+        external_id?: string | null;
+        /**
+         * Every other system that knows this point, keyed by system name. `external_id` is the leading one; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
+         * Primary key of the contact point.
+         */
+        id?: string;
+        /**
+         * The point THIS kind of document actually goes to. Exactly one point per company and kind carries it: the first point of a kind is flagged as it is created, flagging another demotes the incumbent, and it is never simply switched off — so the question has one answer while the kind has any point at all, and none only when it has none.
+         */
+        is_primary?: boolean;
+        /**
+         * WHICH document goes here — one of the tenant's own document recipient types (GET /customers/contact-point-kinds), seeded with invoice, order_confirmation, shipping_notice and dunning. Required and never defaulted: a point filed as the wrong document is worse than no point at all, because nothing downstream can tell that nobody chose. A merchant whose ERP mails a credit note separately adds their own type without a release of this app.
+         */
+        kind?: string;
+        /**
+         * Free-form jsonb this tenant owns, for anything about the point this app does not model — a copy rule, a template name.
+         */
+        metadata?: object | null;
+        /**
+         * The company whose document this is. Required — a contact point with no company is an address for nobody, and deleting the company takes its points with it.
+         */
+        organization_id?: string;
+        /**
+         * The number this document is sent to or announced on — a fax for an order confirmation, a mobile for a delivery notice. Free text, as somebody typed it; E.164 is what an integration should send.
+         */
+        phone?: string | null;
+        /**
+         * Where this point sits among the others of its kind, ascending. It orders the ones that are NOT flagged — a fallback list for a caller that wants every invoice recipient rather than the one.
+         */
+        position?: number;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
+         * The tenant this row belongs to — the store slug, not an id. Set by the platform from the authenticated context, never by a caller; a write that carries it is ignored, and no request can read another tenant's rows by sending a different one.
+         */
+        tenant_id?: string;
+        /**
+         * When any column of this row last changed.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Where one kind of document goes for one company. Needs the company, the kind, and a way to reach it — an `email` or a `phone`.
+     */
+    export type ContactPointCreateRequest = {
+        /**
+         * The postal address this point belongs to, for the one case an ERP has it: a mail address carried ON a delivery address, so the notice about a shipment goes to whoever receives it there. Null is the ordinary case and means the point is the company's rather than one address's. It has to be an address of the same company (or of one of its people), and deleting the address takes the point with it.
+         */
+        address_id?: string | null;
+        /**
+         * When the point was created. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
+         */
+        created_at?: string;
+        /**
+         * The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that `addresses` has never had a column for this: a mail address per document had nowhere to live before these rows.
+         */
+        email?: string | null;
+        /**
+         * The key this point has in the system that owns it — an ERP's own id for a document sending address. Unique per tenant where set, so a repeated import updates this row instead of adding a second one. Null for a point somebody typed in here. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
+         */
+        external_id?: string | null;
+        /**
+         * The point THIS kind of document actually goes to. Exactly one point per company and kind carries it: the first point of a kind is flagged as it is created, flagging another demotes the incumbent, and it is never simply switched off — so the question has one answer while the kind has any point at all, and none only when it has none. The first point of a kind gets it on its own. Sending true on a later one demotes the incumbent in the same call; sending false on the one that holds it is refused — flag the point that should take over instead.
+         */
+        is_primary?: boolean;
+        /**
+         * WHICH document goes here — one of the tenant's own document recipient types (GET /customers/contact-point-kinds), seeded with invoice, order_confirmation, shipping_notice and dunning. Required and never defaulted: a point filed as the wrong document is worse than no point at all, because nothing downstream can tell that nobody chose. A merchant whose ERP mails a credit note separately adds their own type without a release of this app. Required on create, and nothing is defaulted: a kind the tenant does not keep is a 400 naming the ones on offer.
+         */
+        kind: string;
+        /**
+         * The company whose document this is. Required — a contact point with no company is an address for nobody, and deleting the company takes its points with it. Fixed once created — the flag that says which point of a kind to use is scoped by the company, so moving a point would move an invariant with it.
+         */
+        organization_id: string;
+        /**
+         * The number this document is sent to or announced on — a fax for an order confirmation, a mobile for a delivery notice. Free text, as somebody typed it; E.164 is what an integration should send.
+         */
+        phone?: string | null;
+        /**
+         * Where this point sits among the others of its kind, ascending. It orders the ones that are NOT flagged — a fallback list for a caller that wants every invoice recipient rather than the one. Default 0.
+         */
+        position?: number;
+    }
+
+    /**
+     * One value of the recipient types set. Which document a contact point receives. Four is what an ERP delivers per debtor; a merchant whose own mails a credit note or a statement separately adds theirs.
+     */
+    export type ContactPointKind = {
+        /**
+         * What `contact_points.kind` stores, and the only part of this row other data depends on. Immutable once created: renaming it would orphan every record carrying it.
+         */
+        code?: string;
+        /**
+         * When the value was added to this set.
+         */
+        created_at?: string;
+        /**
+         * One line of help for an operator choosing this value. Null when there is nothing to add. A row seeded before 0.22.0 may hold a serialized locale map here instead (PE-443).
+         */
+        description?: string | null;
+        /**
+         * Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+         */
+        descriptions?: object | null;
+        /**
+         * Primary key of this value. What the update and delete routes address it by — the CODE is what records store.
+         */
+        id?: string;
+        /**
+         * What an import should file a source value it could not map as. Nothing is created without a kind, so nothing falls back to this — and no seeded type carries it, because which kind an unmapped value means is the merchant's decision and not ours.
+         */
+        is_default?: boolean;
+        /**
+         * True for a value this app seeded on install. Still renameable and still removable — it only records where the value came from.
+         */
+        is_system?: boolean;
+        /**
+         * Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+         */
+        labels?: object | null;
+        /**
+         * Where this value sits in the set, ascending. It is the order a select should offer.
+         */
+        position?: number;
+        /**
+         * The tenant this row belongs to — the store slug, not an id. Set by the platform from the authenticated context, never by a caller; a write that carries it is ignored, and no request can read another tenant's rows by sending a different one.
+         */
+        tenant_id?: string;
+        /**
+         * The fallback name — what a client shows when no locale in `labels` matches. A row seeded before 0.22.0 may hold a serialized locale map here instead (PE-443) — those rows were seeded with no `labels` at all.
+         */
+        title?: string;
+        /**
+         * Semantic badge colour. The palette stays fixed — it is a render concern, not a merchant decision.
+         */
+        tone?: ContactPointKindTone;
+        /**
+         * When it was last edited.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Add one value to the recipient types set. It is available to `contact_points.kind` immediately.
+     */
+    export type ContactPointKindCreateRequest = {
+        /**
+         * What `contact_points.kind` will store. Lowercase, starting with a letter; immutable afterwards.
+         */
+        code: string;
+        /**
+         * One line of help for whoever picks this value.
+         */
+        description?: string | null;
+        /**
+         * Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+         */
+        descriptions?: object | null;
+        /**
+         * Promote this value; the previous default is demoted in the same call.
+         */
+        is_default?: boolean;
+        /**
+         * Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+         */
+        labels?: object | null;
+        /**
+         * Where it sits in the set, ascending. Default 0.
+         */
+        position?: number;
+        /**
+         * The fallback name shown when no locale matches.
+         */
+        title: string;
+        /**
+         * Semantic badge colour.
+         */
+        tone?: ContactPointKindCreateRequestTone;
+    }
+
+    /**
+     * Everything but `code`. Sending a different one is a 400 rather than a silent no-op, because records already store it.
+     */
+    export type ContactPointKindUpdateRequest = {
+        /**
+         * One line of help for whoever picks this value.
+         */
+        description?: string | null;
+        /**
+         * Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+         */
+        descriptions?: object | null;
+        /**
+         * Promote this value; the previous default is demoted.
+         */
+        is_default?: boolean;
+        /**
+         * Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+         */
+        labels?: object | null;
+        /**
+         * Where it sits in the set, ascending.
+         */
+        position?: number;
+        /**
+         * The fallback name shown when no locale matches.
+         */
+        title?: string;
+        /**
+         * Semantic badge colour.
+         */
+        tone?: ContactPointKindUpdateRequestTone;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value. `organization_id` cannot be changed, and the patch may not leave the point with neither an email nor a phone.
+     */
+    export type ContactPointUpdateRequest = {
+        /**
+         * The postal address this point belongs to, for the one case an ERP has it: a mail address carried ON a delivery address, so the notice about a shipment goes to whoever receives it there. Null is the ordinary case and means the point is the company's rather than one address's. It has to be an address of the same company (or of one of its people), and deleting the address takes the point with it.
+         */
+        address_id?: string | null;
+        /**
+         * The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that `addresses` has never had a column for this: a mail address per document had nowhere to live before these rows.
+         */
+        email?: string | null;
+        /**
+         * The key this point has in the system that owns it — an ERP's own id for a document sending address. Unique per tenant where set, so a repeated import updates this row instead of adding a second one. Null for a point somebody typed in here. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
+         */
+        external_id?: string | null;
+        /**
+         * The point THIS kind of document actually goes to. Exactly one point per company and kind carries it: the first point of a kind is flagged as it is created, flagging another demotes the incumbent, and it is never simply switched off — so the question has one answer while the kind has any point at all, and none only when it has none. The first point of a kind gets it on its own. Sending true on a later one demotes the incumbent in the same call; sending false on the one that holds it is refused — flag the point that should take over instead.
+         */
+        is_primary?: boolean;
+        /**
+         * WHICH document goes here — one of the tenant's own document recipient types (GET /customers/contact-point-kinds), seeded with invoice, order_confirmation, shipping_notice and dunning. Required and never defaulted: a point filed as the wrong document is worse than no point at all, because nothing downstream can tell that nobody chose. A merchant whose ERP mails a credit note separately adds their own type without a release of this app. Required on create, and nothing is defaulted: a kind the tenant does not keep is a 400 naming the ones on offer.
+         */
+        kind?: string;
+        /**
+         * The company whose document this is. Required — a contact point with no company is an address for nobody, and deleting the company takes its points with it. Fixed once created — the flag that says which point of a kind to use is scoped by the company, so moving a point would move an invariant with it.
+         */
+        organization_id?: string;
+        /**
+         * The number this document is sent to or announced on — a fax for an order confirmation, a mobile for a delivery notice. Free text, as somebody typed it; E.164 is what an integration should send.
+         */
+        phone?: string | null;
+        /**
+         * Where this point sits among the others of its kind, ascending. It orders the ones that are NOT flagged — a fallback list for a caller that wants every invoice recipient rather than the one. Default 0.
+         */
+        position?: number;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value. external_user_id is mirror-managed and ignored. `organization_id` is fixed once created, and the registration_* columns are not writable here: registration state is only ever changed by the approve/reject routes.
      */
     export type ContactUpdateRequest = {
         /**
-         * Login identity and the unique key of a person within the tenant. Changing it changes the platform login with it. Two people at the same company therefore need two addresses — a shared purchasing mailbox is one contact, not several.
+         * One of the things this person can sign in with, unique within the tenant where it is set. Changing it changes the platform login with it. It is OPTIONAL: B2B buyers without an address of their own are a routine case, and they sign in by username instead. Two people sharing one address is still not possible — a shared purchasing mailbox is one contact, not several.
          */
         email?: string;
         /**
@@ -5923,9 +7844,13 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         locale?: string | null;
         /**
-         * Amount ceiling for this person, in the market's currency: with the `orders.approve` permission it is the most they may sign off. Null means no ceiling. An amount, never a grant — the grant comes from the role.
+         * Amount ceiling for this person, in the market's currency: with the `orders.approve` permission it is the most they may sign off. Set exactly when `order_approval_mode` is 'limited', and then above 0; null otherwise. An amount, never a grant — the grant comes from the role. Required with `order_approval_mode` 'limited' and refused with any other mode (400 `limited_mode_requires_limit` / `limit_requires_limited_mode`).
          */
         order_approval_limit?: number | null;
+        /**
+         * How far `orders.approve` reaches for this person: 'none' (no order — the default), 'limited' (up to `order_approval_limit`) or 'unlimited'. Meaningful only with a role that grants `orders.approve`; the grant comes from the role, the reach from here. Default 'none'. Leaving 'limited' without sending `order_approval_limit` clears the amount.
+         */
+        order_approval_mode?: OrderApprovalMode;
         /**
          * The company this person belongs to. NULL is a legitimate state, not a defect: a standalone buyer with no company behind them. Deleting the organization sets this null and keeps the person. Membership is mirrored to the platform team.
          */
@@ -5935,10 +7860,6 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         phone?: string | null;
         /**
-         * Where this person's own application stands: 'approved' (the default, and what an open store creates), 'pending' while a merchant has yet to decide, 'rejected' once they declined. Only the approve/reject routes move it; it is ignored on an ordinary update. On CREATE only, and only to file the contact as an application: 'pending' creates the platform user disabled and routes the contact through approve/reject. Ignored on update.
-         */
-        registration_status?: ContactUpdateRequestRegistrationStatus;
-        /**
          * The person's role INSIDE its organization, and the only thing permissions are derived from. One of the tenant's own roles (GET /customers/roles); a tenant that never edited the ledger has viewer, requester, buyer, approver, admin. Also the team role on the platform mirror. There is no global role — the same person in two companies is two contacts. A tenant that never edited the ledger has viewer, requester, buyer, approver, admin; a create without a role gets the one flagged as default, and a role the tenant does not keep is a 400.
          */
         role?: string;
@@ -5946,6 +7867,124 @@ response carries no `tenant_id` (the listing envelope does) and no
          * Whether this person may act: 'invited' has been created but has not accepted, 'active' works, 'blocked' cannot log in. A create through the API defaults to 'invited'; a self-registration in an open store lands 'active'. Default 'invited' on create.
          */
         status?: ContactStatus;
+    }
+
+    /**
+     * One cookie or storage entry a vendor sets, as the banner lists it.
+     */
+    export type Cookie = {
+        /**
+         * When the row was created. Server-set.
+         */
+        created_at?: string;
+        /**
+         * What the cookie is for, as the banner shows it. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        description?: object | null;
+        /**
+         * How long it lives, as the banner shows it. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        duration?: object | null;
+        /**
+         * Who sets it: 'first-party' for the shop's own domain, otherwise the third-party host.
+         */
+        host?: string | null;
+        /**
+         * The row's own id, generated by the database. A caller never sends one; it reads one back and puts it in the path of later calls.
+         */
+        id?: string;
+        /**
+         * Where on the device it is stored: cookie, local_storage, session_storage, indexeddb or pixel.
+         */
+        kind?: CookieKind;
+        /**
+         * The cookie or storage key as the browser shows it.
+         */
+        name?: string;
+        /**
+         * Where this row sorts in the order a screen and the banner show them, ascending. Presentation only.
+         */
+        position?: number;
+        /**
+         * The tenant this row belongs to. Set by the platform from the authenticated context, never by a caller.
+         */
+        tenant_id?: string;
+        /**
+         * When the row was last written. Server-set — every route that changes the row stamps it.
+         */
+        updated_at?: string;
+        /**
+         * The vendor this row belongs to.
+         */
+        vendor_id?: string;
+    }
+
+    /**
+     * 
+     */
+    export type CookieCreateRequest = {
+        /**
+         * What the cookie is for, as the banner shows it.
+         */
+        description?: object | null;
+        /**
+         * How long it lives, as the banner shows it. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        duration?: object | null;
+        /**
+         * Who sets it: 'first-party' for the shop's own domain, otherwise the third-party host.
+         */
+        host?: string | null;
+        /**
+         * Where on the device it is stored: cookie, local_storage, session_storage, indexeddb or pixel.
+         */
+        kind?: CookieCreateRequestKind;
+        /**
+         * The cookie or storage key as the browser shows it.
+         */
+        name: string;
+        /**
+         * Where this row sorts in the order a screen and the banner show them, ascending. Presentation only.
+         */
+        position?: number;
+        /**
+         * The vendor that sets this cookie. It has to be a vendor this tenant keeps.
+         */
+        vendor_id: string;
+    }
+
+    /**
+     * 
+     */
+    export type CookieUpdateRequest = {
+        /**
+         * What the cookie is for, as the banner shows it.
+         */
+        description?: object | null;
+        /**
+         * How long it lives, as the banner shows it. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        duration?: object | null;
+        /**
+         * Who sets it: 'first-party' for the shop's own domain, otherwise the third-party host.
+         */
+        host?: string | null;
+        /**
+         * Where on the device it is stored: cookie, local_storage, session_storage, indexeddb or pixel.
+         */
+        kind?: CookieUpdateRequestKind;
+        /**
+         * The cookie or storage key as the browser shows it.
+         */
+        name?: string;
+        /**
+         * Where this row sorts in the order a screen and the banner show them, ascending. Presentation only.
+         */
+        position?: number;
+        /**
+         * The vendor that sets this cookie. It has to be a vendor this tenant keeps.
+         */
+        vendor_id?: string;
     }
 
     /**
@@ -5977,6 +8016,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         currency?: string;
         /**
+         * The key this cost centre has in the system that OWNS it — the dimension value an ERP books against, which is rarely the `code` a controller types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a centre opened in the Cockpit carries none and never will.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this cost centre, keyed by system name — a second ERP, the procurement platform a punchout session comes from, the shop this tenant migrated off. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: the store compares such a field as a WHOLE document, so a filter over part of one is refused. Look the centre up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * 
          */
         id?: string;
@@ -5992,6 +8039,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          * 
          */
         organization_id?: string | null;
+        /**
+         * What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this cost centre was last confirmed against its source. A delta run asks the source for what changed since it, and a controller reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what the ERP has stopped delivering.
+         */
+        source_synced_at?: string | null;
         /**
          * 
          */
@@ -6065,11 +8120,23 @@ response carries no `tenant_id` (the listing envelope does) and no
         /**
          * 
          */
+        budget_type?: CostCenterCreateRequestBudgetType;
+        /**
+         * 
+         */
         code: string;
         /**
          * 
          */
         currency?: string;
+        /**
+         * The key this cost centre has in the system that OWNS it — the dimension value an ERP books against, which is rarely the `code` a controller types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a centre opened in the Cockpit carries none and never will.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this cost centre, keyed by system name — a second ERP, the procurement platform a punchout session comes from, the shop this tenant migrated off. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: the store compares such a field as a WHOLE document, so a filter over part of one is refused. Look the centre up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * 
          */
@@ -6082,6 +8149,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          * 
          */
         organization_id?: string | null;
+        /**
+         * What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this cost centre was last confirmed against its source. A delta run asks the source for what changed since it, and a controller reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what the ERP has stopped delivering.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -6177,11 +8252,23 @@ response carries no `tenant_id` (the listing envelope does) and no
         /**
          * 
          */
+        budget_type?: CostCenterUpdateRequestBudgetType;
+        /**
+         * 
+         */
         code?: string;
         /**
          * 
          */
         currency?: string;
+        /**
+         * The key this cost centre has in the system that OWNS it — the dimension value an ERP books against, which is rarely the `code` a controller types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a centre opened in the Cockpit carries none and never will.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this cost centre, keyed by system name — a second ERP, the procurement platform a punchout session comes from, the shop this tenant migrated off. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: the store compares such a field as a WHOLE document, so a filter over part of one is refused. Look the centre up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * 
          */
@@ -6194,6 +8281,110 @@ response carries no `tenant_id` (the listing envelope does) and no
          * 
          */
         organization_id?: string | null;
+        /**
+         * What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this cost centre was last confirmed against its source. A delta run asks the source for what changed since it, and a controller reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what the ERP has stopped delivering.
+         */
+        source_synced_at?: string | null;
+    }
+
+    /**
+     * One closed value set this app enforces, parsed out of the CHECK constraint in its schema — the served set IS the enforced set. `closed: true` means a client may treat anything outside `values` as stale data.
+     */
+    export type CostCentersVocabulary = {
+        /**
+         * The app that owns this vocabulary.
+         */
+        app?: string;
+        /**
+         * Always true: the values come from a CHECK constraint, so the list is exhaustive.
+         */
+        closed?: boolean;
+        /**
+         * The tone a value that carries none falls back to.
+         */
+        default_tone?: CostCentersVocabularyTone;
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        description?: string;
+        /**
+         * Vocabulary name, unique within the app.
+         */
+        name?: CostCentersVocabularyName;
+        /**
+         * Where the values came from. 'schema' = a CHECK constraint in this app's own schema.
+         */
+        source?: CostCentersVocabularySource;
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        title?: string;
+        /**
+         * Every value the store permits, in the order its constraint lists them — the order a select should offer them in.
+         */
+        values?: CostCentersVocabularyValue[];
+    }
+
+    /**
+     * Every value set this app publishes, by name and title, without its values.
+     */
+    export type CostCentersVocabularyIndex = {
+        /**
+         * The app that owns this vocabulary.
+         */
+        app?: string;
+        /**
+         * 
+         */
+        vocabularies?: CostCentersVocabularySummary[];
+    }
+
+    /**
+     * 
+     */
+    export type CostCentersVocabularySummary = {
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        description?: string;
+        /**
+         * Vocabulary name, unique within the app.
+         */
+        name?: CostCentersVocabularySummaryName;
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        title?: string;
+    }
+
+    /**
+     * 
+     */
+    export type CostCentersVocabularyValue = {
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        description?: string;
+        /**
+         * A terminal state nothing moves out of.
+         */
+        final?: boolean;
+        /**
+         * The value as stored.
+         */
+        key?: string;
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        title?: string;
+        /**
+         * Semantic badge tone — the client decides what it looks like.
+         */
+        tone?: CostCentersVocabularyTone;
     }
 
     /**
@@ -6313,7 +8504,7 @@ response carries no `tenant_id` (the listing envelope does) and no
      */
     export type CustomersDefaultsResponse = {
         /**
-         * One entry per value set, keyed by its route name — `payment-terms`, `address-types`, `lifecycle-stages`, `contact-event-kinds`. Each says what THIS call did: `created` are the codes it inserted, `existing` the seeded codes it found already there and left completely alone (a merchant's rename included). A second call therefore answers with everything under `existing` and nothing under `created`.
+         * One entry per value set, keyed by its route name — `payment-terms`, `address-types`, `lifecycle-stages`, `contact-event-kinds` and `contact-point-kinds`. Each says what THIS call did: `created` are the codes it inserted, `existing` the seeded codes it found already there and left completely alone (a merchant's rename included). A second call therefore answers with everything under `existing` and nothing under `created`.
          */
         sets?: object;
     }
@@ -6329,6 +8520,30 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
+     * No payload — send {}.
+     */
+    export type DefaultsRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type DefaultsResponse = {
+        /**
+         * Whether the shop's draft was created.
+         */
+        banner?: object;
+        /**
+         * What happened to the purposes.
+         */
+        purposes?: object;
+        /**
+         * The one vendor an install adopts — `revenexx`, the shop's own necessary cookies.
+         */
+        vendors?: object;
+    }
+
+    /**
      * 
      */
     export type Deleted = {
@@ -6340,6 +8555,32 @@ response carries no `tenant_id` (the listing envelope does) and no
          * Which row.
          */
         id?: string;
+    }
+
+    /**
+     * The policy the storefront renders and gates by: the version header plus the frozen content. The storefront asks again when the number in the visitor's `rvx_consent` cookie is below `version.material_number`.
+     */
+    export type DeliveredPolicy = {
+        /**
+         * Per language: the banner labels and links, and the purpose and vendor texts.
+         */
+        locales?: object;
+        /**
+         * The purposes, with their legal basis and Consent Mode signals.
+         */
+        purposes?: object[];
+        /**
+         * The settings frozen with the version.
+         */
+        settings?: object;
+        /**
+         * The vendors, with their purposes, hosts, cookies and override. Effective basis = legal_basis_override ?? the purpose's.
+         */
+        vendors?: object[];
+        /**
+         * Which version this is.
+         */
+        version?: object;
     }
 
     /**
@@ -6431,7 +8672,872 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * Everything the blökkli editor runs on, for one page in one language, materialized at the current point of the undo history. The theme adapter maps it 1:1 onto blökkli&#039;s MappedState.
+     * The tenant's site settings, keyed by name.
+     */
+    export type DeliverySiteSettings = {
+        /**
+         * The theme appearance settings — color scheme, corner style, spacing density, font family — or `null` when unset.
+         */
+        appearance?: object | null;
+        /**
+         * Custom CSS the theme emits after its own, or `null` when unset.
+         */
+        customCss?: string | null;
+        /**
+         * The tenant's design tokens — primary colour, neutral palette, radius, font — or `null` when unset.
+         */
+        design?: object | null;
+    }
+
+    export type DefaultDeliverySiteSettings = DeliverySiteSettings & {
+        [key: string]: any;
+        [__default]: true;
+    };
+
+    /**
+     * The page the record renders with.
+     */
+    export type DeliveryTemplate = {
+        /**
+         * The slug to resolve with `GET /pages/delivery/page`.
+         */
+        slug?: string;
+    }
+
+    /**
+     * 
+     */
+    export type DirectOrder = {
+        /**
+         * 
+         */
+        abandoned_at?: string | null;
+        /**
+         * 
+         */
+        allocations?: object | null;
+        /**
+         * 
+         */
+        amount?: number;
+        /**
+         * 
+         */
+        attempts?: number;
+        /**
+         * 
+         */
+        cart_id?: string;
+        /**
+         * 
+         */
+        committed_at?: string | null;
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * 
+         */
+        created_at?: string;
+        /**
+         * 
+         */
+        currency?: string | null;
+        /**
+         * 
+         */
+        id?: string;
+        /**
+         * 
+         */
+        last_attempt_at?: string | null;
+        /**
+         * 
+         */
+        last_error?: string | null;
+        /**
+         * 
+         */
+        metadata?: object | null;
+        /**
+         * 
+         */
+        order_id?: string | null;
+        /**
+         * 
+         */
+        organization_id?: string | null;
+        /**
+         * 
+         */
+        settle_note?: string | null;
+        /**
+         * 
+         */
+        settled_at?: string | null;
+        /**
+         * 
+         */
+        settled_by_contact_id?: string | null;
+        /**
+         * 
+         */
+        status?: DirectOrderStatus;
+        /**
+         * 
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type DirectOrderResult = {
+        /**
+         * Why the commit failed, when budget_pending is true.
+         */
+        budget_error?: string;
+        /**
+         * True when the retried commit failed again; the record says whether it is retried hourly (commit_pending) or waits for a person (commit_refused).
+         */
+        budget_pending?: boolean;
+        /**
+         * 
+         */
+        direct_order?: DirectOrder;
+    }
+
+    /**
+     * Why the refused commit is given up on. Who is settling is NOT in this body — it is the acting identity the platform establishes.
+     */
+    export type DirectOrderSettleRequest = {
+        /**
+         * Required free-text reason, kept on the record.
+         */
+        note: string;
+    }
+
+    /**
+     * One record a merchant issued and filed against a transaction: an invoice, a delivery note, a credit note, a return receipt. The row says which transaction it belongs to, what kind of record it is, the number a customer asks about, who may read it and where its bytes live. It does not contain the bytes and this app never produces one.
+     */
+    export type Document = {
+        /**
+         * How large the file is, in bytes — what a download link shows next to it. Nullable, and never computed here: this app does not read the bytes.
+         */
+        byte_size?: number | null;
+        /**
+         * The media type of the file, so a client knows whether to open it or hand it to the browser. Nullable, because a feed does not always say.
+         */
+        content_type?: string | null;
+        /**
+         * When the row was created. Server-set: it is in no request body, and a value sent for it is ignored.
+         */
+        created_at?: string;
+        /**
+         * The ISO 4217 code the amount is in. Nullable exactly where the amount is, and carried per document rather than per tenant because a merchant selling across markets issues in more than one.
+         */
+        currency?: string | null;
+        /**
+         * Where the stored file is served from today — a CDN path, and a CACHE of an address rather than an authorisation. Do NOT fetch a document with it: a path is not a permission, so it answers a private asset with 403, and it is stale the moment the file moves. POST /documents/documents/{id}/link is the way to get the bytes; this column is kept for an operator tracing an object through the delivery plane. Null for an external document.
+         */
+        delivery_path?: string | null;
+        /**
+         * When the amount on this document is due. Only some kinds carry one — an invoice does, a delivery note does not — so it is nullable, and nothing in this app dunns on it.
+         */
+        due_date?: string | null;
+        /**
+         * WHICH transaction this document belongs to — the id of the order, as the orders app knows it. Nothing here checks that the transaction exists: it lives in another app, and a register that called it on every write would fail a whole feed for one deleted order. Together with `entity_type` this is the filter an account area reads a buyer's papers with.
+         */
+        entity_id?: string;
+        /**
+         * WHAT KIND of transaction this document belongs to. `order` is the only value this app accepts today, and a write naming anything else is refused with a message listing what is accepted. The column carries no database constraint on purpose: a return receipt hangs off a return, a contract off an organization and a certificate off a product, so the next kind of owner is a release of this app rather than a migration.
+         */
+        entity_type?: string;
+        /**
+         * The key this document has in the system that ISSUED it — a finance system, a warehouse. Unique per tenant, and the key this register recognises a feed's own rows by: a write carrying one this tenant already holds UPDATES that document and answers 200 instead of filing a second copy. The document number is deliberately NOT that key, because a merchant may renumber and one number may cover an invoice and its delivery note.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name. `external_id` is the leading system; this is the rest, and a new one costs no column. Answered and NOT filterable — see the note on `metadata`.
+         */
+        external_refs?: object | null;
+        /**
+         * The address of a file this platform does not hold. Required while `source` is 'external' and null otherwise. It is the tenant's own host — a document archive, a finance system's portal — and this app stores the address without fetching it.
+         */
+        external_url?: string | null;
+        /**
+         * What the file is called — the name a person is offered when they download it, and the only thing the register has to show them. Required, at least one character: a row that names no file is an offer of a download nobody can complete.
+         */
+        filename?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * The date ON the document — when the merchant issued it, not when this row was written. It is the date a buyer sorts their invoices by and the one that appears in a tax return, which is why it is a date and not a timestamp: a document is issued on a day.
+         */
+        issued_at?: string | null;
+        /**
+         * What kind of record this is, as a code from GET /documents/kinds — `invoice`, `delivery_note`, `credit_note`, `return_receipt` on a fresh install, plus whatever the merchant added. The check is a membership test against the tenant's own table and NOT a database constraint, because a merchant adds a proforma invoice or a dunning letter without a release of this app. A code the tenant does not keep is refused with 400 and the list of the ones they do.
+         */
+        kind?: string;
+        /**
+         * Free-form data the tenant keeps on the row. No route in this app reads it; it is stored and handed back unchanged. It is answered and is NOT a query parameter: a jsonb column is compared as a WHOLE document, so `?metadata=erp` is refused with 400 `invalid_value` rather than answered with an empty page, and a selector whose every plausible use fails is worse than none.
+         */
+        metadata?: object | null;
+        /**
+         * The number printed on the document — what a customer quotes when they call about it, and what a service desk searches for. The DOCUMENT's own number, not the order's: an invoice and its credit note carry different ones. Nullable, because a delivery note is not always numbered, and NOT unique: a merchant who issues an invoice and its delivery note under one number is ordinary practice, and the source key is what identifies a row instead.
+         */
+        number?: string | null;
+        /**
+         * WHERE the bytes are, and which of the two address columns is filled. 'storage' — an asset this platform holds, addressed by `storage_asset_id`, and the only case POST /documents/documents/{id}/link can hand over: the bucket is private, so the link is a signed, short-lived URL. 'external' — a file on a host the tenant runs, addressed by `external_url`, which this app neither fetches nor signs. The database pairs them: `(source = 'storage' AND storage_asset_id IS NOT NULL) OR (source = 'external' AND external_url IS NOT NULL)`, the same CHECK the product assets carry, so neither pairing can be half-filled. It is a discriminator rather than a preference.
+         */
+        source?: DocumentSource;
+        /**
+         * What the source said about this row, kept as it said it. Carries the ETag a write-back has to return in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit here. Answered and NOT filterable — see the note on `metadata`.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. An edit made here does not touch it: it records when the SOURCE was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
+         * The stable identity of the stored file, as the platform's storage service issued it. Required while `source` is 'storage' and null otherwise. It is the IDENTITY, not an address: it survives a move or a rename, which `delivery_path` does not, and it is what POST /documents/documents/{id}/link signs. The file is uploaded by whoever ISSUES the document — this app stores no bytes and has no upload route.
+         */
+        storage_asset_id?: string | null;
+        /**
+         * The tenant this row belongs to — the store slug, not an id. Set by the platform from the authenticated context, never by a caller; a write that carries it is ignored, and no request can read another tenant's rows by sending a different one.
+         */
+        tenant_id?: string;
+        /**
+         * The gross amount printed on the document, in `currency`. A COPY of what the document says, kept so a list can show it without fetching the file — it is not recomputed here and never corrects the document. Nullable: a delivery note carries no amount.
+         */
+        total_amount?: number | null;
+        /**
+         * When the row was last written. Server-set — every route that changes this row stamps it.
+         */
+        updated_at?: string;
+        /**
+         * Who may read this document. 'customer' — the buyer may, which is what an account area shows and the column's default, because a document a finance system issues to a customer is the normal case. 'internal' — the merchant's side only: a margin sheet, a supplier confirmation, a credit note still being argued about. A storefront caller is confined to 'customer' IN THE QUERY, so an internal document is absent from its list, absent from its page total and answered 404 at its own address. This is the one value in this app that, set wrongly, shows a buyer another buyer's invoice.
+         */
+        visibility?: DocumentVisibility;
+    }
+
+    /**
+     * Record one document. `entity_type`, `entity_id`, `kind` and `filename` are owed; `source` defaults to 'storage' and `visibility` to 'customer'. Carrying an `external_id` this tenant already holds UPDATES that document and answers 200 instead of filing a second copy.
+     */
+    export type DocumentCreateRequest = {
+        /**
+         * How large the file is, in bytes — what a download link shows next to it. Nullable, and never computed here: this app does not read the bytes.
+         */
+        byte_size?: number | null;
+        /**
+         * The media type of the file, so a client knows whether to open it or hand it to the browser. Nullable, because a feed does not always say.
+         */
+        content_type?: string | null;
+        /**
+         * The ISO 4217 code the amount is in. Nullable exactly where the amount is, and carried per document rather than per tenant because a merchant selling across markets issues in more than one.
+         */
+        currency?: string | null;
+        /**
+         * Where the stored file is served from today — a CDN path, and a CACHE of an address rather than an authorisation. Do NOT fetch a document with it: a path is not a permission, so it answers a private asset with 403, and it is stale the moment the file moves. POST /documents/documents/{id}/link is the way to get the bytes; this column is kept for an operator tracing an object through the delivery plane. Null for an external document.
+         */
+        delivery_path?: string | null;
+        /**
+         * When the amount on this document is due. Only some kinds carry one — an invoice does, a delivery note does not — so it is nullable, and nothing in this app dunns on it.
+         */
+        due_date?: string | null;
+        /**
+         * WHICH transaction this document belongs to — the id of the order, as the orders app knows it. Nothing here checks that the transaction exists: it lives in another app, and a register that called it on every write would fail a whole feed for one deleted order. Together with `entity_type` this is the filter an account area reads a buyer's papers with.
+         */
+        entity_id: string;
+        /**
+         * WHAT KIND of transaction this document belongs to. `order` is the only value this app accepts today, and a write naming anything else is refused with a message listing what is accepted. The column carries no database constraint on purpose: a return receipt hangs off a return, a contract off an organization and a certificate off a product, so the next kind of owner is a release of this app rather than a migration.
+         */
+        entity_type: string;
+        /**
+         * The key this document has in the system that ISSUED it — a finance system, a warehouse. Unique per tenant, and the key this register recognises a feed's own rows by: a write carrying one this tenant already holds UPDATES that document and answers 200 instead of filing a second copy. The document number is deliberately NOT that key, because a merchant may renumber and one number may cover an invoice and its delivery note.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name. `external_id` is the leading system; this is the rest, and a new one costs no column. Answered and NOT filterable — see the note on `metadata`.
+         */
+        external_refs?: object | null;
+        /**
+         * The address of a file this platform does not hold. Required while `source` is 'external' and null otherwise. It is the tenant's own host — a document archive, a finance system's portal — and this app stores the address without fetching it.
+         */
+        external_url?: string | null;
+        /**
+         * What the file is called — the name a person is offered when they download it, and the only thing the register has to show them. Required, at least one character: a row that names no file is an offer of a download nobody can complete.
+         */
+        filename: string;
+        /**
+         * The date ON the document — when the merchant issued it, not when this row was written. It is the date a buyer sorts their invoices by and the one that appears in a tax return, which is why it is a date and not a timestamp: a document is issued on a day.
+         */
+        issued_at?: string | null;
+        /**
+         * What kind of record this is, as a code from GET /documents/kinds — `invoice`, `delivery_note`, `credit_note`, `return_receipt` on a fresh install, plus whatever the merchant added. The check is a membership test against the tenant's own table and NOT a database constraint, because a merchant adds a proforma invoice or a dunning letter without a release of this app. A code the tenant does not keep is refused with 400 and the list of the ones they do.
+         */
+        kind: string;
+        /**
+         * Free-form data the tenant keeps on the row. No route in this app reads it; it is stored and handed back unchanged. It is answered and is NOT a query parameter: a jsonb column is compared as a WHOLE document, so `?metadata=erp` is refused with 400 `invalid_value` rather than answered with an empty page, and a selector whose every plausible use fails is worse than none.
+         */
+        metadata?: object | null;
+        /**
+         * The number printed on the document — what a customer quotes when they call about it, and what a service desk searches for. The DOCUMENT's own number, not the order's: an invoice and its credit note carry different ones. Nullable, because a delivery note is not always numbered, and NOT unique: a merchant who issues an invoice and its delivery note under one number is ordinary practice, and the source key is what identifies a row instead.
+         */
+        number?: string | null;
+        /**
+         * WHERE the bytes are, and which of the two address columns is filled. 'storage' — an asset this platform holds, addressed by `storage_asset_id`, and the only case POST /documents/documents/{id}/link can hand over: the bucket is private, so the link is a signed, short-lived URL. 'external' — a file on a host the tenant runs, addressed by `external_url`, which this app neither fetches nor signs. The database pairs them: `(source = 'storage' AND storage_asset_id IS NOT NULL) OR (source = 'external' AND external_url IS NOT NULL)`, the same CHECK the product assets carry, so neither pairing can be half-filled. It is a discriminator rather than a preference. Defaults to 'storage'.
+         */
+        source?: DocumentSource;
+        /**
+         * What the source said about this row, kept as it said it. Carries the ETag a write-back has to return in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit here. Answered and NOT filterable — see the note on `metadata`.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. An edit made here does not touch it: it records when the SOURCE was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
+         * The stable identity of the stored file, as the platform's storage service issued it. Required while `source` is 'storage' and null otherwise. It is the IDENTITY, not an address: it survives a move or a rename, which `delivery_path` does not, and it is what POST /documents/documents/{id}/link signs. The file is uploaded by whoever ISSUES the document — this app stores no bytes and has no upload route.
+         */
+        storage_asset_id?: string | null;
+        /**
+         * The gross amount printed on the document, in `currency`. A COPY of what the document says, kept so a list can show it without fetching the file — it is not recomputed here and never corrects the document. Nullable: a delivery note carries no amount.
+         */
+        total_amount?: number | null;
+        /**
+         * Who may read this document. 'customer' — the buyer may, which is what an account area shows and the column's default, because a document a finance system issues to a customer is the normal case. 'internal' — the merchant's side only: a margin sheet, a supplier confirmation, a credit note still being argued about. A storefront caller is confined to 'customer' IN THE QUERY, so an internal document is absent from its list, absent from its page total and answered 404 at its own address. This is the one value in this app that, set wrongly, shows a buyer another buyer's invoice. Defaults to 'customer'.
+         */
+        visibility?: DocumentVisibility;
+    }
+
+    /**
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `documents` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched". Every value is a string, whatever the column's type: this is the query string, not the parsed row.
+     */
+    export type DocumentFilter = {
+        /**
+         * The literal `?byte_size=` value this call was understood to carry.
+         */
+        byte_size?: string;
+        /**
+         * The literal `?content_type=` value this call was understood to carry.
+         */
+        content_type?: string;
+        /**
+         * The literal `?created_at=` value this call was understood to carry.
+         */
+        created_at?: string;
+        /**
+         * The literal `?currency=` value this call was understood to carry.
+         */
+        currency?: string;
+        /**
+         * The literal `?delivery_path=` value this call was understood to carry.
+         */
+        delivery_path?: string;
+        /**
+         * The literal `?due_date=` value this call was understood to carry.
+         */
+        due_date?: string;
+        /**
+         * The literal `?entity_id=` value this call was understood to carry.
+         */
+        entity_id?: string;
+        /**
+         * The literal `?entity_type=` value this call was understood to carry.
+         */
+        entity_type?: string;
+        /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_url=` value this call was understood to carry.
+         */
+        external_url?: string;
+        /**
+         * The literal `?filename=` value this call was understood to carry.
+         */
+        filename?: string;
+        /**
+         * The literal `?id=` value this call was understood to carry.
+         */
+        id?: string;
+        /**
+         * The literal `?issued_at=` value this call was understood to carry.
+         */
+        issued_at?: string;
+        /**
+         * The literal `?kind=` value this call was understood to carry.
+         */
+        kind?: string;
+        /**
+         * The literal `?number=` value this call was understood to carry.
+         */
+        number?: string;
+        /**
+         * The literal `?source=` value this call was understood to carry.
+         */
+        source?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
+        /**
+         * The literal `?storage_asset_id=` value this call was understood to carry.
+         */
+        storage_asset_id?: string;
+        /**
+         * The literal `?total_amount=` value this call was understood to carry.
+         */
+        total_amount?: string;
+        /**
+         * The literal `?updated_at=` value this call was understood to carry.
+         */
+        updated_at?: string;
+        /**
+         * The literal `?visibility=` value this call was understood to carry.
+         */
+        visibility?: string;
+    }
+
+    /**
+     * One kind of document this merchant keeps — a code a document stores, the words a person reads for it and the badge colour a screen renders. The tenth vocabulary table on the platform, with the eleven columns the nine before it carry.
+     */
+    export type DocumentKind = {
+        /**
+         * The value's stable identifier, and the string a document stores in `kind`. Lowercase letters, digits, `-` and `_`, starting with a letter. Unique per tenant and FIXED once created: renaming it would orphan every document carrying it, so an edit that changes it is refused and the title is what a merchant renames.
+         */
+        code?: string;
+        /**
+         * When the row was created. Server-set: it is in no request body, and a value sent for it is ignored.
+         */
+        created_at?: string;
+        /**
+         * One sentence a person reads under the title — what this value is for. Optional.
+         */
+        description?: string | null;
+        /**
+         * The description per language tag. Falls back to `description` when a tag is missing.
+         */
+        descriptions?: object | null;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Whether this is the value a caller falls back to. Exactly ONE row of the table carries it: promoting another demotes the current one, so a client can mark the default without reading anything else. Deleting the default hands the flag to the first remaining row.
+         */
+        is_default?: boolean;
+        /**
+         * Whether this app seeded the value. It means "we put it there" and nothing else: a seeded value may be renamed, re-toned, reordered and — once no document carries it — deleted, exactly like one the merchant added.
+         */
+        is_system?: boolean;
+        /**
+         * The title per language tag, for a UI that has to render it in the reader's language. Falls back to `title` when a tag is missing.
+         */
+        labels?: object | null;
+        /**
+         * Sort order in a select or a list, ascending. Values that tie fall back to their code, so a table where every position is 0 is still in a stable order.
+         */
+        position?: number;
+        /**
+         * The tenant this row belongs to — the store slug, not an id. Set by the platform from the authenticated context, never by a caller; a write that carries it is ignored, and no request can read another tenant's rows by sending a different one.
+         */
+        tenant_id?: string;
+        /**
+         * What the value is called for a person, in the tenant's working language. At least one character. A locale map goes in `labels`.
+         */
+        title?: string;
+        /**
+         * The badge colour a screen renders this value in — semantic, not a hex code: the vocabulary says what a value MEANS and the client decides what 'warning' looks like in its own design system. One of 'neutral', 'info', 'success', 'warning', 'danger'.
+         */
+        tone?: DocumentKindTone;
+        /**
+         * When the row was last written. Server-set — every route that changes this row stamps it.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Add a kind of document this merchant keeps. `code` and `title` are owed; the value is created as the merchant's own (`is_system: false`).
+     */
+    export type DocumentKindCreateRequest = {
+        /**
+         * The value's stable identifier, and the string a document stores in `kind`. Lowercase letters, digits, `-` and `_`, starting with a letter. Unique per tenant and FIXED once created: renaming it would orphan every document carrying it, so an edit that changes it is refused and the title is what a merchant renames.
+         */
+        code: string;
+        /**
+         * One sentence a person reads under the title — what this value is for. Optional.
+         */
+        description?: string | null;
+        /**
+         * The description per language tag. Falls back to `description` when a tag is missing.
+         */
+        descriptions?: object | null;
+        /**
+         * Whether this is the value a caller falls back to. Exactly ONE row of the table carries it: promoting another demotes the current one, so a client can mark the default without reading anything else. Deleting the default hands the flag to the first remaining row. Sending `true` promotes this value and demotes whichever held the flag. `false` is ignored — demote by promoting another.
+         */
+        is_default?: boolean | null;
+        /**
+         * The title per language tag, for a UI that has to render it in the reader's language. Falls back to `title` when a tag is missing.
+         */
+        labels?: object | null;
+        /**
+         * Sort order in a select or a list, ascending. Values that tie fall back to their code, so a table where every position is 0 is still in a stable order. Defaults to 0.
+         */
+        position?: number;
+        /**
+         * What the value is called for a person, in the tenant's working language. At least one character. A locale map goes in `labels`.
+         */
+        title: string;
+        /**
+         * The badge colour a screen renders this value in — semantic, not a hex code: the vocabulary says what a value MEANS and the client decides what 'warning' looks like in its own design system. One of 'neutral', 'info', 'success', 'warning', 'danger'. Defaults to 'neutral' on a value a merchant creates.
+         */
+        tone?: DocumentKindTone;
+    }
+
+    /**
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `document_kinds` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched". Every value is a string, whatever the column's type: this is the query string, not the parsed row.
+     */
+    export type DocumentKindFilter = {
+        /**
+         * The literal `?code=` value this call was understood to carry.
+         */
+        code?: string;
+        /**
+         * The literal `?created_at=` value this call was understood to carry.
+         */
+        created_at?: string;
+        /**
+         * The literal `?description=` value this call was understood to carry.
+         */
+        description?: string;
+        /**
+         * The literal `?id=` value this call was understood to carry.
+         */
+        id?: string;
+        /**
+         * The literal `?is_default=` value this call was understood to carry.
+         */
+        is_default?: string;
+        /**
+         * The literal `?is_system=` value this call was understood to carry.
+         */
+        is_system?: string;
+        /**
+         * The literal `?position=` value this call was understood to carry.
+         */
+        position?: string;
+        /**
+         * The literal `?title=` value this call was understood to carry.
+         */
+        title?: string;
+        /**
+         * The literal `?tone=` value this call was understood to carry.
+         */
+        tone?: string;
+        /**
+         * The literal `?updated_at=` value this call was understood to carry.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value. `code` may be sent only unchanged: it is what every document stores, so renaming it would orphan each one.
+     */
+    export type DocumentKindUpdateRequest = {
+        /**
+         * The value's stable identifier, and the string a document stores in `kind`. Lowercase letters, digits, `-` and `_`, starting with a letter. Unique per tenant and FIXED once created: renaming it would orphan every document carrying it, so an edit that changes it is refused and the title is what a merchant renames.
+         */
+        code?: string;
+        /**
+         * One sentence a person reads under the title — what this value is for. Optional.
+         */
+        description?: string | null;
+        /**
+         * The description per language tag. Falls back to `description` when a tag is missing.
+         */
+        descriptions?: object | null;
+        /**
+         * Whether this is the value a caller falls back to. Exactly ONE row of the table carries it: promoting another demotes the current one, so a client can mark the default without reading anything else. Deleting the default hands the flag to the first remaining row. Sending `true` promotes this value and demotes whichever held the flag. `false` is ignored — demote by promoting another.
+         */
+        is_default?: boolean | null;
+        /**
+         * The title per language tag, for a UI that has to render it in the reader's language. Falls back to `title` when a tag is missing.
+         */
+        labels?: object | null;
+        /**
+         * Sort order in a select or a list, ascending. Values that tie fall back to their code, so a table where every position is 0 is still in a stable order. Defaults to 0.
+         */
+        position?: number;
+        /**
+         * What the value is called for a person, in the tenant's working language. At least one character. A locale map goes in `labels`.
+         */
+        title?: string;
+        /**
+         * The badge colour a screen renders this value in — semantic, not a hex code: the vocabulary says what a value MEANS and the client decides what 'warning' looks like in its own design system. One of 'neutral', 'info', 'success', 'warning', 'danger'. Defaults to 'neutral' on a value a merchant creates.
+         */
+        tone?: DocumentKindTone;
+    }
+
+    /**
+     * No fields — send `{}`. What is seeded is fixed, and a kind that already exists is never rewritten.
+     */
+    export type DocumentKindsSeedRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type DocumentKindsSeedResult = {
+        /**
+         * The values this call created, as `<vocabulary>:<code>`. Empty on every call after the first.
+         */
+        created?: string[];
+        /**
+         * The values that were already there and were left untouched, as `<vocabulary>:<code>`.
+         */
+        existing?: string[];
+    }
+
+    /**
+     * A short-lived, signed URL for one document's bytes, plus what a client needs to offer it as a download. Minted on request and valid for minutes: it is a bearer credential for the file, it cannot be revoked before it expires, and asking again mints a new one.
+     */
+    export type DocumentLink = {
+        /**
+         * How large the file is, in bytes — what a download link shows next to itself. Null where the source never said; this app does not read the bytes to find out.
+         */
+        byte_size?: number | null;
+        /**
+         * The media type as the register holds it, so a client knows whether to open the file or hand it to the browser. Null where the source never said.
+         */
+        content_type?: string | null;
+        /**
+         * The instant the link stops working, as the delivery edge will read it — taken from the `expires` inside the signature rather than computed here, so two clocks cannot disagree about it.
+         */
+        expires_at?: string;
+        /**
+         * How many seconds the link was issued for. This register decides it and a caller cannot ask for more: a link nobody can revoke should not outlive the page it was made for.
+         */
+        expires_in?: number;
+        /**
+         * The document's file name, so a client can offer the download under the name a person expects rather than under whatever the URL ends in.
+         */
+        filename?: string;
+        /**
+         * The URL to fetch the bytes from — `https://{delivery-host}/{tenant}/{path}?expires=<unix>&signature=<hmac>`. The signature is HMAC-SHA256 over the host, the path and the expiry, and the delivery edge answers 403 to anything expired, tampered with or unsigned. Fetch it as-is: adding, dropping or re-ordering a query parameter invalidates it. Hand it to a browser, an email or a third party — it needs no API credential, which is exactly why its lifetime is short.
+         */
+        url?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value. A body carrying no field at all is refused rather than answered as a no-op.
+     */
+    export type DocumentUpdateRequest = {
+        /**
+         * How large the file is, in bytes — what a download link shows next to it. Nullable, and never computed here: this app does not read the bytes.
+         */
+        byte_size?: number | null;
+        /**
+         * The media type of the file, so a client knows whether to open it or hand it to the browser. Nullable, because a feed does not always say.
+         */
+        content_type?: string | null;
+        /**
+         * The ISO 4217 code the amount is in. Nullable exactly where the amount is, and carried per document rather than per tenant because a merchant selling across markets issues in more than one.
+         */
+        currency?: string | null;
+        /**
+         * Where the stored file is served from today — a CDN path, and a CACHE of an address rather than an authorisation. Do NOT fetch a document with it: a path is not a permission, so it answers a private asset with 403, and it is stale the moment the file moves. POST /documents/documents/{id}/link is the way to get the bytes; this column is kept for an operator tracing an object through the delivery plane. Null for an external document.
+         */
+        delivery_path?: string | null;
+        /**
+         * When the amount on this document is due. Only some kinds carry one — an invoice does, a delivery note does not — so it is nullable, and nothing in this app dunns on it.
+         */
+        due_date?: string | null;
+        /**
+         * WHICH transaction this document belongs to — the id of the order, as the orders app knows it. Nothing here checks that the transaction exists: it lives in another app, and a register that called it on every write would fail a whole feed for one deleted order. Together with `entity_type` this is the filter an account area reads a buyer's papers with.
+         */
+        entity_id?: string;
+        /**
+         * WHAT KIND of transaction this document belongs to. `order` is the only value this app accepts today, and a write naming anything else is refused with a message listing what is accepted. The column carries no database constraint on purpose: a return receipt hangs off a return, a contract off an organization and a certificate off a product, so the next kind of owner is a release of this app rather than a migration.
+         */
+        entity_type?: string;
+        /**
+         * The key this document has in the system that ISSUED it — a finance system, a warehouse. Unique per tenant, and the key this register recognises a feed's own rows by: a write carrying one this tenant already holds UPDATES that document and answers 200 instead of filing a second copy. The document number is deliberately NOT that key, because a merchant may renumber and one number may cover an invoice and its delivery note.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name. `external_id` is the leading system; this is the rest, and a new one costs no column. Answered and NOT filterable — see the note on `metadata`.
+         */
+        external_refs?: object | null;
+        /**
+         * The address of a file this platform does not hold. Required while `source` is 'external' and null otherwise. It is the tenant's own host — a document archive, a finance system's portal — and this app stores the address without fetching it.
+         */
+        external_url?: string | null;
+        /**
+         * What the file is called — the name a person is offered when they download it, and the only thing the register has to show them. Required, at least one character: a row that names no file is an offer of a download nobody can complete.
+         */
+        filename?: string;
+        /**
+         * The date ON the document — when the merchant issued it, not when this row was written. It is the date a buyer sorts their invoices by and the one that appears in a tax return, which is why it is a date and not a timestamp: a document is issued on a day.
+         */
+        issued_at?: string | null;
+        /**
+         * What kind of record this is, as a code from GET /documents/kinds — `invoice`, `delivery_note`, `credit_note`, `return_receipt` on a fresh install, plus whatever the merchant added. The check is a membership test against the tenant's own table and NOT a database constraint, because a merchant adds a proforma invoice or a dunning letter without a release of this app. A code the tenant does not keep is refused with 400 and the list of the ones they do.
+         */
+        kind?: string;
+        /**
+         * Free-form data the tenant keeps on the row. No route in this app reads it; it is stored and handed back unchanged. It is answered and is NOT a query parameter: a jsonb column is compared as a WHOLE document, so `?metadata=erp` is refused with 400 `invalid_value` rather than answered with an empty page, and a selector whose every plausible use fails is worse than none.
+         */
+        metadata?: object | null;
+        /**
+         * The number printed on the document — what a customer quotes when they call about it, and what a service desk searches for. The DOCUMENT's own number, not the order's: an invoice and its credit note carry different ones. Nullable, because a delivery note is not always numbered, and NOT unique: a merchant who issues an invoice and its delivery note under one number is ordinary practice, and the source key is what identifies a row instead.
+         */
+        number?: string | null;
+        /**
+         * WHERE the bytes are, and which of the two address columns is filled. 'storage' — an asset this platform holds, addressed by `storage_asset_id`, and the only case POST /documents/documents/{id}/link can hand over: the bucket is private, so the link is a signed, short-lived URL. 'external' — a file on a host the tenant runs, addressed by `external_url`, which this app neither fetches nor signs. The database pairs them: `(source = 'storage' AND storage_asset_id IS NOT NULL) OR (source = 'external' AND external_url IS NOT NULL)`, the same CHECK the product assets carry, so neither pairing can be half-filled. It is a discriminator rather than a preference. Defaults to 'storage'.
+         */
+        source?: DocumentSource;
+        /**
+         * What the source said about this row, kept as it said it. Carries the ETag a write-back has to return in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit here. Answered and NOT filterable — see the note on `metadata`.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. An edit made here does not touch it: it records when the SOURCE was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
+         * The stable identity of the stored file, as the platform's storage service issued it. Required while `source` is 'storage' and null otherwise. It is the IDENTITY, not an address: it survives a move or a rename, which `delivery_path` does not, and it is what POST /documents/documents/{id}/link signs. The file is uploaded by whoever ISSUES the document — this app stores no bytes and has no upload route.
+         */
+        storage_asset_id?: string | null;
+        /**
+         * The gross amount printed on the document, in `currency`. A COPY of what the document says, kept so a list can show it without fetching the file — it is not recomputed here and never corrects the document. Nullable: a delivery note carries no amount.
+         */
+        total_amount?: number | null;
+        /**
+         * Who may read this document. 'customer' — the buyer may, which is what an account area shows and the column's default, because a document a finance system issues to a customer is the normal case. 'internal' — the merchant's side only: a margin sheet, a supplier confirmation, a credit note still being argued about. A storefront caller is confined to 'customer' IN THE QUERY, so an internal document is absent from its list, absent from its page total and answered 404 at its own address. This is the one value in this app that, set wrongly, shows a buyer another buyer's invoice. Defaults to 'customer'.
+         */
+        visibility?: DocumentVisibility;
+    }
+
+    /**
+     * 
+     */
+    export type DocumentVocabulary = {
+        /**
+         * This app.
+         */
+        app?: string;
+        /**
+         * True: the set is exhaustive at this moment, so a value outside it is stale data rather than a label nobody wrote. It says nothing about whether a merchant may EXTEND the set — `source` says that.
+         */
+        closed?: boolean;
+        /**
+         * The tone a value carries when none was picked for it.
+         */
+        default_tone?: DocumentVocabularyDefaultTone;
+        /**
+         * One sentence about what the set decides.
+         */
+        description?: object | null;
+        /**
+         * The vocabulary that was read.
+         */
+        name?: DocumentVocabularyName;
+        /**
+         * Who owns the set. 'table' — the merchant's own rows, extendable without a release of this app. 'schema' — a database CHECK, closed to a merchant because the app branches on the value.
+         */
+        source?: DocumentVocabularySource;
+        /**
+         * What the vocabulary is called, per language tag.
+         */
+        title?: object;
+        /**
+         * Every value in the set, in the order a select should offer them.
+         */
+        values?: DocumentVocabularyValue[];
+    }
+
+    /**
+     * 
+     */
+    export type DocumentVocabularyIndex = {
+        /**
+         * This app, so a client merging several indexes knows where each entry came from.
+         */
+        app?: string;
+        /**
+         * One entry per vocabulary, without its values.
+         */
+        vocabularies?: DocumentVocabularySummary[];
+    }
+
+    /**
+     * 
+     */
+    export type DocumentVocabularySummary = {
+        /**
+         * One sentence about what the set decides.
+         */
+        description?: object | null;
+        /**
+         * The name to put in the path of the read below.
+         */
+        name?: DocumentVocabularyName;
+        /**
+         * What the vocabulary is called, per language tag.
+         */
+        title?: object;
+    }
+
+    /**
+     * 
+     */
+    export type DocumentVocabularyValue = {
+        /**
+         * One sentence about the value, in the same two shapes. Null where none was written.
+         */
+        description?: object | null;
+        /**
+         * The per-language descriptions as the merchant stored them, on a table-backed vocabulary only.
+         */
+        descriptions?: object | null;
+        /**
+         * Whether this value ends a lifecycle. Always false in this app: neither a document kind nor a visibility is a state something moves out of.
+         */
+        final?: boolean;
+        /**
+         * Whether this is the value a caller falls back to. Exactly one value of a table-backed vocabulary carries it.
+         */
+        is_default?: boolean;
+        /**
+         * Whether this app seeded the value. Table-backed vocabularies only; it grants no protection.
+         */
+        is_system?: boolean;
+        /**
+         * The value as the data stores it — what a document carries in the column, and what a caller sends back.
+         */
+        key?: string;
+        /**
+         * The per-language titles as the merchant stored them, on a table-backed vocabulary only. Null on a vocabulary the data constrains.
+         */
+        labels?: object | null;
+        /**
+         * What a person reads for it: a locale map keyed by language tag, or a plain string for a value nobody labelled (humanized from its own key).
+         */
+        title?: object;
+        /**
+         * The badge colour a screen renders — semantic, so the client decides what 'warning' looks like in its own design system.
+         */
+        tone?: DocumentVocabularyTone;
+    }
+
+    /**
+     * Everything the blökkli editor runs on, for one page in one language, materialized at the current point of the undo history. The theme adapter maps it 1:1 onto blökkli's MappedState.
      */
     export type EditorState = {
         /**
@@ -6680,6 +9786,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         created_at?: string;
         /**
+         * The key this family has in the system that owns the classification — an ETIM class, an eCl@ss class, a supplier's article type. Unique per tenant where set, and what an import joins on to decide which family a delivered article belongs in.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The row's own id, generated by the database. A client never sends one; it reads one back and uses it in the path of every later call.
          */
         id?: string;
@@ -6696,6 +9810,18 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         labels?: object | null;
         /**
+         * Free-form jsonb this tenant owns, for anything about a family this app does not model. `source_data` is the source's account of the row; this one is yours. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * When the row was last written. Server-set — it is not part of any request body.
          */
         updated_at?: string;
@@ -6710,6 +9836,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         code: string;
         /**
+         * The key this family has in the system that owns the classification — an ETIM class, an eCl@ss class, a supplier's article type. Unique per tenant where set, and what an import joins on to decide which family a delivered article belongs in.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Which attribute code carries the product's main image — the one a grid thumbnail and a picker read.
          */
         image_attribute?: string | null;
@@ -6721,10 +9855,22 @@ response carries no `tenant_id` (the listing envelope does) and no
          * What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns, for anything about a family this app does not model. `source_data` is the source's account of the row; this one is yours. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `families` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `families` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type FamiliesFilter = {
         /**
@@ -6735,6 +9881,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          * The literal `?created_at=` value this call was understood to carry.
          */
         created_at?: string;
+        /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
         /**
          * The literal `?id=` value this call was understood to carry.
          */
@@ -6751,6 +9905,18 @@ response carries no `tenant_id` (the listing envelope does) and no
          * The literal `?labels=` value this call was understood to carry.
          */
         labels?: string;
+        /**
+         * The literal `?metadata=` value this call was understood to carry.
+         */
+        metadata?: string;
+        /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
         /**
          * The literal `?updated_at=` value this call was understood to carry.
          */
@@ -6771,6 +9937,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         code?: string;
         /**
+         * The key this family has in the system that owns the classification — an ETIM class, an eCl@ss class, a supplier's article type. Unique per tenant where set, and what an import joins on to decide which family a delivered article belongs in.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Which attribute code carries the product's main image — the one a grid thumbnail and a picker read.
          */
         image_attribute?: string | null;
@@ -6782,6 +9956,18 @@ response carries no `tenant_id` (the listing envelope does) and no
          * What the family is called, per language tag — the name an operator picks from, while the code is what everything else joins on.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns, for anything about a family this app does not model. `source_data` is the source's account of the row; this one is yours. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -6816,6 +10002,10 @@ response carries no `tenant_id` (the listing envelope does) and no
          * Narrows `is_required` to named channels. NULL or an empty list means required EVERYWHERE, not nowhere — that is how every required link in the wild is stored, and reading an empty list as "nowhere" reports a fully configured family as demanding nothing.
          */
         required_channels?: object | null;
+        /**
+         * When the row was last written. Server-set — it is not part of any request body.
+         */
+        updated_at?: string;
     }
 
     /**
@@ -6845,7 +10035,7 @@ response carries no `tenant_id` (the listing envelope does) and no
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `family_attributes` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `family_attributes` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type FamilyAttributesFilter = {
         /**
@@ -6876,6 +10066,10 @@ response carries no `tenant_id` (the listing envelope does) and no
          * The literal `?required_channels=` value this call was understood to carry.
          */
         required_channels?: string;
+        /**
+         * The literal `?updated_at=` value this call was understood to carry.
+         */
+        updated_at?: string;
     }
 
     export type DefaultFamilyAttributesFilter = FamilyAttributesFilter & {
@@ -6926,6 +10120,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         created_at?: string;
         /**
+         * The key this variant structure has in the system it came from. Unique per tenant where set, and usually null — few sources model how a family splits, so this is normally a structure somebody built here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The family this variant structure belongs to. A family may carry several, and a product names the one it follows through `family_variant_id`.
          */
         family_id?: string;
@@ -6937,6 +10139,18 @@ response carries no `tenant_id` (the listing envelope does) and no
          * What the variant structure is called, per language tag.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns, for anything about a variant structure this app does not model. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * When the row was last written. Server-set — it is not part of any request body.
          */
@@ -6956,6 +10170,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         code: string;
         /**
+         * The key this variant structure has in the system it came from. Unique per tenant where set, and usually null — few sources model how a family splits, so this is normally a structure somebody built here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The family this variant structure belongs to. A family may carry several, and a product names the one it follows through `family_variant_id`.
          */
         family_id: string;
@@ -6963,10 +10185,22 @@ response carries no `tenant_id` (the listing envelope does) and no
          * What the variant structure is called, per language tag.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns, for anything about a variant structure this app does not model. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `family_variants` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `family_variants` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type FamilyVariantsFilter = {
         /**
@@ -6982,6 +10216,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         created_at?: string;
         /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
+        /**
          * The literal `?family_id=` value this call was understood to carry.
          */
         family_id?: string;
@@ -6993,6 +10235,18 @@ response carries no `tenant_id` (the listing envelope does) and no
          * The literal `?labels=` value this call was understood to carry.
          */
         labels?: string;
+        /**
+         * The literal `?metadata=` value this call was understood to carry.
+         */
+        metadata?: string;
+        /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
         /**
          * The literal `?updated_at=` value this call was understood to carry.
          */
@@ -7017,6 +10271,14 @@ response carries no `tenant_id` (the listing envelope does) and no
          */
         code?: string;
         /**
+         * The key this variant structure has in the system it came from. Unique per tenant where set, and usually null — few sources model how a family splits, so this is normally a structure somebody built here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The family this variant structure belongs to. A family may carry several, and a product names the one it follows through `family_variant_id`.
          */
         family_id?: string;
@@ -7024,6 +10286,18 @@ response carries no `tenant_id` (the listing envelope does) and no
          * What the variant structure is called, per language tag.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns, for anything about a variant structure this app does not model. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -7207,13 +10481,13 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
     /**
      * One node of a form definition.
 
-A definition is a FLAT ARRAY of these, and the storefront hands each one to `&lt;FormKitSchema&gt;` verbatim — it maps nothing, so every key FormKit understands works here whether or not it is named below (`options`, `if`, `rows`, `autocomplete`, `min`, `max`, `$cmp`, …). Three kinds of node occur:
+A definition is a FLAT ARRAY of these, and the storefront hands each one to `<FormKitSchema>` verbatim — it maps nothing, so every key FormKit understands works here whether or not it is named below (`options`, `if`, `rows`, `autocomplete`, `min`, `max`, `$cmp`, …). Three kinds of node occur:
 
-  • an INPUT node (`$formkit`) collects a value and, if it carries a `name`, contributes exactly one key to a submission&#039;s `data`;
+  • an INPUT node (`$formkit`) collects a value and, if it carries a `name`, contributes exactly one key to a submission's `data`;
   • a CONTENT node (`$el`) renders markup — a paragraph of legal text, a heading — and collects nothing;
   • a STEP MARKER (`$rxStep`) is a Revenexx extension the storefront consumes and strips before FormKit sees the node; it splits the flat array into wizard steps.
 
-Only the four keys `name`, `label`, `placeholder` and `help` are read by Revenexx code at all (the last three are what the per-form i18n overlay translates). Everything else is FormKit&#039;s business.
+Only the four keys `name`, `label`, `placeholder` and `help` are read by Revenexx code at all (the last three are what the per-form i18n overlay translates). Everything else is FormKit's business.
      */
     export type FormKitNode<FormKitStepMarker extends Models.FormKitStepMarker = Models.DefaultFormKitStepMarker> = {
         /**
@@ -7322,7 +10596,7 @@ Only the four keys `name`, `label`, `placeholder` and `help` are read by Revenex
     };
 
     /**
-     * One post-submit action. `webhook` POSTs `{form, source, data}` to `url`; `entity` writes the mapped fields into another app&#039;s entity; `event` is a no-op, because `form.submitted` already carries it.
+     * One post-submit action. `webhook` POSTs `{form, source, data}` to `url`; `entity` writes the mapped fields into another app's entity; `event` is a no-op, because `form.submitted` already carries it.
      */
     export type FormPostSubmitAction = {
         /**
@@ -7422,7 +10696,7 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
          */
         form_id?: string;
         /**
-         * The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. On a write the body's value WINS; omit it and the form's own slug is copied in.
+         * The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. A create always copies the form's own slug; a body cannot name another.
          */
         form_slug?: string;
         /**
@@ -7470,10 +10744,6 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
          */
         form_id: string;
         /**
-         * The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. On a write the body's value WINS; omit it and the form's own slug is copied in. So: OPTIONAL — send it and it is stored as sent, even if it disagrees with the form; omit it and the form's own slug is filled in from `form_id`.
-         */
-        form_slug?: string;
-        /**
          * Free-form metadata, yours to key as an integration needs. The resolved notification recipient is merged OVER it at insert, so `notify_email` and `notify_source` sent here are overwritten — see the `FormSubmissionMetadata` schema.
          */
         metadata?: object | null;
@@ -7481,10 +10751,6 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
          * Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
          */
         source?: string | null;
-        /**
-         * Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. A create may set it — an inbox importer records a submission that is already read — but nothing needs to: omit it and the row is 'new'.
-         */
-        status?: FormSubmissionStatus;
     }
 
     /**
@@ -7541,7 +10807,7 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
     };
 
     /**
-     * Free-form metadata, plus what this app stamped on at insert. The recipient is resolved ONCE, here, because this row is the payload of `form.submitted` — a workflow reads the address off the event instead of re-resolving a form&#039;s settings that may since have changed.
+     * Free-form metadata, plus what this app stamped on at insert. The recipient is resolved ONCE, here, because this row is the payload of `form.submitted` — a workflow reads the address off the event instead of re-resolving a form's settings that may since have changed.
      */
     export type FormSubmissionMetadata = {
         /**
@@ -7640,7 +10906,7 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
          */
         created_at?: string;
         /**
-         * The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. On a write the body's value WINS; omit it and the form's own slug is copied in.
+         * The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. A create always copies the form's own slug; a body cannot name another.
          */
         form_slug?: string;
         /**
@@ -7650,7 +10916,7 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
     }
 
     /**
-     * Partial update — typically the inbox status change.
+     * Partial update — typically the inbox status change. At least one field: an empty change is refused with 400.
      */
     export type FormSubmissionUpdateRequest = {
         /**
@@ -7668,7 +10934,7 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
          */
         form_id?: string;
         /**
-         * The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. On a write the body's value WINS; omit it and the form's own slug is copied in. So: OPTIONAL — send it and it is stored as sent, even if it disagrees with the form; omit it and the form's own slug is filled in from `form_id`.
+         * The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. A create always copies the form's own slug; a body cannot name another. Changeable only where submission_edit allows a rewrite.
          */
         form_slug?: string;
         /**
@@ -7680,13 +10946,13 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
          */
         source?: string | null;
         /**
-         * Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. A create may set it — an inbox importer records a submission that is already read — but nothing needs to: omit it and the row is 'new'.
+         * Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. Moves freely between the four in any direction, including back to 'new' — an inbox re-opens what it filed. Not settable on a create: a submission arrives 'new', or 'spam' when the honeypot caught it.
          */
         status?: FormSubmissionStatus;
     }
 
     /**
-     * Partial update — omitted fields keep their current value.
+     * Partial update — omitted fields keep their current value. At least one field: an empty change is refused with 400.
      */
     export type FormUpdateRequest = {
         /**
@@ -7844,7 +11110,117 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
     }
 
     /**
-     * One item and its SIGNED correction: &#039;product_id&#039; or &#039;sku&#039;, plus a non-zero delta.
+     * One occasion on which a rep acted for a buyer — which rep, in which organization, as which contact, from when until when, and why. Append-only: the entry records what happened and is never edited, because the session that is minted for this is a BUYER session and this row is the only record anywhere that somebody else was behind it.
+     */
+    export type Impersonation = {
+        /**
+         * WHICH buyer the rep acted as — the contact in the organization, as the customers app knows them. It is the buyer and not the rep: the session that will be minted for this is a BUYER session, so on every other app the resulting order looks exactly as though this contact placed it. That is the reason this table exists at all.
+         */
+        contact_id?: string;
+        /**
+         * When the row was created. Server-set: it is in no request body, and a value sent for it is ignored.
+         */
+        created_at?: string;
+        /**
+         * When the rep stopped. Nullable, and a null is a FACT rather than a gap: it is a session nobody closed — the tab was shut, the token expired, the tablet went flat. There is no route that fills it in later, because this log is append-only; whoever records the entry records what they know.
+         */
+        ended_at?: string | null;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * WHICH customer, as the customers app knows the organization. Nothing here checks that the organization exists — it lives in another app, and a call on every write would fail a whole import for one organization somebody archived.
+         */
+        organization_id?: string;
+        /**
+         * Why the rep acted for this buyer, in the words of whoever recorded it — "placed a telephone order", "checked a price the customer disputed". Optional and never validated: a log that refused an unfamiliar reason would be a log with a gap in it.
+         */
+        reason?: string | null;
+        /**
+         * WHICH rep this row is about, by their `code` rather than by their row id. The code is what an ERP already holds, so an import can write this row before it has ever read an id out of this app. There is no foreign key behind it: the check is a membership test against the rep table on every write, and a code that names no rep is refused with 400 `unknown_rep`. It is also why a rep's code cannot be renamed and why a rep carrying rows here cannot be deleted.
+         */
+        rep_code?: string;
+        /**
+         * When the rep began acting for the buyer. Written when the entry is recorded, and it may be sent explicitly by whatever recorded it — a system that noticed afterwards must be able to say WHEN rather than when it got round to writing it down. Defaults to the moment of the write.
+         */
+        started_at?: string;
+        /**
+         * The tenant this row belongs to — the store slug, not an id. Set by the platform from the authenticated context, never by a caller; a write that carries it is ignored, and no request can read another tenant's rows by sending a different one.
+         */
+        tenant_id?: string;
+    }
+
+    /**
+     * Record that a rep acted for a buyer. Three fields are owed; `started_at` defaults to the moment of the write and may be sent explicitly by a system that noticed afterwards. There is no route that edits an entry once it is here.
+     */
+    export type ImpersonationCreateRequest = {
+        /**
+         * WHICH buyer the rep acted as — the contact in the organization, as the customers app knows them. It is the buyer and not the rep: the session that will be minted for this is a BUYER session, so on every other app the resulting order looks exactly as though this contact placed it. That is the reason this table exists at all.
+         */
+        contact_id: string;
+        /**
+         * When the rep stopped. Nullable, and a null is a FACT rather than a gap: it is a session nobody closed — the tab was shut, the token expired, the tablet went flat. There is no route that fills it in later, because this log is append-only; whoever records the entry records what they know.
+         */
+        ended_at?: string | null;
+        /**
+         * WHICH customer, as the customers app knows the organization. Nothing here checks that the organization exists — it lives in another app, and a call on every write would fail a whole import for one organization somebody archived.
+         */
+        organization_id: string;
+        /**
+         * Why the rep acted for this buyer, in the words of whoever recorded it — "placed a telephone order", "checked a price the customer disputed". Optional and never validated: a log that refused an unfamiliar reason would be a log with a gap in it.
+         */
+        reason?: string | null;
+        /**
+         * WHICH rep this row is about, by their `code` rather than by their row id. The code is what an ERP already holds, so an import can write this row before it has ever read an id out of this app. There is no foreign key behind it: the check is a membership test against the rep table on every write, and a code that names no rep is refused with 400 `unknown_rep`. It is also why a rep's code cannot be renamed and why a rep carrying rows here cannot be deleted.
+         */
+        rep_code: string;
+        /**
+         * When the rep began acting for the buyer. Written when the entry is recorded, and it may be sent explicitly by whatever recorded it — a system that noticed afterwards must be able to say WHEN rather than when it got round to writing it down. Defaults to the moment of the write.
+         */
+        started_at?: string;
+    }
+
+    /**
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `impersonations` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched". Every value is a string, whatever the column's type: this is the query string, not the parsed row.
+     */
+    export type ImpersonationFilter = {
+        /**
+         * The literal `?contact_id=` value this call was understood to carry.
+         */
+        contact_id?: string;
+        /**
+         * The literal `?created_at=` value this call was understood to carry.
+         */
+        created_at?: string;
+        /**
+         * The literal `?ended_at=` value this call was understood to carry.
+         */
+        ended_at?: string;
+        /**
+         * The literal `?id=` value this call was understood to carry.
+         */
+        id?: string;
+        /**
+         * The literal `?organization_id=` value this call was understood to carry.
+         */
+        organization_id?: string;
+        /**
+         * The literal `?reason=` value this call was understood to carry.
+         */
+        reason?: string;
+        /**
+         * The literal `?rep_code=` value this call was understood to carry.
+         */
+        rep_code?: string;
+        /**
+         * The literal `?started_at=` value this call was understood to carry.
+         */
+        started_at?: string;
+    }
+
+    /**
+     * One item and its SIGNED correction: 'product_id' or 'sku', plus a non-zero delta.
      */
     export type InventoryAdjustItem = {
         /**
@@ -7892,7 +11268,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
     }
 
     /**
-     * One item to check: &#039;product_id&#039; or &#039;sku&#039;. Checking is free of consequence — it books nothing and holds nothing.
+     * One item to check: 'product_id' or 'sku'. Checking is free of consequence — it books nothing and holds nothing.
      */
     export type InventoryAvailabilityItem = {
         /**
@@ -7900,7 +11276,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
          */
         product_id?: string | null;
         /**
-         * How many are wanted. It only decides `orderable`; the on_hand / reserved / available figures come back whatever it is. Omit it (or send null) to ask "is this sellable at all?", which is a check against 1.
+         * How many are wanted, above zero. It only decides `orderable`; the on_hand / reserved / available figures come back whatever it is. Omit it (or send null) to ask "is this sellable at all?", which is a check against 1. Zero, a negative number or a non-number is answered 400.
          */
         quantity?: number | null;
         /**
@@ -7918,7 +11294,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
          */
         items?: InventoryAvailabilityItem[];
         /**
-         * Restrict the check to ONE location, by its code — the stock a click-and-collect store can promise today. Omitted, every ENABLED location is summed; a disabled one is never counted either way.
+         * Restrict the check to ONE location, by its code — the stock a click-and-collect store can promise today. Omitted, every ENABLED location is summed; a disabled one is never counted either way, so a disabled location's code answers every item untracked. A code no location carries is answered 404 `unknown_location`.
          */
         location_code?: string | null;
         /**
@@ -7926,7 +11302,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
          */
         product_id?: string | null;
         /**
-         * Inline single-item form: how many are wanted (default 1). It decides `orderable` and nothing else.
+         * Inline single-item form: how many are wanted, above zero (default 1). It decides `orderable` and nothing else.
          */
         quantity?: number | null;
         /**
@@ -7973,6 +11349,20 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
          * Inline single-item form: the article number to move (instead of `product_id`).
          */
         sku?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type InventoryReceiveWarning = {
+        /**
+         * What the warning is about.
+         */
+        code?: InventoryReceiveWarningCode;
+        /**
+         * The location the warning is about, by code.
+         */
+        location_code?: string;
     }
 
     /**
@@ -8062,7 +11452,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
     }
 
     /**
-     * Where the order is going. Read ONLY when the tenant&#039;s `allocation_strategy` is &#039;nearest&#039; — under &#039;priority&#039; or &#039;single_location&#039; it is accepted and ignored, so sending it is never wrong, it is just not always heard.
+     * Where the order is going. Read ONLY when the tenant's `allocation_strategy` is 'nearest' — under 'priority' or 'single_location' it is accepted and ignored, so sending it is never wrong, it is just not always heard.
      */
     export type InventoryShipTo = {
         /**
@@ -8076,7 +11466,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
     }
 
     /**
-     * One item and how much of it: &#039;product_id&#039; or &#039;sku&#039;, plus a positive quantity.
+     * One item and how much of it: 'product_id' or 'sku', plus a positive quantity.
      */
     export type InventoryStockItem = {
         /**
@@ -8102,11 +11492,11 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
          */
         app?: string;
         /**
-         * True when these values are the complete permitted set, because they were read out of a CHECK constraint. A value outside a closed set is therefore stale data, not a missing label — which is what lets a client show it as an error instead of inventing a title for it.
+         * True when these values are the complete permitted set at this moment — because a CHECK constraint permits exactly them, or because they are all the rows the tenant keeps. A value outside a closed set is therefore stale data, not a missing label, which is what lets a client show it as an error instead of inventing a title for it.
          */
         closed?: boolean;
         /**
-         * The tone a value gets when nobody has labelled it — a value added to the CHECK constraint is served with its key humanized and this tone, rather than not being served at all.
+         * The tone a value gets when nobody has labelled it — a value added to the CHECK constraint, or a row a merchant left at the default, is served with its key humanized and this tone rather than not being served at all.
          */
         default_tone?: InventoryVocabularyDefaultTone;
         /**
@@ -8118,7 +11508,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
          */
         name?: string;
         /**
-         * Where the words come from: 'schema' — the app's own, read from the constraint. Nothing here is renameable per tenant, so a client may cache it per app version.
+         * Who owns the set. 'schema' — the app's own, read from the constraint, identical for every tenant and cacheable per app version. 'table' — the TENANT's own rows: a merchant may add, rename, re-tone and remove values, so it is cacheable only briefly and per tenant, and the values carry `orderable`, `is_default` and `is_system` as well.
          */
         source?: InventoryVocabularySource;
         /**
@@ -8126,7 +11516,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
          */
         title?: object;
         /**
-         * Every permitted value, IN CONSTRAINT ORDER — which is lifecycle order for a status, so a UI can render the steps in the order they happen.
+         * Every permitted value. A 'schema' set comes back IN CONSTRAINT ORDER — lifecycle order for a status, so a UI renders the steps in the order they happen. A 'table' set comes back in the order the tenant gave it, ascending by position, with ties broken by the code.
          */
         values?: object[];
     }
@@ -8272,7 +11662,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
     }
 
     /**
-     * A saved profile. Mirrors the controller&#039;s presenter exactly — there
+     * A saved profile. Mirrors the controller's presenter exactly — there
 are no `created_at` / `updated_at` fields on this resource.
 
      */
@@ -8370,11 +11760,19 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type ItemAvailability = {
         /**
+         * The code that governs the ITEM, picked the way allocation picks a location so that a shop shows the badge of the place it would actually ship from: the code of the FIRST row, by its location's priority, that could serve the whole request; and when no location can, the code of the highest-priority row that carries one. Null when no row carries one, and null when the row that would serve it carries none — silence at the place that can ship is the answer. Per-location codes are in `locations[]`, and they may disagree with this one.
+         */
+        availability_code?: string | null;
+        /**
          * on_hand − reserved across the locations in scope: available-to-promise, and the number a storefront shows. It can be NEGATIVE once backorders have been reserved beyond stock — nothing floors it, because "sold more than we hold" is a real state a merchant needs to see.
          */
         available?: number;
         /**
-         * The per-location breakdown behind the summed figures — which place could actually ship it.
+         * The answer to "when can I have it", and NOT just some date on some row: the EARLIEST date among the rows that could NOT serve this request. Null whenever the item is orderable — nobody is waiting — null when untracked, and null when no such row carries a date. A day and not an hour, because that is what a supplier promises. The per-location dates in `locations[]` are the unrolled-up facts.
+         */
+        expected_at?: string | null;
+        /**
+         * The per-location breakdown behind the summed figures — which place could actually ship it, what each of them says about the item, and when each expects it back.
          */
         locations?: LocationAvailability[];
         /**
@@ -8382,7 +11780,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         on_hand?: number;
         /**
-         * True when the item is tracked and `available >= requested` at this moment. A SNAPSHOT, not a hold: nothing is set aside until POST /inventories/reserve, and two checkouts can both read true for the last unit.
+         * True when the item is tracked, `available >= requested` at this moment, AND the governing availability state does not say the item may not be ordered. A SNAPSHOT, not a hold: nothing is set aside until POST /inventories/reserve, and two checkouts can both read true for the last unit. When no stock row carries an `availability_code` — the case for every tenant who has not started importing them — no state can veto and this is the quantity answer alone.
          */
         orderable?: boolean;
         /**
@@ -8405,6 +11803,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * False when this app has never seen the item: no stock row anywhere in scope. It is not an error and not a zero — the storefront decides whether an untracked item sells freely (a service, a made-to-order piece) or not at all. `on_hand`, `reserved` and `available` are 0 in that case, and `orderable` is false.
          */
         tracked?: boolean;
+        /**
+         * Why not, so a storefront picks its message without re-deriving the verdict. Null exactly when `orderable` is true. 'untracked' — this app has no stock row for the item anywhere in scope. 'quantity' — there are rows, and `available` is below `requested`. 'state' — the quantity is there, and the governing availability state says an item in it may not be ordered. Precedence is that order: the item has to be known before a number means anything, and the number has to be there before the state gets a say.
+         */
+        unorderable_reason?: InventoryUnorderableReason;
     }
 
     /**
@@ -8538,6 +11940,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         label?: string;
         /**
+         * The item's own bag for whoever keeps it in step with something else — the id it has in a design system, the import that last wrote it, a flag a theme reads. Nothing in this app reads a key of it; it is stored, answered back and otherwise left alone, so the writer owns its shape. Replaced wholesale by a write, never merged.
+         */
+        metadata?: object | null;
+        /**
          * The block and everything under it, serialized. This is the payload: every page that references the item renders THIS tree, so editing it here changes every placement at once.
          */
         tree?: PageBlockTree;
@@ -8614,7 +12020,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * One value of the lifecycle stages set. Where a company stands in the sales pipeline — a separate axis from status, and one whose steps are a sales team&#039;s own.
+     * One value of the lifecycle stages set. Where a company stands in the sales pipeline — a separate axis from status, and one whose steps are a sales team's own.
      */
     export type LifecycleStage = {
         /**
@@ -8764,6 +12170,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         enabled?: boolean;
         /**
+         * The key this row has in the system that OWNS it. On a location it is unique per tenant and an import can upsert on it; on a stock row it is informational, because a stock row is identified by its location and its item and nothing else. Often a GUID, stored verbatim whatever shape the source uses.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name. `external_id` is the leading system; this is the rest, and a new one costs no column.
+         */
+        external_refs?: object | null;
+        /**
          * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
          */
         id?: string;
@@ -8784,6 +12198,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         priority?: number;
         /**
+         * What the source said about this row, kept as it said it. Carries the ETag a write-back has to return in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit here.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. An edit made here does not touch it: it records when the SOURCE was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
          * The tenant this row belongs to, as a slug. Set by the platform, never by a caller — it is the row-level security scope, not a field, and every row a request can reach is inside it already.
          */
         tenant_id?: string;
@@ -8802,9 +12224,17 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type LocationAvailability = {
         /**
+         * What the source system says about the item AT THIS LOCATION, as one of the codes this tenant keeps (GET /inventories/vocabularies/availability-states resolves it to a title, a tone and `orderable`). Null when the row says nothing, which is not the same as unavailable — the quantities answer that. Two locations may well disagree; the item-level `availability_code` says which one governs.
+         */
+        availability_code?: string | null;
+        /**
          * on_hand − reserved at this location — what this one place can still promise.
          */
         available?: number;
+        /**
+         * The day the item is due back AT THIS LOCATION — a day and not an hour, because that is what a supplier promises. Null when nothing is recorded. A date in the past is answered as it was recorded: the promise was missed, which is worth showing rather than hiding.
+         */
+        expected_at?: string | null;
         /**
          * The location CODE (`locations.code`) — the same value `location_code` takes in a request. Falls back to the raw location id in the rare case where the location row disappeared between the two reads.
          */
@@ -8817,6 +12247,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * Held for orders at this location.
          */
         reserved?: number;
+        /**
+         * The merchant's policy for the code above: whether an item in that state may still be ordered. NOT this call's verdict — that is the item-level `orderable`, which also weighs the quantity. Null when the row carries no code, and null when it carries one the tenant no longer keeps: a value that resolves to nothing says nothing, and is never read as a refusal.
+         */
+        state_orderable?: boolean | null;
     }
 
     /**
@@ -8896,7 +12330,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `locations` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `locations` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type LocationsFilter = {
         /**
@@ -8915,6 +12349,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * The literal `?enabled=` value this call was understood to carry.
          */
         enabled?: string;
+        /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
         /**
          * The literal `?id=` value this call was understood to carry.
          */
@@ -8936,6 +12378,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         priority?: string;
         /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
+        /**
          * The literal `?type=` value this call was understood to carry.
          */
         type?: string;
@@ -8951,11 +12401,11 @@ are no `created_at` / `updated_at` fields on this resource.
     };
 
     /**
-     * A distinct business context within a tenant — a country, a region, or a storefront segment such as B2C vs B2B — with its own base currency, locales, traded currencies and tax classes. A market is also the platform&#039;s `market` SCOPE dimension: every other commerce app slices its data by one, keyed on this row&#039;s `code`. A market is never just this row: it needs at least one locale, one currency and one tax class before it can serve, which is what /readiness measures and what /clone and /backfill build.
+     * A distinct business context within a tenant — a country, a region, or a storefront segment such as B2C vs B2B — with its own base currency, locales, traded currencies and tax classes. A market is also the platform's `market` SCOPE dimension: every other commerce app slices its data by one, keyed on this row's `code`. A market is never just this row: it needs at least one locale, one currency and one tax class before it can serve, which is what /readiness measures and what /clone and /backfill build.
      */
     export type Market = {
         /**
-         * Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it re-keys that scope for everyone, so treat it as permanent. Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
+         * Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it would re-key that scope for everyone, so it is fixed once the market exists (an update that changes it is a 409). Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
          */
         code?: string;
         /**
@@ -8971,7 +12421,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         id?: string;
         /**
-         * The tenant default market — what a call naming no market falls back to. Exactly one market holds it; move it with POST /markets/{id}/make-default rather than by writing this flag, which does not demote the market that currently holds it.
+         * The tenant default market — what a call naming no market falls back to. Exactly one market holds it, and it is moved only with POST /markets/{id}/make-default: a create may set it only while the tenant has none, and an update cannot change it.
          */
         is_default?: boolean;
         /**
@@ -9121,7 +12571,7 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type MarketCloneRequest = {
         /**
-         * Code of the NEW market (unique per tenant).
+         * Code of the NEW market (unique per tenant). Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`).
          */
         code: string;
         /**
@@ -9137,7 +12587,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         copy_tax_classes?: boolean;
         /**
-         * Base currency of the new market (ISO 4217). Defaults to the source market's, and is registered and marked default on the new one either way.
+         * Base currency of the new market, upper-case ISO 4217 (400 `invalid_currency` — it is not uppercased for you). Defaults to the source market's, and is registered and marked default on the new one either way.
          */
         currency?: string;
         /**
@@ -9229,19 +12679,19 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * A market needs a &#039;code&#039; and a &#039;name&#039; — currency defaults to EUR, status to active. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
+     * A market needs a 'code' and a 'name' — currency defaults to EUR, status to active. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
      */
     export type MarketCreateRequest = {
         /**
-         * Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it re-keys that scope for everyone, so treat it as permanent. Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
+         * Market code — the market scope slug every other app stores. Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`). Fixed once the market exists: an update that changes it is refused with 409 `code_immutable`; the same value sent back is accepted and ignored.
          */
         code: string;
         /**
-         * Base currency this market quotes in — ISO 4217, and schema.json's own default is 'EUR'. This is the single currency prices are STATED in; the currencies collection under the market is the wider set it accepts. A base currency missing from that collection is a blocking readiness failure.
+         * Base currency, upper-case ISO 4217 (400 `invalid_currency` otherwise — it is not uppercased for you). Defaults to EUR.
          */
         currency?: string;
         /**
-         * The tenant default market — what a call naming no market falls back to. Exactly one market holds it; move it with POST /markets/{id}/make-default rather than by writing this flag, which does not demote the market that currently holds it.
+         * The tenant default flag. On a create, `true` is accepted only while the tenant has no default market (409 `default_exists` otherwise). On an update it cannot change — move it with POST /markets/{id}/make-default (400 `default_via_make_default`); the current value sent back is accepted and ignored.
          */
         is_default?: boolean;
         /**
@@ -9279,7 +12729,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         id?: string;
         /**
-         * The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
+         * The currency offered first to a buyer who states no preference. At most one per market — a write flagging one takes it from the others — and it should be the market's base currency — readiness reports it as a warning when it is not.
          */
         is_default?: boolean;
         /**
@@ -9290,18 +12740,22 @@ are no `created_at` / `updated_at` fields on this resource.
          * Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
          */
         position?: number;
+        /**
+         * When the currency registration was last written. Set by the database on every update; never writable. A currency is changed in place — its default flag and its position move — so this is the column that says when that last happened.
+         */
+        updated_at?: string;
     }
 
     /**
-     * The owning market comes from the route path (&#039;market_id&#039;).
+     * The owning market comes from the route path ('market_id').
      */
     export type MarketCurrencyCreateRequest = {
         /**
-         * ISO 4217 code, unique per market — one entry in the set of currencies this market TRADES in, as opposed to the single base currency on the market row that its prices are quoted in. The base currency must appear here or the market cannot serve; clone and backfill register it for you.
+         * Upper-case ISO 4217 code (400 `invalid_currency` otherwise — it is not uppercased for you). Unique per market.
          */
         code: string;
         /**
-         * The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
+         * Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call.
          */
         is_default?: boolean;
         /**
@@ -9325,7 +12779,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The exact-column filters this call applied, echoed back. Every value is the raw query string, never the column&#039;s own type: `?is_default=true` comes back as `&quot;true&quot;`. A `?column=value` naming a column this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list, and the key missing from here is the only way to find out.
+     * The exact-column filters this call applied, echoed back. Every value is the raw query string, never the column's own type: `?is_default=true` comes back as `"true"`. A `?column=value` naming a column this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list, and the key missing from here is the only way to find out.
      */
     export type MarketCurrencyFilter = {
         /**
@@ -9352,6 +12806,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * The `position` filter as it arrived, verbatim. Present only when the call sent it.
          */
         position?: string;
+        /**
+         * The `updated_at` filter as it arrived, verbatim. Present only when the call sent it. Any form the database accepts as a timestamp, including a bare date.
+         */
+        updated_at?: string;
     }
 
     /**
@@ -9377,11 +12835,11 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type MarketCurrencyUpdateRequest = {
         /**
-         * ISO 4217 code, unique per market — one entry in the set of currencies this market TRADES in, as opposed to the single base currency on the market row that its prices are quoted in. The base currency must appear here or the market cannot serve; clone and backfill register it for you.
+         * Upper-case ISO 4217 code (400 `invalid_currency` otherwise — it is not uppercased for you). Unique per market.
          */
         code?: string;
         /**
-         * The currency offered first to a buyer who states no preference. At most one per market, and it should be the market's base currency — readiness reports it as a warning when it is not.
+         * Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call.
          */
         is_default?: boolean;
         /**
@@ -9391,7 +12849,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The locale a storefront should render this market in. `source` names where it came from: &#039;market&#039; (a locale flagged is_default), &#039;market_first&#039; (no flag — first by position) or &#039;tenant_fallback&#039; (the market registers none; the tenant&#039;s fallback_locale setting answered).
+     * The locale a storefront should render this market in. `source` names where it came from: 'market' (a locale flagged is_default), 'market_first' (no flag — first by position) or 'tenant_fallback' (the market registers none; the tenant's fallback_locale setting answered).
      */
     export type MarketDefaultLocale = {
         /**
@@ -9427,7 +12885,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The exact-column filters this call applied, echoed back. Every value is the raw query string, never the column&#039;s own type: `?is_default=true` comes back as `&quot;true&quot;`. A `?column=value` naming a column this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list, and the key missing from here is the only way to find out.
+     * The exact-column filters this call applied, echoed back. Every value is the raw query string, never the column's own type: `?is_default=true` comes back as `"true"`. A `?column=value` naming a column this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list, and the key missing from here is the only way to find out.
      */
     export type MarketFilter = {
         /**
@@ -9511,7 +12969,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         id?: string;
         /**
-         * The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
+         * The locale a storefront renders this market in when the request asks for none. At most one per market — a write flagging one takes it from the others; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
          */
         is_default?: boolean;
         /**
@@ -9526,28 +12984,32 @@ are no `created_at` / `updated_at` fields on this resource.
          * Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
          */
         position?: number;
+        /**
+         * When the locale registration was last written. Set by the database on every update; never writable. A locale is changed in place — its default flag and its position move — so this is the column that says when that last happened.
+         */
+        updated_at?: string;
     }
 
     /**
-     * The owning market comes from the route path (&#039;market_id&#039;).
+     * The owning market comes from the route path ('market_id').
      */
     export type MarketLocaleCreateRequest = {
         /**
-         * Locale code, language-COUNTRY — the language a storefront renders this market in, and the key a translation is stored under. Unique per market. The app's own seeded value is the tenant's `fallback_locale` setting, whose declared default is de-DE.
+         * Locale code, language-COUNTRY: ISO 639-1 lower case, a hyphen, ISO 3166-1 upper case — `de-DE` (400 `invalid_locale_code`). Unique per market.
          */
         code: string;
         /**
-         * ISO 3166-1 alpha-2 country code — the region half of `code`. It is a spelling of the language, not a shipping destination: a market may register de-AT without trading in Austria.
+         * The country half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
          */
-        country: string;
+        country?: string;
         /**
-         * The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
+         * Flag this locale as the market's default. The flag MOVES: every other locale of the market loses it in the same call.
          */
         is_default?: boolean;
         /**
-         * ISO 639-1 language code — the language half of `code`, stored separately so a client can group markets by language without parsing.
+         * The language half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
          */
-        language: string;
+        language?: string;
         /**
          * Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
          */
@@ -9569,7 +13031,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The exact-column filters this call applied, echoed back. Every value is the raw query string, never the column&#039;s own type: `?is_default=true` comes back as `&quot;true&quot;`. A `?column=value` naming a column this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list, and the key missing from here is the only way to find out.
+     * The exact-column filters this call applied, echoed back. Every value is the raw query string, never the column's own type: `?is_default=true` comes back as `"true"`. A `?column=value` naming a column this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list, and the key missing from here is the only way to find out.
      */
     export type MarketLocaleFilter = {
         /**
@@ -9604,10 +13066,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * The `position` filter as it arrived, verbatim. Present only when the call sent it.
          */
         position?: string;
+        /**
+         * The `updated_at` filter as it arrived, verbatim. Present only when the call sent it. Any form the database accepts as a timestamp, including a bare date.
+         */
+        updated_at?: string;
     }
 
     /**
-     * The read and write keys for one of the market&#039;s locales, already resolved from the two settings.
+     * The read and write keys for one of the market's locales, already resolved from the two settings.
      */
     export type MarketLocaleKeys = {
         /**
@@ -9669,19 +13135,19 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type MarketLocaleUpdateRequest = {
         /**
-         * Locale code, language-COUNTRY — the language a storefront renders this market in, and the key a translation is stored under. Unique per market. The app's own seeded value is the tenant's `fallback_locale` setting, whose declared default is de-DE.
+         * Locale code, language-COUNTRY: ISO 639-1 lower case, a hyphen, ISO 3166-1 upper case — `de-DE` (400 `invalid_locale_code`). Unique per market.
          */
         code?: string;
         /**
-         * ISO 3166-1 alpha-2 country code — the region half of `code`. It is a spelling of the language, not a shipping destination: a market may register de-AT without trading in Austria.
+         * The country half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
          */
         country?: string;
         /**
-         * The locale a storefront renders this market in when the request asks for none. At most one per market; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
+         * Flag this locale as the market's default. The flag MOVES: every other locale of the market loses it in the same call.
          */
         is_default?: boolean;
         /**
-         * ISO 639-1 language code — the language half of `code`, stored separately so a client can group markets by language without parsing.
+         * The language half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
          */
         language?: string;
         /**
@@ -9711,7 +13177,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * Whether a stored price in this market is NET or GROSS — the market layer of an answer the prices app also holds. A price list&#039;s own tax_basis wins over this; `tax_basis: null` with `source: &#039;unset&#039;` means this market declares nothing and the reader must fall through to the tenant&#039;s own default.
+     * Whether a stored price in this market is NET or GROSS — the market layer of an answer the prices app also holds. A price list's own tax_basis wins over this; `tax_basis: null` with `source: 'unset'` means this market declares nothing and the reader must fall through to the tenant's own default.
      */
     export type MarketPricing = {
         /**
@@ -9833,7 +13299,7 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type MarketReadinessSubject = {
         /**
-         * Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it re-keys that scope for everyone, so treat it as permanent. Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
+         * Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it would re-key that scope for everyone, so it is fixed once the market exists (an update that changes it is a 409). Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
          */
         code?: string;
         /**
@@ -9869,7 +13335,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * One rate bucket within a market — &#039;standard&#039;, &#039;reduced&#039;, &#039;zero&#039; — and the source of record for that rate across the platform. Other apps point at it by CODE, with no foreign key behind it.
+     * One rate bucket within a market — 'standard', 'reduced', 'zero' — and the source of record for that rate across the platform. Other apps point at it by CODE, with no foreign key behind it.
      */
     export type MarketTaxClass = {
         /**
@@ -9885,7 +13351,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         id?: string;
         /**
-         * The class applied to a line that names none. At most one per market. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+         * The class applied to a line that names none. At most one per market — a write flagging one takes it from the others. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
          */
         is_default?: boolean;
         /**
@@ -9915,7 +13381,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The owning market comes from the route path (&#039;market_id&#039;).
+     * The owning market comes from the route path ('market_id').
      */
     export type MarketTaxClassCreateRequest = {
         /**
@@ -9923,7 +13389,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         code: string;
         /**
-         * The class applied to a line that names none. At most one per market. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+         * Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call.
          */
         is_default?: boolean;
         /**
@@ -9963,7 +13429,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The exact-column filters this call applied, echoed back. Every value is the raw query string, never the column&#039;s own type: `?is_default=true` comes back as `&quot;true&quot;`. A `?column=value` naming a column this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list, and the key missing from here is the only way to find out.
+     * The exact-column filters this call applied, echoed back. Every value is the raw query string, never the column's own type: `?is_default=true` comes back as `"true"`. A `?column=value` naming a column this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list, and the key missing from here is the only way to find out.
      */
     export type MarketTaxClassFilter = {
         /**
@@ -10035,7 +13501,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         code?: string;
         /**
-         * The class applied to a line that names none. At most one per market. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+         * Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call.
          */
         is_default?: boolean;
         /**
@@ -10061,15 +13527,15 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type MarketUpdateRequest = {
         /**
-         * Market code, unique per tenant, and the single most load-bearing string in this app: it IS the market scope slug. The Entity Scoping Engine publishes it as the `market` dimension (`scope_context.market` in the JWT), and every other commerce app — products, prices, orders, customers — stores THIS value to say which market a row belongs to. Renaming it re-keys that scope for everyone, so treat it as permanent. Accepted in place of the uuid on /readiness, /clone, /backfill and /make-default — but not on the item routes or /context, which take a uuid only.
+         * Market code — the market scope slug every other app stores. Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`). Fixed once the market exists: an update that changes it is refused with 409 `code_immutable`; the same value sent back is accepted and ignored.
          */
         code?: string;
         /**
-         * Base currency this market quotes in — ISO 4217, and schema.json's own default is 'EUR'. This is the single currency prices are STATED in; the currencies collection under the market is the wider set it accepts. A base currency missing from that collection is a blocking readiness failure.
+         * Base currency, upper-case ISO 4217 (400 `invalid_currency` otherwise — it is not uppercased for you). Defaults to EUR.
          */
         currency?: string;
         /**
-         * The tenant default market — what a call naming no market falls back to. Exactly one market holds it; move it with POST /markets/{id}/make-default rather than by writing this flag, which does not demote the market that currently holds it.
+         * The tenant default flag. On a create, `true` is accepted only while the tenant has no default market (409 `default_exists` otherwise). On an update it cannot change — move it with POST /markets/{id}/make-default (400 `default_via_make_default`); the current value sent back is accepted and ignored.
          */
         is_default?: boolean;
         /**
@@ -10269,7 +13735,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `measurement_families` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `measurement_families` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type MeasurementFamiliesFilter = {
         /**
@@ -10362,6 +13828,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         menu_key?: string;
         /**
+         * The menu's own bag for whoever keeps it in step with something else — the slot a theme maps it to, the import that last wrote it, a flag a renderer reads. Nothing in this app reads a key of it; it is stored, answered back and otherwise left alone, so the writer owns its shape. Replaced wholesale by a write, never merged.
+         */
+        metadata?: object | null;
+        /**
          * When the menu was last replaced. The upsert rewrites `items` wholesale, so this is the timestamp of the whole navigation, not of one entry.
          */
         updated_at?: string;
@@ -10379,6 +13849,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * What this menu is called for the people who edit it.
          */
         label?: string;
+        /**
+         * The menu's own bag, replaced wholesale. This route is the only way to write it — the upsert reads `menuKey`, `label` and `items` and nothing else — so a caller that seeds a menu by key names its metadata here afterwards.
+         */
+        metadata?: object;
     }
 
     /**
@@ -10522,7 +13996,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * One search inside a federated request. `collection_name` is required on the gateway-trust path; with a `revx_` key it is optional and is forced to the key&#039;s own collection.
+     * One search inside a federated request. `collection_name` is required on the gateway-trust path; with a `revx_` key it is optional and is forced to the key's own collection.
      */
     export type MultiSearchEntry = {
         /**
@@ -10900,15 +14374,23 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         discount_total?: number;
         /**
+         * The key this order has in the system that OWNS it — the ERP's own handle on the sales order, which is what a write-back addresses. Distinct from `external_ref`, which is the readable ORDER NUMBER that system quotes at a human, and from `number`, which is the one this app issued. Unique per tenant where set, so a retried import that sends the same key again is refused rather than founding a second order. Null for an order the shop owns.
+         */
+        external_id?: string | null;
+        /**
          * The FULFILLING system's reference for this order, typically the ERP order number. Written once by POST /orders/{id}/acknowledge and null until an integration acknowledged it.
          */
         external_ref?: string | null;
+        /**
+         * Every OTHER system that knows this order, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * Whether the order has SHIPPED, and the one dimension nobody writes: it is DERIVED after every quantity change from the positions' own bookkeeping. 'fulfilled' means shipped >= ordered − cancelled across all positions, 'partial' means something went out. Sending it has no effect; ship, cancel or return something and it moves.
          */
         fulfillment_status?: OrderFulfillmentStatus;
         /**
-         * What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
+         * What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus the payment surcharge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
          */
         grand_total?: number;
         /**
@@ -10940,9 +14422,21 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         organization_id?: string | null;
         /**
-         * The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
+         * The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'; a buyer's own call may only send 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
          */
         payment?: object | null;
+        /**
+         * The payment surcharge this order was placed with, NET — what the payments app computed for the chosen method (a fixed amount, or a share of the order). Zero for a method that charges nothing, which is most of them. Passed in with the payment arrangement the way the shipping price is, and stored rather than folded into the `payment` blob: a grand_total that silently included a fee nobody could point at is a reconciliation nobody can finish.
+         */
+        payment_fee_amount?: number;
+        /**
+         * Tax on the payment surcharge, part of tax_total and stored separately so the fee can be stated on its own line of an invoice or an export.
+         */
+        payment_fee_tax_amount?: number;
+        /**
+         * The rate the payment surcharge was taxed at, frozen at place-time (19 means 19 %). A surcharge is a Nebenleistung and is taxed like one.
+         */
+        payment_fee_tax_rate?: number;
         /**
          * Whether the order is PAID, and the dimension this app does not decide: it is fed from outside through POST /orders/{id}/payment-status (the payments app or an ERP), and only seeded at place-time from payment.status. Orthogonal to the lifecycle — a completed order can still be open, and a paid one can still be pending.
          */
@@ -10951,6 +14445,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * When the order was PLACED. Null while it is pending approval: an order awaiting sign-off exists but was never placed, and that is exactly the difference this field records.
          */
         placed_at?: string | null;
+        /**
+         * The calendar day the BUYER asked to be delivered on, as a date and not a moment — a buyer asks for Tuesday, not for Tuesday at 14:03 in a timezone nobody named. It is a wish and nothing here judges it: a date in the past, a weekend or a day inside the lead time is stored as sent, because what is deliverable is the merchant's answer and this app reads neither stock nor carrier calendar. The positions carry their own, and A POSITION'S DATE WINS over this one — this is the proposal for every position that names none. Null on an order that asked for nothing, which is the ordinary case. It was collected in `user_data.requested_date` before this column existed and is still echoed there by callers that have not moved over; the column is what is compared, sorted and mapped.
+         */
+        requested_delivery_date?: string | null;
         /**
          * The shipping arrangement as it was chosen, FROZEN. Two keys are READ at place-time and feed the totals: 'price' becomes shipping_total (the shipping_total field is only the fallback when this is absent) and 'tax_rate' is what shipping is taxed at, because shipping is a Nebenleistung and is taxed too. Everything else — the carrier product, the delivery window, the pickup point — is stored untouched and belongs to the shipping app.
          */
@@ -10972,6 +14470,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shipping_total?: number;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this order was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a order no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * Where the order stands in its LIFECYCLE, and one of three independent status dimensions. 'pending' = created but not placed, an order waiting for approval; 'placed' = accepted, nothing shipped; 'in_fulfillment' = part of it has gone out, or all of it has and the tenant does not close on shipment; 'completed' and 'cancelled' end it. Moved by the action routes only — it is not writable through PUT /orders/{id}.
          */
         status?: OrderStatus;
@@ -10988,19 +14494,35 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         updated_at?: string;
         /**
-         * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change.
+         * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change. One key of it is read: `requested_date`, which is where the wanted delivery date was collected before it had a column, and which is taken as the date only when `requested_delivery_date` names none. The blob itself is never rewritten by that reading.
          */
         user_data?: object | null;
     }
 
     /**
-     * The acknowledgement carries one field, and it is optional: sending {} still stamps acknowledged_at, which is the point of the call. acknowledged_at is the server&#039;s clock and is never taken from the body.
+     * What the fulfilling system answers with, and every field of it is optional: sending {} still stamps acknowledged_at, which is the point of the call. acknowledged_at is the server's clock and is never taken from the body. This is the natural home for the ERP's own record of the order — its KEY beside the document number `external_ref` already carried, and the token a later write-back has to hand back. A field left out keeps the value the order already has; nothing here is cleared by omission.
      */
     export type OrderAcknowledgeRequest = {
+        /**
+         * The key this order has in the system that OWNS it — the ERP's own handle on the sales order, which is what a write-back addresses. Distinct from `external_ref`, which is the readable ORDER NUMBER that system quotes at a human, and from `number`, which is the one this app issued. Unique per tenant where set, so a retried import that sends the same key again is refused rather than founding a second order. Null for an order the shop owns. The key beside the document number, and the one a write-back addresses. Keeps the existing value when omitted; a key another order of this tenant already holds is a 409.
+         */
+        external_id?: string | null;
         /**
          * The FULFILLING system's reference for this order, typically the ERP order number. Written once by POST /orders/{id}/acknowledge and null until an integration acknowledged it. Keeps the existing value when omitted.
          */
         external_ref?: string;
+        /**
+         * Every OTHER system that knows this order, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer. Keeps the existing value when omitted.
+         */
+        external_refs?: object | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it. Where the ETag of the handover belongs. Keeps the existing value when omitted.
+         */
+        source_data?: object | null;
+        /**
+         * When this order was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a order no source owns. Keeps the existing value when omitted — the acknowledgement itself is stamped in acknowledged_at, which is a different fact.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -11334,15 +14856,23 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         discounts?: OrderDiscount[];
         /**
+         * The key this order has in the system that OWNS it — the ERP's own handle on the sales order, which is what a write-back addresses. Distinct from `external_ref`, which is the readable ORDER NUMBER that system quotes at a human, and from `number`, which is the one this app issued. Unique per tenant where set, so a retried import that sends the same key again is refused rather than founding a second order. Null for an order the shop owns.
+         */
+        external_id?: string | null;
+        /**
          * The FULFILLING system's reference for this order, typically the ERP order number. Written once by POST /orders/{id}/acknowledge and null until an integration acknowledged it.
          */
         external_ref?: string | null;
+        /**
+         * Every OTHER system that knows this order, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * Whether the order has SHIPPED, and the one dimension nobody writes: it is DERIVED after every quantity change from the positions' own bookkeeping. 'fulfilled' means shipped >= ordered − cancelled across all positions, 'partial' means something went out. Sending it has no effect; ship, cancel or return something and it moves.
          */
         fulfillment_status?: OrderFulfillmentStatus;
         /**
-         * What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
+         * What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus the payment surcharge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
          */
         grand_total?: number;
         /**
@@ -11378,9 +14908,21 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         organization_id?: string | null;
         /**
-         * The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
+         * The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'; a buyer's own call may only send 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
          */
         payment?: object | null;
+        /**
+         * The payment surcharge this order was placed with, NET — what the payments app computed for the chosen method (a fixed amount, or a share of the order). Zero for a method that charges nothing, which is most of them. Passed in with the payment arrangement the way the shipping price is, and stored rather than folded into the `payment` blob: a grand_total that silently included a fee nobody could point at is a reconciliation nobody can finish.
+         */
+        payment_fee_amount?: number;
+        /**
+         * Tax on the payment surcharge, part of tax_total and stored separately so the fee can be stated on its own line of an invoice or an export.
+         */
+        payment_fee_tax_amount?: number;
+        /**
+         * The rate the payment surcharge was taxed at, frozen at place-time (19 means 19 %). A surcharge is a Nebenleistung and is taxed like one.
+         */
+        payment_fee_tax_rate?: number;
         /**
          * Whether the order is PAID, and the dimension this app does not decide: it is fed from outside through POST /orders/{id}/payment-status (the payments app or an ERP), and only seeded at place-time from payment.status. Orthogonal to the lifecycle — a completed order can still be open, and a paid one can still be pending.
          */
@@ -11389,6 +14931,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * When the order was PLACED. Null while it is pending approval: an order awaiting sign-off exists but was never placed, and that is exactly the difference this field records.
          */
         placed_at?: string | null;
+        /**
+         * The calendar day the BUYER asked to be delivered on, as a date and not a moment — a buyer asks for Tuesday, not for Tuesday at 14:03 in a timezone nobody named. It is a wish and nothing here judges it: a date in the past, a weekend or a day inside the lead time is stored as sent, because what is deliverable is the merchant's answer and this app reads neither stock nor carrier calendar. The positions carry their own, and A POSITION'S DATE WINS over this one — this is the proposal for every position that names none. Null on an order that asked for nothing, which is the ordinary case. It was collected in `user_data.requested_date` before this column existed and is still echoed there by callers that have not moved over; the column is what is compared, sorted and mapped.
+         */
+        requested_delivery_date?: string | null;
         /**
          * What is coming back or has come back, oldest first, in every state including rejected. A return is registered against the SHIPPED quantities, so this list is empty on an order that never shipped.
          */
@@ -11418,6 +14964,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shipping_total?: number;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this order was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a order no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * Where the order stands in its LIFECYCLE, and one of three independent status dimensions. 'pending' = created but not placed, an order waiting for approval; 'placed' = accepted, nothing shipped; 'in_fulfillment' = part of it has gone out, or all of it has and the tenant does not close on shipment; 'completed' and 'cancelled' end it. Moved by the action routes only — it is not writable through PUT /orders/{id}.
          */
         status?: OrderStatus;
@@ -11434,7 +14988,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         updated_at?: string;
         /**
-         * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change.
+         * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change. One key of it is read: `requested_date`, which is where the wanted delivery date was collected before it had a column, and which is taken as the date only when `requested_delivery_date` names none. The blob itself is never rewritten by that reading.
          */
         user_data?: object | null;
     }
@@ -11488,9 +15042,9 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         placement?: OrderDiscountPlacement;
         /**
-         * The promotion in the promotions app that granted this. A loose reference on purpose — an order must stay readable after the promotion is edited or deleted, the same reason the buyer is a frozen copy.
+         * The promotion in the promotions app that granted this. A loose reference on purpose — an order must stay readable after the promotion is edited or deleted, the same reason the buyer is a frozen copy. NULL where `source` is 'app': a figure an app computed has no promotion behind it, and a placeholder id would be a lie a reconciliation would follow. Every step this app writes today carries one.
          */
-        promotion_id?: string;
+        promotion_id?: string | null;
         /**
          * What the promotion was called when it applied, frozen. Renaming it later does not rewrite this order.
          */
@@ -11499,6 +15053,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * The order in which the steps were applied, from 1. It is not decoration: a percentage acts on what is LEFT, so replaying the chain out of order gives a different answer.
          */
         sequence?: number;
+        /**
+         * Where this step's money came from: 'promotion' — a promotion of the promotions app, which every step written so far is — or 'app' — a figure an installed app computed at order time, a metal surcharge out of a daily rate and a weight being the case it exists for. Without it a step with no promotion behind it would be indistinguishable from one whose promotion was deleted. It defaults to 'promotion', so every row written before it existed reads correctly.
+         */
+        source?: OrderDiscountSource;
         /**
          * The rate the reduced money was taxed at, which is how discount_tax_split is arrived at. Null when the step reduced something with no rate of its own.
          */
@@ -11542,7 +15100,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         items?: OrderDraftLine[];
         /**
-         * Carries `quote_id` and `quote_number`, so the order names where its price came from.
+         * Carries `quote_id` and `quote_number`, so the order names where its price came from — plus `quote_external_id` where the quote came from a source, which is what lets that source reconcile the order it produced. The order's OWN key in that system is a different value and is not this one.
          */
         metadata?: object;
         /**
@@ -11654,6 +15212,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         discount_percent?: number | null;
         /**
+         * The key this POSITION has in the system that owns the order — the ERP's sales-line handle. It is what lets a partial shipment or a partial invoice name the line it covers: without it the far side can only say "three of something", and matching by sku fails on an order that carries the same article twice. Unique per tenant where set. Null on a position the shop owns.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this position, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Primary key of the position. This is the id every positions[] payload names: /ship, /items/cancel and /return all take order_item_id.
          */
         id?: string;
@@ -11710,15 +15276,27 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         quantity_shipped?: number;
         /**
+         * The calendar day this POSITION is wanted on, where it differs from the order's. THE LINE WINS: a buyer who pulls one position forward is asking for that position, not for the order, and a fulfilling system reads the line's date where there is one and the order's where there is not. Null is the ordinary case and means exactly that — the order's date applies. Nothing copies the order's value down here, because a null that was filled in cannot afterwards be told apart from a null the buyer meant. It is set at placement; no address changes it once the order exists.
+         */
+        requested_delivery_date?: string | null;
+        /**
          * The article number as it stood at place-time, frozen with the rest of the line. The value an ERP and a warehouse both join on, and the one field a picker reads. Null only on a line that never had one.
          */
         sku?: string | null;
         /**
-         * Tax on this line in `currency`. Derived from line_total_discounted × tax_rate/100 — the money actually owed, not the list price when the caller sent none, which is the normal case — but a caller may send it, for a market whose rounding rules differ from ours.
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this position was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a position no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
+         * Tax on this line in `currency`, always COMPUTED here: line_total_discounted × tax_rate/100 — the money actually owed, not the list price. A caller cannot set it; a value sent at placement is not read.
          */
         tax_amount?: number;
         /**
-         * Tax percentage for this line, as a number (19 means 19 %). Frozen at place-time with everything else.
+         * Tax percentage for this line, as a number from 0 to 100 (19 means 19 %). Frozen at place-time with everything else.
          */
         tax_rate?: number;
         /**
@@ -11730,7 +15308,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         unit?: string | null;
         /**
-         * NET price per unit, FROZEN at place-time. A later price change in the catalog does not reach this order.
+         * NET price per unit, FROZEN at place-time, never below zero. A later price change in the catalog does not reach this order. It is the placing caller's figure — this app reads no price list, so the server-side orchestrator that places the order (a storefront BFF, procurement, a quote) is what stands behind it.
          */
         unit_price?: number;
         /**
@@ -11744,7 +15322,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * A position of the placed order — needs an identity: &#039;name&#039; or &#039;sku&#039;. Items are SNAPSHOTS: carry the product copy, prices are frozen at place-time.
+     * A position of the placed order — needs an identity: 'name' or 'sku'. Items are SNAPSHOTS: carry the product copy, prices are frozen at place-time.
      */
     export type OrderItemCreateRequest = {
         /**
@@ -11755,6 +15333,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * The buyer's own cost centre for this line — a B2B field: the same order is split across several of them and the buyer's finance department needs the split per line, not per order. Omit it and a `cost_center` inside this line's `metadata` is taken instead: a cart has no cost-centre field of its own, so an order placed straight from one carries the centre there. Sending it here wins over that copy. A metadata value that is not a non-blank string is ignored rather than refused, and the metadata itself is stored exactly as sent either way.
          */
         cost_center?: string | null;
+        /**
+         * The key this POSITION has in the system that owns the order — the ERP's sales-line handle. It is what lets a partial shipment or a partial invoice name the line it covers: without it the far side can only say "three of something", and matching by sku fails on an order that carries the same article twice. Unique per tenant where set. Null on a position the shop owns. Send it on every position of an order a foreign system owns: a later partial shipment or partial invoice names the line, and nothing else resolves that name back to a position here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this position, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * Free-form data belonging to the integration side, per position. Stored and returned untouched.
          */
@@ -11784,6 +15370,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         quantity?: number | null;
         /**
+         * The calendar day this POSITION is wanted on, where it differs from the order's. THE LINE WINS: a buyer who pulls one position forward is asking for that position, not for the order, and a fulfilling system reads the line's date where there is one and the order's where there is not. Null is the ordinary case and means exactly that — the order's date applies. Nothing copies the order's value down here, because a null that was filled in cannot afterwards be told apart from a null the buyer meant. It is set at placement; no address changes it once the order exists. Send it only where this position is wanted on a different day from the order — omit it and the order's date applies, which is what almost every position wants. 'YYYY-MM-DD'; a value that is not a day that exists is a 400 naming the position.
+         */
+        requested_delivery_date?: string | null;
+        /**
          * The article number as it stood at place-time, frozen with the rest of the line. The value an ERP and a warehouse both join on, and the one field a picker reads. Null only on a line that never had one.
          */
         sku?: string | null;
@@ -11792,11 +15382,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         snapshot?: object | null;
         /**
-         * Tax on this line in `currency`. Derived from line_total_discounted × tax_rate/100 — the money actually owed, not the list price when the caller sent none, which is the normal case — but a caller may send it, for a market whose rounding rules differ from ours. Send it only where your market rounds differently from line_total × tax_rate/100.
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this position was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a position no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
+         * Tax on this line in `currency`, always COMPUTED here: line_total_discounted × tax_rate/100 — the money actually owed, not the list price. A caller cannot set it; a value sent at placement is not read. NOT READ — accepted for callers that send it, and replaced by the computed figure. Kept in the contract so a caller sending it is not refused.
          */
         tax_amount?: number | null;
         /**
-         * Tax percentage for this line, as a number (19 means 19 %). Frozen at place-time with everything else. Defaults to 0.
+         * Tax percentage for this line, as a number from 0 to 100 (19 means 19 %). Frozen at place-time with everything else. Defaults to 0; outside 0–100 is a 400.
          */
         tax_rate?: number | null;
         /**
@@ -11808,7 +15406,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         unit?: string | null;
         /**
-         * NET price per unit, FROZEN at place-time. A later price change in the catalog does not reach this order. Defaults to 0. line_total is always derived from it and never taken from the body.
+         * NET price per unit, FROZEN at place-time, never below zero. A later price change in the catalog does not reach this order. It is the placing caller's figure — this app reads no price list, so the server-side orchestrator that places the order (a storefront BFF, procurement, a quote) is what stands behind it. Defaults to 0. Below zero is a 400: a reduction travels in 'discounts'. line_total is always derived from it and never taken from the body.
          */
         unit_price?: number | null;
         /**
@@ -11840,6 +15438,14 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type OrderListCreateRequest = {
         /**
+         * The id this list has in the system that OWNS it — the saved list as the shop this tenant migrated from numbered it. Unique per tenant where it is set, so a re-run of the migration updates the list it wrote last time instead of leaving the buyer two of them. Null for a list created here, which is every list a buyer has ever made in this shop.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this list, keyed by system name — a second shop it was carried through, a procurement platform that mirrors it. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the list up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Optional initial positions. Every one is validated — and article-checked where `reject_unknown_articles` is on — BEFORE the list row is written, so a rejected position never leaves an empty list behind.
          */
         items?: OrderListItemInput[];
@@ -11856,7 +15462,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         name: string;
         /**
-         * The organization the sharing is scoped to. Null means the list can only ever be the owner's own: `shared` is meaningless without it, because there is no set of people to share with. It is also what the order conversion hands the orders app as the buying organization.
+         * The organization the sharing is scoped to. Null means the list can only ever be the owner's own: `shared` is meaningless without it, because there is no set of people to share with. It is also the buying organization the cart conversion asks the prices app to price for when no acting contact is asserted.
          */
         organization_id?: string | null;
         /**
@@ -11871,6 +15477,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * Whether the OWNING ORGANIZATION may see this list. False — the default — keeps it private to `owner_id`, and a foreign private list answers 404 rather than 403, so an outsider learns nothing from the difference. True lets every contact of `organization_id` READ it, and write it only where the tenant turned on the `shared_lists_editable` setting. A list with no `organization_id` shares with nobody however this is set.
          */
         shared?: boolean;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -11882,7 +15496,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         category_slug?: string | null;
         /**
-         * The cost centre this position books to, as the tenant's ERP names it. Free text and not our enum. It survives into the ORDER position, which has a `cost_center` column; a CART line has none, so the cart conversion carries it in the line snapshot instead.
+         * The cost centre this position books to, as the tenant's ERP names it. Free text and not our enum. A cart line has no column for it, so the cart conversion carries it in the line snapshot.
          */
         cost_center_id?: string | null;
         /**
@@ -11894,11 +15508,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         custom_sku?: string | null;
         /**
+         * The id this position has in the system that OWNS it — the line as the shop this tenant migrated from numbered it, usually the old list id and the line number. Unique per tenant where it is set. It is what makes a re-run of the migration update the line rather than append a second one, which on a list of two hundred positions is the difference between a correction and a mess.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this position, keyed by system name. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the position up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The position, by id.
          */
         id?: string;
         /**
-         * The article image at the time the position was saved, as a URL or a path — a snapshot like `name`, and nothing here refreshes it. It rides into the cart line and the order position in their snapshot, because neither has a column for it.
+         * The article image at the time the position was saved, as a URL or a path — a snapshot like `name`, and nothing here refreshes it. It rides into the cart line's snapshot, because a cart line has no column for it.
          */
         image?: string | null;
         /**
@@ -11906,7 +15528,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         list_id?: string;
         /**
-         * Free-form data the tenant keeps on the position. Never read by this app; it travels into the cart line / order position snapshot untouched. A write replaces the whole document rather than merging into it.
+         * Free-form data the tenant keeps on the position. Never read by this app; it is never copied into a cart line. A write replaces the whole document rather than merging into it.
          */
         metadata?: object | null;
         /**
@@ -11914,19 +15536,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         name?: string;
         /**
-         * Sort order within the list, ascending — the order the positions collection returns by default and the order the conversions hand the lines over in. Neither dense nor unique: an add with no `position` of its own takes the list's current position COUNT, so removing a position from the middle and adding another leaves two rows sharing a number. A bulk replace assigns the array index the same way, so it renumbers only the positions it is not given explicitly.
+         * Sort order within the list, ascending — the order the positions collection returns by default and the order the cart conversion hands the lines over in. Neither dense nor unique: an add with no `position` of its own takes the list's current position COUNT, so removing a position from the middle and adding another leaves two rows sharing a number. A bulk replace assigns the array index the same way, so it renumbers only the positions it is not given explicitly.
          */
         position?: number;
         /**
-         * Per-position notes the buyer wrote — an engraving, a delivery instruction, a reference for the picker. An ARRAY OF STRINGS, one entry per line; the order conversion joins them with newlines into the order position's single `position_text`, and the cart conversion carries the array in the line snapshot.
+         * Per-position notes the buyer wrote — an engraving, a delivery instruction, a reference for the picker. An ARRAY OF STRINGS, one entry per line; a single string is accepted on a write and stored as a one-line array, anything else is a 400. The cart conversion carries the array in the line snapshot.
          */
         position_texts?: object | null;
         /**
-         * Unit price snapshot — what the buyer saw when they saved the position, in whatever way the catalogue quoted it. It is a record, not a live price: the cart and the order reprice on their own terms, so this never becomes what somebody is charged.
+         * The price when saved — what the buyer saw when they saved the position, in whatever way the catalogue quoted it. Informational only and never binding: the cart conversion prices every line through the prices app at the current price, and carries this one in the line snapshot as `saved_price`. A line the prices app cannot price is left out rather than sent at this price.
          */
         price?: number | null;
         /**
-         * The catalogue product this position stands for. One of `product_id` / `sku` must be set (the database enforces it); this is the identity the products app answers to, and the one `reject_unknown_articles` and the conversions check against.
+         * The catalogue product this position stands for. One of `product_id` / `sku` must be set (the database enforces it); this is the identity the products app answers to, and the one `reject_unknown_articles` and the cart conversion check against.
          */
         product_id?: string | null;
         /**
@@ -11938,11 +15560,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         sku?: string | null;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
          * The catalogue subcategory, as a slug. Same purpose as `category_slug`, one level down.
          */
         subcategory_slug?: string | null;
         /**
-         * The VAT rate that applied when the position was saved, as a PERCENT (19 = 19 %). Four decimals so a rate like 8.25 % survives; carts and orders document the same field the same way, and the conversion forwards the number unchanged.
+         * The VAT rate that applied when the position was saved, as a PERCENT (19 = 19 %). Four decimals so a rate like 8.25 % survives; carts and orders document the same field the same way. Informational like `price`: the cart line always takes the rate the prices app quotes, and carries this one in its snapshot as `saved_tax_rate`; where the prices app cannot tax the call, the conversion is refused rather than falling back to it.
          */
         tax_rate?: number | null;
         /**
@@ -11968,7 +15598,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         category_slug?: string | null;
         /**
-         * The cost centre this position books to, as the tenant's ERP names it. Free text and not our enum. It survives into the ORDER position, which has a `cost_center` column; a CART line has none, so the cart conversion carries it in the line snapshot instead.
+         * The cost centre this position books to, as the tenant's ERP names it. Free text and not our enum. A cart line has no column for it, so the cart conversion carries it in the line snapshot.
          */
         cost_center_id?: string | null;
         /**
@@ -11976,11 +15606,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         custom_sku?: string | null;
         /**
-         * The article image at the time the position was saved, as a URL or a path — a snapshot like `name`, and nothing here refreshes it. It rides into the cart line and the order position in their snapshot, because neither has a column for it.
+         * The id this position has in the system that OWNS it — the line as the shop this tenant migrated from numbered it, usually the old list id and the line number. Unique per tenant where it is set. It is what makes a re-run of the migration update the line rather than append a second one, which on a list of two hundred positions is the difference between a correction and a mess.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this position, keyed by system name. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the position up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
+         * The article image at the time the position was saved, as a URL or a path — a snapshot like `name`, and nothing here refreshes it. It rides into the cart line's snapshot, because a cart line has no column for it.
          */
         image?: string | null;
         /**
-         * Free-form data the tenant keeps on the position. Never read by this app; it travels into the cart line / order position snapshot untouched. A write replaces the whole document rather than merging into it.
+         * Free-form data the tenant keeps on the position. Never read by this app; it is never copied into a cart line. A write replaces the whole document rather than merging into it.
          */
         metadata?: object | null;
         /**
@@ -11988,19 +15626,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         name: string;
         /**
-         * Sort order within the list, ascending — the order the positions collection returns by default and the order the conversions hand the lines over in. Neither dense nor unique: an add with no `position` of its own takes the list's current position COUNT, so removing a position from the middle and adding another leaves two rows sharing a number. A bulk replace assigns the array index the same way, so it renumbers only the positions it is not given explicitly.
+         * Sort order within the list, ascending — the order the positions collection returns by default and the order the cart conversion hands the lines over in. Neither dense nor unique: an add with no `position` of its own takes the list's current position COUNT, so removing a position from the middle and adding another leaves two rows sharing a number. A bulk replace assigns the array index the same way, so it renumbers only the positions it is not given explicitly.
          */
         position?: number;
         /**
-         * Per-position notes the buyer wrote — an engraving, a delivery instruction, a reference for the picker. An ARRAY OF STRINGS, one entry per line; the order conversion joins them with newlines into the order position's single `position_text`, and the cart conversion carries the array in the line snapshot.
+         * Per-position notes the buyer wrote — an engraving, a delivery instruction, a reference for the picker. An ARRAY OF STRINGS, one entry per line; a single string is accepted on a write and stored as a one-line array, anything else is a 400. The cart conversion carries the array in the line snapshot.
          */
         position_texts?: string[] | null;
         /**
-         * Unit price snapshot — what the buyer saw when they saved the position, in whatever way the catalogue quoted it. It is a record, not a live price: the cart and the order reprice on their own terms, so this never becomes what somebody is charged.
+         * The price when saved — what the buyer saw when they saved the position, in whatever way the catalogue quoted it. Informational only and never binding: the cart conversion prices every line through the prices app at the current price, and carries this one in the line snapshot as `saved_price`. A line the prices app cannot price is left out rather than sent at this price.
          */
         price?: number | null;
         /**
-         * The catalogue product this position stands for. One of `product_id` / `sku` must be set (the database enforces it); this is the identity the products app answers to, and the one `reject_unknown_articles` and the conversions check against.
+         * The catalogue product this position stands for. One of `product_id` / `sku` must be set (the database enforces it); this is the identity the products app answers to, and the one `reject_unknown_articles` and the cart conversion check against.
          */
         product_id?: string | null;
         /**
@@ -12012,11 +15650,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         sku?: string | null;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
          * The catalogue subcategory, as a slug. Same purpose as `category_slug`, one level down.
          */
         subcategory_slug?: string | null;
         /**
-         * The VAT rate that applied when the position was saved, as a PERCENT (19 = 19 %). Four decimals so a rate like 8.25 % survives; carts and orders document the same field the same way, and the conversion forwards the number unchanged.
+         * The VAT rate that applied when the position was saved, as a PERCENT (19 = 19 %). Four decimals so a rate like 8.25 % survives; carts and orders document the same field the same way. Informational like `price`: the cart line always takes the rate the prices app quotes, and carries this one in its snapshot as `saved_tax_rate`; where the prices app cannot tax the call, the conversion is refused rather than falling back to it.
          */
         tax_rate?: number | null;
         /**
@@ -12026,7 +15672,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * Partial update — omitted fields keep their current value. `quantity` is still checked (&gt; 0) and the article is still checked against the catalogue where `reject_unknown_articles` is on.
+     * Partial update — omitted fields keep their current value. Every field sent is checked as on an add (`quantity` > 0, `price` not negative, `tax_rate` 0–100, `product_id` a uuid), the article is still checked against the catalogue where `reject_unknown_articles` is on, and a body that names no field this route changes is a 400.
      */
     export type OrderListItemUpdateRequest = {
         /**
@@ -12034,7 +15680,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         category_slug?: string | null;
         /**
-         * The cost centre this position books to, as the tenant's ERP names it. Free text and not our enum. It survives into the ORDER position, which has a `cost_center` column; a CART line has none, so the cart conversion carries it in the line snapshot instead.
+         * The cost centre this position books to, as the tenant's ERP names it. Free text and not our enum. A cart line has no column for it, so the cart conversion carries it in the line snapshot.
          */
         cost_center_id?: string | null;
         /**
@@ -12042,11 +15688,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         custom_sku?: string | null;
         /**
-         * The article image at the time the position was saved, as a URL or a path — a snapshot like `name`, and nothing here refreshes it. It rides into the cart line and the order position in their snapshot, because neither has a column for it.
+         * The id this position has in the system that OWNS it — the line as the shop this tenant migrated from numbered it, usually the old list id and the line number. Unique per tenant where it is set. It is what makes a re-run of the migration update the line rather than append a second one, which on a list of two hundred positions is the difference between a correction and a mess.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this position, keyed by system name. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the position up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
+         * The article image at the time the position was saved, as a URL or a path — a snapshot like `name`, and nothing here refreshes it. It rides into the cart line's snapshot, because a cart line has no column for it.
          */
         image?: string | null;
         /**
-         * Free-form data the tenant keeps on the position. Never read by this app; it travels into the cart line / order position snapshot untouched. A write replaces the whole document rather than merging into it.
+         * Free-form data the tenant keeps on the position. Never read by this app; it is never copied into a cart line. A write replaces the whole document rather than merging into it.
          */
         metadata?: object | null;
         /**
@@ -12054,19 +15708,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         name?: string;
         /**
-         * Sort order within the list, ascending — the order the positions collection returns by default and the order the conversions hand the lines over in. Neither dense nor unique: an add with no `position` of its own takes the list's current position COUNT, so removing a position from the middle and adding another leaves two rows sharing a number. A bulk replace assigns the array index the same way, so it renumbers only the positions it is not given explicitly.
+         * Sort order within the list, ascending — the order the positions collection returns by default and the order the cart conversion hands the lines over in. Neither dense nor unique: an add with no `position` of its own takes the list's current position COUNT, so removing a position from the middle and adding another leaves two rows sharing a number. A bulk replace assigns the array index the same way, so it renumbers only the positions it is not given explicitly.
          */
         position?: number;
         /**
-         * Per-position notes the buyer wrote — an engraving, a delivery instruction, a reference for the picker. An ARRAY OF STRINGS, one entry per line; the order conversion joins them with newlines into the order position's single `position_text`, and the cart conversion carries the array in the line snapshot.
+         * Per-position notes the buyer wrote — an engraving, a delivery instruction, a reference for the picker. An ARRAY OF STRINGS, one entry per line; a single string is accepted on a write and stored as a one-line array, anything else is a 400. The cart conversion carries the array in the line snapshot.
          */
         position_texts?: string[] | null;
         /**
-         * Unit price snapshot — what the buyer saw when they saved the position, in whatever way the catalogue quoted it. It is a record, not a live price: the cart and the order reprice on their own terms, so this never becomes what somebody is charged.
+         * The price when saved — what the buyer saw when they saved the position, in whatever way the catalogue quoted it. Informational only and never binding: the cart conversion prices every line through the prices app at the current price, and carries this one in the line snapshot as `saved_price`. A line the prices app cannot price is left out rather than sent at this price.
          */
         price?: number | null;
         /**
-         * The catalogue product this position stands for. One of `product_id` / `sku` must be set (the database enforces it); this is the identity the products app answers to, and the one `reject_unknown_articles` and the conversions check against.
+         * The catalogue product this position stands for. One of `product_id` / `sku` must be set (the database enforces it); this is the identity the products app answers to, and the one `reject_unknown_articles` and the cart conversion check against.
          */
         product_id?: string | null;
         /**
@@ -12078,11 +15732,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         sku?: string | null;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
          * The catalogue subcategory, as a slug. Same purpose as `category_slug`, one level down.
          */
         subcategory_slug?: string | null;
         /**
-         * The VAT rate that applied when the position was saved, as a PERCENT (19 = 19 %). Four decimals so a rate like 8.25 % survives; carts and orders document the same field the same way, and the conversion forwards the number unchanged.
+         * The VAT rate that applied when the position was saved, as a PERCENT (19 = 19 %). Four decimals so a rate like 8.25 % survives; carts and orders document the same field the same way. Informational like `price`: the cart line always takes the rate the prices app quotes, and carries this one in its snapshot as `saved_tax_rate`; where the prices app cannot tax the call, the conversion is refused rather than falling back to it.
          */
         tax_rate?: number | null;
         /**
@@ -12216,7 +15878,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         descriptions?: object | null;
         /**
-         * True promotes this kind and demotes the previous default — the same move POST /orderlists/kinds/{id}/make-default makes on its own.
+         * True promotes this kind and demotes the previous default — the same move POST /orderlists/kinds/{id}/make-default makes on its own. False is accepted only on a kind that is not the default: the flag moves by promoting another kind.
          */
         is_default?: boolean;
         /**
@@ -12228,7 +15890,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         position?: number;
         /**
-         * What a person reads. A blank title is ignored rather than stored — a kind with no words is unreadable in every UI.
+         * What a person reads. A blank title is a 400 — a kind with no words is unreadable in every UI.
          */
         title?: string;
         /**
@@ -12238,7 +15900,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * A position left out of the conversion because the catalogue no longer knows its article (only ever non-empty when the tenant&#039;s &#039;on_missing_article&#039; setting is &#039;skip&#039;).
+     * A position left out of the conversion: the catalogue no longer knows its article (only when the tenant's 'on_missing_article' setting is 'skip'), or the prices app has no current price for it (always, unless that setting is 'fail', which refuses instead).
      */
     export type OrderListSkippedPosition = {
         /**
@@ -12254,6 +15916,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         product_id?: string | null;
         /**
+         * Why it was left out. 'missing_article': the catalogue no longer knows the article. 'no_current_price': the prices app quotes it only on request, or not at all — it is never sent at the price it was saved with.
+         */
+        reason?: OrderListSkipReason;
+        /**
          * The article number the position named, if it named one.
          */
         sku?: string | null;
@@ -12267,6 +15933,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * When the list was created.
          */
         created_at?: string;
+        /**
+         * The id this list has in the system that OWNS it — the saved list as the shop this tenant migrated from numbered it. Unique per tenant where it is set, so a re-run of the migration updates the list it wrote last time instead of leaving the buyer two of them. Null for a list created here, which is every list a buyer has ever made in this shop.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this list, keyed by system name — a second shop it was carried through, a procurement platform that mirrors it. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the list up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * The list, by id. Generated by the database and the only way to address it — every /orderlists/{id} route takes this uuid.
          */
@@ -12288,7 +15962,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         name?: string;
         /**
-         * The organization the sharing is scoped to. Null means the list can only ever be the owner's own: `shared` is meaningless without it, because there is no set of people to share with. It is also what the order conversion hands the orders app as the buying organization.
+         * The organization the sharing is scoped to. Null means the list can only ever be the owner's own: `shared` is meaningless without it, because there is no set of people to share with. It is also the buying organization the cart conversion asks the prices app to price for when no acting contact is asserted.
          */
         organization_id?: string | null;
         /**
@@ -12308,6 +15982,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shared?: boolean;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
          * The tenant this row belongs to, as a slug. Set by the platform, never by a caller — it is the row-level security scope, not a field, and every row a request can reach is inside it already.
          */
         tenant_id?: string;
@@ -12318,17 +16000,21 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * Every field is optional: with an empty body the list goes into a NEW cart for its owner, on the tenant defaults.
+     * Every field is optional: with an empty body the list goes into a NEW cart for the buyer — the acting contact, or the list owner from the back office — on the tenant defaults.
      */
     export type OrderListToCartRequest = {
         /**
-         * Add to this existing cart. Omit to create one for the list owner and make it their current cart.
+         * Add to this existing cart. Omit to create one for the acting contact (from the back office: for the list owner). Whose cart this id names is not checked here — that is the carts app's rule to enforce.
          */
         cart_id?: string | null;
         /**
-         * ISO 4217 code for the cart and its lines. Omit to let the carts app decide.
+         * ISO 4217 code for the cart and its lines, and the currency the prices app is asked to price in — only price lists in it count. Omit to let the carts and prices apps apply the market default.
          */
         currency?: string | null;
+        /**
+         * The market CODE (markets.code) this conversion is for, sent as `X-Revenexx-Market` to the prices app (which prices and taxes in it) and to every carts call (a new cart is assigned to that market and opens in its currency). It wins over the caller's own market header; omit it to forward that header as is. A back office with several markets names one here, because without a market such a tenant's prices cannot be taxed and the call is refused. Matched case-insensitively and forwarded lower-cased.
+         */
+        market?: string | null;
         /**
          * 'append' adds the positions (the carts app merges a line by product and price, so quantities accumulate); 'replace' makes the list the cart's entire contents. Defaults to the tenant's 'cart_merge_mode' setting.
          */
@@ -12344,7 +16030,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         added?: number;
         /**
-         * True when this call created the cart. A created cart is the owner's CURRENT cart, because a cart the buyer cannot see is not "added to cart".
+         * True when this call created the cart. With an acting contact a created cart is THAT CONTACT'S current cart, because a cart the buyer cannot see is not "added to cart"; without one (the back office) it is not, so the customer's own cart stays current.
          */
         cart_created?: boolean;
         /**
@@ -12360,63 +16046,23 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         mode?: OrderListCartMode;
         /**
-         * Positions left out because the catalogue no longer knows their article. Only ever non-empty when 'on_missing_article' is 'skip' — 'include' converts them anyway and 'fail' answers 400 instead.
+         * Positions left out, in list order, each with its `reason`. A vanished article is left out only when 'on_missing_article' is 'skip' ('include' converts it anyway); a position without a current price is left out under 'include' and 'skip' alike. Under 'fail' either answers 400 instead.
          */
         skipped?: OrderListSkippedPosition[];
     }
 
     /**
-     * Every field is optional — the buyer, the organization and the positions all come from the list.
-     */
-    export type OrderListToOrderRequest = {
-        /**
-         * ISO 4217 code. Omit to let the orders app apply the market default.
-         */
-        currency?: string | null;
-        /**
-         * The BUYER's own order or purchase-order number, forwarded to the orders app verbatim. Free text and never generated here: it exists so the paperwork can carry the number the buyer's accounts payable will look for.
-         */
-        customer_order_number?: string | null;
-    }
-
-    /**
-     * 
-     */
-    export type OrderListToOrderResult = {
-        /**
-         * The list that was ordered. Unchanged by the call — the list stays, so it can be ordered again next month.
-         */
-        list_id?: string;
-        /**
-         * The orders app's answer, verbatim and unreshaped — the whole created order, whose shape is the orders app's own `Order` schema (GET /v1/orders/{id}) and is deliberately not restated here, because a copy would be the thing that goes stale. `order_id`, `order_number` and `status` are lifted out of it for a client that needs nothing else.
-         */
-        order?: object;
-        /**
-         * The order the orders app created. Null only when that app answered without one, which is a fault worth reporting rather than a normal outcome.
-         */
-        order_id?: string | null;
-        /**
-         * The order number a human quotes, drawn from the tenant's order range by the orders app. It is NOT the id: every orders route addresses an order by uuid.
-         */
-        order_number?: string | null;
-        /**
-         * Positions handed to the orders app — the list's count minus `skipped`.
-         */
-        positions?: number;
-        /**
-         * Positions left out because the catalogue no longer knows their article. Only ever non-empty when 'on_missing_article' is 'skip'.
-         */
-        skipped?: OrderListSkippedPosition[];
-        /**
-         * Where the new order stands, as the orders app decided: 'placed' when it was accepted outright, 'pending' when it awaits approval — a contact holding only orders.request, or an order above the tenant's approval threshold. This app does not choose it and cannot override it.
-         */
-        status?: string | null;
-    }
-
-    /**
-     * Partial update — rename, visibility or kind. Positions go through the items routes, and the owner cannot be changed.
+     * Partial update — rename, visibility or kind. Positions go through the items routes. `owner_id` and `organization_id` are immutable: sending the value the list already has is accepted, any other value is a 400.
      */
     export type OrderListUpdateRequest = {
+        /**
+         * The id this list has in the system that OWNS it — the saved list as the shop this tenant migrated from numbered it. Unique per tenant where it is set, so a re-run of the migration updates the list it wrote last time instead of leaving the buyer two of them. Null for a list created here, which is every list a buyer has ever made in this shop.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this list, keyed by system name — a second shop it was carried through, a procurement platform that mirrors it. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the list up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * List kind — the `code` of one of the tenant's own kinds (GET /orderlists/kinds); defaults to the flagged one, or the market's 'default_kind' setting.
          */
@@ -12430,9 +16076,25 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         name?: string;
         /**
+         * The organization the sharing is scoped to. Null means the list can only ever be the owner's own: `shared` is meaningless without it, because there is no set of people to share with. It is also the buying organization the cart conversion asks the prices app to price for when no acting contact is asserted.
+         */
+        organization_id?: string | null;
+        /**
+         * The contact who owns the list. Ownership IS the authorization here: a caller the gateway resolved to a contact sees their own lists plus their organization's shared ones, and may write only their own — unless `shared_lists_editable` opens a shared list to the whole owning organization. Set once at create; no route moves a list to another owner.
+         */
+        owner_id?: string;
+        /**
          * Whether the OWNING ORGANIZATION may see this list. False — the default — keeps it private to `owner_id`, and a foreign private list answers 404 rather than 403, so an outsider learns nothing from the difference. True lets every contact of `organization_id` READ it, and write it only where the tenant turned on the `shared_lists_editable` setting. A list with no `organization_id` shares with nobody however this is set.
          */
         shared?: boolean;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -12538,6 +16200,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         created_at?: string;
         /**
+         * The id this list has in the system that OWNS it — the saved list as the shop this tenant migrated from numbered it. Unique per tenant where it is set, so a re-run of the migration updates the list it wrote last time instead of leaving the buyer two of them. Null for a list created here, which is every list a buyer has ever made in this shop.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this list, keyed by system name — a second shop it was carried through, a procurement platform that mirrors it. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the list up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The list, by id. Generated by the database and the only way to address it — every /orderlists/{id} route takes this uuid.
          */
         id?: string;
@@ -12558,7 +16228,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         name?: string;
         /**
-         * The organization the sharing is scoped to. Null means the list can only ever be the owner's own: `shared` is meaningless without it, because there is no set of people to share with. It is also what the order conversion hands the orders app as the buying organization.
+         * The organization the sharing is scoped to. Null means the list can only ever be the owner's own: `shared` is meaningless without it, because there is no set of people to share with. It is also the buying organization the cart conversion asks the prices app to price for when no acting contact is asserted.
          */
         organization_id?: string | null;
         /**
@@ -12578,6 +16248,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shared?: boolean;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
          * The tenant this row belongs to, as a slug. Set by the platform, never by a caller — it is the row-level security scope, not a field, and every row a request can reach is inside it already.
          */
         tenant_id?: string;
@@ -12588,7 +16266,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * Number pattern: &#039;{prefix}{counter padded to padding}{suffix}&#039;.
+     * Number pattern: '{prefix}{counter padded to padding}{suffix}'.
      */
     export type OrderNumberRangeCreateRequest = {
         /**
@@ -12758,6 +16436,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         customer_order_number?: string | null;
         /**
+         * The key this order has in the system that OWNS it — the ERP's own handle on the sales order, which is what a write-back addresses. Distinct from `external_ref`, which is the readable ORDER NUMBER that system quotes at a human, and from `number`, which is the one this app issued. Unique per tenant where set, so a retried import that sends the same key again is refused rather than founding a second order. Null for an order the shop owns. Sending it a second time is a 409, not a second order: the key is unique per tenant, which is what makes a retried import safe to run. Recover by reading the order back with GET /orders?external_id=… and correcting that one.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this order, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Optional, and CHECKED rather than used: the order always computes its own total from the positions, the shipping cost and the tax. Send it as a checksum on that arithmetic — if it agrees the order is placed, and if it disagrees the call is refused with 400 naming both numbers, yours and the computed one. The comparison is at 2 decimal places (this app stores 4, ERPs work to 2, so a difference below a cent is agreement). It is never taken as the order value: the approval threshold and the revenue rollup read the computed number, which is why a total that disagrees is an error rather than an override.
          */
         grand_total?: number | null;
@@ -12774,9 +16460,13 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         organization_id?: string | null;
         /**
-         * The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
+         * The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'; a buyer's own call may only send 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
          */
         payment?: object | null;
+        /**
+         * The calendar day the BUYER asked to be delivered on, as a date and not a moment — a buyer asks for Tuesday, not for Tuesday at 14:03 in a timezone nobody named. It is a wish and nothing here judges it: a date in the past, a weekend or a day inside the lead time is stored as sent, because what is deliverable is the merchant's answer and this app reads neither stock nor carrier calendar. The positions carry their own, and A POSITION'S DATE WINS over this one — this is the proposal for every position that names none. Null on an order that asked for nothing, which is the ordinary case. It was collected in `user_data.requested_date` before this column existed and is still echoed there by callers that have not moved over; the column is what is compared, sorted and mapped. 'YYYY-MM-DD'. A value that is not a day that exists is a 400. Omit it and `user_data.requested_date` is taken instead, which is where a caller written before this field existed puts it — send the field and that copy is ignored.
+         */
+        requested_delivery_date?: string | null;
         /**
          * The shipping arrangement as it was chosen, FROZEN. Two keys are READ at place-time and feed the totals: 'price' becomes shipping_total (the shipping_total field is only the fallback when this is absent) and 'tax_rate' is what shipping is taxed at, because shipping is a Nebenleistung and is taxed too. Everything else — the carrier product, the delivery window, the pickup point — is stored untouched and belongs to the shipping app.
          */
@@ -12786,11 +16476,19 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shipping_address?: object | null;
         /**
-         * NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. This is the price BEFORE any promotion reduced it; the reduction is a row in the discount components. Only read when the shipping snapshot carries no 'price'.
+         * NET shipping cost, taken from shipping.price or, when the snapshot carries no price, from the request's shipping_total. In `currency`. This is the price BEFORE any promotion reduced it; the reduction is a row in the discount components. Only read when the shipping snapshot carries no 'price'. Below zero is a 400, and so is a 'shipping.price' below zero or a 'shipping.tax_rate' outside 0–100.
          */
         shipping_total?: number | null;
         /**
-         * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change.
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this order was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a order no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
+         * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change. One key of it is read: `requested_date`, which is where the wanted delivery date was collected before it had a column, and which is taken as the date only when `requested_delivery_date` names none. The blob itself is never rewritten by that reading.
          */
         user_data?: object | null;
     }
@@ -12856,15 +16554,23 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         discounts?: OrderDiscount[];
         /**
+         * The key this order has in the system that OWNS it — the ERP's own handle on the sales order, which is what a write-back addresses. Distinct from `external_ref`, which is the readable ORDER NUMBER that system quotes at a human, and from `number`, which is the one this app issued. Unique per tenant where set, so a retried import that sends the same key again is refused rather than founding a second order. Null for an order the shop owns.
+         */
+        external_id?: string | null;
+        /**
          * The FULFILLING system's reference for this order, typically the ERP order number. Written once by POST /orders/{id}/acknowledge and null until an integration acknowledged it.
          */
         external_ref?: string | null;
+        /**
+         * Every OTHER system that knows this order, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * Whether the order has SHIPPED, and the one dimension nobody writes: it is DERIVED after every quantity change from the positions' own bookkeeping. 'fulfilled' means shipped >= ordered − cancelled across all positions, 'partial' means something went out. Sending it has no effect; ship, cancel or return something and it moves.
          */
         fulfillment_status?: OrderFulfillmentStatus;
         /**
-         * What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
+         * What the buyer owes: the positions' discounted totals plus the discounted shipping charge plus the payment surcharge plus tax_total, COMPUTED by this app and NEVER taken from the caller — trusting a supplied total is how inconsistent orders happened. This is the number the approval threshold is compared against and the number the revenue rollup sums.
          */
         grand_total?: number;
         /**
@@ -12900,9 +16606,21 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         organization_id?: string | null;
         /**
-         * The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
+         * The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'; a buyer's own call may only send 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
          */
         payment?: object | null;
+        /**
+         * The payment surcharge this order was placed with, NET — what the payments app computed for the chosen method (a fixed amount, or a share of the order). Zero for a method that charges nothing, which is most of them. Passed in with the payment arrangement the way the shipping price is, and stored rather than folded into the `payment` blob: a grand_total that silently included a fee nobody could point at is a reconciliation nobody can finish.
+         */
+        payment_fee_amount?: number;
+        /**
+         * Tax on the payment surcharge, part of tax_total and stored separately so the fee can be stated on its own line of an invoice or an export.
+         */
+        payment_fee_tax_amount?: number;
+        /**
+         * The rate the payment surcharge was taxed at, frozen at place-time (19 means 19 %). A surcharge is a Nebenleistung and is taxed like one.
+         */
+        payment_fee_tax_rate?: number;
         /**
          * Whether the order is PAID, and the dimension this app does not decide: it is fed from outside through POST /orders/{id}/payment-status (the payments app or an ERP), and only seeded at place-time from payment.status. Orthogonal to the lifecycle — a completed order can still be open, and a paid one can still be pending.
          */
@@ -12911,6 +16629,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * When the order was PLACED. Null while it is pending approval: an order awaiting sign-off exists but was never placed, and that is exactly the difference this field records.
          */
         placed_at?: string | null;
+        /**
+         * The calendar day the BUYER asked to be delivered on, as a date and not a moment — a buyer asks for Tuesday, not for Tuesday at 14:03 in a timezone nobody named. It is a wish and nothing here judges it: a date in the past, a weekend or a day inside the lead time is stored as sent, because what is deliverable is the merchant's answer and this app reads neither stock nor carrier calendar. The positions carry their own, and A POSITION'S DATE WINS over this one — this is the proposal for every position that names none. Null on an order that asked for nothing, which is the ordinary case. It was collected in `user_data.requested_date` before this column existed and is still echoed there by callers that have not moved over; the column is what is compared, sorted and mapped.
+         */
+        requested_delivery_date?: string | null;
         /**
          * The shipping arrangement as it was chosen, FROZEN. Two keys are READ at place-time and feed the totals: 'price' becomes shipping_total (the shipping_total field is only the fallback when this is absent) and 'tax_rate' is what shipping is taxed at, because shipping is a Nebenleistung and is taxed too. Everything else — the carrier product, the delivery window, the pickup point — is stored untouched and belongs to the shipping app.
          */
@@ -12932,6 +16654,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shipping_total?: number;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this order was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a order no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * Where the order stands in its LIFECYCLE, and one of three independent status dimensions. 'pending' = created but not placed, an order waiting for approval; 'placed' = accepted, nothing shipped; 'in_fulfillment' = part of it has gone out, or all of it has and the tenant does not close on shipment; 'completed' and 'cancelled' end it. Moved by the action routes only — it is not writable through PUT /orders/{id}.
          */
         status?: OrderStatus;
@@ -12948,9 +16678,49 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         updated_at?: string;
         /**
-         * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change.
+         * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change. One key of it is read: `requested_date`, which is where the wanted delivery date was collected before it had a column, and which is taken as the date only when `requested_delivery_date` names none. The blob itself is never rewritten by that reading.
          */
         user_data?: object | null;
+    }
+
+    /**
+     * What this call looked at and what it changed.
+     */
+    export type OrderRequestedDeliveryDateMigration = {
+        /**
+         * Where to resume, when `done` is false — the id of the last order this call read. Null once the run finished.
+         */
+        cursor?: string | null;
+        /**
+         * True = the whole set was read and the migration is finished for this tenant. False = the scan hit its time budget; send `cursor` back to continue.
+         */
+        done?: boolean;
+        /**
+         * Orders whose date was lifted out of the free-form key. Zero on every call after the migration has been run once.
+         */
+        filled?: number;
+        /**
+         * Orders read — those carrying no delivery date yet. It never falls to zero, because an order that asked for no day is read again by every run.
+         */
+        scanned?: number;
+        /**
+         * Orders read that had nothing to lift: no key, or a value in it that is not a calendar day. Those are left exactly as they are.
+         */
+        skipped?: number;
+    }
+
+    /**
+     * Both fields are optional — send {} to run it from the beginning.
+     */
+    export type OrderRequestedDeliveryDateMigrationRequest = {
+        /**
+         * Continue an unfinished run: the exact value the previous call returned, which is the id of the last order it read. Do not construct one — it is a resume point, not an offset. Omit it on the first call.
+         */
+        cursor?: string | null;
+        /**
+         * Orders read per page of the scan (default 500, clamped to 1000). It is the page size, not a cap on the run: the scan keeps paging until it finishes or runs out of time.
+         */
+        limit?: number | null;
     }
 
     /**
@@ -12984,6 +16754,18 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         created_at?: string;
         /**
+         * How much of the order's discount went back with these goods, included in refund_total rather than added to it. Stated on its own because an ERP reconciling a promotion's cost needs to know what was given back as well as what was given.
+         */
+        discount_returned?: number;
+        /**
+         * The key this return case has in the system that owns it — an ERP return order, an RMA portal's case handle. `number` beside it is the return number the customer writes on the parcel; this is what a write-back addresses. Unique per tenant where set. Null for a return registered here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this return, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Primary key of the return. The {rid} segment of the return routes.
          */
         id?: string;
@@ -13004,13 +16786,25 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         positions?: OrderReturnedPosition[];
         /**
-         * Why the goods are coming back, free text as the customer or the desk stated it. Also what /reject stores when it is given no resolution out of the published set.
+         * Why the goods are coming back, free text as the customer or the desk stated it — the sentence beside the code, not a replacement for it. Also what /reject stores when it is given no resolution out of the published set.
          */
         reason?: string | null;
+        /**
+         * Why the goods are coming back, as a code out of the set THIS TENANT keeps — GET /orders/return-reasons lists them. This is the field a report groups by; `reason` beside it is the sentence somebody wrote about this one return, and the two are separate because 'Damaged', 'damaged' and 'arrived broken' were one reason counted three times. Null on a return registered without one, which is allowed. There is no foreign key behind it: the registration refuses a code the tenant does not keep, and a code retired afterwards leaves the return carrying it rather than breaking it.
+         */
+        reason_code?: string | null;
         /**
          * When the goods physically arrived back. Null until POST …/receive — and null forever on a return that was completed straight out of registered, which is allowed.
          */
         received_at?: string | null;
+        /**
+         * How the money was decided: 'proportional' — the buyer gets back the share of what THEY paid, discount and all, which is what this app computes; 'recomputed' — the merchant re-decided what the kept goods are worth and sent the figures with the call. The second exists because "buy three pay two" with one piece returned is a judgement about the offer, and that judgement is the promotions app's, not this one's.
+         */
+        refund_mode?: OrderReturnRefundMode;
+        /**
+         * What is owed back, in the order currency. Computed from what the buyer actually paid for the returned quantities — line_total_discounted, not line_total, because refunding a share of the list price on a discounted order hands the buyer money the promotion already took off. This app states the figure; it moves no money.
+         */
+        refund_total?: number;
         /**
          * When the return was announced. Defaults to now.
          */
@@ -13023,6 +16817,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * How it ended, in one of the words this app publishes — the settlement words on a completion (refund, partial_refund, replacement, repair, store_credit), the refusal words on a rejection (wear_and_tear, not_returnable); GET /orders/vocabularies/return-resolutions carries both sets with the stage that accepts each. The column carries no database constraint; the ROUTES enforce the set, which is what stopped a client settling returns with a word nobody else knew. On a rejection that named no resolution, the free-text reason is stored here instead — which is the one case a value outside the two sets appears.
          */
         resolution?: string | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this return was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a return no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * Where the return stands: 'registered' = announced, nothing booked; 'received' = the goods are back but not yet settled; 'completed' = settled, and the only transition that books quantity_returned; 'rejected' = refused, nothing booked. The last two are final.
          */
@@ -13044,7 +16846,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The completed return plus the restock report. Restocking itself is an explicit inventories.restock call by the orchestrator — this app books quantity_returned and says what came back, it does not write another app&#039;s stock.
+     * The completed return plus the restock report. Restocking itself is an explicit inventories.restock call by the orchestrator — this app books quantity_returned and says what came back, it does not write another app's stock.
      */
     export type OrderReturnCompleted = {
         /**
@@ -13055,6 +16857,18 @@ are no `created_at` / `updated_at` fields on this resource.
          * When the return row was written.
          */
         created_at?: string;
+        /**
+         * How much of the order's discount went back with these goods, included in refund_total rather than added to it. Stated on its own because an ERP reconciling a promotion's cost needs to know what was given back as well as what was given.
+         */
+        discount_returned?: number;
+        /**
+         * The key this return case has in the system that owns it — an ERP return order, an RMA portal's case handle. `number` beside it is the return number the customer writes on the parcel; this is what a write-back addresses. Unique per tenant where set. Null for a return registered here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this return, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * Primary key of the return. The {rid} segment of the return routes.
          */
@@ -13076,13 +16890,25 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         positions?: OrderReturnedPosition[];
         /**
-         * Why the goods are coming back, free text as the customer or the desk stated it. Also what /reject stores when it is given no resolution out of the published set.
+         * Why the goods are coming back, free text as the customer or the desk stated it — the sentence beside the code, not a replacement for it. Also what /reject stores when it is given no resolution out of the published set.
          */
         reason?: string | null;
+        /**
+         * Why the goods are coming back, as a code out of the set THIS TENANT keeps — GET /orders/return-reasons lists them. This is the field a report groups by; `reason` beside it is the sentence somebody wrote about this one return, and the two are separate because 'Damaged', 'damaged' and 'arrived broken' were one reason counted three times. Null on a return registered without one, which is allowed. There is no foreign key behind it: the registration refuses a code the tenant does not keep, and a code retired afterwards leaves the return carrying it rather than breaking it.
+         */
+        reason_code?: string | null;
         /**
          * When the goods physically arrived back. Null until POST …/receive — and null forever on a return that was completed straight out of registered, which is allowed.
          */
         received_at?: string | null;
+        /**
+         * How the money was decided: 'proportional' — the buyer gets back the share of what THEY paid, discount and all, which is what this app computes; 'recomputed' — the merchant re-decided what the kept goods are worth and sent the figures with the call. The second exists because "buy three pay two" with one piece returned is a judgement about the offer, and that judgement is the promotions app's, not this one's.
+         */
+        refund_mode?: OrderReturnRefundMode;
+        /**
+         * What is owed back, in the order currency. Computed from what the buyer actually paid for the returned quantities — line_total_discounted, not line_total, because refunding a share of the list price on a discounted order hands the buyer money the promotion already took off. This app states the figure; it moves no money.
+         */
+        refund_total?: number;
         /**
          * When the return was announced. Defaults to now.
          */
@@ -13100,6 +16926,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         restock?: OrderRestockPosition[];
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this return was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a return no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * Where the return stands: 'registered' = announced, nothing booked; 'received' = the goods are back but not yet settled; 'completed' = settled, and the only transition that books quantity_returned; 'rejected' = refused, nothing booked. The last two are final.
          */
         status?: OrderReturnStatus;
@@ -13110,9 +16944,17 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * Register a return against the shipped quantities — the return number is drawn from the return range. Omitted positions = every position that still has a returnable quantity, in full (&#039;the customer sent it all back&#039;).
+     * Register a return against the shipped quantities — the return number is drawn from the return range. Omitted positions = every position that still has a returnable quantity, in full ('the customer sent it all back').
      */
     export type OrderReturnCreateRequest = {
+        /**
+         * The key this return case has in the system that owns it — an ERP return order, an RMA portal's case handle. `number` beside it is the return number the customer writes on the parcel; this is what a write-back addresses. Unique per tenant where set. Null for a return registered here. Send it when the case was opened in an RMA portal or an ERP — that system then finds this return again by its own key. The three transitions below do not take it: a return is registered once, and its provenance is set there.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this return, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * Free-form data for the caller — the returns portal's own reference. Stored and returned untouched.
          */
@@ -13122,13 +16964,25 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         positions?: OrderReturnPosition[];
         /**
-         * Why the goods are coming back, free text as the customer or the desk stated it. Also what /reject stores when it is given no resolution out of the published set.
+         * Why the goods are coming back, free text as the customer or the desk stated it — the sentence beside the code, not a replacement for it. Also what /reject stores when it is given no resolution out of the published set.
          */
         reason?: string;
+        /**
+         * Why the goods are coming back, as a code out of the set THIS TENANT keeps — GET /orders/return-reasons lists them. This is the field a report groups by; `reason` beside it is the sentence somebody wrote about this one return, and the two are separate because 'Damaged', 'damaged' and 'arrived broken' were one reason counted three times. Null on a return registered without one, which is allowed. There is no foreign key behind it: the registration refuses a code the tenant does not keep, and a code retired afterwards leaves the return carrying it rather than breaking it. Read the codes from GET /orders/return-reasons. Lowercased on the way in. A code this tenant does not keep is a 400 that names the ones it does; omit it and the return is registered without a code, which is allowed. Send `reason` beside it for the sentence — the two are not alternatives.
+         */
+        reason_code?: string | null;
         /**
          * The default restock flag for positions that carry none of their own — and the only way to say "put it all back into stock" when the positions are defaulted. It does not restock anything itself: it decides what the completion REPORTS for the orchestrator's inventories.restock call.
          */
         restock?: boolean;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this return was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a return no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -13147,6 +17001,60 @@ are no `created_at` / `updated_at` fields on this resource.
          * Report this position for restocking when the return completes (the explicit inventories.restock call stays with the orchestrator).
          */
         restock?: boolean;
+    }
+
+    /**
+     * One reason a merchant takes goods back under, in their own words: a code a report groups by, a title an operator picks, and the labels and badge tone a client renders. The ONE vocabulary of this app the merchant keeps rather than the database — why a customer sent something back differs per trade, so it is a table and not a constraint. `order_returns.reason_code` holds one of these codes.
+     */
+    export type OrderReturnReason = {
+        /**
+         * The stable identifier a return carries in `reason_code`, and the one thing about a reason that is not a label: lowercase, starting with a letter, with digits, '-' and '_' after it. It is what a report groups by and what an ERP mapping keys on, so it is fixed once created — the title is what a merchant renames.
+         */
+        code?: string;
+        /**
+         * When the reason was created — the seed writes the nine standard ones on install.
+         */
+        created_at?: string;
+        /**
+         * One sentence on when to pick this reason, for whoever is choosing between two that sound alike. Null where nobody wrote one.
+         */
+        description?: string | null;
+        /**
+         * The description per locale, with the same fallback to `description`.
+         */
+        descriptions?: object | null;
+        /**
+         * Primary key of the reason. The {id} segment of the item route; `code` is what a return stores.
+         */
+        id?: string;
+        /**
+         * Exactly one reason of the tenant carries this: the one a picker preselects. It is NOT a fallback — `order_returns.reason_code` is nullable and a return registered without a code carries none, deliberately, because a default of 'Damaged in transit' would label returns that were never damaged. The seeded flag sits on 'other' for that reason. The set repairs itself on read when no row holds it.
+         */
+        is_default?: boolean;
+        /**
+         * True for a reason the app seeded, and it means only 'we put it there' — not that it is protected. A merchant may rename, re-tone and reorder a seeded reason like any other; nothing here branches on this flag.
+         */
+        is_system?: boolean;
+        /**
+         * The title per locale, so a buyer portal and a German warehouse read the same reason in their own language. Falls back to `title` for a locale that is missing.
+         */
+        labels?: object | null;
+        /**
+         * Where the reason sits in the picker, ascending. Ties fall back to whatever the database returns, so a merchant who cares about the order gives every row its own number.
+         */
+        position?: number;
+        /**
+         * What an operator reads in the picker, in the tenant's own words. Renaming it rewrites no return, because a return stores the code.
+         */
+        title?: string;
+        /**
+         * The semantic badge colour a client renders this reason in — the same five tones every vocabulary of this platform uses. The client owns what each tone looks like.
+         */
+        tone?: OrderVocabularyTone;
+        /**
+         * When the reason last changed.
+         */
+        updated_at?: string;
     }
 
     /**
@@ -13200,6 +17108,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         created_at?: string;
         /**
+         * The key this shipment has in the system that issued it — the ERP's or the warehouse's handle on the delivery. `number` beside it is the DELIVERY NOTE number, which is what a customer asking after their parcel quotes; this is what a write-back addresses. Unique per tenant where set. Null for a shipment booked here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this shipment, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Primary key of the shipment.
          */
         id?: string;
@@ -13224,6 +17140,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         shipped_at?: string;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this shipment was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a shipment no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * The consignment number the carrier issued. Free text: every carrier formats it differently and this app stores whatever it is given.
          */
         tracking_code?: string | null;
@@ -13231,16 +17155,28 @@ are no `created_at` / `updated_at` fields on this resource.
          * Where a human can follow the parcel. Supplied by the caller — this app does not build it, because only the caller knows the carrier's tracking address.
          */
         tracking_url?: string | null;
+        /**
+         * When the shipment row last changed. A delivery is booked once here and no address changes it afterwards, so today it equals created_at — it exists so that the correction that will come (a tracking code the carrier issues hours later) has somewhere to say when it arrived, rather than being indistinguishable from the original booking.
+         */
+        updated_at?: string;
     }
 
     /**
-     * Book what went out. Every field is optional: an empty body ships every position that still has an open quantity, in full, on a delivery note number drawn from the tenant&#039;s delivery range — which is the whole payload for the common case.
+     * Book what went out. Every field is optional: an empty body ships every position that still has an open quantity, in full, on a delivery note number drawn from the tenant's delivery range — which is the whole payload for the common case.
      */
     export type OrderShipmentCreateRequest = {
         /**
          * Who is carrying it, in the merchant's own words. Free text — this app neither validates it nor knows the carrier's API.
          */
         carrier?: string;
+        /**
+         * The key this shipment has in the system that issued it — the ERP's or the warehouse's handle on the delivery. `number` beside it is the DELIVERY NOTE number, which is what a customer asking after their parcel quotes; this is what a write-back addresses. Unique per tenant where set. Null for a shipment booked here. Send it when the delivery was issued elsewhere — `number` then carries that system's delivery-note number and this carries its key. A key another shipment of this tenant holds is a 409.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this shipment, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * Free-form data for the caller — the warehouse system's own reference for this handover. Stored and returned untouched.
          */
@@ -13257,6 +17193,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * When the goods actually left. Defaults to now, and a caller may backdate it — a shipment booked on Monday for a Friday handover says Friday.
          */
         shipped_at?: string;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it.
+         */
+        source_data?: object | null;
+        /**
+         * When this shipment was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a shipment no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * The consignment number the carrier issued. Free text: every carrier formats it differently and this app stores whatever it is given.
          */
@@ -13294,6 +17238,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         id?: string;
         /**
+         * Free-form data for the caller, per line of the delivery note — the batch, the serial numbers or the bin this quantity came out of, which belong to the line and not to the parcel. Supplied with the position on POST /orders/{id}/ship, stored and returned untouched; nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
          * Which order position went out. Always a position of the same order as the shipment.
          */
         order_item_id?: string;
@@ -13311,6 +17259,10 @@ are no `created_at` / `updated_at` fields on this resource.
      * A position quantity to ship — guarded against the open quantity.
      */
     export type OrderShipmentPosition = {
+        /**
+         * Free-form data for the caller, per line of the delivery note — the batch, the serial numbers or the bin this quantity came out of, which belong to the line and not to the parcel. Supplied with the position on POST /orders/{id}/ship, stored and returned untouched; nothing here reads it.
+         */
+        metadata?: object | null;
         /**
          * The order item (position) to act on. Read the ids from GET /orders/{id} (items[].id) or GET /orders/{id}/shippable (positions[].order_item_id) — an id this order does not carry is a 400.
          */
@@ -13434,7 +17386,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * Narrow modification — these six columns and no others. Anything else in the body is ignored, and a body with none of them at all is a 400 naming the allowed set. A whole key REPLACES the value it names; there is no merge into an existing snapshot. Nothing here moves the order: status, payment and fulfillment travel through the action routes.
+     * Narrow modification — these eleven columns and no others. Anything else in the body is ignored, and a body with none of them at all is a 400 naming the allowed set. A whole key REPLACES the value it names; there is no merge into an existing snapshot. Nothing here moves the order: status, payment and fulfillment travel through the action routes. Four of the eleven are where a source says the row was confirmed again — this is the only address that refreshes them without a transition, which is what a delta run needs. One is the delivery date the buyer asked for, which is the one field here a service desk moves rather than corrects. The POSITIONS' dates are not here: nothing changes a position after the order exists.
      */
     export type OrderUpdateRequest = {
         /**
@@ -13450,15 +17402,35 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         customer_order_number?: string;
         /**
+         * The key this order has in the system that OWNS it — the ERP's own handle on the sales order, which is what a write-back addresses. Distinct from `external_ref`, which is the readable ORDER NUMBER that system quotes at a human, and from `number`, which is the one this app issued. Unique per tenant where set, so a retried import that sends the same key again is refused rather than founding a second order. Null for an order the shop owns. Replaced wholesale, and null disowns the order — no source then answers for it. Moving it to a key another order of this tenant holds is a 409.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this order, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer. Replaced wholesale — send the whole map, not the one system that changed.
+         */
+        external_refs?: object | null;
+        /**
          * Free-form data belonging to the INTEGRATION side — an ERP's own bookkeeping about this order. Stored and returned untouched; nothing here reads it. Replaced wholesale.
          */
         metadata?: object;
+        /**
+         * The calendar day the BUYER asked to be delivered on, as a date and not a moment — a buyer asks for Tuesday, not for Tuesday at 14:03 in a timezone nobody named. It is a wish and nothing here judges it: a date in the past, a weekend or a day inside the lead time is stored as sent, because what is deliverable is the merchant's answer and this app reads neither stock nor carrier calendar. The positions carry their own, and A POSITION'S DATE WINS over this one — this is the proposal for every position that names none. Null on an order that asked for nothing, which is the ordinary case. It was collected in `user_data.requested_date` before this column existed and is still echoed there by callers that have not moved over; the column is what is compared, sorted and mapped. The buyer rang up and asked for a different day. 'YYYY-MM-DD', and null withdraws the request entirely. It moves the ORDER's date only — a position that named its own keeps it, because the line wins. It is not held to any lead time here: a date the merchant cannot serve is a conversation, not a 400.
+         */
+        requested_delivery_date?: string | null;
         /**
          * The delivery address, FROZEN at place-time — what goes on the label of every shipment of this order. Null on an order that is never delivered (a service, a digital item, a collection). Replaced wholesale. This is the one correction that actually matters after placement: the label of every shipment still to go out is printed from it.
          */
         shipping_address?: object;
         /**
-         * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change. Replaced wholesale.
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit. Nothing here reads it, and no transition clears it. Replaced wholesale, which is how a fresh ETag arrives: send what the source said THIS time, not a patch of what it said last time.
+         */
+        source_data?: object | null;
+        /**
+         * When this order was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a order no source owns. This is where a delta run stamps the run it confirmed the order in.
+         */
+        source_synced_at?: string | null;
+        /**
+         * Free-form data belonging to the ORDERING side — carried through from the storefront or the cart and handed back untouched. One of the few fields PUT /orders/{id} may still change. One key of it is read: `requested_date`, which is where the wanted delivery date was collected before it had a column, and which is taken as the date only when `requested_delivery_date` names none. The blob itself is never rewritten by that reading. Replaced wholesale — the `requested_date` key included, so a body that rewrites this blob without it drops that echo. The typed column is unaffected either way.
          */
         user_data?: object;
     }
@@ -13600,6 +17572,14 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type Organization = {
         /**
+         * What this company owes right now, in the market's currency, as its accounting system last reported it — the figure a credit limit is compared against, and the reason the limit could check nothing on its own. A COPY, never a live read: this app asks no accounting system anything, so the number is exactly as old as `source_synced_at` says and the tenant's `credit_check_max_age_hours` setting says how old is too old. Null means no source has ever reported one, which is NOT a balance of zero — reading it as nothing owed is the mistake this column exists to prevent. A negative figure is a credit balance.
+         */
+        balance?: number | null;
+        /**
+         * How much of `balance` is already OVERDUE, in the same currency and from the same report. The difference between warning a customer and blocking one: a company at its limit with nothing overdue is buying normally, and one below its limit with an unpaid invoice from March is not. Null means no source has reported it; zero means nothing is overdue, and the two are not the same answer.
+         */
+        balance_due?: number | null;
+        /**
          * Industry / line of business, in the merchant's own words. Free text: no NACE code, no WZ number, no list to pick from — whatever somebody typed on the company. Segment rules read it, and both `?branche=` and an `eq` condition match it EXACTLY and case-sensitively, so 'Maschinenbau' and 'maschinenbau' are two different industries. Indexed, so it stays cheap to filter on.
          */
         branche?: string | null;
@@ -13608,9 +17588,13 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         created_at?: string;
         /**
-         * Ceiling on open receivables in the market's currency, and one of the inputs that decide whether an order is accepted at all. Null means NO limit — not a limit of zero.
+         * Ceiling on open receivables in the market's currency, and one of the inputs that decide whether an order is accepted at all. Set exactly when `credit_limit_mode` is 'limited', and then above 0; null otherwise — read the mode, never the null, to know whether there is a ceiling.
          */
         credit_limit?: number | null;
+        /**
+         * Whether this company buys on credit, and how far: 'unset' (nobody decided — whoever checks credit applies its own fallback), 'limited' (open receivables up to `credit_limit`) or 'unlimited' (no ceiling, by decision). The mode is the decision; the amount exists only for 'limited'.
+         */
+        credit_limit_mode?: OrganizationCreditLimitMode;
         /**
          * The number this company carries in the merchant's own ERP — the key an ERP integration joins on, and what a service desk asks for on the phone. Free text with NO enforced format (a letter prefix and a running number is the common shape, but plain digits are just as valid), unique per tenant while it is set, and one of the fields duplicate detection can be pointed at. The real values come out of the merchant's ERP; nothing published here can name one that exists.
          */
@@ -13619,6 +17603,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * True stops SHIPMENTS to this company while leaving login and ordering alone — the "they may order, we are just not sending anything until this is settled" state. Separate from `status` on purpose: blocking the login to stop a delivery locks out the people who could settle it.
          */
         delivery_block?: boolean;
+        /**
+         * The key this company has in the system that OWNS it — the ERP's own key for the customer, not the number a human quotes (that is `customer_number`). Often a GUID; it is stored verbatim, whatever shape the source uses. Unique per tenant where set, so an import upserts on it instead of matching on a name. Null for a company the shop itself created.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this company, keyed by system name — a second ERP, a PIM, a GLN. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * Id of the platform TEAM this organization is mirrored as — what makes its people a team for storefront auth (sessions, SSO, mobile SDKs). Written by the mirror and ignored on every write a caller sends; null while the mirror has not run yet.
          */
@@ -13631,6 +17623,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * Where the company stands in the SALES PIPELINE, and a deliberately separate axis from `status`: a prospect that may log in and a customer that may not are both ordinary states, and one column cannot say that. One of the tenant's own stages (GET /customers/lifecycle-stages) — a fresh install starts with lead, prospect, customer, churned, and the merchant may add their own. Nothing moves it automatically; a stage changes when a person or an integration says so.
          */
         lifecycle_stage?: string;
+        /**
+         * Code of the warehouse this company's availability is computed against — plain text naming `locations.code` in the inventories app. A CODE and not a foreign key: ADR-0055 forbids the cross-app one, and nothing here checks it, so a code that names no location simply computes availability against the default. It belongs on the customer rather than in inventories because inventories models what is IN a warehouse and not which customer buys out of which — a company served from the northern depot is a fact about the company. Null means no warehouse was agreed.
+         */
+        location_code?: string | null;
         /**
          * Legal or trading name of the COMPANY — never a person. Mirrored to the platform team, so a rename here is a rename in storefront auth too.
          */
@@ -13647,6 +17643,18 @@ are no `created_at` / `updated_at` fields on this resource.
          * Free-form per-organization settings, keyed by whatever the merchant's own integrations agree on — this app never branches on a key in here. Segment rules can address a TOP-LEVEL key as `setting:<key>`, which is the whole reason the blob survives: a flag an ERP writes here selects a segment without a schema change. Commercial terms are typed columns now (payment_terms, credit_limit); writing them back in here leaves the checkout reading the column and finding nothing.
          */
         settings?: object | null;
+        /**
+         * Whether this company accepts a PART delivery: 'partial' ships what is available and lets the rest follow, 'complete' holds the whole order until every line can go at once. It decides whether a basket may offer a part quantity in the first place, so a checkout that ignores it promises a delivery date the warehouse cannot keep. Null means nothing was agreed and the store's own default applies. Only these two values — it is an ERP's own delivery flag, and there is no third way to ship an order.
+         */
+        shipping_advice?: OrganizationShippingAdvice;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * ACCESS, not pipeline: 'blocked' stops this company's people from logging in and is where a rejected registration parks the company it founded. 'active' is the default. For how far along a company is, read `lifecycle_stage` — reading this one for that is how a won deal gets locked out.
          */
@@ -13700,13 +17708,29 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type OrganizationCreateRequest = {
         /**
+         * What this company owes right now, in the market's currency, as its accounting system last reported it — the figure a credit limit is compared against, and the reason the limit could check nothing on its own. A COPY, never a live read: this app asks no accounting system anything, so the number is exactly as old as `source_synced_at` says and the tenant's `credit_check_max_age_hours` setting says how old is too old. Null means no source has ever reported one, which is NOT a balance of zero — reading it as nothing owed is the mistake this column exists to prevent. A negative figure is a credit balance. Written by whatever imports the accounting figures. Send `source_synced_at` with it — a balance whose age nobody knows cannot be used for a credit decision at all.
+         */
+        balance?: number | null;
+        /**
+         * How much of `balance` is already OVERDUE, in the same currency and from the same report. The difference between warning a customer and blocking one: a company at its limit with nothing overdue is buying normally, and one below its limit with an unpaid invoice from March is not. Null means no source has reported it; zero means nothing is overdue, and the two are not the same answer. Written by the same import, and null rather than 0 where the source reported nothing.
+         */
+        balance_due?: number | null;
+        /**
          * Industry / line of business, in the merchant's own words. Free text: no NACE code, no WZ number, no list to pick from — whatever somebody typed on the company. Segment rules read it, and both `?branche=` and an `eq` condition match it EXACTLY and case-sensitively, so 'Maschinenbau' and 'maschinenbau' are two different industries. Indexed, so it stays cheap to filter on.
          */
         branche?: string | null;
         /**
-         * Ceiling on open receivables in the market's currency, and one of the inputs that decide whether an order is accepted at all. Null means NO limit — not a limit of zero. A create without it inherits the tenant's `default_credit_limit`.
+         * When this company record was created in this app. Not when the customer relationship began — an ERP import creates decade-old customers today. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
+         */
+        created_at?: string;
+        /**
+         * Ceiling on open receivables in the market's currency, and one of the inputs that decide whether an order is accepted at all. Set exactly when `credit_limit_mode` is 'limited', and then above 0; null otherwise — read the mode, never the null, to know whether there is a ceiling. Required with `credit_limit_mode` 'limited' and refused with any other mode (400 `limited_mode_requires_limit` / `limit_requires_limited_mode`).
          */
         credit_limit?: number | null;
+        /**
+         * Whether this company buys on credit, and how far: 'unset' (nobody decided — whoever checks credit applies its own fallback), 'limited' (open receivables up to `credit_limit`) or 'unlimited' (no ceiling, by decision). The mode is the decision; the amount exists only for 'limited'. A create naming neither this nor `credit_limit` inherits the market's `default_credit_limit_mode` (and, for 'limited', `default_credit_limit`). Leaving 'limited' without sending `credit_limit` clears the amount.
+         */
+        credit_limit_mode?: CreditLimitMode;
         /**
          * The number this company carries in the merchant's own ERP — the key an ERP integration joins on, and what a service desk asks for on the phone. Free text with NO enforced format (a letter prefix and a running number is the common shape, but plain digits are just as valid), unique per tenant while it is set, and one of the fields duplicate detection can be pointed at. The real values come out of the merchant's ERP; nothing published here can name one that exists. A second company with the same number is a 409.
          */
@@ -13719,6 +17743,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * Where the company stands in the SALES PIPELINE, and a deliberately separate axis from `status`: a prospect that may log in and a customer that may not are both ordinary states, and one column cannot say that. One of the tenant's own stages (GET /customers/lifecycle-stages) — a fresh install starts with lead, prospect, customer, churned, and the merchant may add their own. Nothing moves it automatically; a stage changes when a person or an integration says so. A create without it gets the stage flagged as default; a value the tenant does not keep is a 400.
          */
         lifecycle_stage?: string;
+        /**
+         * Code of the warehouse this company's availability is computed against — plain text naming `locations.code` in the inventories app. A CODE and not a foreign key: ADR-0055 forbids the cross-app one, and nothing here checks it, so a code that names no location simply computes availability against the default. It belongs on the customer rather than in inventories because inventories models what is IN a warehouse and not which customer buys out of which — a company served from the northern depot is a fact about the company. Null means no warehouse was agreed. Not validated against the inventories app — ADR-0055 forbids the cross-app read, so a code that names no location is stored and computes availability against the default.
+         */
+        location_code?: string | null;
         /**
          * Legal or trading name of the COMPANY — never a person. Mirrored to the platform team, so a rename here is a rename in storefront auth too.
          */
@@ -13736,6 +17764,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         settings?: object | null;
         /**
+         * Whether this company accepts a PART delivery: 'partial' ships what is available and lets the rest follow, 'complete' holds the whole order until every line can go at once. It decides whether a basket may offer a part quantity in the first place, so a checkout that ignores it promises a delivery date the warehouse cannot keep. Null means nothing was agreed and the store's own default applies. Only these two values — it is an ERP's own delivery flag, and there is no third way to ship an order. Null leaves it unagreed.
+         */
+        shipping_advice?: ShippingAdvice;
+        /**
          * ACCESS, not pipeline: 'blocked' stops this company's people from logging in and is where a rejected registration parks the company it founded. 'active' is the default. For how far along a company is, read `lifecycle_stage` — reading this one for that is how a won deal gets locked out. Default 'active'.
          */
         status?: OrganizationStatus;
@@ -13746,7 +17778,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * What an organization has BOUGHT, materialized from the orders app. One row per organization — including all-zero rows for companies that never ordered, so a &#039;never bought anything&#039; rule has something to match.
+     * What an organization has BOUGHT, materialized from the orders app. One row per organization — including all-zero rows for companies that never ordered, so a 'never bought anything' rule has something to match.
      */
     export type OrganizationMetrics = {
         /**
@@ -13938,13 +17970,25 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type OrganizationUpdateRequest = {
         /**
+         * What this company owes right now, in the market's currency, as its accounting system last reported it — the figure a credit limit is compared against, and the reason the limit could check nothing on its own. A COPY, never a live read: this app asks no accounting system anything, so the number is exactly as old as `source_synced_at` says and the tenant's `credit_check_max_age_hours` setting says how old is too old. Null means no source has ever reported one, which is NOT a balance of zero — reading it as nothing owed is the mistake this column exists to prevent. A negative figure is a credit balance. Written by whatever imports the accounting figures. Send `source_synced_at` with it — a balance whose age nobody knows cannot be used for a credit decision at all.
+         */
+        balance?: number | null;
+        /**
+         * How much of `balance` is already OVERDUE, in the same currency and from the same report. The difference between warning a customer and blocking one: a company at its limit with nothing overdue is buying normally, and one below its limit with an unpaid invoice from March is not. Null means no source has reported it; zero means nothing is overdue, and the two are not the same answer. Written by the same import, and null rather than 0 where the source reported nothing.
+         */
+        balance_due?: number | null;
+        /**
          * Industry / line of business, in the merchant's own words. Free text: no NACE code, no WZ number, no list to pick from — whatever somebody typed on the company. Segment rules read it, and both `?branche=` and an `eq` condition match it EXACTLY and case-sensitively, so 'Maschinenbau' and 'maschinenbau' are two different industries. Indexed, so it stays cheap to filter on.
          */
         branche?: string | null;
         /**
-         * Ceiling on open receivables in the market's currency, and one of the inputs that decide whether an order is accepted at all. Null means NO limit — not a limit of zero. A create without it inherits the tenant's `default_credit_limit`.
+         * Ceiling on open receivables in the market's currency, and one of the inputs that decide whether an order is accepted at all. Set exactly when `credit_limit_mode` is 'limited', and then above 0; null otherwise — read the mode, never the null, to know whether there is a ceiling. Required with `credit_limit_mode` 'limited' and refused with any other mode (400 `limited_mode_requires_limit` / `limit_requires_limited_mode`).
          */
         credit_limit?: number | null;
+        /**
+         * Whether this company buys on credit, and how far: 'unset' (nobody decided — whoever checks credit applies its own fallback), 'limited' (open receivables up to `credit_limit`) or 'unlimited' (no ceiling, by decision). The mode is the decision; the amount exists only for 'limited'. A create naming neither this nor `credit_limit` inherits the market's `default_credit_limit_mode` (and, for 'limited', `default_credit_limit`). Leaving 'limited' without sending `credit_limit` clears the amount.
+         */
+        credit_limit_mode?: CreditLimitMode;
         /**
          * The number this company carries in the merchant's own ERP — the key an ERP integration joins on, and what a service desk asks for on the phone. Free text with NO enforced format (a letter prefix and a running number is the common shape, but plain digits are just as valid), unique per tenant while it is set, and one of the fields duplicate detection can be pointed at. The real values come out of the merchant's ERP; nothing published here can name one that exists. A second company with the same number is a 409.
          */
@@ -13957,6 +18001,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * Where the company stands in the SALES PIPELINE, and a deliberately separate axis from `status`: a prospect that may log in and a customer that may not are both ordinary states, and one column cannot say that. One of the tenant's own stages (GET /customers/lifecycle-stages) — a fresh install starts with lead, prospect, customer, churned, and the merchant may add their own. Nothing moves it automatically; a stage changes when a person or an integration says so. A create without it gets the stage flagged as default; a value the tenant does not keep is a 400.
          */
         lifecycle_stage?: string;
+        /**
+         * Code of the warehouse this company's availability is computed against — plain text naming `locations.code` in the inventories app. A CODE and not a foreign key: ADR-0055 forbids the cross-app one, and nothing here checks it, so a code that names no location simply computes availability against the default. It belongs on the customer rather than in inventories because inventories models what is IN a warehouse and not which customer buys out of which — a company served from the northern depot is a fact about the company. Null means no warehouse was agreed. Not validated against the inventories app — ADR-0055 forbids the cross-app read, so a code that names no location is stored and computes availability against the default.
+         */
+        location_code?: string | null;
         /**
          * Legal or trading name of the COMPANY — never a person. Mirrored to the platform team, so a rename here is a rename in storefront auth too.
          */
@@ -13973,6 +18021,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * Free-form per-organization settings, keyed by whatever the merchant's own integrations agree on — this app never branches on a key in here. Segment rules can address a TOP-LEVEL key as `setting:<key>`, which is the whole reason the blob survives: a flag an ERP writes here selects a segment without a schema change. Commercial terms are typed columns now (payment_terms, credit_limit); writing them back in here leaves the checkout reading the column and finding nothing. Replaced wholesale on an update — send the whole object, not a patch of it.
          */
         settings?: object | null;
+        /**
+         * Whether this company accepts a PART delivery: 'partial' ships what is available and lets the rest follow, 'complete' holds the whole order until every line can go at once. It decides whether a basket may offer a part quantity in the first place, so a checkout that ignores it promises a delivery date the warehouse cannot keep. Null means nothing was agreed and the store's own default applies. Only these two values — it is an ERP's own delivery flag, and there is no third way to ship an order. Null leaves it unagreed.
+         */
+        shipping_advice?: ShippingAdvice;
         /**
          * ACCESS, not pipeline: 'blocked' stops this company's people from logging in and is where a rejected registration parks the company it founded. 'active' is the default. For how far along a company is, read `lifecycle_stage` — reading this one for that is how a won deal gets locked out. Default 'active'.
          */
@@ -14190,9 +18242,27 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         sourceLanguage?: string | null;
         /**
+         * Start from a template instead of an empty page: its blocks become the page's blocks, with new ids, in the template's `field_name` (or `content` when it has none), and the page takes the template's `page_bundle` as its type. Nothing is published — the page starts at default_page_status like any other. `GET /pages/templates?page_bundle=` lists the templates for a type, and `is_default` marks the one to offer first. Omit or send null for an empty page.
+         */
+        templateId?: string | null;
+        /**
          * What the page is called, in its source language. Shown in the editorial list and searched by `?q=`.
          */
         title: string;
+    }
+
+    /**
+     * Both fields are optional; send `{}` for a copy named after the source with no slug. The body itself is not: the gateway checks it against this schema, and a request without one is refused with 400.
+     */
+    export type PageDuplicateRequest = {
+        /**
+         * The path segment to route the copy under. Omit or send null for none — the source's slug stays the source's. One another live page or a live page's translation holds answers 409.
+         */
+        slug?: string | null;
+        /**
+         * The copy's title in its source language. Omit for the source title plus `(Kopie)` / `(copy)`.
+         */
+        title?: string;
     }
 
     /**
@@ -14221,6 +18291,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * What the item is called in the picker.
          */
         label?: string;
+        /**
+         * The item's own bag, replaced wholesale. This route is the only way to write it — the library item itself is made by the `make_reusable` editor step, which writes none — so an importer creates the item and then names it here.
+         */
+        metadata?: object;
         /**
          * A block and its whole subtree, serialized. Produced by the editor when a selection is made reusable or saved as a template, and instantiated back into real blocks when one is inserted.
          */
@@ -14393,7 +18467,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The strings to translate. They are forwarded to the tenant&#039;s provider verbatim.
+     * The strings to translate. They are forwarded to the tenant's provider verbatim.
      */
     export type PageTranslateRequest = {
         /**
@@ -14403,7 +18477,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * Partial update — only title, slug, status, meta and bundle are applied; other keys are ignored. The page&#039;s CONTENT is never edited here: blocks change through the editor&#039;s mutation log.
+     * Partial update — only title, slug, status, meta and bundle are applied; other keys are ignored. The page's CONTENT is never edited here: blocks change through the editor's mutation log.
      */
     export type PageUpdateRequest = {
         /**
@@ -14583,6 +18657,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         error_message?: string | null;
         /**
+         * The key this payment has in the system that BOOKED it — the ERP's own document number for the receipt. A different thing from `psp_payment_id`, which is the provider's own transaction id: one payment is known to two systems and this is the merchant's side of that pair, which is what makes a reconciliation run possible at all. Free text, nullable, and deliberately NOT unique — a payment cannot be updated here, so there is no upsert for a uniqueness rule to serve, and an import that must not book twice sends its key as `idempotency_key` too and gets the same payment back with 200. null for a payment a checkout made, which is the ordinary case.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this payment, keyed by system name — a second ERP, a bank statement reference, a dunning platform. `external_id` is the leading system and `psp_payment_id` is the provider's own; this is the rest. Free jsonb: the database constrains neither the keys nor the values. Not a query parameter — such a column is compared as a WHOLE document, so a filter over part of one is refused rather than answered.
+         */
+        external_refs?: object | null;
+        /**
          * When the payment failed. `error_code` says which class of failure.
          */
         failed_at?: string | null;
@@ -14615,6 +18697,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         next_action?: object | null;
         /**
+         * The order this payment is for, as the orders app knows it (its uuid). Optional. When it is sent, the payment is checked against the order before anything is written: its currency must be the order's (409 `currency_mismatch`), and together with every payment of the order that is created, requires_action, authorized or captured it must not exceed the order's `grand_total` (409 `amount_exceeds_order`) — several payments per order are fine. A `cancelled` order takes no payment (409 `order_not_payable`); every other order status passes. An order that does not exist is 400 `unknown_order`; an orders app that cannot be asked is 502 `orders_unavailable` and nothing is created. On a buyer's own call the order must be the buyer's (400 `buyer_mismatch`). Left out, the payment is accepted unchecked, as before 1.0 — a purchase under approval has no order yet.
+         */
+        order_id?: string | null;
+        /**
          * The external order reference the checkout wrote onto the payment. It is what POST /payments/orders/{order_ref}/capture resolves and the fallback key a PSP webhook is matched on when it carries no transaction id — so an integration that leaves it null gives up both. Free text with no uniqueness: several payments may share one reference.
          */
         order_ref?: string | null;
@@ -14623,13 +18709,21 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         provider?: string | null;
         /**
-         * The provider's own transaction id, as it answered — the value to quote in a PSP support case, and the primary key a webhook is matched on. Shaped by the provider, so nothing here constrains it; null until a provider has answered, and always null for self-managed payments.
+         * The provider's own transaction id, as it answered — the value to quote in a PSP support case, and the primary key a webhook is matched on. Shaped by the provider, so nothing here constrains it; null until a provider has answered, and always null for self-managed payments. It is the PROVIDER's own key and is written by the driver: the key of the system that BOOKED the payment — an ERP — is `external_id`, and the two are never the same value.
          */
         psp_payment_id?: string | null;
         /**
          * When the payment was refunded in full — this app has no partial refund to record.
          */
         refunded_at?: string | null;
+        /**
+         * What the source said about this payment, kept as it said it. `system` names it, `etag` is the token an `If-Match` write-back has to hand back — there is nowhere else to keep it between two runs — and `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost. Free jsonb; nothing here is read by this app.
+         */
+        source_data?: object | null;
+        /**
+         * When this payment was last confirmed against the system that booked it. What a delta run asks for changes since, and what tells an operator a feed has gone quiet — a capture or a refund does not touch it, because it says when the SOURCE was last seen and not when the row moved. Indexed, and null for a payment no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * Where the payment stands. 'created' → 'requires_action' → 'authorized' → 'captured' → 'refunded', with 'failed' and 'cancelled' ending it. GET /payments/vocabularies/statuses serves the same set with labels, badge tones and which of them are final.
          */
@@ -14669,6 +18763,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         currency?: string;
         /**
+         * The key this payment has in the system that BOOKED it — the ERP's own document number for the receipt. A different thing from `psp_payment_id`, which is the provider's own transaction id: one payment is known to two systems and this is the merchant's side of that pair, which is what makes a reconciliation run possible at all. Free text, nullable, and deliberately NOT unique — a payment cannot be updated here, so there is no upsert for a uniqueness rule to serve, and an import that must not book twice sends its key as `idempotency_key` too and gets the same payment back with 200. null for a payment a checkout made, which is the ordinary case.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this payment, keyed by system name — a second ERP, a bank statement reference, a dunning platform. `external_id` is the leading system and `psp_payment_id` is the provider's own; this is the rest. Free jsonb: the database constrains neither the keys nor the values. Not a query parameter — such a column is compared as a WHOLE document, so a filter over part of one is refused rather than answered.
+         */
+        external_refs?: object | null;
+        /**
          * The caller's own key for this creation attempt. Sending it again answers the SAME payment with 200 instead of creating a second one — which is what makes a retried checkout safe. Unique per tenant, so a filter on it answers at most one row. The replay answers 200, not 201.
          */
         idempotency_key?: string | null;
@@ -14681,6 +18783,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         method_code: string;
         /**
+         * The order this payment is for, as the orders app knows it (its uuid). Optional. When it is sent, the payment is checked against the order before anything is written: its currency must be the order's (409 `currency_mismatch`), and together with every payment of the order that is created, requires_action, authorized or captured it must not exceed the order's `grand_total` (409 `amount_exceeds_order`) — several payments per order are fine. A `cancelled` order takes no payment (409 `order_not_payable`); every other order status passes. An order that does not exist is 400 `unknown_order`; an orders app that cannot be asked is 502 `orders_unavailable` and nothing is created. On a buyer's own call the order must be the buyer's (400 `buyer_mismatch`). Left out, the payment is accepted unchecked, as before 1.0 — a purchase under approval has no order yet.
+         */
+        order_id?: string | null;
+        /**
          * The external order reference the checkout wrote onto the payment. It is what POST /payments/orders/{order_ref}/capture resolves and the fallback key a PSP webhook is matched on when it carries no transaction id — so an integration that leaves it null gives up both. Free text with no uniqueness: several payments may share one reference.
          */
         order_ref?: string | null;
@@ -14688,6 +18794,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * Where the PSP sends the buyer back after a redirect or a 3-D Secure challenge. Kept in `metadata.return_url` and handed to the driver — a PSP method that needs a redirect and has none leaves the buyer stranded at the provider.
          */
         return_url?: string | null;
+        /**
+         * What the source said about this payment, kept as it said it. `system` names it, `etag` is the token an `If-Match` write-back has to hand back — there is nowhere else to keep it between two runs — and `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost. Free jsonb; nothing here is read by this app.
+         */
+        source_data?: object | null;
+        /**
+         * When this payment was last confirmed against the system that booked it. What a delta run asks for changes since, and what tells an operator a feed has gone quiet — a capture or a refund does not touch it, because it says when the SOURCE was last seen and not when the row moved. Indexed, and null for a payment no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -15271,7 +19385,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         request?: string;
         /**
-         * Whether the ingress verified the callback signature against the provider's `webhook_secret`. An explicit false is refused with 422: an endpoint may run in annotate mode, and the ledger stays sovereign over one that does.
+         * Whether the ingress verified the callback signature against the provider's `webhook_secret`. Only `true` is applied; false, missing or anything else is refused with 422: an endpoint may run in annotate mode, and the ledger stays sovereign over one that does.
          */
         verified?: string;
     }
@@ -15343,6 +19457,118 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
+     * 
+     */
+    export type PolicyPreview = {
+        /**
+         * The content as the storefront would be delivered it: settings, locales, purposes, vendors.
+         */
+        content?: object;
+        /**
+         * When it stops answering.
+         */
+        expires_at?: string;
+        /**
+         * The market rendered for ('' = the shop).
+         */
+        market?: string;
+        /**
+         * Where the storefront reads it.
+         */
+        preview_path?: string;
+        /**
+         * The hash the content would carry.
+         */
+        sha256?: string;
+        /**
+         * The preview token.
+         */
+        token?: string;
+    }
+
+    /**
+     * Optional.
+     */
+    export type PolicyPreviewRequest = {
+        /**
+         * How long the token answers.
+         */
+        ttl_hours?: number;
+    }
+
+    /**
+     * Optional.
+     */
+    export type PolicyPublishRequest = {
+        /**
+         * Whether visitors are asked again. Defaults to true.
+         */
+        material?: boolean;
+        /**
+         * What changed.
+         */
+        note?: string;
+    }
+
+    /**
+     * One published, frozen, hashed policy — exactly what visitors were shown. Never changed and never deleted.
+     */
+    export type PolicyVersion = {
+        /**
+         * Everything the version froze — settings, the banner and the purpose and vendor texts per locale, the purposes and the vendors — exactly as the storefront is delivered it. Never changed.
+         */
+        content?: object;
+        /**
+         * When the row was created. Server-set.
+         */
+        created_at?: string;
+        /**
+         * The row's own id, generated by the database. A caller never sends one; it reads one back and puts it in the path of later calls.
+         */
+        id?: string;
+        /**
+         * The languages this version holds — every language the draft carried text for.
+         */
+        locales?: string[];
+        /**
+         * The market this row belongs to, by code — '' (empty) is the shop as a whole. Taken from the `x-revenexx-market` header of the call that wrote it, never from a body.
+         */
+        market?: string;
+        /**
+         * Whether this publish asks every visitor again. Set by the publish, or forced on by the `reconsent_on_publish` setting.
+         */
+        material?: boolean;
+        /**
+         * The number of the latest material version up to and including this one. A storefront asks again when the number in the visitor's cookie is lower.
+         */
+        material_number?: number;
+        /**
+         * What changed, in the publisher's words. Optional.
+         */
+        note?: string | null;
+        /**
+         * The version's number. It rises with every publish across what the publishing call can see, and the visitor's cookie remembers the number it was asked under.
+         */
+        number?: number;
+        /**
+         * When the version was published. Server time.
+         */
+        published_at?: string;
+        /**
+         * The subject of the identity that published it, when the call carried one.
+         */
+        published_by?: string | null;
+        /**
+         * SHA-256 over the canonical JSON of `content` (object keys sorted, recursively). Recomputing it proves the content has not moved since it was published.
+         */
+        sha256?: string;
+        /**
+         * The tenant this row belongs to. Set by the platform from the authenticated context, never by a caller.
+         */
+        tenant_id?: string;
+    }
+
+    /**
      * One entry, before and after — the row a confirmation dialog shows.
      */
     export type PriceAdjustPreviewRow = {
@@ -15387,7 +19613,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * Change every priced entry of a list at once. Send &#039;percent&#039; OR &#039;amount&#039;, never both. On-request entries are never touched — a percentage of &quot;ask us&quot; is not a number.
+     * Change every priced entry of a list at once. Send 'percent' OR 'amount', never both. On-request entries are never touched — a percentage of "ask us" is not a number.
      */
     export type PriceEntriesAdjustRequest = {
         /**
@@ -15487,7 +19713,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The quantity ladder (Staffelpreise) for ONE item, generated instead of typed: a price at the first tier and a discount compounded per tier. Identify the item with &#039;product_id&#039; or &#039;sku&#039;.
+     * The quantity ladder (Staffelpreise) for ONE item, generated instead of typed: a price at the first tier and a discount compounded per tier. Identify the item with 'product_id' or 'sku'.
      */
     export type PriceEntriesLadderRequest = {
         /**
@@ -15579,6 +19805,22 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         created_at?: string;
         /**
+         * The source’s own label for this price line — what a price book prints next to the amount, where an ERP or a catalogue feed carries one. Free text, never read into a price, and distinct from the LIST’s `description`, which is about the book rather than the line.
+         */
+        description?: string | null;
+        /**
+         * The line discount the SOURCE stated, in percent, kept so an invoice or an order confirmation can show it. It is NEVER APPLIED: `unit_price` is the authoritative amount and resolution never computes with this column, so a price list that carries both is not two prices. Import it as it arrived and subtract nothing — a second number that also moves the price is how one price becomes two.
+         */
+        discount_percent?: number | null;
+        /**
+         * The key this price entry has in the system that OWNS it — an ERP price list code, a PIM id. Unique per tenant where set, so an import upserts on it instead of matching on a name. Null for a price entry maintained here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this price entry, keyed by system name: {"business-central": "VKPL-2026/10000"}. Answered on read and carries no query parameter — a jsonb column is compared as a whole document, so a filter over part of one is refused. Look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The entry itself — one rung of one item’s quantity ladder.
          */
         id?: string;
@@ -15590,6 +19832,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * The price list this entry belongs to, and therefore the currency and tax basis its amount is on. Set from the path on write.
          */
         price_list_id?: string;
+        /**
+         * How many units `unit_price` is the price OF. 100 means the amount is the price per 100, not per one. Null means one, which is the ordinary case. Named after the BMEcat field of the same meaning rather than after any one ERP, because the source of a price book changes and the standard does not. Nothing in this app divides by it: `unit_price` stays the number a resolve answer quotes, and a caller that prints a per-one price derives it.
+         */
+        price_quantity?: number | null;
+        /**
+         * The unit `price_quantity` counts in — and NOT a duplicate of `unit`. A price line can be priced per 100 kg for an article that is sold by the piece, and both facts come off the same source line, so both are kept. Free text, neither validated nor converted here. Null where the source states none.
+         */
+        price_quantity_unit?: string | null;
         /**
          * `standard` is a number. `on_request` is the explicit no-price marker: it STOPS resolution for this item on this list and answers price-on-request, even where a cheaper list exists — the list is authoritative for this buyer and it says "ask us".
          */
@@ -15606,6 +19856,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * The article number this rung prices, for a price book keyed by SKU rather than by product id — matched exactly, never normalised or case-folded.
          */
         sku?: string | null;
+        /**
+         * What the source said about this price entry, kept as it said it: system, the ETag a write-back has to return in `If-Match`, and the source fields this app does not model. Without it the unmodelled ones are lost on the first edit here.
+         */
+        source_data?: object | null;
+        /**
+         * When this price entry was last confirmed against its source. What a delta run asks for changes since, and what shows an operator that a feed has gone quiet. An edit made here does not touch it: it records when the SOURCE was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
         /**
          * The unit of measure the price is per — ‘pcs’, ‘m’, ‘kg’, a packaging size. Free text: this app neither validates nor converts it, and the `quantity` of a resolve call is counted in it.
          */
@@ -15629,13 +19887,29 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * An entry needs an identity: &#039;product_id&#039; or &#039;sku&#039;.
+     * An entry needs an identity: 'product_id' or 'sku'.
      */
     export type PriceEntryCreateRequest = {
+        /**
+         * The source’s own label for this price line — what a price book prints next to the amount. Free text, never read into a price, and not the LIST’s description.
+         */
+        description?: string | null;
+        /**
+         * The line discount the SOURCE stated, kept so a document can show it. NEVER APPLIED: unit_price is the authoritative amount and resolution never computes with this field. Import it as it arrived and subtract nothing.
+         */
+        discount_percent?: number | null;
         /**
          * Free-form bag: whatever JSON object you write round-trips exactly, and this app never reads it. Its keys are yours.
          */
         metadata?: object | null;
+        /**
+         * How many units unit_price is the price OF — 100 for a price per 100 m. Omit (null) for one, the ordinary case. Nothing divides by it: unit_price stays the number a resolve answer quotes.
+         */
+        price_quantity?: number | null;
+        /**
+         * The unit price_quantity counts in — NOT a duplicate of `unit`. A line can be priced per 100 kg for an article sold by the piece, and both come off the same source line.
+         */
+        price_quantity_unit?: string | null;
         /**
          * Default 'standard'; 'on_request' is the explicit no-price marker — it STOPS resolution for this item on this list and answers "price on request" even where a cheaper list exists.
          */
@@ -15671,13 +19945,29 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * An entry needs an identity: &#039;product_id&#039; or &#039;sku&#039; — every other field is normalized to its default when null/omitted.
+     * An entry needs an identity: 'product_id' or 'sku' — every other field is normalized to its default when null/omitted.
      */
     export type PriceEntryReplaceItem = {
+        /**
+         * The source’s own label for this price line — what a price book prints next to the amount. Free text, never read into a price, and not the LIST’s description.
+         */
+        description?: string | null;
+        /**
+         * The line discount the SOURCE stated, kept so a document can show it. NEVER APPLIED: unit_price is the authoritative amount and resolution never computes with this field. Import it as it arrived and subtract nothing.
+         */
+        discount_percent?: number | null;
         /**
          * Free-form bag: whatever JSON object you write round-trips exactly, and this app never reads it. Its keys are yours.
          */
         metadata?: object | null;
+        /**
+         * How many units unit_price is the price OF — 100 for a price per 100 m. Omit (null) for one, the ordinary case. Nothing divides by it: unit_price stays the number a resolve answer quotes.
+         */
+        price_quantity?: number | null;
+        /**
+         * The unit price_quantity counts in — NOT a duplicate of `unit`. A line can be priced per 100 kg for an article sold by the piece, and both come off the same source line.
+         */
+        price_quantity_unit?: string | null;
         /**
          * Default 'standard'; 'on_request' is the explicit no-price marker — it STOPS resolution for this item on this list and answers "price on request" even where a cheaper list exists.
          */
@@ -15717,9 +20007,25 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type PriceEntryUpdateRequest = {
         /**
+         * The source’s own label for this price line — what a price book prints next to the amount. Free text, never read into a price, and not the LIST’s description.
+         */
+        description?: string | null;
+        /**
+         * The line discount the SOURCE stated, kept so a document can show it. NEVER APPLIED: unit_price is the authoritative amount and resolution never computes with this field. Import it as it arrived and subtract nothing.
+         */
+        discount_percent?: number | null;
+        /**
          * Free-form bag: whatever JSON object you write round-trips exactly, and this app never reads it. Its keys are yours.
          */
         metadata?: object | null;
+        /**
+         * How many units unit_price is the price OF — 100 for a price per 100 m. Omit (null) for one, the ordinary case. Nothing divides by it: unit_price stays the number a resolve answer quotes.
+         */
+        price_quantity?: number | null;
+        /**
+         * The unit price_quantity counts in — NOT a duplicate of `unit`. A line can be priced per 100 kg for an article sold by the piece, and both come off the same source line.
+         */
+        price_quantity_unit?: string | null;
         /**
          * Default 'standard'; 'on_request' is the explicit no-price marker — it STOPS resolution for this item on this list and answers "price on request" even where a cheaper list exists.
          */
@@ -15759,6 +20065,14 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type PriceLine = {
         /**
+         * The key this position has in the system that owns it. Left out on anything this shop raised itself.
+         */
+        external_id?: string;
+        /**
+         * Every other system that knows this position, keyed by system name.
+         */
+        external_refs?: object;
+        /**
          * Which position.
          */
         id: string;
@@ -15774,6 +20088,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * The negotiated price per unit.
          */
         quoted_price?: number;
+        /**
+         * What the source said, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`.
+         */
+        source_data?: object;
+        /**
+         * When this position was last confirmed against its source.
+         */
+        source_synced_at?: string;
     }
 
     /**
@@ -15781,7 +20103,7 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type PriceList = {
         /**
-         * Buyer scope: this list prices for this sales channel. Beats the open lists, loses to contact and organization scope.
+         * Buyer scope: this list prices for this sales channel. Beats the open lists, loses to contact, organization and segment scope.
          */
         channel_id?: string | null;
         /**
@@ -15805,6 +20127,14 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         description?: string | null;
         /**
+         * The key this price list has in the system that OWNS it — an ERP price list code, a PIM id. Unique per tenant where set, so an import upserts on it instead of matching on a name. Null for a price list maintained here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this price list, keyed by system name: {"business-central": "VKPL-2026"}. Answered on read and carries no query parameter — a jsonb column is compared as a whole document, so a filter over part of one is refused. Look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The price list itself. Every sub-route addresses the list by this id, and a resolve answer names the list that priced an item under `price_list.id`.
          */
         id?: string;
@@ -15825,7 +20155,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         name?: string;
         /**
-         * Buyer scope: this list prices for buyers of this organization. Beats channel-scoped and open lists, loses to a contact-scoped one.
+         * Buyer scope: this list prices for buyers of this organization. Beats segment-scoped, channel-scoped and open lists, loses to a contact-scoped one.
          */
         organization_id?: string | null;
         /**
@@ -15836,6 +20166,18 @@ are no `created_at` / `updated_at` fields on this resource.
          * Gate: when true the list resolves only for a buyer who has a contact or organization context. An anonymous resolve never matches it, so a tenant that prices only for logged-in customers flags its list and guests fall through to price-on-request rather than to some other list’s number.
          */
         requires_auth?: boolean;
+        /**
+         * Buyer scope: this list prices for every buyer in this segment — a GROUP of organizations rather than one, which is how a graduated price book (wholesale, retail, project business) is expressed without a list per organization. The code is the segment’s own, as the customers app knows it, and it is matched exactly against the `segment_codes` a resolve call states; nothing here reads the membership, so a call that names no segment never matches a segment-scoped list. Ranks between organization and channel: less specific than one organization, more specific than a channel.
+         */
+        segment_code?: string | null;
+        /**
+         * What the source said about this price list, kept as it said it: system, the ETag a write-back has to return in `If-Match`, and the source fields this app does not model. Without it the unmodelled ones are lost on the first edit here.
+         */
+        source_data?: object | null;
+        /**
+         * When this price list was last confirmed against its source. What a delta run asks for changes since, and what shows an operator that a feed has gone quiet. An edit made here does not touch it: it records when the SOURCE was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
         /**
          * Whether the list takes part in resolution at all. Only `active` lists are candidates; `inactive` retires a list without deleting the prices it holds.
          */
@@ -15867,7 +20209,7 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type PriceListCreateRequest = {
         /**
-         * Scope: only this sales channel. Beats the open lists, loses to contact and organization.
+         * Scope: only this sales channel. Beats the open lists, loses to contact, organization and segment.
          */
         channel_id?: string | null;
         /**
@@ -15887,7 +20229,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         description?: string | null;
         /**
-         * The fallback list. Within its group it sorts LAST, so it wins only where nothing more specific priced the item. Use prices.lists.make-default to move the flag rather than setting it here — two defaults leave a tie to row order.
+         * The fallback list. Within its group it sorts LAST, so it wins only where nothing more specific priced the item. Taken on a create only while no list carries the flag (409 default_exists otherwise); a change may restate it but never move it (400 default_via_make_default). prices.lists.make-default moves it.
          */
         is_default?: boolean;
         /**
@@ -15914,6 +20256,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * Gate: when true the list resolves only for an authenticated buyer (contact or organization context); anonymous resolve calls get on_request. Default false (open to everyone).
          */
         requires_auth?: boolean;
+        /**
+         * Scope: every buyer in this buyer segment — a GROUP of organizations, which is how a graduated price book is expressed without one list per organization. The segment’s own code, matched exactly against the segment_codes a resolve call states. Ranks between organization and channel.
+         */
+        segment_code?: string | null;
         /**
          * Default 'active' — only active lists resolve. 'inactive' retires a list without deleting its prices.
          */
@@ -15971,7 +20317,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The price list this answer came out of — enough to link to it or to explain the number to a merchant (&quot;this came from the dealer list&quot;).
+     * The price list this answer came out of — enough to link to it or to explain the number to a merchant ("this came from the dealer list").
      */
     export type PriceListRef = {
         /**
@@ -15989,7 +20335,7 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type PriceListUpdateRequest = {
         /**
-         * Scope: only this sales channel. Beats the open lists, loses to contact and organization.
+         * Scope: only this sales channel. Beats the open lists, loses to contact, organization and segment.
          */
         channel_id?: string | null;
         /**
@@ -16009,7 +20355,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         description?: string | null;
         /**
-         * The fallback list. Within its group it sorts LAST, so it wins only where nothing more specific priced the item. Use prices.lists.make-default to move the flag rather than setting it here — two defaults leave a tie to row order.
+         * The fallback list. Within its group it sorts LAST, so it wins only where nothing more specific priced the item. Taken on a create only while no list carries the flag (409 default_exists otherwise); a change may restate it but never move it (400 default_via_make_default). prices.lists.make-default moves it.
          */
         is_default?: boolean;
         /**
@@ -16036,6 +20382,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * Gate: when true the list resolves only for an authenticated buyer (contact or organization context); anonymous resolve calls get on_request. Default false (open to everyone).
          */
         requires_auth?: boolean;
+        /**
+         * Scope: every buyer in this buyer segment — a GROUP of organizations, which is how a graduated price book is expressed without one list per organization. The segment’s own code, matched exactly against the segment_codes a resolve call states. Ranks between organization and channel.
+         */
+        segment_code?: string | null;
         /**
          * Default 'active' — only active lists resolve. 'inactive' retires a list without deleting its prices.
          */
@@ -16089,6 +20439,14 @@ are no `created_at` / `updated_at` fields on this resource.
      */
     export type PriceRequest = {
         /**
+         * The key this quote has in the system that owns it. Left out on anything this shop raised itself.
+         */
+        external_id?: string;
+        /**
+         * Every other system that knows this quote, keyed by system name.
+         */
+        external_refs?: object;
+        /**
          * The positions to price. A position left out keeps what it has.
          */
         items?: PriceLine[];
@@ -16104,6 +20462,14 @@ are no `created_at` / `updated_at` fields on this resource.
          * The rate carriage is taxed at, in percent (0–100).
          */
         shipping_tax_rate?: number;
+        /**
+         * What the source said, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`.
+         */
+        source_data?: object;
+        /**
+         * When this quote was last confirmed against its source.
+         */
+        source_synced_at?: string;
         /**
          * When the offer stops standing. Left out, the configured default validity is used.
          */
@@ -16145,7 +20511,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * Identify by &#039;product_id&#039; or &#039;sku&#039; — an item without identity resolves to on_request with a per-item error rather than failing the call.
+     * Identify by 'product_id' or 'sku' — an item without identity resolves to on_request with a per-item error rather than failing the call.
      */
     export type PriceResolveItem = {
         /**
@@ -16153,7 +20519,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         product_id?: string | null;
         /**
-         * Requested quantity, counted in the entry’s `unit`. It picks the tier (the highest `quantity_min` at or below it) and multiplies into `line_total`. Default 1; a non-positive value falls back to 1.
+         * Requested quantity, counted in the entry’s `unit`. It picks the tier (the highest `quantity_min` at or below it) and multiplies into `line_total`. Default 1 when absent or null; zero, a negative number or anything that is not a number is refused with 400 `invalid_quantity`.
          */
         quantity?: number | null;
         /**
@@ -16175,7 +20541,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         channel_id?: string | null;
         /**
-         * Buyer context: the contact this quote is for. The most specific scope — a list naming this contact beats every other list, whatever their priority. Sending it (or organization_id) is also what makes the buyer AUTHENTICATED for `requires_auth` lists and for the tenant’s anonymous_resolve_allowed setting.
+         * Buyer context: the contact this quote is for. The most specific scope — a list naming this contact beats every other list, whatever their priority. Sending it (or organization_id) is also what makes the buyer AUTHENTICATED for `requires_auth` lists and for the tenant’s anonymous_resolve_allowed setting. On a buyer's own call it is the acting contact, taken from the platform: the body may restate it, and naming another one is refused with 400 `buyer_mismatch`.
          */
         contact_id?: string | null;
         /**
@@ -16191,9 +20557,13 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         market_id?: string | null;
         /**
-         * Buyer context: the organization the buyer belongs to. Second most specific scope; also counts as authenticated.
+         * Buyer context: the organization the buyer belongs to. Second most specific scope; also counts as authenticated. On a buyer's own call it is the acting contact's organization, taken from the platform: the body may restate it, and naming another one is refused with 400 `buyer_mismatch`.
          */
         organization_id?: string | null;
+        /**
+         * Buyer context: the buyer segments this buyer is in, by code. A list scoped to any of them is a candidate, and ranks BETWEEN organization and channel — a segment is a group of organizations, so it is less specific than one and more specific than a channel. Refused with 400 `segments_not_accepted` on a buyer's own call (one acting for a contact), because the platform does not state membership yet. Membership is not read here: a call that states no segment never matches a segment-scoped list. At most 50 codes, matched exactly; anything that is not a list of non-empty codes is refused with 400.
+         */
+        segment_codes?: string[] | null;
     }
 
     /**
@@ -16231,7 +20601,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         message?: string;
         /**
-         * Only when resolved=false — why no rate could be applied.
+         * Only when resolved=false — why no rate could be applied. 'unknown_market' is a header code or a pinned market_id naming no market of this tenant; 'lookup_failed' is the markets app not answering.
          */
         reason?: PriceTaxUnresolvedReason;
         /**
@@ -16419,6 +20789,102 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
+     * One closed value set this app owns, parsed out of the CHECK constraint in schema.json — the served set IS the enforced set.
+     */
+    export type ProcurementVocabulary = {
+        /**
+         * 
+         */
+        app?: string;
+        /**
+         * Always true: the values come from a CHECK constraint, so the list is exhaustive.
+         */
+        closed?: boolean;
+        /**
+         * The tone a value that carries none falls back to.
+         */
+        default_tone?: ProcurementVocabularyDefaultTone;
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        description?: string;
+        /**
+         * 
+         */
+        name?: ProcurementVocabularyName;
+        /**
+         * 'schema' = a CHECK constraint in this app's own schema.json.
+         */
+        source?: ProcurementVocabularySource;
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        title?: string;
+        /**
+         * Every value the column may hold, in the order the CHECK constraint lists them — the order a select should offer them in.
+         */
+        values?: ProcurementVocabularyValue[];
+    }
+
+    /**
+     * 
+     */
+    export type ProcurementVocabularyIndex = {
+        /**
+         * 
+         */
+        app?: string;
+        /**
+         * 
+         */
+        vocabularies?: ProcurementVocabularySummary[];
+    }
+
+    /**
+     * 
+     */
+    export type ProcurementVocabularySummary = {
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        description?: string;
+        /**
+         * 
+         */
+        name?: ProcurementVocabularySummaryName;
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        title?: string;
+    }
+
+    /**
+     * 
+     */
+    export type ProcurementVocabularyValue = {
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        description?: string;
+        /**
+         * A terminal state nothing moves out of.
+         */
+        final?: boolean;
+        /**
+         * The value as stored in the column.
+         */
+        key?: string;
+        /**
+         * Either one string, or a map of locale to string ({"en": …, "de": …}).
+         */
+        title?: string;
+        /**
+         * Semantic badge tone — the client decides what it looks like.
+         */
+        tone?: ProcurementVocabularyValueTone;
+    }
+
+    /**
      * 
      */
     export type ProductAssociations = {
@@ -16450,6 +20916,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * The product the relation points at — the accessory, the spare part, the cross-sell.
          */
         target_product_id?: string;
+        /**
+         * When the row was last written. Server-set — it is not part of any request body.
+         */
+        updated_at?: string;
     }
 
     /**
@@ -16479,7 +20949,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `product_associations` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `product_associations` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type ProductAssociationsFilter = {
         /**
@@ -16510,6 +20980,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * The literal `?target_product_id=` value this call was understood to carry.
          */
         target_product_id?: string;
+        /**
+         * The literal `?updated_at=` value this call was understood to carry.
+         */
+        updated_at?: string;
     }
 
     export type DefaultProductAssociationsFilter = ProductAssociationsFilter & {
@@ -16544,6 +21018,109 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
+     * The whole product row, exactly as `GET /products/{id}` answers it — except `label`, which carries the resolved display name, so `label` means the same thing in both shapes of this route.
+     */
+    export type ProductBatchRow = {
+        /**
+         * Every attribute value the record carries, in ONE jsonb document — the core of an attribute-driven PIM. A record's properties are not columns here: they are rows in `attributes`, selected per family by `family_attributes`, and their values live under their attribute CODE inside this object.
+
+Four buckets, and an attribute's own flags decide which one it writes to:
+
+  `common`                    the attribute is neither localizable nor scopable — one value, full stop.
+                              `{"common": {"net_weight": 2.4, "colour": "black"}}`
+  `locale_specific`           `localizable`: one value per language tag.
+                              `{"locale_specific": {"de_DE": {"name": "Akku-Bohrschrauber"}}}`
+  `channel_specific`          `scopable`: one value per channel.
+                              `{"channel_specific": {"b2b": {"minimum_order_quantity": 6}}}`
+  `channel_locale_specific`   both: one value per channel AND language tag.
+                              `{"channel_locale_specific": {"b2b": {"de_DE": {"description": "…"}}}}`
+
+A reader takes the most specific bucket that carries the code and falls back through locale, then channel, then `common`. `common` is always last and always consulted, because early imports wrote everything there whatever an attribute's flags said — a reader that skipped it reports an imported catalog as empty. `GET /products/attribute-schema` answers, per field, the exact path a value belongs at (`storage.path`) and that full fallback order (`from`), so no client has to re-derive any of this.
+
+The value itself is whatever the attribute's `type` implies: a string, a number, a boolean, an option CODE for a select (never its label), a list of codes for a multi-select, `{"amount": …, "unit": …}` for a measure, a list of `{"amount": …, "currency": …}` for a price, an asset code for media.
+
+Defaults to `{}`, and an empty object is a normal state — a record nobody has enriched yet. The declared type also admits an array only because every jsonb column of this app shares one mapping; an array is not meaningful here and every reader in this app treats a non-object as empty.
+         */
+        attribute_values?: object;
+        /**
+         * How much of what this product's family REQUIRES it actually carries — the number a merchandiser works down. `required` counts the attributes the family marks `is_required`, `filled` how many of those carry a value in ANY bucket, `ratio` is filled/required between 0 and 1 (a family that requires nothing is 1, not undefined), `missing` lists the codes with no value anywhere, sorted, and `computed_at` is when it was measured.
+
+Written only by `POST /products/{id}/completeness` and by `POST /products/{id}/family`; a plain create or update never touches it, so it is null until one of the two has run. It also stays null for a product with no family — there is nothing to measure it against, and 0 % would be a lie.
+         */
+        completeness?: object | null;
+        /**
+         * When the row was created. Server-set — it is not part of any request body.
+         */
+        created_at?: string;
+        /**
+         * When the product was soft-deleted. `GET /products/grid` and every category-rule evaluation exclude a row that carries one; `GET /products` does NOT — filter on it to read the live catalog.
+         */
+        deleted_at?: string | null;
+        /**
+         * Whether the product is offered. A create defaults it from the `new_products_enabled_by_default` tenant setting rather than blindly to true, so an import does not publish twenty thousand unfinished products the moment it lands. An explicit value in the body always wins.
+         */
+        enabled?: boolean;
+        /**
+         * The key this article has in the system that OWNS it — for a catalog fed by BMEcat, the PIM's own id for the row. It is NOT the `sku`: the SKU is the merchant's article number, typed by people and printed on paper, while this is whatever the feeding system calls the same article, often a number nobody outside it sees. Unique per tenant where set, so a repeated import upserts on it instead of matching on SKU and founding a second product. Null for a product created here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
+         * The family that decides which attributes this product HAS. Without one nothing is required, completeness cannot be computed and the display name never resolves — `POST /products/{id}/family` is the call that sets it and computes completeness in the same step.
+         */
+        family_id?: string | null;
+        /**
+         * Which variant structure of the family this product follows — the axes it splits on. Null on a simple product.
+         */
+        family_variant_id?: string | null;
+        /**
+         * The row's own id, generated by the database. A client never sends one; it reads one back and uses it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Where the product sits in the variant hierarchy. 'simple' stands on its own. 'model' carries the values its variants share and is never sold itself. 'variant' carries the axis values and points at its model through `parent_id`.
+         */
+        kind?: string;
+        /**
+         * The product's resolved display name (family-aware, as `POST /products/labels` resolves it), or its SKU when the catalog holds no name for it. NOT the stored `label` column.
+         */
+        label?: string;
+        /**
+         * The product MODEL this variant belongs to. Only a `variant` carries one. Deleting the model leaves its variants behind with a null parent rather than deleting them.
+         */
+        parent_id?: string | null;
+        /**
+         * The import-side mirror of associations that carry a quantity — a bundle, a bill of materials, a spare-parts set. NOTHING IN THIS APP READS OR WRITES IT: no route produces it, no route consumes it, and it is null on every product this app has created. The surface that IS served is relational — `product_associations`, whose `quantity` column holds the number, guarded by `association_types.is_quantified`.
+
+It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed by association type code, and the column lets that document round-trip instead of being dropped. The database enforces no shape on it, so what a reader finds is whatever the importer wrote; the example is the conventional form.
+         */
+        quantified_associations?: object | null;
+        /**
+         * The merchant's own article number — unique per tenant, and the value every integration (ERP, shop, feed, price list) joins on. The one identifier a person types, and the fallback this app shows when the catalog holds no name.
+         */
+        sku?: string;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
+         * The tax class key the prices app resolves a VAT rate from. Free text here — the vocabulary belongs to the app that prices, and `POST /products/batch` exists to hand exactly this column to it in bulk.
+         */
+        tax_class?: string | null;
+        /**
+         * When the row was last written. Server-set — it is not part of any request body.
+         */
+        updated_at?: string;
+    }
+
+    /**
      * 
      */
     export type ProductCategories = {
@@ -16571,6 +21148,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * How the membership came about: 'manual' is hand-picked, 'rule' was materialized by a category rule. The two never touch each other — a recompute only ever inserts and deletes `rule` rows, so a hand-picked membership survives every pass.
          */
         source?: string;
+        /**
+         * When the row was last written. Server-set — it is not part of any request body.
+         */
+        updated_at?: string;
     }
 
     /**
@@ -16596,7 +21177,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `product_categories` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `product_categories` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type ProductCategoriesFilter = {
         /**
@@ -16623,6 +21204,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * The literal `?source=` value this call was understood to carry.
          */
         source?: string;
+        /**
+         * The literal `?updated_at=` value this call was understood to carry.
+         */
+        updated_at?: string;
     }
 
     export type DefaultProductCategoriesFilter = ProductCategoriesFilter & {
@@ -16920,6 +21505,14 @@ Written only by `POST /products/{id}/completeness` and by `POST /products/{id}/f
          */
         enabled?: boolean;
         /**
+         * The key this article has in the system that OWNS it — for a catalog fed by BMEcat, the PIM's own id for the row. It is NOT the `sku`: the SKU is the merchant's article number, typed by people and printed on paper, while this is whatever the feeding system calls the same article, often a number nobody outside it sees. Unique per tenant where set, so a repeated import upserts on it instead of matching on SKU and founding a second product. Null for a product created here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The family that decides which attributes this product HAS. Without one nothing is required, completeness cannot be computed and the display name never resolves — `POST /products/{id}/family` is the call that sets it and computes completeness in the same step.
          */
         family_id?: string | null;
@@ -16954,6 +21547,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         sku?: string;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * The tax class key the prices app resolves a VAT rate from. Free text here — the vocabulary belongs to the app that prices, and `POST /products/batch` exists to hand exactly this column to it in bulk.
          */
         tax_class?: string | null;
@@ -16964,15 +21565,19 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
     }
 
     /**
-     * Name the products either way, or both ways. Send at least one non-empty list; the two are unioned and a product named twice comes back once.
+     * Name the products either way, or both ways. The two are unioned and a product named twice comes back once; naming nothing answers an empty list.
      */
     export type ProductsBatchRequest = {
         /**
-         * Product ids, when the caller already holds them.
+         * True answers each product as its whole row (`ProductBatchRow`) instead of the four-field reference (`ProductTaxRef`). For a caller that must hand a whole product on — every column and attribute value — without a read per line.
+         */
+        full?: boolean;
+        /**
+         * Product ids, when the caller already holds them. At most 500.
          */
         ids?: string[];
         /**
-         * Product SKUs — the identifier a foreign system carries, which is why this route exists at all.
+         * Product SKUs — the identifier a foreign system carries, which is why this route exists at all. At most 500.
          */
         skus?: string[];
     }
@@ -17017,6 +21622,14 @@ Written only by `POST /products/{id}/completeness` and by `POST /products/{id}/f
          */
         enabled?: boolean;
         /**
+         * The key this article has in the system that OWNS it — for a catalog fed by BMEcat, the PIM's own id for the row. It is NOT the `sku`: the SKU is the merchant's article number, typed by people and printed on paper, while this is whatever the feeding system calls the same article, often a number nobody outside it sees. Unique per tenant where set, so a repeated import upserts on it instead of matching on SKU and founding a second product. Null for a product created here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The family that decides which attributes this product HAS. Without one nothing is required, completeness cannot be computed and the display name never resolves — `POST /products/{id}/family` is the call that sets it and computes completeness in the same step.
          */
         family_id?: string | null;
@@ -17043,13 +21656,21 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         sku: string;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * The tax class key the prices app resolves a VAT rate from. Free text here — the vocabulary belongs to the app that prices, and `POST /products/batch` exists to hand exactly this column to it in bulk.
          */
         tax_class?: string | null;
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `products` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `products` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type ProductsFilter = {
         /**
@@ -17072,6 +21693,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * The literal `?enabled=` value this call was understood to carry.
          */
         enabled?: string;
+        /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
         /**
          * The literal `?family_id=` value this call was understood to carry.
          */
@@ -17104,6 +21733,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * The literal `?sku=` value this call was understood to carry.
          */
         sku?: string;
+        /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
         /**
          * The literal `?tax_class=` value this call was understood to carry.
          */
@@ -17159,6 +21796,14 @@ Written only by `POST /products/{id}/completeness` and by `POST /products/{id}/f
          */
         enabled?: boolean;
         /**
+         * The key this article has in the system that OWNS it — for a catalog fed by BMEcat, the PIM's own id for the row. It is NOT the `sku`: the SKU is the merchant's article number, typed by people and printed on paper, while this is whatever the feeding system calls the same article, often a number nobody outside it sees. Unique per tenant where set, so a repeated import upserts on it instead of matching on SKU and founding a second product. Null for a product created here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The family that decides which attributes this product HAS. Without one nothing is required, completeness cannot be computed and the display name never resolves — `POST /products/{id}/family` is the call that sets it and computes completeness in the same step.
          */
         family_id?: string | null;
@@ -17184,6 +21829,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * The merchant's own article number — unique per tenant, and the value every integration (ERP, shop, feed, price list) joins on. The one identifier a person types, and the fallback this app shows when the catalog holds no name.
          */
         sku?: string;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * The tax class key the prices app resolves a VAT rate from. Free text here — the vocabulary belongs to the app that prices, and `POST /products/batch` exists to hand exactly this column to it in bulk.
          */
@@ -18409,6 +23062,50 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
     /**
      * 
      */
+    export type PruneRequest = {
+        /**
+         * Defaults to true: report, delete nothing.
+         */
+        dry_run?: boolean;
+    }
+
+    /**
+     * 
+     */
+    export type PruneResponse = {
+        /**
+         * Records that ended before this go.
+         */
+        cutoff?: string;
+        /**
+         * Records deleted (0 on a preview).
+         */
+        deleted?: number;
+        /**
+         * Whether this was a preview.
+         */
+        dry_run?: boolean;
+        /**
+         * Whether another run is needed.
+         */
+        has_more?: boolean;
+        /**
+         * Records found to go.
+         */
+        matched?: number;
+        /**
+         * The retention applied.
+         */
+        retention_days?: number;
+        /**
+         * Up to five of them.
+         */
+        sample?: object[];
+    }
+
+    /**
+     * 
+     */
     export type PunchoutAccount = {
         /**
          * 
@@ -18755,7 +23452,7 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
     }
 
     /**
-     * Nothing: the visit is named in the path, and who the buyer is was settled by the entry call and the account&#039;s own policy.
+     * Nothing: the visit is named in the path, and who the buyer is was settled by the entry call and the account's own policy.
      */
     export type PunchoutClaimRequest = {
     }
@@ -18859,7 +23556,7 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
     }
 
     /**
-     * The external system&#039;s entry call, forwarded verbatim by the storefront pass-through. The account credentials inside it are checked by this app against punchout_accounts; the pass-through authenticates nothing.
+     * The external system's entry call, forwarded verbatim by the storefront pass-through. The account credentials inside it are checked by this app against punchout_accounts; the pass-through authenticates nothing.
      */
     export type PunchoutEntryRequest = {
         /**
@@ -19305,7 +24002,7 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
     }
 
     /**
-     * Nothing: the visit is named in the path and everything else is the account&#039;s configuration and the cart.
+     * Nothing: the visit is named in the path and everything else is the account's configuration and the cart.
      */
     export type PunchoutReturnRequest = {
     }
@@ -20515,6 +25212,128 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
     }
 
     /**
+     * One reason a tool runs, with the one legal basis that decides whether it loads before a visitor decides.
+     */
+    export type Purpose = {
+        /**
+         * The purpose's fixed identity — `necessary`, `statistics`, `marketing`, `comfort`, `external_media` or one the tenant adds. Vendors, the catalogue, the Tag Manager, the visitor's cookie and every record name it, so it never changes once created.
+         */
+        code?: string;
+        /**
+         * When the row was created. Server-set.
+         */
+        created_at?: string;
+        /**
+         * The sentence under the purpose in the banner's second layer. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        description?: object | null;
+        /**
+         * The Google Consent Mode v2 signals this purpose releases when granted — e.g. statistics releases `analytics_storage`. A list drawn from the google-signals vocabulary.
+         */
+        google_signals?: string[] | null;
+        /**
+         * The row's own id, generated by the database. A caller never sends one; it reads one back and puts it in the path of later calls.
+         */
+        id?: string;
+        /**
+         * Whether this row takes part in the next published version. Switching it off keeps the row and leaves it out of every version published afterwards; versions already published are untouched.
+         */
+        is_active?: boolean;
+        /**
+         * True for the five purposes this app seeds. It records who put the row there and licenses nothing: a seeded purpose may be reworded like any other.
+         */
+        is_system?: boolean;
+        /**
+         * Why this purpose may process data at all, and therefore whether its tools load before a decision: `consent` waits for the visitor, `legitimate_interest` runs until the visitor objects, `necessary` always runs. A vendor may override it with its own `legal_basis_override`.
+         */
+        legal_basis?: PurposeLegalBasis;
+        /**
+         * What a visitor reads for this purpose. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        name?: object;
+        /**
+         * Where this row sorts in the order a screen and the banner show them, ascending. Presentation only.
+         */
+        position?: number;
+        /**
+         * The tenant this row belongs to. Set by the platform from the authenticated context, never by a caller.
+         */
+        tenant_id?: string;
+        /**
+         * When the row was last written. Server-set — every route that changes the row stamps it.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type PurposeCreateRequest = {
+        /**
+         * The purpose's fixed identity — `necessary`, `statistics`, `marketing`, `comfort`, `external_media` or one the tenant adds. Vendors, the catalogue, the Tag Manager, the visitor's cookie and every record name it, so it never changes once created.
+         */
+        code: string;
+        /**
+         * The sentence under the purpose in the banner's second layer. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        description?: object | null;
+        /**
+         * The Google Consent Mode v2 signals this purpose releases when granted — e.g. statistics releases `analytics_storage`. A list drawn from the google-signals vocabulary.
+         */
+        google_signals?: string[] | null;
+        /**
+         * Whether this row takes part in the next published version. Switching it off keeps the row and leaves it out of every version published afterwards; versions already published are untouched.
+         */
+        is_active?: boolean;
+        /**
+         * Why this purpose may process data at all, and therefore whether its tools load before a decision: `consent` waits for the visitor, `legitimate_interest` runs until the visitor objects, `necessary` always runs. A vendor may override it with its own `legal_basis_override`.
+         */
+        legal_basis: PurposeCreateRequestLegalBasis;
+        /**
+         * What a visitor reads for this purpose. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        name: object | null;
+        /**
+         * Where this row sorts in the order a screen and the banner show them, ascending. Presentation only.
+         */
+        position?: number;
+    }
+
+    /**
+     * 
+     */
+    export type PurposeUpdateRequest = {
+        /**
+         * The purpose's fixed identity — `necessary`, `statistics`, `marketing`, `comfort`, `external_media` or one the tenant adds. Vendors, the catalogue, the Tag Manager, the visitor's cookie and every record name it, so it never changes once created.
+         */
+        code?: string;
+        /**
+         * The sentence under the purpose in the banner's second layer. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        description?: object | null;
+        /**
+         * The Google Consent Mode v2 signals this purpose releases when granted — e.g. statistics releases `analytics_storage`. A list drawn from the google-signals vocabulary.
+         */
+        google_signals?: string[] | null;
+        /**
+         * Whether this row takes part in the next published version. Switching it off keeps the row and leaves it out of every version published afterwards; versions already published are untouched.
+         */
+        is_active?: boolean;
+        /**
+         * Why this purpose may process data at all, and therefore whether its tools load before a decision: `consent` waits for the visitor, `legitimate_interest` runs until the visitor objects, `necessary` always runs. A vendor may override it with its own `legal_basis_override`.
+         */
+        legal_basis?: PurposeUpdateRequestLegalBasis;
+        /**
+         * What a visitor reads for this purpose. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        name?: object | null;
+        /**
+         * Where this row sorts in the order a screen and the banner show them, ascending. Presentation only.
+         */
+        position?: number;
+    }
+
+    /**
      * 
      */
     export type PushSubscription = {
@@ -20597,6 +25416,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         expired_at?: string | null;
         /**
+         * The key this quote has in the system that OWNS it — an ERP or a CPQ that raised the offer and mirrors it here. Not `number`: that one this app mints and a person reads out on the phone. Unique per tenant where it is set, so a second run of an import updates the quote it wrote rather than founding another. Null on a quote that started here, which is the ordinary case.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this quote, keyed by system name — a second ERP, a CPQ, the procurement platform the request came through. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the quote up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * What the buyer pays before tax: `quoted_total` plus `shipping_amount`. The one figure the list, the Cockpit and the storefront all show, so they cannot disagree about what a quote with freight is worth.
          */
         grand_total?: number;
@@ -20665,6 +25492,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         shipping_tax_rate?: number | null;
         /**
+         * What the source said about this quote, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody prices the quote.
+         */
+        source_data?: object | null;
+        /**
+         * When this quote was last confirmed against its source. What a delta run asks for changes since, and what tells an operator a feed has gone quiet — pricing it here does not touch it, because it says when the SOURCE was last seen and not when the row changed. Null on a quote no source owns.
+         */
+        source_synced_at?: string | null;
+        /**
          * Where the quote stands. `requested` is a buyer's ask nobody has picked up; `in_review` is on somebody's desk; `quoted` carries prices and a deadline; `accepted`, `declined`, `rejected` and `expired` are final. `partially_accepted` is NOT final — some positions are ordered and the rest are still open, and the buyer may come back for them.
          */
         status?: QuoteStatus;
@@ -20719,6 +25554,10 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         id?: string;
         /**
+         * Free-form data the caller attached. Stored and returned verbatim; nothing here is read by this app, and none of it is indexed.
+         */
+        metadata?: object | null;
+        /**
          * The quote this file belongs to.
          */
         quote_id?: string;
@@ -20726,6 +25565,10 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
          */
         tenant_id?: string;
+        /**
+         * When the row last changed, stamped by the app on every write.
+         */
+        updated_at?: string;
         /**
          * Whether the customer sees the file, same meaning as on an entry.
          */
@@ -20752,6 +25595,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * ISO 4217 code every amount is read in.
          */
         currency: string;
+        /**
+         * The key this quote has in the system that owns it. Left out on anything this shop raised itself.
+         */
+        external_id?: string;
+        /**
+         * Every other system that knows this quote, keyed by system name.
+         */
+        external_refs?: object;
         /**
          * The positions. At least one.
          */
@@ -20780,6 +25631,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * Where the goods would go.
          */
         shipping_address?: object;
+        /**
+         * What the source said, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`.
+         */
+        source_data?: object;
+        /**
+         * When this quote was last confirmed against its source.
+         */
+        source_synced_at?: string;
     }
 
     /**
@@ -20834,6 +25693,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * When the sweep moved it to expired.
          */
         expired_at?: string | null;
+        /**
+         * The key this quote has in the system that OWNS it — an ERP or a CPQ that raised the offer and mirrors it here. Not `number`: that one this app mints and a person reads out on the phone. Unique per tenant where it is set, so a second run of an import updates the quote it wrote rather than founding another. Null on a quote that started here, which is the ordinary case.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this quote, keyed by system name — a second ERP, a CPQ, the procurement platform the request came through. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the quote up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
         /**
          * What the buyer pays before tax: `quoted_total` plus `shipping_amount`. The one figure the list, the Cockpit and the storefront all show, so they cannot disagree about what a quote with freight is worth.
          */
@@ -20906,6 +25773,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * The rate that carriage is taxed at, in percent.
          */
         shipping_tax_rate?: number | null;
+        /**
+         * What the source said about this quote, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody prices the quote.
+         */
+        source_data?: object | null;
+        /**
+         * When this quote was last confirmed against its source. What a delta run asks for changes since, and what tells an operator a feed has gone quiet — pricing it here does not touch it, because it says when the SOURCE was last seen and not when the row changed. Null on a quote no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * Where the quote stands. `requested` is a buyer's ask nobody has picked up; `in_review` is on somebody's desk; `quoted` carries prices and a deadline; `accepted`, `declined`, `rejected` and `expired` are final. `partially_accepted` is NOT final — some positions are ordered and the rest are still open, and the buyer may come back for them.
          */
@@ -20995,6 +25870,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         decision?: QuoteItemDecision;
         /**
+         * The key this position has in the system that owns the quote — the ERP line number, the CPQ line id. A position has no create address of its own, so it arrives with the quote and is re-confirmed when pricing runs. Deliberately NOT unique: a revision of a quote carries the same source lines again, and a tenant-wide uniqueness would refuse the second round.
+         */
+        external_id?: string | null;
+        /**
+         * Every other system that knows this position, keyed by system name. Not a query parameter: such a value is compared as a whole document, so a filter over part of one could only answer by accident.
+         */
+        external_refs?: object | null;
+        /**
          * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
          */
         id?: string;
@@ -21051,6 +25934,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         sku?: string | null;
         /**
+         * What the source said about this position, kept as it said it — including the token a write-back has to hand back, and the source fields this app does not model. Pricing patches the four columns it owns and leaves this alone, so a negotiation cannot cost a line what its source said about it.
+         */
+        source_data?: object | null;
+        /**
+         * When this position was last confirmed against its source. Null on a line nobody imported.
+         */
+        source_synced_at?: string | null;
+        /**
          * The rate this position is taxed at, in percent. Carried to the order unchanged.
          */
         tax_rate?: number | null;
@@ -21086,6 +25977,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * What was configured on this line, in the configurator's vocabulary.
          */
         configuration?: object;
+        /**
+         * The key this position has in the system that owns it. Left out on anything this shop raised itself.
+         */
+        external_id?: string;
+        /**
+         * Every other system that knows this position, keyed by system name.
+         */
+        external_refs?: object;
         /**
          * Quoted delivery time in days.
          */
@@ -21126,6 +26025,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * The article number. Free text.
          */
         sku?: string;
+        /**
+         * What the source said, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`.
+         */
+        source_data?: object;
+        /**
+         * When this position was last confirmed against its source.
+         */
+        source_synced_at?: string;
         /**
          * The rate in percent.
          */
@@ -21183,6 +26090,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         currency: string;
         /**
+         * The key this quote has in the system that owns it. Left out on anything this shop raised itself.
+         */
+        external_id?: string;
+        /**
+         * Every other system that knows this quote, keyed by system name.
+         */
+        external_refs?: object;
+        /**
          * The positions asked about. At least one.
          */
         items: QuoteLineInput[];
@@ -21202,14 +26117,22 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * Where the goods would go.
          */
         shipping_address?: object;
+        /**
+         * What the source said, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`.
+         */
+        source_data?: object;
+        /**
+         * When this quote was last confirmed against its source.
+         */
+        source_synced_at?: string;
     }
 
     /**
-     * Bounded sweep: how many purchase requests to examine per status.
+     * Bounded sweep: how many purchase requests, direct orders and budget releases to examine per status.
      */
     export type ReconcileRequest = {
         /**
-         * Requests examined per status (default 50, max 200).
+         * Records examined per status (default 50, max 200).
          */
         limit?: number;
     }
@@ -21219,11 +26142,23 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
      */
     export type ReconcileResult = {
         /**
+         * Direct orders whose submission died before an Order was placed; none is placed for them.
+         */
+        abandoned?: string[];
+        /**
          * Outcome events recorded for a state that had none.
          */
         announced?: object[];
         /**
-         * Per-request failures ({ purchase_request_id, step, error }); the sweep continues past them.
+         * Direct orders whose budget commit was completed (RAD-100).
+         */
+        committed?: string[];
+        /**
+         * Budget releases recorded for cancellations found on orders changed in the last 48 hours (RAD-112).
+         */
+        discovered?: string[];
+        /**
+         * Per-record failures ({ purchase_request_id | direct_order_id | budget_release_id | order_id, step, error }); the sweep continues past them.
          */
         failed?: object[];
         /**
@@ -21231,7 +26166,15 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         ordered?: string[];
         /**
-         * Purchase requests examined.
+         * Budget releases of cancelled orders given back or found to have nothing to give back (RAD-112).
+         */
+        released?: string[];
+        /**
+         * Abandoned direct orders whose Order turned up after all, and were committed.
+         */
+        reopened?: string[];
+        /**
+         * Purchase requests and direct orders examined.
          */
         scanned?: number;
         /**
@@ -21339,6 +26282,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         created_at?: string;
         /**
+         * The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The row's own id, generated by the database. A client never sends one; it reads one back and uses it in the path of every later call.
          */
         id?: string;
@@ -21350,6 +26301,18 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * What the entity is called, per language tag — the heading over its record list.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns, for anything about a reference domain this app does not model. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * When the row was last written. Server-set — it is not part of any request body.
          */
@@ -21365,6 +26328,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         code: string;
         /**
+         * The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
          */
         image?: string | null;
@@ -21372,10 +26343,22 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * What the entity is called, per language tag — the heading over its record list.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns, for anything about a reference domain this app does not model. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `reference_entities` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `reference_entities` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type ReferenceEntitiesFilter = {
         /**
@@ -21386,6 +26369,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * The literal `?created_at=` value this call was understood to carry.
          */
         created_at?: string;
+        /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
         /**
          * The literal `?id=` value this call was understood to carry.
          */
@@ -21398,6 +26389,18 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * The literal `?labels=` value this call was understood to carry.
          */
         labels?: string;
+        /**
+         * The literal `?metadata=` value this call was understood to carry.
+         */
+        metadata?: string;
+        /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
         /**
          * The literal `?updated_at=` value this call was understood to carry.
          */
@@ -21418,6 +26421,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         code?: string;
         /**
+         * The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
          */
         image?: string | null;
@@ -21425,6 +26436,18 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * What the entity is called, per language tag — the heading over its record list.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns, for anything about a reference domain this app does not model. Nothing here reads it.
+         */
+        metadata?: object | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -21463,6 +26486,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         created_at?: string;
         /**
+         * The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * The row's own id, generated by the database. A client never sends one; it reads one back and uses it in the path of every later call.
          */
         id?: string;
@@ -21474,6 +26505,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * Which reference entity this record belongs to.
          */
         reference_entity_id?: string;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * When the row was last written. Server-set — it is not part of any request body.
          */
@@ -21512,6 +26551,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         code: string;
         /**
+         * The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * What the record is called, per language tag — the text a picker shows while the code is what gets written.
          */
         labels?: object | null;
@@ -21519,10 +26566,18 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * Which reference entity this record belongs to.
          */
         reference_entity_id: string;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `reference_entity_records` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `reference_entity_records` — `?status=`, a typo, a filter another entity has — is DROPPED and does not appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type ReferenceEntityRecordsFilter = {
         /**
@@ -21538,6 +26593,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         created_at?: string;
         /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
+        /**
          * The literal `?id=` value this call was understood to carry.
          */
         id?: string;
@@ -21549,6 +26612,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * The literal `?reference_entity_id=` value this call was understood to carry.
          */
         reference_entity_id?: string;
+        /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
         /**
          * The literal `?updated_at=` value this call was understood to carry.
          */
@@ -21592,6 +26663,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         code?: string;
         /**
+         * The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * What the record is called, per language tag — the text a picker shows while the code is what gets written.
          */
         labels?: object | null;
@@ -21599,6 +26678,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * Which reference entity this record belongs to.
          */
         reference_entity_id?: string;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
     }
 
     /**
@@ -21633,6 +26720,36 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * Why the merchant will not quote.
          */
         reason: string;
+    }
+
+    /**
+     * 
+     */
+    export type ReleaseRequest = {
+        /**
+         * Optional: the amount to give back per cost centre, capped at what the order booked there. Omit to give back everything still booked for the order.
+         */
+        allocations?: object[];
+        /**
+         * 
+         */
+        contact_id?: string | null;
+        /**
+         * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+         */
+        currency?: string | null;
+        /**
+         * Idempotency key of this cancellation within the order (e.g. the cancellation id, or cancellation_id:item_id for one item). A repeat under the same key gives nothing back again.
+         */
+        key: string;
+        /**
+         * 
+         */
+        note?: string | null;
+        /**
+         * 
+         */
+        order_id: string;
     }
 
     /**
@@ -21740,9 +26857,241 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
-     * No fields — send `{}`. What counts as low follows each row&#039;s own `reorder_point` and the market&#039;s `reorder_point_default`, exactly as GET /inventories/reorder-alerts computes it.
+     * No fields — send `{}`. What counts as low follows each row's own `reorder_point` and the market's `reorder_point_default`, exactly as GET /inventories/reorder-alerts computes it.
      */
     export type ReorderScanRequest = {
+    }
+
+    /**
+     * One field sales rep, as a record this platform owns rather than a string in somebody else's column. The row says who they are, how to reach them, which patch they cover, whether they are still working, and — once there is a login — which platform identity they sign in with. They are identified by a `code` an ERP already holds, never by their email address.
+     */
+    export type Rep = {
+        /**
+         * Whether this rep is currently working. Deactivating is what 'this person has left' means here, and it is NOT a delete: the record stays, the assignments stay, and the impersonation entries that name the code keep pointing at somebody. That is the whole reason the column exists — the history has to remain answerable. Defaults to true, because a rep is created in order to work.
+         */
+        active?: boolean;
+        /**
+         * The rep's STABLE IDENTITY, and the deliberate difference from the IntelliShop predecessor — where a rep is identified by their email address, so an ERP import loses the record the moment somebody changes the address and files the same person again as a stranger with no customers. This is a short code the ERP already owns (`salespersonCode` on a Business Central customer, `Representative_Code_RAITS` on the customer row), unique per tenant, and FIXED once created: every assignment and every impersonation entry stores it, and neither has a reference this app could follow to rename. Letters, digits, '.', '-' and '_', starting with a letter or a digit — the case is kept rather than folded, because the ERP's codes are upper case and a column that folded them would stop matching the system it points at.
+         */
+        code?: string;
+        /**
+         * When the row was created. Server-set: it is in no request body, and a value sent for it is ignored.
+         */
+        created_at?: string;
+        /**
+         * The rep's address, and NOTHING depends on it being unique or even present. That is the point: it is the column the predecessor used as the primary key, so here it is an ordinary attribute a merchant may leave empty, change, or share between two reps who work one shared mailbox. An import that only knows a code and a name records a usable rep. What a login is bound to is `platform_user_id`, which is a different column for a reason.
+         */
+        email?: string | null;
+        /**
+         * The key this rep has in the system that OWNS them — the ERP's own row id, as distinct from the `code` printed on a customer record. Unique per tenant where it is set. It is the second handle a feed can find a rep by: `code` is the one a human quotes and the one this app's other tables store, and this is the one a synchronisation matches on when even the code has been re-issued.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this rep, keyed by system name. `external_id` is the leading system; this is the rest, and a new one costs no column. Answered and NOT filterable — see the note on `metadata`.
+         */
+        external_refs?: object | null;
+        /**
+         * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+         */
+        id?: string;
+        /**
+         * Free-form data the tenant keeps on the row. No route in this app reads it; it is stored and handed back unchanged. It is answered and is NOT a query parameter: a jsonb column is compared as a WHOLE document, so `?metadata=north` is refused with 400 `invalid_value` rather than answered with an empty page, and a selector whose every plausible use fails is worse than none.
+         */
+        metadata?: object | null;
+        /**
+         * What the rep is called, as a person reads it — the one field every list of reps has to show. At least one character. It is the field a merchant renames after a marriage or a typo, which is precisely why it is not the identity.
+         */
+        name?: string;
+        /**
+         * How a customer or a colleague reaches this rep, as the merchant writes it. Free text rather than a validated number: an internal extension, a second mobile and a note in brackets are all things that really appear in this field, and refusing them would cost a merchant the information.
+         */
+        phone?: string | null;
+        /**
+         * The bridge to a login: the platform identity a rep signs in with, once this app has an auth surface. Null on every rep today, because nothing mints one yet — a rep created now is a RECORD, not an account. It is an id and not a secret: no credential, no password hash and no session token is stored in this app at all, which is why there is nothing here a read has to withhold.
+         */
+        platform_user_id?: string | null;
+        /**
+         * What the source said about this rep, kept as it said it. Carries the ETag a write-back has to return in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit here. Answered and NOT filterable — see the note on `metadata`.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. An edit made here does not touch it: it records when the SOURCE was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
+         * The tenant this row belongs to — the store slug, not an id. Set by the platform from the authenticated context, never by a caller; a write that carries it is ignored, and no request can read another tenant's rows by sending a different one.
+         */
+        tenant_id?: string;
+        /**
+         * The patch this rep covers, as ONE piece of text and not a tree. A hierarchy of territories is deliberately out of scope: the rows that decide what a rep actually sees are the assignments, and a territory here is a label an operator groups a list by. Nothing in this app branches on it.
+         */
+        territory?: string | null;
+        /**
+         * When the row was last written. Server-set — every route that changes this row stamps it.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Create one rep. `code` and `name` are owed and nothing else is: an import that knows only a salesperson code and a name records a usable rep, which is the point of the address not being the identity. A `code` this tenant already holds is refused with 409 rather than merged — the unique index is the guard.
+     */
+    export type RepCreateRequest = {
+        /**
+         * Whether this rep is currently working. Deactivating is what 'this person has left' means here, and it is NOT a delete: the record stays, the assignments stay, and the impersonation entries that name the code keep pointing at somebody. That is the whole reason the column exists — the history has to remain answerable. Defaults to true, because a rep is created in order to work. Defaults to true.
+         */
+        active?: boolean;
+        /**
+         * The rep's STABLE IDENTITY, and the deliberate difference from the IntelliShop predecessor — where a rep is identified by their email address, so an ERP import loses the record the moment somebody changes the address and files the same person again as a stranger with no customers. This is a short code the ERP already owns (`salespersonCode` on a Business Central customer, `Representative_Code_RAITS` on the customer row), unique per tenant, and FIXED once created: every assignment and every impersonation entry stores it, and neither has a reference this app could follow to rename. Letters, digits, '.', '-' and '_', starting with a letter or a digit — the case is kept rather than folded, because the ERP's codes are upper case and a column that folded them would stop matching the system it points at.
+         */
+        code: string;
+        /**
+         * The rep's address, and NOTHING depends on it being unique or even present. That is the point: it is the column the predecessor used as the primary key, so here it is an ordinary attribute a merchant may leave empty, change, or share between two reps who work one shared mailbox. An import that only knows a code and a name records a usable rep. What a login is bound to is `platform_user_id`, which is a different column for a reason.
+         */
+        email?: string | null;
+        /**
+         * The key this rep has in the system that OWNS them — the ERP's own row id, as distinct from the `code` printed on a customer record. Unique per tenant where it is set. It is the second handle a feed can find a rep by: `code` is the one a human quotes and the one this app's other tables store, and this is the one a synchronisation matches on when even the code has been re-issued.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this rep, keyed by system name. `external_id` is the leading system; this is the rest, and a new one costs no column. Answered and NOT filterable — see the note on `metadata`.
+         */
+        external_refs?: object | null;
+        /**
+         * Free-form data the tenant keeps on the row. No route in this app reads it; it is stored and handed back unchanged. It is answered and is NOT a query parameter: a jsonb column is compared as a WHOLE document, so `?metadata=north` is refused with 400 `invalid_value` rather than answered with an empty page, and a selector whose every plausible use fails is worse than none.
+         */
+        metadata?: object | null;
+        /**
+         * What the rep is called, as a person reads it — the one field every list of reps has to show. At least one character. It is the field a merchant renames after a marriage or a typo, which is precisely why it is not the identity.
+         */
+        name: string;
+        /**
+         * How a customer or a colleague reaches this rep, as the merchant writes it. Free text rather than a validated number: an internal extension, a second mobile and a note in brackets are all things that really appear in this field, and refusing them would cost a merchant the information.
+         */
+        phone?: string | null;
+        /**
+         * The bridge to a login: the platform identity a rep signs in with, once this app has an auth surface. Null on every rep today, because nothing mints one yet — a rep created now is a RECORD, not an account. It is an id and not a secret: no credential, no password hash and no session token is stored in this app at all, which is why there is nothing here a read has to withhold. Nothing mints one yet; a value sent here is stored and acted on by nothing.
+         */
+        platform_user_id?: string | null;
+        /**
+         * What the source said about this rep, kept as it said it. Carries the ETag a write-back has to return in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit here. Answered and NOT filterable — see the note on `metadata`.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. An edit made here does not touch it: it records when the SOURCE was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
+         * The patch this rep covers, as ONE piece of text and not a tree. A hierarchy of territories is deliberately out of scope: the rows that decide what a rep actually sees are the assignments, and a territory here is a label an operator groups a list by. Nothing in this app branches on it.
+         */
+        territory?: string | null;
+    }
+
+    /**
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `reps` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched". Every value is a string, whatever the column's type: this is the query string, not the parsed row.
+     */
+    export type RepFilter = {
+        /**
+         * The literal `?active=` value this call was understood to carry.
+         */
+        active?: string;
+        /**
+         * The literal `?code=` value this call was understood to carry.
+         */
+        code?: string;
+        /**
+         * The literal `?created_at=` value this call was understood to carry.
+         */
+        created_at?: string;
+        /**
+         * The literal `?email=` value this call was understood to carry.
+         */
+        email?: string;
+        /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?id=` value this call was understood to carry.
+         */
+        id?: string;
+        /**
+         * The literal `?name=` value this call was understood to carry.
+         */
+        name?: string;
+        /**
+         * The literal `?phone=` value this call was understood to carry.
+         */
+        phone?: string;
+        /**
+         * The literal `?platform_user_id=` value this call was understood to carry.
+         */
+        platform_user_id?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
+        /**
+         * The literal `?territory=` value this call was understood to carry.
+         */
+        territory?: string;
+        /**
+         * The literal `?updated_at=` value this call was understood to carry.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * Partial update — omitted fields keep their current value. A body carrying no field at all is refused rather than answered as a no-op. `code` may be sent only unchanged. This is also where a rep is DEACTIVATED, with `active: false`.
+     */
+    export type RepUpdateRequest = {
+        /**
+         * Whether this rep is currently working. Deactivating is what 'this person has left' means here, and it is NOT a delete: the record stays, the assignments stay, and the impersonation entries that name the code keep pointing at somebody. That is the whole reason the column exists — the history has to remain answerable. Defaults to true, because a rep is created in order to work. Defaults to true.
+         */
+        active?: boolean;
+        /**
+         * The rep's STABLE IDENTITY, and the deliberate difference from the IntelliShop predecessor — where a rep is identified by their email address, so an ERP import loses the record the moment somebody changes the address and files the same person again as a stranger with no customers. This is a short code the ERP already owns (`salespersonCode` on a Business Central customer, `Representative_Code_RAITS` on the customer row), unique per tenant, and FIXED once created: every assignment and every impersonation entry stores it, and neither has a reference this app could follow to rename. Letters, digits, '.', '-' and '_', starting with a letter or a digit — the case is kept rather than folded, because the ERP's codes are upper case and a column that folded them would stop matching the system it points at.
+         */
+        code?: string;
+        /**
+         * The rep's address, and NOTHING depends on it being unique or even present. That is the point: it is the column the predecessor used as the primary key, so here it is an ordinary attribute a merchant may leave empty, change, or share between two reps who work one shared mailbox. An import that only knows a code and a name records a usable rep. What a login is bound to is `platform_user_id`, which is a different column for a reason.
+         */
+        email?: string | null;
+        /**
+         * The key this rep has in the system that OWNS them — the ERP's own row id, as distinct from the `code` printed on a customer record. Unique per tenant where it is set. It is the second handle a feed can find a rep by: `code` is the one a human quotes and the one this app's other tables store, and this is the one a synchronisation matches on when even the code has been re-issued.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this rep, keyed by system name. `external_id` is the leading system; this is the rest, and a new one costs no column. Answered and NOT filterable — see the note on `metadata`.
+         */
+        external_refs?: object | null;
+        /**
+         * Free-form data the tenant keeps on the row. No route in this app reads it; it is stored and handed back unchanged. It is answered and is NOT a query parameter: a jsonb column is compared as a WHOLE document, so `?metadata=north` is refused with 400 `invalid_value` rather than answered with an empty page, and a selector whose every plausible use fails is worse than none.
+         */
+        metadata?: object | null;
+        /**
+         * What the rep is called, as a person reads it — the one field every list of reps has to show. At least one character. It is the field a merchant renames after a marriage or a typo, which is precisely why it is not the identity.
+         */
+        name?: string;
+        /**
+         * How a customer or a colleague reaches this rep, as the merchant writes it. Free text rather than a validated number: an internal extension, a second mobile and a note in brackets are all things that really appear in this field, and refusing them would cost a merchant the information.
+         */
+        phone?: string | null;
+        /**
+         * The bridge to a login: the platform identity a rep signs in with, once this app has an auth surface. Null on every rep today, because nothing mints one yet — a rep created now is a RECORD, not an account. It is an id and not a secret: no credential, no password hash and no session token is stored in this app at all, which is why there is nothing here a read has to withhold. Nothing mints one yet; a value sent here is stored and acted on by nothing.
+         */
+        platform_user_id?: string | null;
+        /**
+         * What the source said about this rep, kept as it said it. Carries the ETag a write-back has to return in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit here. Answered and NOT filterable — see the note on `metadata`.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. An edit made here does not touch it: it records when the SOURCE was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
+         * The patch this rep covers, as ONE piece of text and not a tree. A hierarchy of territories is deliberately out of scope: the rows that decide what a rep actually sees are the assignments, and a territory here is a label an operator groups a list by. Nothing in this app branches on it.
+         */
+        territory?: string | null;
     }
 
     /**
@@ -21800,7 +27149,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
-     * No fields — send `{}`. The cut-off is always now, and what counts as expired follows each reservation&#039;s own `expires_at` plus the `reservation_ttl_minutes` setting of the market it belongs to.
+     * No fields — send `{}`. The cut-off is always now, and what counts as expired follows each reservation's own `expires_at` plus the `reservation_ttl_minutes` setting of the market it belongs to.
      */
     export type ReservationSweepRequest = {
     }
@@ -21832,7 +27181,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `reservations` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `reservations` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type ReservationsFilter = {
         /**
@@ -21913,7 +27262,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
-     * 
+     * purchase_request_id is required unless dry_run is true.
      */
     export type ReserveRequest = {
         /**
@@ -21929,13 +27278,17 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         currency?: string | null;
         /**
+         * true runs the pre-flight (currency, no active budget, tracking-only centres) and answers as the real call would — same status, skipped and refusal — while writing nothing and claiming no key. The purchase request / order id may then be omitted.
+         */
+        dry_run?: boolean;
+        /**
          * 
          */
         note?: string | null;
         /**
          * 
          */
-        purchase_request_id: string;
+        purchase_request_id?: string | null;
     }
 
     /**
@@ -22145,6 +27498,58 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     /**
      * 
      */
+    export type SalesRepVocabulary = {
+        /**
+         * This app's name — the part before the dot in the qualified id.
+         */
+        app?: string;
+        /**
+         * True when these values are the complete permitted set at this moment — here, because they are all the rows the tenant keeps. A value outside a closed set is therefore stale data and not a missing label, which is what lets a client show it as an error instead of inventing a title for it.
+         */
+        closed?: boolean;
+        /**
+         * The tone a value gets when nobody has toned it — a row a merchant left at the default, or one carrying a tone outside the five, is served with this rather than not being served at all.
+         */
+        default_tone?: SalesRepVocabularyDefaultTone;
+        /**
+         * A plain string, or a locale map keyed by language tag ({ "en": …, "de": … }). Read the requested tag, fall back to `en`.
+         */
+        description?: object | null;
+        /**
+         * The vocabulary name, echoed — the part after the dot in the qualified id.
+         */
+        name?: string;
+        /**
+         * Who owns the set. 'table' — the TENANT's own rows: a merchant may add, rename, re-tone and remove values, so it is cacheable only briefly and per tenant. This app publishes no other kind, because its one value set is the merchant's own.
+         */
+        source?: SalesRepVocabularySource;
+        /**
+         * A plain string, or a locale map keyed by language tag ({ "en": …, "de": … }). Read the requested tag, fall back to `en`.
+         */
+        title?: object;
+        /**
+         * Every value this tenant keeps, in the order they gave it: ascending by position, with ties broken by the code. That is the order a select should offer them in.
+         */
+        values?: object[];
+    }
+
+    /**
+     * 
+     */
+    export type SalesRepVocabularyIndex = {
+        /**
+         * This app's name — the part before the dot in a qualified vocabulary id such as `sales-reps.assignment-roles`.
+         */
+        app?: string;
+        /**
+         * Every vocabulary this app publishes, WITHOUT its values — the index a client reads to discover them. Fetch the values with GET /sales-reps/vocabularies/{name}.
+         */
+        vocabularies?: object[];
+    }
+
+    /**
+     * 
+     */
     export type SearchHit = {
         /**
          * The matching document; its properties are the collection's own fields.
@@ -22268,31 +27673,67 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     };
 
     /**
-     * A theme&#039;s starting content. Both lists are optional; sending neither is a no-op.
+     * A theme's starting content. Every section is optional; sending none is a no-op.
      */
     export type SeedRequest = {
+        /**
+         * The reusable blocks to create. Idempotent by label among live items. One without a label or without a block tree is reported under `skipped`.
+         */
+        library?: object[] | null;
         /**
          * The menus to create. One with no key or no label is reported under `skipped`.
          */
         menus?: object[] | null;
         /**
+         * `fill` (the default) adds what is missing and keeps everything that exists. `reset` replaces every section that is sent — pages, menus and library items go to the trash first, site settings are removed — and must be asked for by name.
+         */
+        mode?: SeedRequestMode;
+        /**
          * The pages to create. One that has no `slug` or no `title` is reported under `skipped` rather than refused, so one bad entry never loses the rest.
          */
         pages?: object[] | null;
+        /**
+         * Site settings by key — the same values `PUT /pages/settings/site/{key}` stores. In fill only keys the tenant has not set are written; in reset every existing key is removed first. A key that is not a valid setting name, an empty value or one over 128 KiB is reported under `skipped`.
+         */
+        settings?: object | null;
     }
 
     /**
-     * What was created and what was already there. Nothing is ever overwritten, so a non-empty `skipped` is the normal answer to a second run.
+     * What was created, what was already there and — on a reset — how much was taken away first. Fill never overwrites, so a non-empty `kept` is the normal answer to a second run. `pages` and `menus` keep the shape this route has always answered; `added`, `kept` and `removed` summarize every section by name.
      */
     export type SeedResult = {
+        /**
+         * What this run created, by name, per section.
+         */
+        added?: object;
+        /**
+         * What this run left as it was because the tenant already had it, by name, per section. An entry skipped for a missing field is not here — it is in that section's `skipped` with its reason.
+         */
+        kept?: object;
+        /**
+         * The library half of the run.
+         */
+        library?: object;
         /**
          * The menu half of the run.
          */
         menus?: object;
         /**
+         * The mode that ran.
+         */
+        mode?: SeedResultMode;
+        /**
          * The page half of the run.
          */
         pages?: object;
+        /**
+         * How many rows a reset took away before seeding, per section. Always zero in fill, and zero for a section the body did not carry.
+         */
+        removed?: object;
+        /**
+         * The site-settings half of the run.
+         */
+        settings?: object;
     }
 
     /**
@@ -22308,6 +27749,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         created_at?: string;
         /**
+         * The key this group has in the system that owns it — an ERP price group, discount group or bonus group arrives as a segment, and this is what it was called there. Unique per tenant where set.
+         */
+        external_id?: string | null;
+        /**
+         * Every other system that knows this group, keyed by system name. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
          * Primary key of the segment.
          */
         id?: string;
@@ -22315,6 +27764,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * Localized display names keyed by language tag. Null means nobody translated it and a client falls back to showing the code.
          */
         labels?: object | null;
+        /**
+         * Free-form jsonb this tenant owns, for anything about the group this app does not model.
+         */
+        metadata?: object | null;
         /**
          * Sort order in the cockpit, ascending. Ties fall back to insertion order.
          */
@@ -22331,6 +27784,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * When the rule last finished a COMPLETE recompute. Null after a rule change, and while a chunked recompute is still running — so it doubles as "are the rule memberships trustworthy right now?".
          */
         rules_computed_at?: string | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost on the first edit.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
+         */
+        source_synced_at?: string | null;
         /**
          * The tenant this row belongs to — the store slug, not an id. Set by the platform from the authenticated context, never by a caller; a write that carries it is ignored, and no request can read another tenant's rows by sending a different one.
          */
@@ -22349,6 +27810,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * Stable identifier, unique per tenant — what other apps and integrations name the segment by. Free text, but lowercase with underscores is the convention every seeded vocabulary follows.
          */
         code: string;
+        /**
+         * When the segment was created. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
+         */
+        created_at?: string;
         /**
          * Localized display names keyed by language tag. Null means nobody translated it and a client falls back to showing the code.
          */
@@ -22388,7 +27853,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         segment_id?: string;
         /**
-         * How this membership came about: 'manual' is hand-picked, 'rule' was materialized by a recompute. The distinction is load-bearing — a recompute only ever inserts and deletes 'rule' rows, so a hand-picked member survives every rule change.
+         * How this membership came about: 'manual' is hand-picked, 'rule' was materialized by a recompute, 'sync' was written by an import from the system that owns the grouping — an ERP customer discount or price group arrives as a segment membership rather than as a column on the company. The distinction is load-bearing — a recompute only ever inserts and deletes 'rule' rows, so a hand-picked member and an imported one both survive every rule change.
          */
         source?: SegmentMemberSource;
         /**
@@ -22398,9 +27863,13 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
-     * Add one organization to a segment. Use source=&#039;manual&#039; (the default) for hand-picked members; rule members are materialized by the recompute route.
+     * Add one organization to a segment. Use source='manual' (the default) for hand-picked members; rule members are materialized by the recompute route.
      */
     export type SegmentMemberCreateRequest = {
+        /**
+         * When the organization joined the segment. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
+         */
+        created_at?: string;
         /**
          * The member company. Segments group companies, never people — a person is reached through their organization.
          */
@@ -22410,13 +27879,13 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         segment_id: string;
         /**
-         * How this membership came about: 'manual' is hand-picked, 'rule' was materialized by a recompute. The distinction is load-bearing — a recompute only ever inserts and deletes 'rule' rows, so a hand-picked member survives every rule change. Default 'manual'.
+         * How this membership came about: 'manual' is hand-picked, 'rule' was materialized by a recompute, 'sync' was written by an import from the system that owns the grouping — an ERP customer discount or price group arrives as a segment membership rather than as a column on the company. The distinction is load-bearing — a recompute only ever inserts and deletes 'rule' rows, so a hand-picked member and an imported one both survive every rule change. Default 'manual'. Send 'sync' from an import so the next recompute of the segment leaves the row alone; 'rule' rows are the recompute's own and it deletes the ones that stopped matching.
          */
         source?: SegmentMemberSource;
     }
 
     /**
-     * Partial update — omitted fields keep their current value.
+     * Partial update — omitted fields keep their current value. `segment_id` and `organization_id` are fixed once created: a membership moves by being deleted and created again.
      */
     export type SegmentMemberUpdateRequest = {
         /**
@@ -22428,7 +27897,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         segment_id?: string;
         /**
-         * How this membership came about: 'manual' is hand-picked, 'rule' was materialized by a recompute. The distinction is load-bearing — a recompute only ever inserts and deletes 'rule' rows, so a hand-picked member survives every rule change. Default 'manual'.
+         * How this membership came about: 'manual' is hand-picked, 'rule' was materialized by a recompute, 'sync' was written by an import from the system that owns the grouping — an ERP customer discount or price group arrives as a segment membership rather than as a column on the company. The distinction is load-bearing — a recompute only ever inserts and deletes 'rule' rows, so a hand-picked member and an imported one both survive every rule change. Default 'manual'. Send 'sync' from an import so the next recompute of the segment leaves the row alone; 'rule' rows are the recompute's own and it deletes the ones that stopped matching.
          */
         source?: SegmentMemberSource;
     }
@@ -22596,7 +28065,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
-     * The selector that decides membership, stored verbatim. Null means the segment is manual-only. The same rule language product categories use, evaluated over organization columns, `setting:&lt;key&gt;` entries and the organization_metrics projection — so &#039;no order in 365 days&#039; is expressible without joining the orders app. Null makes the segment manual-only. Changing it does not move a single membership — run the recompute.
+     * The selector that decides membership, stored verbatim. Null means the segment is manual-only. The same rule language product categories use, evaluated over organization columns, `setting:<key>` entries and the organization_metrics projection — so 'no order in 365 days' is expressible without joining the orders app. Null makes the segment manual-only. Changing it does not move a single membership — run the recompute.
      */
     export type SegmentRules = {
         /**
@@ -22640,11 +28109,11 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      */
     export type ShippingCarrier = {
         /**
-         * Stable carrier code, unique per tenant (e.g. dhl, dpd, gls). A method whose `carrier` text equals this code resolves to this carrier — that is the migration path off the free-text field. Deliberately no slug pattern: the column asks only for a non-empty string, and a contract stricter than the implementation would refuse codes merchants already keep.
+         * Stable carrier code, unique per tenant (e.g. dhl, dpd, gls), in lower case. A method whose `carrier` text equals this code resolves to this carrier — that is the migration path off the free-text field — and a tracking request finds it by code without regard to case. A code with a capital letter is refused with 400 `invalid_carrier_code`; a carrier stored with one before 1.0 keeps it and keeps resolving.
          */
         code?: string;
         /**
-         * The countries this carrier serves. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared upper-cased, so a lower-case entry still matches. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list.
+         * The countries this carrier serves. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list.
          */
         countries?: string[] | null;
         /**
@@ -22664,7 +28133,15 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         eta_days_min?: number | null;
         /**
-         * Days needed to make a consignment ready for THIS carrier, added to the ship date before the transit days. Overrides the tenant's handling_days.
+         * The key this carrier has in the system that OWNS it — the shipping agent as an ERP numbers it, which is rarely the `code` a merchant types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a carrier created in the Cockpit carries none and never will.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this carrier, keyed by system name — a second ERP, a TMS, the label printer's own agent list. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: a jsonb column is compared as a WHOLE document, so a filter over part of one is refused. Look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
+         * Days needed to make a consignment ready for THIS carrier, added to the ship date before the transit days — a whole number, 0 or more. Overrides the tenant's handling_days.
          */
         handling_days?: number | null;
         /**
@@ -22692,6 +28169,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         service_level?: string;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what a feed has stopped delivering.
+         */
+        source_synced_at?: string | null;
+        /**
          * Whether this carrier may be quoted (default 'active'). Anything else excludes every method that ships with it from POST /shipping/rates, with a reason. Tracking links are NOT gated on it — a retired carrier's old shipments stay resolvable.
          */
         status?: ShippingCarrierStatus;
@@ -22714,7 +28199,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         code?: string;
         /**
-         * The countries this carrier serves. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared upper-cased, so a lower-case entry still matches. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list.
+         * The countries this carrier serves. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list.
          */
         countries?: string[] | null;
         /**
@@ -22730,7 +28215,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         eta_days_min?: number | null;
         /**
-         * Days needed to make a consignment ready for THIS carrier, added to the ship date before the transit days. Overrides the tenant's handling_days.
+         * Days needed to make a consignment ready for THIS carrier, added to the ship date before the transit days — a whole number, 0 or more. Overrides the tenant's handling_days.
          */
         handling_days?: number | null;
         /**
@@ -22760,11 +28245,11 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      */
     export type ShippingCarrierCreateRequest = {
         /**
-         * Stable carrier code, unique per tenant (e.g. dhl, dpd, gls). A method whose `carrier` text equals this code resolves to this carrier — that is the migration path off the free-text field. Deliberately no slug pattern: the column asks only for a non-empty string, and a contract stricter than the implementation would refuse codes merchants already keep.
+         * Stable carrier code, unique per tenant (e.g. dhl, dpd, gls), in lower case. A method whose `carrier` text equals this code resolves to this carrier — that is the migration path off the free-text field — and a tracking request finds it by code without regard to case. A code with a capital letter is refused with 400 `invalid_carrier_code`; a carrier stored with one before 1.0 keeps it and keeps resolving.
          */
         code: string;
         /**
-         * The countries this carrier serves. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared upper-cased, so a lower-case entry still matches. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the method's own restriction: a method may not be offered into a country its carrier does not reach.
+         * The countries this carrier serves. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the method's own restriction: a method may not be offered into a country its carrier does not reach.
          */
         countries?: string[] | null;
         /**
@@ -22780,7 +28265,15 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         eta_days_min?: number | null;
         /**
-         * Days needed to make a consignment ready for THIS carrier, added to the ship date before the transit days. Overrides the tenant's handling_days.
+         * The key this carrier has in the system that OWNS it — the shipping agent as an ERP numbers it, which is rarely the `code` a merchant types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a carrier created in the Cockpit carries none and never will.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this carrier, keyed by system name — a second ERP, a TMS, the label printer's own agent list. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: a jsonb column is compared as a WHOLE document, so a filter over part of one is refused. Look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
+         * Days needed to make a consignment ready for THIS carrier, added to the ship date before the transit days — a whole number, 0 or more. Overrides the tenant's handling_days.
          */
         handling_days?: number | null;
         /**
@@ -22804,6 +28297,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         service_level?: string;
         /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what a feed has stopped delivering.
+         */
+        source_synced_at?: string | null;
+        /**
          * Whether this carrier may be quoted (default 'active'). Anything else excludes every method that ships with it from POST /shipping/rates, with a reason. Tracking links are NOT gated on it — a retired carrier's old shipments stay resolvable.
          */
         status?: ShippingCarrierStatus;
@@ -22818,11 +28319,11 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      */
     export type ShippingCarrierUpdateRequest = {
         /**
-         * Stable carrier code, unique per tenant (e.g. dhl, dpd, gls). A method whose `carrier` text equals this code resolves to this carrier — that is the migration path off the free-text field. Deliberately no slug pattern: the column asks only for a non-empty string, and a contract stricter than the implementation would refuse codes merchants already keep.
+         * Stable carrier code, unique per tenant (e.g. dhl, dpd, gls), in lower case. A method whose `carrier` text equals this code resolves to this carrier — that is the migration path off the free-text field — and a tracking request finds it by code without regard to case. A code with a capital letter is refused with 400 `invalid_carrier_code`; a carrier stored with one before 1.0 keeps it and keeps resolving.
          */
         code?: string;
         /**
-         * The countries this carrier serves. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared upper-cased, so a lower-case entry still matches. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the method's own restriction: a method may not be offered into a country its carrier does not reach.
+         * The countries this carrier serves. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the method's own restriction: a method may not be offered into a country its carrier does not reach.
          */
         countries?: string[] | null;
         /**
@@ -22838,7 +28339,15 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         eta_days_min?: number | null;
         /**
-         * Days needed to make a consignment ready for THIS carrier, added to the ship date before the transit days. Overrides the tenant's handling_days.
+         * The key this carrier has in the system that OWNS it — the shipping agent as an ERP numbers it, which is rarely the `code` a merchant types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a carrier created in the Cockpit carries none and never will.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this carrier, keyed by system name — a second ERP, a TMS, the label printer's own agent list. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: a jsonb column is compared as a WHOLE document, so a filter over part of one is refused. Look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
+         * Days needed to make a consignment ready for THIS carrier, added to the ship date before the transit days — a whole number, 0 or more. Overrides the tenant's handling_days.
          */
         handling_days?: number | null;
         /**
@@ -22861,6 +28370,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * The class of service this row represents (default 'standard'), as a CODE into the tenant's own service levels (GET /shipping/service-levels). One row is one class: a carrier selling both a parcel and an express product is two rows. Deliberately not an enum here — the set is the merchant's, so a fixed list in this contract would make the gateway reject a level they created. A code the tenant does not keep is a 400 naming the codes they do.
          */
         service_level?: string;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what a feed has stopped delivering.
+         */
+        source_synced_at?: string | null;
         /**
          * Whether this carrier may be quoted (default 'active'). Anything else excludes every method that ships with it from POST /shipping/rates, with a reason. Tracking links are NOT gated on it — a retired carrier's old shipments stay resolvable.
          */
@@ -22918,7 +28435,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         code?: string;
         /**
-         * The countries this method may be offered into. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared upper-cased, so a lower-case entry still matches. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list.
+         * The countries this method may be offered into. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list.
          */
         countries?: string[] | null;
         /**
@@ -22926,7 +28443,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         created_at?: string;
         /**
-         * ISO 4217 code (default EUR). Exactly three characters — the column says so. Echoed into a rate, never converted: this app prices in the currency the method carries.
+         * ISO 4217 code (default EUR) the price, the free-above threshold and the tiers are in. Exactly three characters — the column says so. Every rate carries it, and a rate request naming another currency is not offered this method: this app converts nothing.
          */
         currency?: string;
         /**
@@ -22946,7 +28463,15 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         eta_days_min?: number | null;
         /**
-         * Free shipping at or above this order value — wins over every pricing model, including a matrix. Compared net or gross as the market's free_above_compares setting declares. Null falls back to the tenant's shop-wide free_shipping_threshold.
+         * The key this method has in the system that OWNS it — the shipment method as an ERP numbers it, which is rarely the `code` a checkout stores. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a method a merchant maintains here carries none.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this method, keyed by system name — a second ERP, a marketplace's own carrier code, the shop this catalogue was migrated from. `external_id` names the leading system; this is the rest. Answered on read and carrying no query parameter: a jsonb column is compared as a WHOLE document, so a filter over part of one is refused. Look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
+         * Free shipping at or above this order value — wins over every pricing model, including a matrix. Compared net or gross as the market's free_above_compares setting declares. Null falls back to the tenant's shop-wide free_shipping_threshold; a negative amount is refused with 400 `invalid_free_above`.
          */
         free_above?: number | null;
         /**
@@ -22958,11 +28483,11 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         labels?: object | null;
         /**
-         * Attribute name for matrix_basis 'attribute' — the key the rate request's `attributes` map is read at. Free text: the set of attributes is the catalogue's, not this app's.
+         * Attribute name for matrix_basis 'attribute' — the key the rate request's `attributes` map is read at, and required with that basis (400 `matrix_attribute_required`). Free text: the set of attributes is the catalogue's, not this app's.
          */
         matrix_attribute?: string | null;
         /**
-         * The measure a matrix method prices its tiers over: total basket weight (in the market's weight unit), total item count, order value, or 'attribute' — any number the rate request carries under matrix_attribute. Null falls back to the tenant's matrix_basis_default. Ignored unless pricing_type is 'matrix'.
+         * The measure a matrix method prices its tiers over: total basket weight (in the market's weight unit), total item count, order value (the net or gross figure the market's free_above_compares names, else the bare order_value), or 'attribute' — any number the rate request carries under matrix_attribute. Null falls back to the tenant's matrix_basis_default. Ignored unless pricing_type is 'matrix'.
          */
         matrix_basis?: ShippingMethodMatrixBasis;
         /**
@@ -22986,9 +28511,17 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         pricing_type?: ShippingMethodPricingType;
         /**
-         * Above this MATRIX MEASURE the method carries no automatic price: it is still offered, flagged `quote_required` with a reason, and the storefront shows 'shipping on request'. For bulky or overweight freight priced by hand. Null = every measure is priced automatically.
+         * Above this MATRIX MEASURE the method carries no automatic price: it is still offered, flagged `quote_required` with a reason, and the storefront shows 'shipping on request'. For bulky or overweight freight priced by hand. Null = every measure is priced automatically. A 'matrix' method only: set on any other, or left in place while the method moves off 'matrix', it is refused with 400 `quote_above_not_matrix`.
          */
         quote_above?: number | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what a feed has stopped delivering.
+         */
+        source_synced_at?: string | null;
         /**
          * This method's own tax class, as a CODE into the buyer market's tax classes (markets.tax_classes) — never a rate. First step of the tax chain: unset falls back to the tenant's shipping_tax_class setting, then the market default. Not a foreign key and it could not be (ADR-0055); GET /shipping/tax-classes/{code}/usage is the integrity question markets asks in its place.
          */
@@ -23016,11 +28549,11 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         code: string;
         /**
-         * The countries this method may be offered into. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared upper-cased, so a lower-case entry still matches. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the carrier's own reach.
+         * The countries this method may be offered into. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the carrier's own reach.
          */
         countries?: string[] | null;
         /**
-         * ISO 4217 code (default EUR). Exactly three characters — the column says so. Echoed into a rate, never converted: this app prices in the currency the method carries.
+         * ISO 4217 code (default EUR) the price, the free-above threshold and the tiers are in. Exactly three characters — the column says so. Every rate carries it, and a rate request naming another currency is not offered this method: this app converts nothing.
          */
         currency?: string;
         /**
@@ -23040,7 +28573,15 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         eta_days_min?: number | null;
         /**
-         * Free shipping at or above this order value — wins over every pricing model, including a matrix. Compared net or gross as the market's free_above_compares setting declares. Null falls back to the tenant's shop-wide free_shipping_threshold.
+         * The key this method has in the system that OWNS it — the shipment method as an ERP numbers it, which is rarely the `code` a checkout stores. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a method a merchant maintains here carries none.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this method, keyed by system name — a second ERP, a marketplace's own carrier code, the shop this catalogue was migrated from. `external_id` names the leading system; this is the rest. Answered on read and carrying no query parameter: a jsonb column is compared as a WHOLE document, so a filter over part of one is refused. Look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
+         * Free shipping at or above this order value — wins over every pricing model, including a matrix. Compared net or gross as the market's free_above_compares setting declares. Null falls back to the tenant's shop-wide free_shipping_threshold; a negative amount is refused with 400 `invalid_free_above`.
          */
         free_above?: number | null;
         /**
@@ -23048,11 +28589,11 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         labels?: object | null;
         /**
-         * Attribute name for matrix_basis 'attribute' — the key the rate request's `attributes` map is read at. Free text: the set of attributes is the catalogue's, not this app's.
+         * Attribute name for matrix_basis 'attribute' — the key the rate request's `attributes` map is read at, and required with that basis (400 `matrix_attribute_required`). Free text: the set of attributes is the catalogue's, not this app's.
          */
         matrix_attribute?: string | null;
         /**
-         * The measure a matrix method prices its tiers over: total basket weight (in the market's weight unit), total item count, order value, or 'attribute' — any number the rate request carries under matrix_attribute. Null falls back to the tenant's matrix_basis_default. Ignored unless pricing_type is 'matrix'.
+         * The measure a matrix method prices its tiers over: total basket weight (in the market's weight unit), total item count, order value (the net or gross figure the market's free_above_compares names, else the bare order_value), or 'attribute' — any number the rate request carries under matrix_attribute. Null falls back to the tenant's matrix_basis_default. Ignored unless pricing_type is 'matrix'.
          */
         matrix_basis?: ShippingMethodMatrixBasis;
         /**
@@ -23076,9 +28617,17 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         pricing_type?: ShippingMethodPricingType;
         /**
-         * Above this MATRIX MEASURE the method carries no automatic price: it is still offered, flagged `quote_required` with a reason, and the storefront shows 'shipping on request'. For bulky or overweight freight priced by hand. Null = every measure is priced automatically.
+         * Above this MATRIX MEASURE the method carries no automatic price: it is still offered, flagged `quote_required` with a reason, and the storefront shows 'shipping on request'. For bulky or overweight freight priced by hand. Null = every measure is priced automatically. A 'matrix' method only: set on any other, or left in place while the method moves off 'matrix', it is refused with 400 `quote_above_not_matrix`.
          */
         quote_above?: number | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what a feed has stopped delivering.
+         */
+        source_synced_at?: string | null;
         /**
          * This method's own tax class, as a CODE into the buyer market's tax classes (markets.tax_classes) — never a rate. First step of the tax chain: unset falls back to the tenant's shipping_tax_class setting, then the market default. Not a foreign key and it could not be (ADR-0055); GET /shipping/tax-classes/{code}/usage is the integrity question markets asks in its place.
          */
@@ -23102,11 +28651,11 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         code?: string;
         /**
-         * The countries this method may be offered into. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared upper-cased, so a lower-case entry still matches. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the carrier's own reach.
+         * The countries this method may be offered into. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the carrier's own reach.
          */
         countries?: string[] | null;
         /**
-         * ISO 4217 code (default EUR). Exactly three characters — the column says so. Echoed into a rate, never converted: this app prices in the currency the method carries.
+         * ISO 4217 code (default EUR) the price, the free-above threshold and the tiers are in. Exactly three characters — the column says so. Every rate carries it, and a rate request naming another currency is not offered this method: this app converts nothing.
          */
         currency?: string;
         /**
@@ -23126,7 +28675,15 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         eta_days_min?: number | null;
         /**
-         * Free shipping at or above this order value — wins over every pricing model, including a matrix. Compared net or gross as the market's free_above_compares setting declares. Null falls back to the tenant's shop-wide free_shipping_threshold.
+         * The key this method has in the system that OWNS it — the shipment method as an ERP numbers it, which is rarely the `code` a checkout stores. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a method a merchant maintains here carries none.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this method, keyed by system name — a second ERP, a marketplace's own carrier code, the shop this catalogue was migrated from. `external_id` names the leading system; this is the rest. Answered on read and carrying no query parameter: a jsonb column is compared as a WHOLE document, so a filter over part of one is refused. Look the row up by `external_id` and read this off the answer.
+         */
+        external_refs?: object | null;
+        /**
+         * Free shipping at or above this order value — wins over every pricing model, including a matrix. Compared net or gross as the market's free_above_compares setting declares. Null falls back to the tenant's shop-wide free_shipping_threshold; a negative amount is refused with 400 `invalid_free_above`.
          */
         free_above?: number | null;
         /**
@@ -23134,11 +28691,11 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         labels?: object | null;
         /**
-         * Attribute name for matrix_basis 'attribute' — the key the rate request's `attributes` map is read at. Free text: the set of attributes is the catalogue's, not this app's.
+         * Attribute name for matrix_basis 'attribute' — the key the rate request's `attributes` map is read at, and required with that basis (400 `matrix_attribute_required`). Free text: the set of attributes is the catalogue's, not this app's.
          */
         matrix_attribute?: string | null;
         /**
-         * The measure a matrix method prices its tiers over: total basket weight (in the market's weight unit), total item count, order value, or 'attribute' — any number the rate request carries under matrix_attribute. Null falls back to the tenant's matrix_basis_default. Ignored unless pricing_type is 'matrix'.
+         * The measure a matrix method prices its tiers over: total basket weight (in the market's weight unit), total item count, order value (the net or gross figure the market's free_above_compares names, else the bare order_value), or 'attribute' — any number the rate request carries under matrix_attribute. Null falls back to the tenant's matrix_basis_default. Ignored unless pricing_type is 'matrix'.
          */
         matrix_basis?: ShippingMethodMatrixBasis;
         /**
@@ -23162,9 +28719,17 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         pricing_type?: ShippingMethodPricingType;
         /**
-         * Above this MATRIX MEASURE the method carries no automatic price: it is still offered, flagged `quote_required` with a reason, and the storefront shows 'shipping on request'. For bulky or overweight freight priced by hand. Null = every measure is priced automatically.
+         * Above this MATRIX MEASURE the method carries no automatic price: it is still offered, flagged `quote_required` with a reason, and the storefront shows 'shipping on request'. For bulky or overweight freight priced by hand. Null = every measure is priced automatically. A 'matrix' method only: set on any other, or left in place while the method moves off 'matrix', it is refused with 400 `quote_above_not_matrix`.
          */
         quote_above?: number | null;
+        /**
+         * What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model, so an edit here does not silently throw them away.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks the source for what changed since it, and an operator reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what a feed has stopped delivering.
+         */
+        source_synced_at?: string | null;
         /**
          * This method's own tax class, as a CODE into the buyer market's tax classes (markets.tax_classes) — never a rate. First step of the tax chain: unset falls back to the tenant's shipping_tax_class setting, then the market default. Not a foreign key and it could not be (ADR-0055); GET /shipping/tax-classes/{code}/usage is the integrity question markets asks in its place.
          */
@@ -23196,7 +28761,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         code?: string;
         /**
-         * ISO 4217 code (default EUR). Exactly three characters — the column says so. Echoed into a rate, never converted: this app prices in the currency the method carries.
+         * The currency of `price` — the method's own, never converted. When the request named a currency, it is that one.
          */
         currency?: string;
         /**
@@ -23440,31 +29005,31 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         country?: string | null;
         /**
-         * ISO 4217 code, echoed into the rates (default 'EUR'). Echoed, not converted: this app prices in the currency the method carries.
+         * ISO 4217 code the checkout prices in, compared without regard to case. A method priced in another currency is excluded with a reason — this app converts nothing. Omitted or null: every method is offered, and each rate carries its method's own currency.
          */
         currency?: string | null;
         /**
-         * Buyer market for tax resolution. Omitted: the market matching `country`, else the tenant's sole market — never an arbitrary one.
+         * Buyer market for tax resolution. Omitted: the market matching `country`, else the tenant's sole market — never an arbitrary one. An id naming no market of this tenant quotes no tax, with the reason `unknown_market`.
          */
         market_id?: string | null;
         /**
-         * Order value (default 0) — drives order_value matrices, and free-above thresholds when no sided value is sent. Read on the basis the tenant's free_above_compares setting declares.
+         * Order value (default 0) — the fallback figure for order_value matrices and free-above thresholds when the sided value the market's free_above_compares names is not sent. Taken to be on that basis. Below 0 is refused with 400 `negative_measure`.
          */
         order_value?: number | null;
         /**
-         * Order value including tax. Compared against free-above thresholds when free_above_compares is 'gross'.
+         * Order value including tax. Compared against free-above thresholds, and measured by order_value matrices, when free_above_compares is 'gross'.
          */
         order_value_gross?: number | null;
         /**
-         * Order value excluding tax. Compared against free-above thresholds when free_above_compares is 'net'.
+         * Order value excluding tax. Compared against free-above thresholds, and measured by order_value matrices, when free_above_compares is 'net'.
          */
         order_value_net?: number | null;
         /**
-         * Total quantity — measure for quantity matrices.
+         * Total quantity — measure for quantity matrices. Below 0 is refused with 400 `negative_measure`.
          */
         quantity?: number | null;
         /**
-         * Total weight — measure for weight matrices. Read in weight_unit and converted to the unit the tiers are keyed in.
+         * Total weight — measure for weight matrices. Read in weight_unit and converted to the unit the tiers are keyed in. Below 0 is refused with 400 `negative_measure`.
          */
         weight?: number | null;
         /**
@@ -23644,7 +29209,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         message?: string;
         /**
-         * Only when resolved=false — why no rate could be applied.
+         * Only when resolved=false — why no rate could be applied. 'unknown_market' means the header or market_id named a market this tenant does not have.
          */
         reason?: ShippingTaxUnresolvedReason;
         /**
@@ -23666,7 +29231,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      */
     export type ShippingTrackingCarrier = {
         /**
-         * Stable carrier code, unique per tenant (e.g. dhl, dpd, gls). A method whose `carrier` text equals this code resolves to this carrier — that is the migration path off the free-text field. Deliberately no slug pattern: the column asks only for a non-empty string, and a contract stricter than the implementation would refuse codes merchants already keep.
+         * Stable carrier code, unique per tenant (e.g. dhl, dpd, gls), in lower case. A method whose `carrier` text equals this code resolves to this carrier — that is the migration path off the free-text field — and a tracking request finds it by code without regard to case. A code with a capital letter is refused with 400 `invalid_carrier_code`; a carrier stored with one before 1.0 keeps it and keeps resolving.
          */
         code?: string;
         /**
@@ -23978,6 +29543,46 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
+     * One site-wide value of the tenant, under its key — what a theme renders every page with rather than what one page holds.
+     */
+    export type SiteSetting = {
+        /**
+         * When the key was first set.
+         */
+        created_at?: string;
+        /**
+         * The row id. Nothing addresses a site setting by it — the key is the address — but a delete echoes it.
+         */
+        id?: string;
+        /**
+         * The name of the setting, and its address: `/pages/settings/site/{key}`. One value per key and tenant. The storefront themes read `appearance`, `design` and `customCss`; any other key a theme asks for is stored the same way.
+         */
+        key?: string;
+        /**
+         * When the value was last replaced.
+         */
+        updated_at?: string;
+        /**
+         * The user id that last set the value.
+         */
+        updated_by?: string | null;
+        /**
+         * The value itself, as JSON: an object for `appearance` and `design`, a string for `customCss`, whatever the theme reading the key expects for any other. Stored and handed back untouched — this app reads no part of it.
+         */
+        value?: object;
+    }
+
+    /**
+     * The value to store under the key.
+     */
+    export type SiteSettingPutRequest = {
+        /**
+         * The value, as JSON. `appearance` and `design` hold objects, `customCss` a string; any other key holds whatever the theme reading it expects. At most 128 KiB serialized.
+         */
+        value: object;
+    }
+
+    /**
      * 
      */
     export type StackingGroup = {
@@ -24096,9 +29701,25 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      */
     export type StockLevel = {
         /**
+         * What the source system says about this item's availability, as one of the codes THIS TENANT keeps (GET /inventories/availability-states, or GET /inventories/vocabularies/availability-states for the same set with its words and its `orderable` flag). Deliberately not free text and deliberately not an enum of this app's: a code the tenant does not keep is refused with 400 naming the codes they do, and the set itself is a table they extend, because the number a source system delivers for this is that system's number and what it means is theirs to state. Null means nothing said so — which is not the same as unavailable, and a storefront reads `available` for that.
+         */
+        availability_code?: string | null;
+        /**
          * When the row was created. Server-set: it is in no request body, and a value sent for it is ignored.
          */
         created_at?: string;
+        /**
+         * When this item is expected back in stock at this location — a DATE, not a timestamp, because a supplier promises a day and not an hour. It is the single most asked-for fact about an article that is out of stock, and the one a buyer telephones sales for: a storefront shows it on the article page next to the availability state. Nothing in this app COMPUTES it — no reorder alert, no allocation, no event: it is written by whoever knows (an ERP feed, or an operator on the stock row). It is read in one place, POST /inventories/availability, which answers it per location and rolls the earliest one up for an item that cannot be had now. A past date is stored as sent: it means the promise was missed, which is worth showing rather than hiding.
+         */
+        expected_at?: string | null;
+        /**
+         * The key this row has in the system that OWNS it. On a location it is unique per tenant and an import can upsert on it; on a stock row it is informational, because a stock row is identified by its location and its item and nothing else. Often a GUID, stored verbatim whatever shape the source uses.
+         */
+        external_id?: string | null;
+        /**
+         * Every OTHER system that knows this row, keyed by system name. `external_id` is the leading system; this is the rest, and a new one costs no column.
+         */
+        external_refs?: object | null;
         /**
          * The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
          */
@@ -24132,6 +29753,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         sku?: string | null;
         /**
+         * What the source said about this row, kept as it said it. Carries the ETag a write-back has to return in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit here.
+         */
+        source_data?: object | null;
+        /**
+         * When this row was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. An edit made here does not touch it: it records when the SOURCE was last seen, not when the row changed.
+         */
+        source_synced_at?: string | null;
+        /**
          * The tenant this row belongs to, as a slug. Set by the platform, never by a caller — it is the row-level security scope, not a field, and every row a request can reach is inside it already.
          */
         tenant_id?: string;
@@ -24156,9 +29785,17 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
-     * A stock row tracks an item: &#039;product_id&#039; or &#039;sku&#039;.
+     * A stock row tracks an item: 'product_id' or 'sku'.
      */
     export type StockLevelCreateRequest = {
+        /**
+         * What the source system says about this item's availability, as one of the codes THIS TENANT keeps (GET /inventories/availability-states, or GET /inventories/vocabularies/availability-states for the same set with its words and its `orderable` flag). Deliberately not free text and deliberately not an enum of this app's: a code the tenant does not keep is refused with 400 naming the codes they do, and the set itself is a table they extend, because the number a source system delivers for this is that system's number and what it means is theirs to state. Null means nothing said so — which is not the same as unavailable, and a storefront reads `available` for that. A code this tenant does not keep is refused with 400 naming the ones it does, rather than stored as a value nothing can resolve. Null clears it.
+         */
+        availability_code?: string | null;
+        /**
+         * When this item is expected back in stock at this location — a DATE, not a timestamp, because a supplier promises a day and not an hour. It is the single most asked-for fact about an article that is out of stock, and the one a buyer telephones sales for: a storefront shows it on the article page next to the availability state. Nothing in this app COMPUTES it — no reorder alert, no allocation, no event: it is written by whoever knows (an ERP feed, or an operator on the stock row). It is read in one place, POST /inventories/availability, which answers it per location and rolls the earliest one up for an item that cannot be had now. A past date is stored as sent: it means the promise was missed, which is worth showing rather than hiding. Send it as YYYY-MM-DD; null clears it, which is what a receipt that arrived should do.
+         */
+        expected_at?: string | null;
         /**
          * The location this balance is held at — a `locations` row of this tenant (GET /inventories/locations). There is ONE stock row per (location, item): the same SKU in three warehouses is three rows, and what a storefront shows is their sum (POST /inventories/availability). Deleting the location deletes its stock rows with it. It has to exist already (GET /inventories/locations); an id no location carries is answered 400 by the foreign key, not 404.
          */
@@ -24186,6 +29823,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      */
     export type StockLevelUpdateRequest = {
         /**
+         * What the source system says about this item's availability, as one of the codes THIS TENANT keeps (GET /inventories/availability-states, or GET /inventories/vocabularies/availability-states for the same set with its words and its `orderable` flag). Deliberately not free text and deliberately not an enum of this app's: a code the tenant does not keep is refused with 400 naming the codes they do, and the set itself is a table they extend, because the number a source system delivers for this is that system's number and what it means is theirs to state. Null means nothing said so — which is not the same as unavailable, and a storefront reads `available` for that. A code this tenant does not keep is refused with 400 naming the ones it does, rather than stored as a value nothing can resolve. Null clears it.
+         */
+        availability_code?: string | null;
+        /**
+         * When this item is expected back in stock at this location — a DATE, not a timestamp, because a supplier promises a day and not an hour. It is the single most asked-for fact about an article that is out of stock, and the one a buyer telephones sales for: a storefront shows it on the article page next to the availability state. Nothing in this app COMPUTES it — no reorder alert, no allocation, no event: it is written by whoever knows (an ERP feed, or an operator on the stock row). It is read in one place, POST /inventories/availability, which answers it per location and rolls the earliest one up for an item that cannot be had now. A past date is stored as sent: it means the promise was missed, which is worth showing rather than hiding. Send it as YYYY-MM-DD; null clears it, which is what a receipt that arrived should do.
+         */
+        expected_at?: string | null;
+        /**
          * The location this balance is held at — a `locations` row of this tenant (GET /inventories/locations). There is ONE stock row per (location, item): the same SKU in three warehouses is three rows, and what a storefront shows is their sum (POST /inventories/availability). Deleting the location deletes its stock rows with it. It has to exist already (GET /inventories/locations); an id no location carries is answered 400 by the foreign key, not 404.
          */
         location_id?: string;
@@ -24208,13 +29853,29 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `stock_levels` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `stock_levels` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type StockLevelsFilter = {
+        /**
+         * The literal `?availability_code=` value this call was understood to carry.
+         */
+        availability_code?: string;
         /**
          * The literal `?created_at=` value this call was understood to carry.
          */
         created_at?: string;
+        /**
+         * The literal `?expected_at=` value this call was understood to carry.
+         */
+        expected_at?: string;
+        /**
+         * The literal `?external_id=` value this call was understood to carry.
+         */
+        external_id?: string;
+        /**
+         * The literal `?external_refs=` value this call was understood to carry.
+         */
+        external_refs?: string;
         /**
          * The literal `?id=` value this call was understood to carry.
          */
@@ -24247,6 +29908,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * The literal `?sku=` value this call was understood to carry.
          */
         sku?: string;
+        /**
+         * The literal `?source_data=` value this call was understood to carry.
+         */
+        source_data?: string;
+        /**
+         * The literal `?source_synced_at=` value this call was understood to carry.
+         */
+        source_synced_at?: string;
         /**
          * The literal `?updated_at=` value this call was understood to carry.
          */
@@ -24309,7 +29978,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
-     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `stock_movements` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from &quot;nothing matched&quot;.
+     * The exact-column filters this call was understood to carry, verbatim as they arrived. A query parameter that is not a column of `stock_movements` — a typo, a filter another entity has, `?q=` — is DROPPED and cannot appear here, and the list comes back unfiltered. This object is the only way to tell that apart from "nothing matched".
      */
     export type StockMovementsFilter = {
         /**
@@ -24542,6 +30211,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      */
     export type SubmitResult = {
         /**
+         * Why the budget move failed, when budget_pending is true.
+         */
+        budget_error?: string;
+        /**
+         * True when the Order or Purchase Request stands but its budget commit/reservation failed after it was made (RAD-88). A direct order's commit is then retried by the hourly sweep, by /procurement/direct-orders/{id}/commit or by a re-submit of the cart (RAD-100). Absent otherwise.
+         */
+        budget_pending?: boolean;
+        /**
          * { requested, actual, subject, reason } when the amount is stated in one currency and the cost centre or personal limit it is measured against holds another (currency_mismatch outcome, HTTP 409). Nothing converts, so the question is refused rather than decided (ADR-0099).
          */
         currency_mismatch?: object | null;
@@ -24550,6 +30227,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         decided?: object | null;
         /**
+         * The direct-order record of a direct outcome: written before the Order is placed, it carries the budget commit's state and is what /procurement/direct-orders/{id}/commit retries (RAD-100).
+         */
+        direct_order_id?: string;
+        /**
          * sendEmail effect payloads (additive; delivery is RX-599).
          */
         emails?: object[];
@@ -24557,6 +30238,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * True when a prior submit for this cart was returned unchanged.
          */
         idempotent?: boolean;
+        /**
+         * { cost_center_code, reason } when a line books to a cost centre with no active budget (no_budget outcome, HTTP 409). Asked of cost-centers as a dry run before anything is created, so nothing was (RAD-88).
+         */
+        no_budget?: object | null;
         /**
          * The placed Order (direct outcome).
          */
@@ -24577,6 +30262,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * The created Purchase Request (approval outcome).
          */
         purchase_request?: object | null;
+        /**
+         * The rules that caught this cart and are marked show_condition, as { rule_id, condition } — the condition a buyer may be told about, never its parameters (RAD-35). Empty when a re-submit was answered from what already stands.
+         */
+        show_conditions?: object[];
     }
 
     /**
@@ -24730,6 +30419,428 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
+     * The container a storefront runs.
+     */
+    export type TagManagerContainer = {
+        /**
+         * 
+         */
+        container?: object;
+        /**
+         * Every third-party host of the container, for the storefront's Content-Security-Policy.
+         */
+        hosts?: string[];
+        /**
+         * 
+         */
+        settings?: object;
+        /**
+         * The active marketing tags: code, kind, registry_key, script_url, config, vendor_code, purpose_code, chained_vendor_codes, load, event_map, every_page, triggers, hosts.
+         */
+        tags?: object[];
+        /**
+         * 
+         */
+        variables?: object[];
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerContainerCheck = {
+        /**
+         * When the check ran.
+         */
+        checked_at?: string;
+        /**
+         * The version that was checked.
+         */
+        container_version_id?: string;
+        /**
+         * Its number.
+         */
+        container_version_number?: number;
+        /**
+         * The row's own id, generated by the database.
+         */
+        id?: string;
+        /**
+         * Whether the check found no violation.
+         */
+        ok?: boolean;
+        /**
+         * The consent policy version it was checked against.
+         */
+        policy_version_number?: number | null;
+        /**
+         * `publish`, `policy_change` (a new consent policy) or `manual`.
+         */
+        reason?: TagManagerContainerCheckReason;
+        /**
+         * Every violation found, each `{ code, message, tag?, vendor?, purpose?, field?, variable?, trigger? }`.
+         */
+        violations?: object[];
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerContainerVersion = {
+        /**
+         * The row's own id, generated by the database.
+         */
+        id?: string;
+        /**
+         * The market code the container was published for; empty means every market without a version of its own.
+         */
+        market?: string | null;
+        /**
+         * A note given with the publish.
+         */
+        note?: string | null;
+        /**
+         * The version number, increasing per tenant across markets.
+         */
+        number?: number;
+        /**
+         * That policy version's own sha256, as the consent manager answered it.
+         */
+        policy_sha256?: string | null;
+        /**
+         * The consent policy version the container was checked against.
+         */
+        policy_version_number?: number;
+        /**
+         * When the version was published.
+         */
+        published_at?: string;
+        /**
+         * The subject of the identity that published.
+         */
+        published_by?: string | null;
+        /**
+         * For a rollback: the version whose snapshot this one republished.
+         */
+        rolled_back_from?: number | null;
+        /**
+         * sha256 of the snapshot's canonical JSON. Equal content hashes equally.
+         */
+        sha256?: string;
+        /**
+         * The frozen container: schema version, marketing tags with their effective event maps and triggers, variables and hosts.
+         */
+        snapshot?: object;
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerMarketingTag = {
+        /**
+         * Vendors this tag loads by itself — Google Analytics under a Google Tag Manager container. They do not decide whether the tag loads, but each must be disclosed in the policy, or the publish is refused.
+         */
+        chained_vendor_codes?: string[];
+        /**
+         * The row's stable handle, unique per tenant: lowercase letters, digits, '-' and '_'.
+         */
+        code?: string;
+        /**
+         * For a registry tag: the options passed to that registry entry, checked against its `config_schema` on every write. A value may be a `{{variable}}` placeholder, checked again once resolved at publish. Consent Mode defaults and personal data are never options.
+         */
+        config?: object;
+        /**
+         * When the row was created. Server-set.
+         */
+        created_at?: string;
+        /**
+         * Free text for the merchant: why this tag exists.
+         */
+        description?: string | null;
+        /**
+         * Theme event → the vendor's own call, `{ name, params? }` or a name. Overrides the registry's default map per event; `null` removes a default. Keys must be events of theme-events/1.
+         */
+        event_map?: object;
+        /**
+         * The row's own id, generated by the database.
+         */
+        id?: string;
+        /**
+         * Whether the tag is part of the next published container. An inactive tag is kept but never published.
+         */
+        is_active?: boolean;
+        /**
+         * `registry` (an entry of GET /tag-manager/registry) or `script` (an https address). There is no custom HTML kind, and anything else is refused with 422.
+         */
+        kind?: TagManagerMarketingTagKind;
+        /**
+         * When the storefront starts loading the tag once allowed: `immediate`, `idle` or `interaction`. A new tag without one takes the market's `default_load` setting.
+         */
+        load?: TagManagerMarketingTagLoad;
+        /**
+         * What the row is called, as a person reads it.
+         */
+        name?: string;
+        /**
+         * The purpose this tag serves (`statistics`, `marketing`, `necessary`, …). The vendor must be disclosed for exactly this purpose. Required.
+         */
+        purpose_code?: string;
+        /**
+         * For a registry tag: the @nuxt/scripts registry key (`googleAnalytics`, `etracker`, …). Empty for a script tag.
+         */
+        registry_key?: string | null;
+        /**
+         * For a script tag: the absolute https:// address it loads. Empty for a registry tag.
+         */
+        script_url?: string | null;
+        /**
+         * When the row was last written. Server-set.
+         */
+        updated_at?: string;
+        /**
+         * The vendor this tag loads, as the consent manager's published policy discloses it (`google-analytics`, `etracker`). Required.
+         */
+        vendor_code?: string;
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerMarketingTagInput = {
+        /**
+         * Vendors this tag loads by itself — Google Analytics under a Google Tag Manager container. They do not decide whether the tag loads, but each must be disclosed in the policy, or the publish is refused.
+         */
+        chained_vendor_codes?: string[];
+        /**
+         * The row's stable handle, unique per tenant: lowercase letters, digits, '-' and '_'.
+         */
+        code?: string;
+        /**
+         * For a registry tag: the options passed to that registry entry, checked against its `config_schema` on every write. A value may be a `{{variable}}` placeholder, checked again once resolved at publish. Consent Mode defaults and personal data are never options.
+         */
+        config?: object;
+        /**
+         * Free text for the merchant: why this tag exists.
+         */
+        description?: string | null;
+        /**
+         * Theme event → the vendor's own call, `{ name, params? }` or a name. Overrides the registry's default map per event; `null` removes a default. Keys must be events of theme-events/1.
+         */
+        event_map?: object;
+        /**
+         * Whether the tag is part of the next published container. An inactive tag is kept but never published.
+         */
+        is_active?: boolean;
+        /**
+         * `registry` (an entry of GET /tag-manager/registry) or `script` (an https address). There is no custom HTML kind, and anything else is refused with 422.
+         */
+        kind?: TagManagerMarketingTagInputKind;
+        /**
+         * When the storefront starts loading the tag once allowed: `immediate`, `idle` or `interaction`. A new tag without one takes the market's `default_load` setting.
+         */
+        load?: TagManagerMarketingTagInputLoad;
+        /**
+         * What the row is called, as a person reads it.
+         */
+        name?: string;
+        /**
+         * The purpose this tag serves (`statistics`, `marketing`, `necessary`, …). The vendor must be disclosed for exactly this purpose. Required.
+         */
+        purpose_code?: string;
+        /**
+         * For a registry tag: the @nuxt/scripts registry key (`googleAnalytics`, `etracker`, …). Empty for a script tag.
+         */
+        registry_key?: string | null;
+        /**
+         * For a script tag: the absolute https:// address it loads. Empty for a registry tag.
+         */
+        script_url?: string | null;
+        /**
+         * The vendor this tag loads, as the consent manager's published policy discloses it (`google-analytics`, `etracker`). Required.
+         */
+        vendor_code?: string;
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerPreviewRequest = {
+        /**
+         * Lifetime in minutes, default 60, at most 7 days.
+         */
+        ttl_minutes?: number;
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerPublishRequest = {
+        /**
+         * A note kept with the version.
+         */
+        note?: string;
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerRecheckRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerRollbackRequest = {
+        /**
+         * The number of the version to publish again.
+         */
+        version: number;
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerTrigger = {
+        /**
+         * The row's stable handle, unique per tenant: lowercase letters, digits, '-' and '_'.
+         */
+        code?: string;
+        /**
+         * Narrowing, every key optional and all set keys must match: `path_prefixes` (paths starting with /), `page_types` (the contract's page types), `b2b` (true/false).
+         */
+        conditions?: object;
+        /**
+         * When the row was created. Server-set.
+         */
+        created_at?: string;
+        /**
+         * For a theme_event trigger: an event of theme-events/1. Empty for a page_view trigger.
+         */
+        event_name?: string | null;
+        /**
+         * The row's own id, generated by the database.
+         */
+        id?: string;
+        /**
+         * `page_view` (on page views matching the conditions) or `theme_event` (when the named event happens).
+         */
+        kind?: TagManagerTriggerKind;
+        /**
+         * What the row is called, as a person reads it.
+         */
+        name?: string;
+        /**
+         * When the row was last written. Server-set.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerTriggerAttachment = {
+        /**
+         * The trigger to attach.
+         */
+        trigger_id: string;
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerTriggerInput = {
+        /**
+         * The row's stable handle, unique per tenant: lowercase letters, digits, '-' and '_'.
+         */
+        code?: string;
+        /**
+         * Narrowing, every key optional and all set keys must match: `path_prefixes` (paths starting with /), `page_types` (the contract's page types), `b2b` (true/false).
+         */
+        conditions?: object;
+        /**
+         * For a theme_event trigger: an event of theme-events/1. Empty for a page_view trigger.
+         */
+        event_name?: string | null;
+        /**
+         * `page_view` (on page views matching the conditions) or `theme_event` (when the named event happens).
+         */
+        kind?: TagManagerTriggerInputKind;
+        /**
+         * What the row is called, as a person reads it.
+         */
+        name?: string;
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerValidateRequest = {
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerVariable = {
+        /**
+         * The name a placeholder uses: `{{code}}`. Lowercase letters, digits and underscores, starting with a letter.
+         */
+        code?: string;
+        /**
+         * For a constant variable: its value, of any JSON type.
+         */
+        constant_value?: string;
+        /**
+         * When the row was created. Server-set.
+         */
+        created_at?: string;
+        /**
+         * The row's own id, generated by the database.
+         */
+        id?: string;
+        /**
+         * `constant` (a value kept here), `event_field` (a field of the theme event) or `page` (a field of the page).
+         */
+        kind?: TagManagerVariableKind;
+        /**
+         * What the row is called, as a person reads it.
+         */
+        name?: string;
+        /**
+         * For event_field and page variables: the dotted path, e.g. `ecommerce.value_net`.
+         */
+        path?: string | null;
+        /**
+         * When the row was last written. Server-set.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type TagManagerVariableInput = {
+        /**
+         * The name a placeholder uses: `{{code}}`. Lowercase letters, digits and underscores, starting with a letter.
+         */
+        code?: string;
+        /**
+         * For a constant variable: its value, of any JSON type.
+         */
+        constant_value?: string;
+        /**
+         * `constant` (a value kept here), `event_field` (a field of the theme event) or `page` (a field of the page).
+         */
+        kind?: TagManagerVariableInputKind;
+        /**
+         * What the row is called, as a person reads it.
+         */
+        name?: string;
+        /**
+         * For event_field and page variables: the dotted path, e.g. `ecommerce.value_net`.
+         */
+        path?: string | null;
+    }
+
+    /**
      * 
      */
     export type Template = {
@@ -24852,6 +30963,50 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
+     * One record another app owns — a product, a category — and the page that renders as its template.
+     */
+    export type TemplateAssignment = {
+        /**
+         * When the record first had a page assigned.
+         */
+        created_at?: string;
+        /**
+         * The row id. The assignment is addressed by its record type and id instead; a delete echoes this.
+         */
+        id?: string;
+        /**
+         * The slug of the page that renders as the record's template. A slug, not a page id, so the assignment follows whichever live page the slug routes to.
+         */
+        page_slug?: string;
+        /**
+         * The id of that record as the app owning it knows it. Opaque to this app: never looked up, never checked, only matched.
+         */
+        resource_id?: string;
+        /**
+         * The kind of record the page is the template of — `product`, `category`, whatever another app owns and a theme renders with a page. Lower case, as the theme asks for it.
+         */
+        resource_type?: string;
+        /**
+         * When the assigned page last changed.
+         */
+        updated_at?: string;
+        /**
+         * The user id that last assigned the page.
+         */
+        updated_by?: string | null;
+    }
+
+    /**
+     * The page to assign.
+     */
+    export type TemplateAssignmentPutRequest = {
+        /**
+         * The slug of the page that renders as this record's template.
+         */
+        pageSlug: string;
+    }
+
+    /**
      * 
      */
     export type TenantConfig = {
@@ -24964,6 +31119,30 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
+     * 
+     */
+    export type UnlinkContactRequest = {
+        /**
+         * The contact to unlink.
+         */
+        contact_id: string;
+    }
+
+    /**
+     * 
+     */
+    export type UnlinkContactResponse = {
+        /**
+         * The contact.
+         */
+        contact_id?: string;
+        /**
+         * Records unlinked.
+         */
+        unlinked?: number;
+    }
+
+    /**
      * Buyer identity + per-line context. Restrictions are open-by-default, AND across dimensions, OR within one.
      */
     export type UsableRequest = {
@@ -25011,6 +31190,288 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * 
          */
         status?: ValidationFailedResponseStatus;
+    }
+
+    /**
+     * One tool a merchant uses, as they declare it: the company behind it, where data goes, the purposes it serves and the storage it leaves on a device.
+     */
+    export type Vendor = {
+        /**
+         * The company's postal address, as the banner names it.
+         */
+        address?: string | null;
+        /**
+         * The catalogue entry this vendor was adopted from; null for a vendor the tenant described themselves. It is provenance — nothing re-reads the catalogue through it.
+         */
+        catalog_key?: string | null;
+        /**
+         * Null unless this vendor was adopted from the catalogue and the shipped catalogue is newer. Then it names both versions. Nothing about the vendor changes until the merchant adopts it again with `refresh: true`.
+         */
+        catalog_update?: object | null;
+        /**
+         * The catalogue version the adopted copy was taken from. A read flags the vendor when the shipped catalogue is newer, and nothing changes until the merchant refreshes it.
+         */
+        catalog_version?: string | null;
+        /**
+         * What kind of tool this is — analytics, advertising, chat, video — as the catalogue groups it. Presentation only.
+         */
+        category?: string | null;
+        /**
+         * Other vendors this one loads in turn — Google Tag Manager loading Google Analytics — by vendor code, so the banner can name every link of the chain.
+         */
+        chains?: string[] | null;
+        /**
+         * The vendor's fixed identity, as the Tag Manager, the visitor's cookie and every record name it. Lowercase letters, digits and '-'. For an adopted vendor it is the catalogue key.
+         */
+        code?: string;
+        /**
+         * The legal entity behind the tool, as the banner names it.
+         */
+        company?: string | null;
+        /**
+         * The company's country, ISO 3166-1 alpha-2.
+         */
+        country?: string | null;
+        /**
+         * When the row was created. Server-set.
+         */
+        created_at?: string;
+        /**
+         * What the tool does, in the banner's second layer. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        description?: object | null;
+        /**
+         * Where the vendor's data processing terms are published, if anywhere.
+         */
+        dpa_url?: string | null;
+        /**
+         * The hosts the tool contacts. A storefront blocks requests to them until the vendor is allowed; the Tag Manager checks its tags against them.
+         */
+        hosts?: string[] | null;
+        /**
+         * The row's own id, generated by the database. A caller never sends one; it reads one back and puts it in the path of later calls.
+         */
+        id?: string;
+        /**
+         * Whether this row takes part in the next published version. Switching it off keeps the row and leaves it out of every version published afterwards; versions already published are untouched.
+         */
+        is_active?: boolean;
+        /**
+         * This vendor's own legal basis where it differs from its purpose's — a cookieless statistics tool on `legitimate_interest` while the rest of statistics waits for `consent`. Null means the purpose's basis applies. The effective basis is this ?? the purpose's.
+         */
+        legal_basis_override?: VendorLegalBasisOverride;
+        /**
+         * The vendor's logo for the admin UI, as a base64 data URI of an SVG, PNG, JPEG or WebP image, at most 20480 characters. Adoption copies the catalogue's logo. Null shows the vendor's initials. It is never part of the delivered policy.
+         */
+        logo?: string | null;
+        /**
+         * The tool as a visitor knows it.
+         */
+        name?: string;
+        /**
+         * Where this row sorts in the order a screen and the banner show them, ascending. Presentation only.
+         */
+        position?: number;
+        /**
+         * The vendor's own privacy policy, linked from the banner.
+         */
+        privacy_policy_url?: string | null;
+        /**
+         * The `@nuxt/scripts` registry entry the storefront loads this tool through, where one exists.
+         */
+        registry_key?: string | null;
+        /**
+         * How long the vendor keeps the data, as the banner states it. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        retention_note?: object | null;
+        /**
+         * The tenant this row belongs to. Set by the platform from the authenticated context, never by a caller.
+         */
+        tenant_id?: string;
+        /**
+         * Whether data reaches a country outside the EU/EEA. The banner says so, because a visitor is owed it before agreeing.
+         */
+        third_country_transfer?: boolean;
+        /**
+         * What a third-country transfer rests on, in the words the banner shows.
+         */
+        transfer_basis?: string | null;
+        /**
+         * When the row was last written. Server-set — every route that changes the row stamps it.
+         */
+        updated_at?: string;
+    }
+
+    /**
+     * 
+     */
+    export type VendorCreateRequest = {
+        /**
+         * The company's postal address, as the banner names it.
+         */
+        address?: string | null;
+        /**
+         * What kind of tool this is — analytics, advertising, chat, video — as the catalogue groups it. Presentation only.
+         */
+        category?: string | null;
+        /**
+         * Other vendors this one loads in turn — Google Tag Manager loading Google Analytics — by vendor code, so the banner can name every link of the chain.
+         */
+        chains?: string[] | null;
+        /**
+         * The vendor's fixed identity, as the Tag Manager, the visitor's cookie and every record name it. Lowercase letters, digits and '-'. For an adopted vendor it is the catalogue key.
+         */
+        code: string;
+        /**
+         * The legal entity behind the tool, as the banner names it.
+         */
+        company?: string | null;
+        /**
+         * The company's country, ISO 3166-1 alpha-2.
+         */
+        country?: string | null;
+        /**
+         * What the tool does, in the banner's second layer. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        description?: object | null;
+        /**
+         * Where the vendor's data processing terms are published, if anywhere.
+         */
+        dpa_url?: string | null;
+        /**
+         * The hosts the tool contacts. A storefront blocks requests to them until the vendor is allowed; the Tag Manager checks its tags against them.
+         */
+        hosts?: string[] | null;
+        /**
+         * Whether this row takes part in the next published version. Switching it off keeps the row and leaves it out of every version published afterwards; versions already published are untouched.
+         */
+        is_active?: boolean;
+        /**
+         * This vendor's own legal basis where it differs from its purpose's — a cookieless statistics tool on `legitimate_interest` while the rest of statistics waits for `consent`. Null means the purpose's basis applies. The effective basis is this ?? the purpose's.
+         */
+        legal_basis_override?: VendorCreateRequestLegalBasisOverride;
+        /**
+         * The vendor's logo for the admin UI, as a base64 data URI of an SVG, PNG, JPEG or WebP image, at most 20480 characters. Adoption copies the catalogue's logo. Null shows the vendor's initials. It is never part of the delivered policy. Anything else is refused with 422 `invalid_logo`; an empty string clears it.
+         */
+        logo?: string | null;
+        /**
+         * The tool as a visitor knows it.
+         */
+        name: string;
+        /**
+         * Where this row sorts in the order a screen and the banner show them, ascending. Presentation only.
+         */
+        position?: number;
+        /**
+         * The vendor's own privacy policy, linked from the banner.
+         */
+        privacy_policy_url?: string | null;
+        /**
+         * The codes of the purposes this vendor serves. On an update, the list replaces the current one; a code this tenant does not keep is refused with 422.
+         */
+        purposes?: string[];
+        /**
+         * The `@nuxt/scripts` registry entry the storefront loads this tool through, where one exists.
+         */
+        registry_key?: string | null;
+        /**
+         * How long the vendor keeps the data, as the banner states it. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        retention_note?: object | null;
+        /**
+         * Whether data reaches a country outside the EU/EEA. The banner says so, because a visitor is owed it before agreeing.
+         */
+        third_country_transfer?: boolean;
+        /**
+         * What a third-country transfer rests on, in the words the banner shows.
+         */
+        transfer_basis?: string | null;
+    }
+
+    /**
+     * 
+     */
+    export type VendorUpdateRequest = {
+        /**
+         * The company's postal address, as the banner names it.
+         */
+        address?: string | null;
+        /**
+         * What kind of tool this is — analytics, advertising, chat, video — as the catalogue groups it. Presentation only.
+         */
+        category?: string | null;
+        /**
+         * Other vendors this one loads in turn — Google Tag Manager loading Google Analytics — by vendor code, so the banner can name every link of the chain.
+         */
+        chains?: string[] | null;
+        /**
+         * The vendor's fixed identity, as the Tag Manager, the visitor's cookie and every record name it. Lowercase letters, digits and '-'. For an adopted vendor it is the catalogue key.
+         */
+        code?: string;
+        /**
+         * The legal entity behind the tool, as the banner names it.
+         */
+        company?: string | null;
+        /**
+         * The company's country, ISO 3166-1 alpha-2.
+         */
+        country?: string | null;
+        /**
+         * What the tool does, in the banner's second layer. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        description?: object | null;
+        /**
+         * Where the vendor's data processing terms are published, if anywhere.
+         */
+        dpa_url?: string | null;
+        /**
+         * The hosts the tool contacts. A storefront blocks requests to them until the vendor is allowed; the Tag Manager checks its tags against them.
+         */
+        hosts?: string[] | null;
+        /**
+         * Whether this row takes part in the next published version. Switching it off keeps the row and leaves it out of every version published afterwards; versions already published are untouched.
+         */
+        is_active?: boolean;
+        /**
+         * This vendor's own legal basis where it differs from its purpose's — a cookieless statistics tool on `legitimate_interest` while the rest of statistics waits for `consent`. Null means the purpose's basis applies. The effective basis is this ?? the purpose's.
+         */
+        legal_basis_override?: VendorUpdateRequestLegalBasisOverride;
+        /**
+         * The vendor's logo for the admin UI, as a base64 data URI of an SVG, PNG, JPEG or WebP image, at most 20480 characters. Adoption copies the catalogue's logo. Null shows the vendor's initials. It is never part of the delivered policy. Anything else is refused with 422 `invalid_logo`; an empty string clears it.
+         */
+        logo?: string | null;
+        /**
+         * The tool as a visitor knows it.
+         */
+        name?: string;
+        /**
+         * Where this row sorts in the order a screen and the banner show them, ascending. Presentation only.
+         */
+        position?: number;
+        /**
+         * The vendor's own privacy policy, linked from the banner.
+         */
+        privacy_policy_url?: string | null;
+        /**
+         * The codes of the purposes this vendor serves. On an update, the list replaces the current one; a code this tenant does not keep is refused with 422.
+         */
+        purposes?: string[];
+        /**
+         * The `@nuxt/scripts` registry entry the storefront loads this tool through, where one exists.
+         */
+        registry_key?: string | null;
+        /**
+         * How long the vendor keeps the data, as the banner states it. A text per language tag, e.g. { "de": "…", "en": "…" }.
+         */
+        retention_note?: object | null;
+        /**
+         * Whether data reaches a country outside the EU/EEA. The banner says so, because a visitor is owed it before agreeing.
+         */
+        third_country_transfer?: boolean;
+        /**
+         * What a third-country transfer rests on, in the words the banner shows.
+         */
+        transfer_basis?: string | null;
     }
 
     /**
@@ -25595,6 +32056,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      * 
      */
     export type WithdrawRequest = {
+        /**
+         * Optional: the request's allocations (the reserve's shape; an empty array is the same as none, and only cost_center_id is read), used only to classify its cost centres by budget type. A request holding no reservation whose every centre is tracking-only is then settled with nothing written; one naming a monetary centre, or naming none, is refused with 409 as before. Amounts are read from the ledger, never from here.
+         */
+        allocations?: object[];
         /**
          * ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
          */
@@ -27668,7 +34133,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     /**
      * Document
      */
-    export type Document = {
+    export type Document2 = {
         /**
          * Collection ID.
          */
@@ -27699,7 +34164,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
         $updatedAt: string;
     }
 
-    export type DefaultDocument = Document & {
+    export type DefaultDocument2 = Document2 & {
         [key: string]: any;
         [__default]: true;
     };
@@ -27707,11 +34172,11 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     /**
      * Documents List
      */
-    export type DocumentList<Document extends Models.Document = Models.DefaultDocument> = {
+    export type DocumentList<Document2 extends Models.Document2 = Models.DefaultDocument2> = {
         /**
          * List of documents.
          */
-        documents: Document[];
+        documents: Document2[];
         /**
          * Total number of documents that matched your query.
          */

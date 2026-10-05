@@ -10,7 +10,7 @@ const client = new Client()
 const carts = new Carts(client);
 
 const result = await carts.cartsVocabulariesGet({
-    name: Name.IoApplyModes
+    name: Name.Ioapplymodes
 });
 
 console.log(result);

@@ -18,6 +18,7 @@ const result = await markets.marketsLocalesList({
     isDefault: true, // optional
     position: 0, // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
+    updatedAt: '2026-01-01T12:00:00Z', // optional
     limit: 50, // optional
     offset: 0, // optional
     order: 'position.asc' // optional

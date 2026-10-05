@@ -10,7 +10,7 @@ const client = new Client()
 const forms = new Forms(client);
 
 const result = await forms.formsVocabulariesGet({
-    name: FormsVocabulariesGetName.FormStatuses
+    name: FormsVocabulariesGetName.Formstatuses
 });
 
 console.log(result);

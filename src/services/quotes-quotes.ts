@@ -25,10 +25,11 @@ export class QuotesQuotes {
      * @param {string} params.ownerId - One salesperson's desk.
      * @param {string} params.cartId - The quote a cart became.
      * @param {string} params.number - A quote by its number.
+     * @param {string} params.externalId - The quote the system that owns it knows by this key — what a mirror asks before it decides whether to create a second. The other three provenance columns carry no parameter: such a value is compared as a whole document, so a filter over part of one is refused rather than answered.
      * @throws {RevenexxException}
      * @returns {Promise<Models.QuoteList>}
      */
-    quotesQuotesList(params?: { limit?: number, offset?: number, order?: string, status?: string, origin?: Origin, organizationId?: string, contactId?: string, ownerId?: string, cartId?: string, number?: string }): Promise<Models.QuoteList>;
+    quotesQuotesList(params?: { limit?: number, offset?: number, order?: string, status?: string, origin?: Origin, organizationId?: string, contactId?: string, ownerId?: string, cartId?: string, number?: string, externalId?: string }): Promise<Models.QuoteList>;
     /**
      * The quote list — a merchant's work queue and a buyer's history, depending on who is asking. Filter `?status=quoted` for what is waiting on the customer, `?status=requested` for what nobody has picked up yet, and `?owner_id=` for one salesperson's desk; `status` takes several values separated by commas. A call the gateway attributes to a buyer is narrowed to that buyer's organisation whatever it asks for. Newest first unless `order` says otherwise.
      *
@@ -42,19 +43,20 @@ export class QuotesQuotes {
      * @param {string} ownerId - One salesperson's desk.
      * @param {string} cartId - The quote a cart became.
      * @param {string} number - A quote by its number.
+     * @param {string} externalId - The quote the system that owns it knows by this key — what a mirror asks before it decides whether to create a second. The other three provenance columns carry no parameter: such a value is compared as a whole document, so a filter over part of one is refused rather than answered.
      * @throws {RevenexxException}
      * @returns {Promise<Models.QuoteList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    quotesQuotesList(limit?: number, offset?: number, order?: string, status?: string, origin?: Origin, organizationId?: string, contactId?: string, ownerId?: string, cartId?: string, number?: string): Promise<Models.QuoteList>;
+    quotesQuotesList(limit?: number, offset?: number, order?: string, status?: string, origin?: Origin, organizationId?: string, contactId?: string, ownerId?: string, cartId?: string, number?: string, externalId?: string): Promise<Models.QuoteList>;
     quotesQuotesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, status?: string, origin?: Origin, organizationId?: string, contactId?: string, ownerId?: string, cartId?: string, number?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (Origin)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, status?: string, origin?: Origin, organizationId?: string, contactId?: string, ownerId?: string, cartId?: string, number?: string, externalId?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (Origin)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.QuoteList> {
-        let params: { limit?: number, offset?: number, order?: string, status?: string, origin?: Origin, organizationId?: string, contactId?: string, ownerId?: string, cartId?: string, number?: string };
+        let params: { limit?: number, offset?: number, order?: string, status?: string, origin?: Origin, organizationId?: string, contactId?: string, ownerId?: string, cartId?: string, number?: string, externalId?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, status?: string, origin?: Origin, organizationId?: string, contactId?: string, ownerId?: string, cartId?: string, number?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, status?: string, origin?: Origin, organizationId?: string, contactId?: string, ownerId?: string, cartId?: string, number?: string, externalId?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -66,7 +68,8 @@ export class QuotesQuotes {
                 contactId: rest[5] as string,
                 ownerId: rest[6] as string,
                 cartId: rest[7] as string,
-                number: rest[8] as string            
+                number: rest[8] as string,
+                externalId: rest[9] as string            
             };
         }
         
@@ -80,6 +83,7 @@ export class QuotesQuotes {
         const ownerId = params.ownerId;
         const cartId = params.cartId;
         const number = params.number;
+        const externalId = params.externalId;
 
 
         const apiPath = '/v1/quotes/quotes';
@@ -114,6 +118,9 @@ export class QuotesQuotes {
         if (typeof number !== 'undefined') {
             apiPayload['number'] = number;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -135,16 +142,20 @@ export class QuotesQuotes {
      * @param {object} params.billingAddress - Where an invoice would go.
      * @param {object} params.buyer - Name and address of the customer.
      * @param {string} params.contactId - Who the quote is for.
+     * @param {string} params.externalId - The key this quote has in the system that owns it. Left out on anything this shop raised itself.
+     * @param {object} params.externalRefs - Every other system that knows this quote, keyed by system name.
      * @param {object} params.metadata - Free-form data carried with the quote.
      * @param {string} params.organizationId - Which company.
      * @param {string} params.ownerId - Who at the merchant owns it. Taken from the caller identity when left out.
      * @param {string} params.reason - What the quote is about.
      * @param {string} params.sellerNote - What the merchant wants the customer to read.
      * @param {object} params.shippingAddress - Where the goods would go.
+     * @param {object} params.sourceData - What the source said, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`.
+     * @param {string} params.sourceSyncedAt - When this quote was last confirmed against its source.
      * @throws {RevenexxException}
      * @returns {Promise<Models.QuoteDetail>}
      */
-    quotesQuotesCreate(params: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, contactId?: string, metadata?: object, organizationId?: string, ownerId?: string, reason?: string, sellerNote?: string, shippingAddress?: object }): Promise<Models.QuoteDetail>;
+    quotesQuotesCreate(params: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, contactId?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, ownerId?: string, reason?: string, sellerNote?: string, shippingAddress?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.QuoteDetail>;
     /**
      * Sales opens a quote for a customer who never sent a cart — the normal case when a salesperson quotes over the phone. It starts on the desk rather than in the queue, because the person opening it IS the desk.
      *
@@ -153,25 +164,29 @@ export class QuotesQuotes {
      * @param {object} billingAddress - Where an invoice would go.
      * @param {object} buyer - Name and address of the customer.
      * @param {string} contactId - Who the quote is for.
+     * @param {string} externalId - The key this quote has in the system that owns it. Left out on anything this shop raised itself.
+     * @param {object} externalRefs - Every other system that knows this quote, keyed by system name.
      * @param {object} metadata - Free-form data carried with the quote.
      * @param {string} organizationId - Which company.
      * @param {string} ownerId - Who at the merchant owns it. Taken from the caller identity when left out.
      * @param {string} reason - What the quote is about.
      * @param {string} sellerNote - What the merchant wants the customer to read.
      * @param {object} shippingAddress - Where the goods would go.
+     * @param {object} sourceData - What the source said, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`.
+     * @param {string} sourceSyncedAt - When this quote was last confirmed against its source.
      * @throws {RevenexxException}
      * @returns {Promise<Models.QuoteDetail>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    quotesQuotesCreate(currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, contactId?: string, metadata?: object, organizationId?: string, ownerId?: string, reason?: string, sellerNote?: string, shippingAddress?: object): Promise<Models.QuoteDetail>;
+    quotesQuotesCreate(currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, contactId?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, ownerId?: string, reason?: string, sellerNote?: string, shippingAddress?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.QuoteDetail>;
     quotesQuotesCreate(
-        paramsOrFirst: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, contactId?: string, metadata?: object, organizationId?: string, ownerId?: string, reason?: string, sellerNote?: string, shippingAddress?: object } | string,
-        ...rest: [(Models.QuoteLineInput[])?, (object)?, (object)?, (string)?, (object)?, (string)?, (string)?, (string)?, (string)?, (object)?]    
+        paramsOrFirst: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, contactId?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, ownerId?: string, reason?: string, sellerNote?: string, shippingAddress?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(Models.QuoteLineInput[])?, (object)?, (object)?, (string)?, (string)?, (object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.QuoteDetail> {
-        let params: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, contactId?: string, metadata?: object, organizationId?: string, ownerId?: string, reason?: string, sellerNote?: string, shippingAddress?: object };
+        let params: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, contactId?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, ownerId?: string, reason?: string, sellerNote?: string, shippingAddress?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, contactId?: string, metadata?: object, organizationId?: string, ownerId?: string, reason?: string, sellerNote?: string, shippingAddress?: object };
+            params = (paramsOrFirst || {}) as { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, contactId?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, ownerId?: string, reason?: string, sellerNote?: string, shippingAddress?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 currency: paramsOrFirst as string,
@@ -179,12 +194,16 @@ export class QuotesQuotes {
                 billingAddress: rest[1] as object,
                 buyer: rest[2] as object,
                 contactId: rest[3] as string,
-                metadata: rest[4] as object,
-                organizationId: rest[5] as string,
-                ownerId: rest[6] as string,
-                reason: rest[7] as string,
-                sellerNote: rest[8] as string,
-                shippingAddress: rest[9] as object            
+                externalId: rest[4] as string,
+                externalRefs: rest[5] as object,
+                metadata: rest[6] as object,
+                organizationId: rest[7] as string,
+                ownerId: rest[8] as string,
+                reason: rest[9] as string,
+                sellerNote: rest[10] as string,
+                shippingAddress: rest[11] as object,
+                sourceData: rest[12] as object,
+                sourceSyncedAt: rest[13] as string            
             };
         }
         
@@ -193,12 +212,16 @@ export class QuotesQuotes {
         const billingAddress = params.billingAddress;
         const buyer = params.buyer;
         const contactId = params.contactId;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const metadata = params.metadata;
         const organizationId = params.organizationId;
         const ownerId = params.ownerId;
         const reason = params.reason;
         const sellerNote = params.sellerNote;
         const shippingAddress = params.shippingAddress;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof currency === 'undefined') {
             throw new RevenexxException('Missing required parameter: "currency"');
@@ -221,8 +244,14 @@ export class QuotesQuotes {
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = Client.toWireKeys(items, {"leadTimeDays":{"wire":"lead_time_days","children":null},"listPrice":{"wire":"list_price","children":null},"priceReason":{"wire":"price_reason","children":null},"productId":{"wire":"product_id","children":null},"quotedPrice":{"wire":"quoted_price","children":null},"taxRate":{"wire":"tax_rate","children":null}});
+            apiPayload['items'] = Client.toWireKeys(items, {"externalId":{"wire":"external_id","children":null},"externalRefs":{"wire":"external_refs","children":null},"leadTimeDays":{"wire":"lead_time_days","children":null},"listPrice":{"wire":"list_price","children":null},"priceReason":{"wire":"price_reason","children":null},"productId":{"wire":"product_id","children":null},"quotedPrice":{"wire":"quoted_price","children":null},"sourceData":{"wire":"source_data","children":null},"sourceSyncedAt":{"wire":"source_synced_at","children":null},"taxRate":{"wire":"tax_rate","children":null}});
         }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
@@ -241,6 +270,12 @@ export class QuotesQuotes {
         }
         if (typeof shippingAddress !== 'undefined') {
             apiPayload['shipping_address'] = shippingAddress;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -427,14 +462,18 @@ export class QuotesQuotes {
      * @param {string} params.buyerNote - What the buyer wants to say about the request.
      * @param {string} params.cartId - The cart this came from, for the trail back.
      * @param {string} params.contactId - Who is asking. Taken from the caller identity when left out.
+     * @param {string} params.externalId - The key this quote has in the system that owns it. Left out on anything this shop raised itself.
+     * @param {object} params.externalRefs - Every other system that knows this quote, keyed by system name.
      * @param {object} params.metadata - Free-form data carried with the quote.
      * @param {string} params.organizationId - Which company they buy for.
      * @param {string} params.reason - Why a quote is being asked for — too heavy to ship, price on request, a volume the list does not cover.
      * @param {object} params.shippingAddress - Where the goods would go.
+     * @param {object} params.sourceData - What the source said, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`.
+     * @param {string} params.sourceSyncedAt - When this quote was last confirmed against its source.
      * @throws {RevenexxException}
      * @returns {Promise<Models.QuoteDetail>}
      */
-    quotesQuotesRequest(params: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, buyerNote?: string, cartId?: string, contactId?: string, metadata?: object, organizationId?: string, reason?: string, shippingAddress?: object }): Promise<Models.QuoteDetail>;
+    quotesQuotesRequest(params: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, buyerNote?: string, cartId?: string, contactId?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, reason?: string, shippingAddress?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.QuoteDetail>;
     /**
      * A buyer sends a basket in and asks for a price. The positions are COPIED onto the quote rather than referenced, so the buyer can keep shopping and the quote does not change under the merchant's desk. Commits the buyer to nothing: the answer is a numbered request waiting for a price.
      *
@@ -445,23 +484,27 @@ export class QuotesQuotes {
      * @param {string} buyerNote - What the buyer wants to say about the request.
      * @param {string} cartId - The cart this came from, for the trail back.
      * @param {string} contactId - Who is asking. Taken from the caller identity when left out.
+     * @param {string} externalId - The key this quote has in the system that owns it. Left out on anything this shop raised itself.
+     * @param {object} externalRefs - Every other system that knows this quote, keyed by system name.
      * @param {object} metadata - Free-form data carried with the quote.
      * @param {string} organizationId - Which company they buy for.
      * @param {string} reason - Why a quote is being asked for — too heavy to ship, price on request, a volume the list does not cover.
      * @param {object} shippingAddress - Where the goods would go.
+     * @param {object} sourceData - What the source said, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`.
+     * @param {string} sourceSyncedAt - When this quote was last confirmed against its source.
      * @throws {RevenexxException}
      * @returns {Promise<Models.QuoteDetail>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    quotesQuotesRequest(currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, buyerNote?: string, cartId?: string, contactId?: string, metadata?: object, organizationId?: string, reason?: string, shippingAddress?: object): Promise<Models.QuoteDetail>;
+    quotesQuotesRequest(currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, buyerNote?: string, cartId?: string, contactId?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, reason?: string, shippingAddress?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.QuoteDetail>;
     quotesQuotesRequest(
-        paramsOrFirst: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, buyerNote?: string, cartId?: string, contactId?: string, metadata?: object, organizationId?: string, reason?: string, shippingAddress?: object } | string,
-        ...rest: [(Models.QuoteLineInput[])?, (object)?, (object)?, (string)?, (string)?, (string)?, (object)?, (string)?, (string)?, (object)?]    
+        paramsOrFirst: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, buyerNote?: string, cartId?: string, contactId?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, reason?: string, shippingAddress?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(Models.QuoteLineInput[])?, (object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (object)?, (object)?, (string)?, (string)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.QuoteDetail> {
-        let params: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, buyerNote?: string, cartId?: string, contactId?: string, metadata?: object, organizationId?: string, reason?: string, shippingAddress?: object };
+        let params: { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, buyerNote?: string, cartId?: string, contactId?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, reason?: string, shippingAddress?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, buyerNote?: string, cartId?: string, contactId?: string, metadata?: object, organizationId?: string, reason?: string, shippingAddress?: object };
+            params = (paramsOrFirst || {}) as { currency: string, items: Models.QuoteLineInput[], billingAddress?: object, buyer?: object, buyerNote?: string, cartId?: string, contactId?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, reason?: string, shippingAddress?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 currency: paramsOrFirst as string,
@@ -471,10 +514,14 @@ export class QuotesQuotes {
                 buyerNote: rest[3] as string,
                 cartId: rest[4] as string,
                 contactId: rest[5] as string,
-                metadata: rest[6] as object,
-                organizationId: rest[7] as string,
-                reason: rest[8] as string,
-                shippingAddress: rest[9] as object            
+                externalId: rest[6] as string,
+                externalRefs: rest[7] as object,
+                metadata: rest[8] as object,
+                organizationId: rest[9] as string,
+                reason: rest[10] as string,
+                shippingAddress: rest[11] as object,
+                sourceData: rest[12] as object,
+                sourceSyncedAt: rest[13] as string            
             };
         }
         
@@ -485,10 +532,14 @@ export class QuotesQuotes {
         const buyerNote = params.buyerNote;
         const cartId = params.cartId;
         const contactId = params.contactId;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const metadata = params.metadata;
         const organizationId = params.organizationId;
         const reason = params.reason;
         const shippingAddress = params.shippingAddress;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof currency === 'undefined') {
             throw new RevenexxException('Missing required parameter: "currency"');
@@ -517,8 +568,14 @@ export class QuotesQuotes {
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof items !== 'undefined') {
-            apiPayload['items'] = Client.toWireKeys(items, {"leadTimeDays":{"wire":"lead_time_days","children":null},"listPrice":{"wire":"list_price","children":null},"priceReason":{"wire":"price_reason","children":null},"productId":{"wire":"product_id","children":null},"quotedPrice":{"wire":"quoted_price","children":null},"taxRate":{"wire":"tax_rate","children":null}});
+            apiPayload['items'] = Client.toWireKeys(items, {"externalId":{"wire":"external_id","children":null},"externalRefs":{"wire":"external_refs","children":null},"leadTimeDays":{"wire":"lead_time_days","children":null},"listPrice":{"wire":"list_price","children":null},"priceReason":{"wire":"price_reason","children":null},"productId":{"wire":"product_id","children":null},"quotedPrice":{"wire":"quoted_price","children":null},"sourceData":{"wire":"source_data","children":null},"sourceSyncedAt":{"wire":"source_synced_at","children":null},"taxRate":{"wire":"tax_rate","children":null}});
         }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
@@ -531,6 +588,12 @@ export class QuotesQuotes {
         }
         if (typeof shippingAddress !== 'undefined') {
             apiPayload['shipping_address'] = shippingAddress;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

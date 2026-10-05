@@ -389,7 +389,7 @@ class Client {
         'x-sdk-name': 'Revenexx Web',
         'x-sdk-platform': '',
         'x-sdk-language': 'web',
-        'x-sdk-version': '0.2.0',
+        'x-sdk-version': '0.3.0',
     };
 
     /**
@@ -879,7 +879,7 @@ class Client {
             } else {
                 responseText = data?.message;
             }
-            throw new RevenexxException(data?.message, response.status, data?.type, responseText);
+            throw new RevenexxException(data?.error ?? data?.message, response.status, data?.type, responseText);
         }
 
         if (data && typeof data === 'object') {

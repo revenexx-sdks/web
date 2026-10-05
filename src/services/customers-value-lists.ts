@@ -683,7 +683,342 @@ export class CustomersValueLists {
     }
 
     /**
-     * What the app.installed event runs. It fills all four of the value sets a tenant needs before anything else works — the payment terms, the address types, the lifecycle stages and the activity types — in one call. Idempotent by code: a set that already has its rows is left completely alone, so a re-delivered event and a merchant's renames both survive. A tenant installed before these tables existed is seeded lazily instead, by the first read that finds one empty.
+     * Which document a contact point receives. Four is what an ERP delivers per debtor; a merchant whose own mails a credit note or a statement separately adds theirs. A fresh install is seeded with invoice, order_confirmation, shipping_notice, dunning, and the set seeds on first read too, so the page is never empty. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order and no column filters, so `page` describes the full set and `filter` is always empty.
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    customersContactPointKindsList(): Promise<{}> {
+
+        const apiPath = '/v1/customers/contact-point-kinds';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Extends this tenant's recipient types set with a value of their own — the whole reason these four stopped being CHECK constraints. Which document a contact point receives. Four is what an ERP delivers per debtor; a merchant whose own mails a credit note or a statement separately adds theirs. The code is lowercase and becomes what `contact_points.kind` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
+     *
+     * @param {string} params.code - What `contact_points.kind` will store. Lowercase, starting with a letter; immutable afterwards.
+     * @param {string} params.title - The fallback name shown when no locale matches.
+     * @param {string} params.description - One line of help for whoever picks this value.
+     * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted in the same call.
+     * @param {object} params.labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+     * @param {number} params.position - Where it sits in the set, ascending. Default 0.
+     * @param {Tone} params.tone - Semantic badge colour.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactPointKind>}
+     */
+    customersContactPointKindsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.ContactPointKind>;
+    /**
+     * Extends this tenant's recipient types set with a value of their own — the whole reason these four stopped being CHECK constraints. Which document a contact point receives. Four is what an ERP delivers per debtor; a merchant whose own mails a credit note or a statement separately adds theirs. The code is lowercase and becomes what `contact_points.kind` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
+     *
+     * @param {string} code - What `contact_points.kind` will store. Lowercase, starting with a letter; immutable afterwards.
+     * @param {string} title - The fallback name shown when no locale matches.
+     * @param {string} description - One line of help for whoever picks this value.
+     * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+     * @param {boolean} isDefault - Promote this value; the previous default is demoted in the same call.
+     * @param {object} labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+     * @param {number} position - Where it sits in the set, ascending. Default 0.
+     * @param {Tone} tone - Semantic badge colour.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactPointKind>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactPointKindsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.ContactPointKind>;
+    customersContactPointKindsCreate(
+        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
+        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
+    ): Promise<Models.ContactPointKind> {
+        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+        } else {
+            params = {
+                code: paramsOrFirst as string,
+                title: rest[0] as string,
+                description: rest[1] as string,
+                descriptions: rest[2] as object,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                position: rest[5] as number,
+                tone: rest[6] as Tone            
+            };
+        }
+        
+        const code = params.code;
+        const title = params.title;
+        const description = params.description;
+        const descriptions = params.descriptions;
+        const isDefault = params.isDefault;
+        const labels = params.labels;
+        const position = params.position;
+        const tone = params.tone;
+
+        if (typeof code === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "code"');
+        }
+        if (typeof title === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "title"');
+        }
+
+        const apiPath = '/v1/customers/contact-point-kinds';
+        const apiPayload: Payload = {};
+        if (typeof code !== 'undefined') {
+            apiPayload['code'] = code;
+        }
+        if (typeof description !== 'undefined') {
+            apiPayload['description'] = description;
+        }
+        if (typeof descriptions !== 'undefined') {
+            apiPayload['descriptions'] = descriptions;
+        }
+        if (typeof isDefault !== 'undefined') {
+            apiPayload['is_default'] = isDefault;
+        }
+        if (typeof labels !== 'undefined') {
+            apiPayload['labels'] = labels;
+        }
+        if (typeof position !== 'undefined') {
+            apiPayload['position'] = position;
+        }
+        if (typeof title !== 'undefined') {
+            apiPayload['title'] = title;
+        }
+        if (typeof tone !== 'undefined') {
+            apiPayload['tone'] = tone;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Takes a value out of the recipient types set. There is no foreign key behind `contact_points.kind` — one added to a table that starts empty fails the migration of every existing tenant — so this route IS the integrity: it refuses while any record still carries the code, and it refuses to empty the set. Retiring a value that is in use is therefore a two-step job: move the records onto another value first, then remove it.
+     *
+     * @param {string} params.id - The recipient type to remove.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    customersContactPointKindsDelete(params: { id: string }): Promise<{}>;
+    /**
+     * Takes a value out of the recipient types set. There is no foreign key behind `contact_points.kind` — one added to a table that starts empty fails the migration of every existing tenant — so this route IS the integrity: it refuses while any record still carries the code, and it refuses to empty the set. Retiring a value that is in use is therefore a two-step job: move the records onto another value first, then remove it.
+     *
+     * @param {string} id - The recipient type to remove.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactPointKindsDelete(id: string): Promise<{}>;
+    customersContactPointKindsDelete(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/customers/contact-point-kinds/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'delete',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * One value of the recipient types set, by its id — its code, its fallback title, the per-language `labels` an operator reads and the badge `tone` a client renders it with. Which document a contact point receives. Four is what an ERP delivers per debtor; a merchant whose own mails a credit note or a statement separately adds theirs. Reading one value is the rare path: `GET /customers/contact-point-kinds` answers the whole set in a single page, which is what a select needs.
+     *
+     * @param {string} params.id - The recipient type to read. Note that records store the CODE, not this id.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactPointKind>}
+     */
+    customersContactPointKindsGet(params: { id: string }): Promise<Models.ContactPointKind>;
+    /**
+     * One value of the recipient types set, by its id — its code, its fallback title, the per-language `labels` an operator reads and the badge `tone` a client renders it with. Which document a contact point receives. Four is what an ERP delivers per debtor; a merchant whose own mails a credit note or a statement separately adds theirs. Reading one value is the rare path: `GET /customers/contact-point-kinds` answers the whole set in a single page, which is what a select needs.
+     *
+     * @param {string} id - The recipient type to read. Note that records store the CODE, not this id.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactPointKind>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactPointKindsGet(id: string): Promise<Models.ContactPointKind>;
+    customersContactPointKindsGet(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.ContactPointKind> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/customers/contact-point-kinds/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `invoice` to wording of their own changes what people READ and nothing about what `contact_points.kind` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
+     *
+     * @param {string} params.id - The recipient type to edit.
+     * @param {string} params.description - One line of help for whoever picks this value.
+     * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted.
+     * @param {object} params.labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+     * @param {number} params.position - Where it sits in the set, ascending.
+     * @param {string} params.title - The fallback name shown when no locale matches.
+     * @param {Tone} params.tone - Semantic badge colour.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactPointKind>}
+     */
+    customersContactPointKindsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.ContactPointKind>;
+    /**
+     * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `invoice` to wording of their own changes what people READ and nothing about what `contact_points.kind` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
+     *
+     * @param {string} id - The recipient type to edit.
+     * @param {string} description - One line of help for whoever picks this value.
+     * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+     * @param {boolean} isDefault - Promote this value; the previous default is demoted.
+     * @param {object} labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+     * @param {number} position - Where it sits in the set, ascending.
+     * @param {string} title - The fallback name shown when no locale matches.
+     * @param {Tone} tone - Semantic badge colour.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactPointKind>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactPointKindsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.ContactPointKind>;
+    customersContactPointKindsUpdate(
+        paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
+        ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
+    ): Promise<Models.ContactPointKind> {
+        let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                description: rest[0] as string,
+                descriptions: rest[1] as object,
+                isDefault: rest[2] as boolean,
+                labels: rest[3] as object,
+                position: rest[4] as number,
+                title: rest[5] as string,
+                tone: rest[6] as Tone            
+            };
+        }
+        
+        const id = params.id;
+        const description = params.description;
+        const descriptions = params.descriptions;
+        const isDefault = params.isDefault;
+        const labels = params.labels;
+        const position = params.position;
+        const title = params.title;
+        const tone = params.tone;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/customers/contact-point-kinds/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof description !== 'undefined') {
+            apiPayload['description'] = description;
+        }
+        if (typeof descriptions !== 'undefined') {
+            apiPayload['descriptions'] = descriptions;
+        }
+        if (typeof isDefault !== 'undefined') {
+            apiPayload['is_default'] = isDefault;
+        }
+        if (typeof labels !== 'undefined') {
+            apiPayload['labels'] = labels;
+        }
+        if (typeof position !== 'undefined') {
+            apiPayload['position'] = position;
+        }
+        if (typeof title !== 'undefined') {
+            apiPayload['title'] = title;
+        }
+        if (typeof tone !== 'undefined') {
+            apiPayload['tone'] = tone;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * What the app.installed event runs. It fills all 5 of the value sets a tenant needs before anything else works — the payment terms, the address types, the lifecycle stages, the activity types and the recipient types — in one call. Idempotent by code: a set that already has its rows is left completely alone, so a re-delivered event and a merchant's renames both survive. A tenant installed before these tables existed is seeded lazily instead, by the first read that finds one empty.
      *
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
@@ -691,7 +1026,7 @@ export class CustomersValueLists {
      */
     customersDefaults(params: { data: object }): Promise<Models.CustomersDefaultsResponse>;
     /**
-     * What the app.installed event runs. It fills all four of the value sets a tenant needs before anything else works — the payment terms, the address types, the lifecycle stages and the activity types — in one call. Idempotent by code: a set that already has its rows is left completely alone, so a re-delivered event and a merchant's renames both survive. A tenant installed before these tables existed is seeded lazily instead, by the first read that finds one empty.
+     * What the app.installed event runs. It fills all 5 of the value sets a tenant needs before anything else works — the payment terms, the address types, the lifecycle stages, the activity types and the recipient types — in one call. Idempotent by code: a set that already has its rows is left completely alone, so a re-delivered event and a merchant's renames both survive. A tenant installed before these tables existed is seeded lazily instead, by the first read that finds one empty.
      *
      * @param {object} data - Request body
      * @throws {RevenexxException}
@@ -1408,7 +1743,7 @@ export class CustomersValueLists {
     }
 
     /**
-     * Discovery for the vocabulary routes: every enum this app publishes, each as a name, a title and a description. The VALUES are deliberately left out — this is the call that says which vocabularies exist, and the detail route is the one that answers what is in them. Names: address-types, contact-event-kinds, contact-statuses, lifecycle-stages, locales, organization-statuses, payment-terms, registration-statuses, roles, rule-matches, segment-sources. Fetch one with GET /customers/vocabularies/{name}; a client holding the qualified pair 'customers.<name>' builds that URL from the pair alone.
+     * Discovery for the vocabulary routes: every enum this app publishes, each as a name, a title and a description. The VALUES are deliberately left out — this is the call that says which vocabularies exist, and the detail route is the one that answers what is in them. Names: address-types, contact-event-kinds, contact-point-kinds, contact-statuses, credit-limit-modes, lifecycle-stages, locales, order-approval-modes, organization-statuses, payment-terms, registration-statuses, roles, rule-matches, segment-sources, shipping-advice. Fetch one with GET /customers/vocabularies/{name}; a client holding the qualified pair 'customers.<name>' builds that URL from the pair alone.
      *
      * @throws {RevenexxException}
      * @returns {Promise<Models.VocabularyIndex>}
@@ -1431,7 +1766,7 @@ export class CustomersValueLists {
     }
 
     /**
-     * One vocabulary in full: every permitted value, each with its title, its description and the badge tone a client renders it with — enough to build a select without a second call. Two kinds of set, and 'source' says which one answered. 'schema' — the values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift; a value added to the constraint appears here even before anyone labels it, titled from its own key. 'table' — the values are the TENANT's own rows (payment terms, address types, lifecycle stages, activity types, roles), so they carry labels/descriptions per locale, is_system and is_default, and a merchant may add to them without a release of this app. 'tenant'/'defaults' are the two answers for a set the merchant configures but may not extend. Either way 'closed' is true: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label. Values come back in the order a select should offer them — lifecycle order for a status, the merchant's own position for a table. Names: address-types, contact-event-kinds, contact-statuses, lifecycle-stages, locales, organization-statuses, payment-terms, registration-statuses, roles, rule-matches, segment-sources.
+     * One vocabulary in full: every permitted value, each with its title, its description and the badge tone a client renders it with — enough to build a select without a second call. Two kinds of set, and 'source' says which one answered. 'schema' — the values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift; a value added to the constraint appears here even before anyone labels it, titled from its own key. 'table' — the values are the TENANT's own rows (payment terms, address types, lifecycle stages, activity types, roles), so they carry labels/descriptions per locale, is_system and is_default, and a merchant may add to them without a release of this app. 'tenant'/'defaults' are the two answers for a set the merchant configures but may not extend. Either way 'closed' is true: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label. Values come back in the order a select should offer them — lifecycle order for a status, the merchant's own position for a table. Names: address-types, contact-event-kinds, contact-point-kinds, contact-statuses, credit-limit-modes, lifecycle-stages, locales, order-approval-modes, organization-statuses, payment-terms, registration-statuses, roles, rule-matches, segment-sources, shipping-advice.
      *
      * @param {CustomersVocabulariesGetName} params.name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
@@ -1439,7 +1774,7 @@ export class CustomersValueLists {
      */
     customersVocabulariesGet(params: { name: CustomersVocabulariesGetName }): Promise<Models.Vocabulary>;
     /**
-     * One vocabulary in full: every permitted value, each with its title, its description and the badge tone a client renders it with — enough to build a select without a second call. Two kinds of set, and 'source' says which one answered. 'schema' — the values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift; a value added to the constraint appears here even before anyone labels it, titled from its own key. 'table' — the values are the TENANT's own rows (payment terms, address types, lifecycle stages, activity types, roles), so they carry labels/descriptions per locale, is_system and is_default, and a merchant may add to them without a release of this app. 'tenant'/'defaults' are the two answers for a set the merchant configures but may not extend. Either way 'closed' is true: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label. Values come back in the order a select should offer them — lifecycle order for a status, the merchant's own position for a table. Names: address-types, contact-event-kinds, contact-statuses, lifecycle-stages, locales, organization-statuses, payment-terms, registration-statuses, roles, rule-matches, segment-sources.
+     * One vocabulary in full: every permitted value, each with its title, its description and the badge tone a client renders it with — enough to build a select without a second call. Two kinds of set, and 'source' says which one answered. 'schema' — the values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift; a value added to the constraint appears here even before anyone labels it, titled from its own key. 'table' — the values are the TENANT's own rows (payment terms, address types, lifecycle stages, activity types, roles), so they carry labels/descriptions per locale, is_system and is_default, and a merchant may add to them without a release of this app. 'tenant'/'defaults' are the two answers for a set the merchant configures but may not extend. Either way 'closed' is true: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label. Values come back in the order a select should offer them — lifecycle order for a status, the merchant's own position for a table. Names: address-types, contact-event-kinds, contact-point-kinds, contact-statuses, credit-limit-modes, lifecycle-stages, locales, order-approval-modes, organization-statuses, payment-terms, registration-statuses, roles, rule-matches, segment-sources, shipping-advice.
      *
      * @param {CustomersVocabulariesGetName} name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Pages, PageStatus } from "@revenexx/sdk";
+import { Client, Pages, PageStatus, Deleted } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -15,7 +15,8 @@ const result = await pages.pagesPagesList({
     order: 'created_at.desc', // optional
     bundle: 'standard', // optional
     status: PageStatus.Draft, // optional
-    q: 'contact' // optional
+    q: 'contact', // optional
+    deleted: Deleted.Only // optional
 });
 
 console.log(result);

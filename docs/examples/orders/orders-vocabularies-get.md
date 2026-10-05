@@ -10,7 +10,7 @@ const client = new Client()
 const orders = new Orders(client);
 
 const result = await orders.ordersVocabulariesGet({
-    name: OrdersVocabulariesGetName.CancellationScopes
+    name: OrdersVocabulariesGetName.Cancellationscopes
 });
 
 console.log(result);

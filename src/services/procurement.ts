@@ -6,6 +6,7 @@ import { Condition } from '../enums/condition';
 import { Effect } from '../enums/effect';
 import { ApproverType } from '../enums/approver-type';
 import { ProcurementPurchaseRequestItemsCreateType } from '../enums/procurement-purchase-request-items-create-type';
+import { ProcurementVocabulariesGetName } from '../enums/procurement-vocabularies-get-name';
 
 export class Procurement {
     client: Client;
@@ -456,6 +457,452 @@ export class Procurement {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    procurementBudgetReleasesList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementBudgetReleasesList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    procurementBudgetReleasesList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
+
+        const apiPath = '/v1/procurement/budget-releases';
+        const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.BudgetRelease>}
+     */
+    procurementBudgetReleasesGet(params: { id: string }): Promise<Models.BudgetRelease>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.BudgetRelease>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementBudgetReleasesGet(id: string): Promise<Models.BudgetRelease>;
+    procurementBudgetReleasesGet(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.BudgetRelease> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/procurement/budget-releases/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.BudgetReleaseResult>}
+     */
+    procurementBudgetReleasesRetry(params: { id: string }): Promise<Models.BudgetReleaseResult>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.BudgetReleaseResult>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementBudgetReleasesRetry(id: string): Promise<Models.BudgetReleaseResult>;
+    procurementBudgetReleasesRetry(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.BudgetReleaseResult> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/procurement/budget-releases/{id}/retry'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @param {string} params.note - Required free-text reason, kept on the record.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.BudgetReleaseResult>}
+     */
+    procurementBudgetReleasesSettle(params: { id: string, note: string }): Promise<Models.BudgetReleaseResult>;
+    /**
+     *
+     * @param {string} id - 
+     * @param {string} note - Required free-text reason, kept on the record.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.BudgetReleaseResult>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementBudgetReleasesSettle(id: string, note: string): Promise<Models.BudgetReleaseResult>;
+    procurementBudgetReleasesSettle(
+        paramsOrFirst: { id: string, note: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.BudgetReleaseResult> {
+        let params: { id: string, note: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, note: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                note: rest[0] as string            
+            };
+        }
+        
+        const id = params.id;
+        const note = params.note;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof note === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "note"');
+        }
+
+        const apiPath = '/v1/procurement/budget-releases/{id}/settle'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof note !== 'undefined') {
+            apiPayload['note'] = note;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    procurementDirectOrdersList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementDirectOrdersList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    procurementDirectOrdersList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
+
+        const apiPath = '/v1/procurement/direct-orders';
+        const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DirectOrder>}
+     */
+    procurementDirectOrdersGet(params: { id: string }): Promise<Models.DirectOrder>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DirectOrder>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementDirectOrdersGet(id: string): Promise<Models.DirectOrder>;
+    procurementDirectOrdersGet(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.DirectOrder> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/procurement/direct-orders/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DirectOrderResult>}
+     */
+    procurementDirectOrdersCommit(params: { id: string }): Promise<Models.DirectOrderResult>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DirectOrderResult>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementDirectOrdersCommit(id: string): Promise<Models.DirectOrderResult>;
+    procurementDirectOrdersCommit(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.DirectOrderResult> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/procurement/direct-orders/{id}/commit'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @param {string} params.note - Required free-text reason, kept on the record.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DirectOrderResult>}
+     */
+    procurementDirectOrdersSettle(params: { id: string, note: string }): Promise<Models.DirectOrderResult>;
+    /**
+     *
+     * @param {string} id - 
+     * @param {string} note - Required free-text reason, kept on the record.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DirectOrderResult>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementDirectOrdersSettle(id: string, note: string): Promise<Models.DirectOrderResult>;
+    procurementDirectOrdersSettle(
+        paramsOrFirst: { id: string, note: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.DirectOrderResult> {
+        let params: { id: string, note: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, note: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                note: rest[0] as string            
+            };
+        }
+        
+        const id = params.id;
+        const note = params.note;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof note === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "note"');
+        }
+
+        const apiPath = '/v1/procurement/direct-orders/{id}/settle'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof note !== 'undefined') {
+            apiPayload['note'] = note;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload
@@ -1793,14 +2240,14 @@ export class Procurement {
 
     /**
      *
-     * @param {number} params.limit - Requests examined per status (default 50, max 200).
+     * @param {number} params.limit - Records examined per status (default 50, max 200).
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReconcileResult>}
      */
     procurementReconcile(params?: { limit?: number }): Promise<Models.ReconcileResult>;
     /**
      *
-     * @param {number} limit - Requests examined per status (default 50, max 200).
+     * @param {number} limit - Records examined per status (default 50, max 200).
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReconcileResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -1990,6 +2437,77 @@ export class Procurement {
 
         return this.client.call(
             'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ProcurementVocabularyIndex>}
+     */
+    procurementVocabulariesList(): Promise<Models.ProcurementVocabularyIndex> {
+
+        const apiPath = '/v1/procurement/vocabularies';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {ProcurementVocabulariesGetName} params.name - Which vocabulary to read — the part after the dot in `procurement.<name>`.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ProcurementVocabulary>}
+     */
+    procurementVocabulariesGet(params: { name: ProcurementVocabulariesGetName }): Promise<Models.ProcurementVocabulary>;
+    /**
+     *
+     * @param {ProcurementVocabulariesGetName} name - Which vocabulary to read — the part after the dot in `procurement.<name>`.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ProcurementVocabulary>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementVocabulariesGet(name: ProcurementVocabulariesGetName): Promise<Models.ProcurementVocabulary>;
+    procurementVocabulariesGet(
+        paramsOrFirst: { name: ProcurementVocabulariesGetName } | ProcurementVocabulariesGetName    
+    ): Promise<Models.ProcurementVocabulary> {
+        let params: { name: ProcurementVocabulariesGetName };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('name' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { name: ProcurementVocabulariesGetName };
+        } else {
+            params = {
+                name: paramsOrFirst as ProcurementVocabulariesGetName            
+            };
+        }
+        
+        const name = params.name;
+
+        if (typeof name === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "name"');
+        }
+
+        const apiPath = '/v1/procurement/vocabularies/{name}'.replace('{name}', name);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
             uri,
             apiHeaders,
             apiPayload

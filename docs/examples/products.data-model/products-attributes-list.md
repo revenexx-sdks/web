@@ -28,6 +28,11 @@ const result = await productsDataModel.productsAttributesList({
     config: '{}', // optional
     labels: '{}', // optional
     position: 1, // optional
+    externalId: 'EF000123', // optional
+    externalRefs: '{}', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: '{}', // optional
+    metadata: '{}', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z' // optional
 });

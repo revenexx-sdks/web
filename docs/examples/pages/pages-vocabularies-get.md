@@ -10,7 +10,7 @@ const client = new Client()
 const pages = new Pages(client);
 
 const result = await pages.pagesVocabulariesGet({
-    name: PagesVocabulariesGetName.EditStateStatuses
+    name: PagesVocabulariesGetName.Editstatestatuses
 });
 
 console.log(result);

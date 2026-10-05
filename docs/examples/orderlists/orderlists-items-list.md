@@ -27,6 +27,10 @@ const result = await orderlists.orderlistsItemsList({
     subcategorySlug: 'paper', // optional
     position: 0, // optional
     metadata: '{}', // optional
+    externalId: 'MERKZETTEL-20481/7', // optional
+    externalRefs: '{}', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: '{}', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z', // optional
     limit: 50, // optional

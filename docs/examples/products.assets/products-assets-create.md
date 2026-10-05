@@ -24,8 +24,21 @@ const result = await productsAssets.productsAssetsCreate({
         }
     }, // optional
     deliveryPath: 'packshots/acme-4711-blk_1.jpg', // optional
+    externalId: 'DAM-88231', // optional
+    externalRefs: {
+        "entitys": "4711",
+        "gtin": "4012345000009"
+    }, // optional
     externalUrl: 'https://cdn.example.com/packshots/acme-4711-blk_1.jpg', // optional
     source: AssetsSource.Storage, // optional
+    sourceData: {
+        "etag": "W\/\"JzQ0O0c2\"",
+        "raw": {
+            "BMECAT_GROUP": "EL-4711"
+        },
+        "system": "pim"
+    }, // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
     storageAssetId: 'ast_01J8ZQ0000000000000000' // optional
 });
 

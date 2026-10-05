@@ -1,5 +1,5 @@
 ```javascript
-import { Client, ProductsAssets, ProductsAssetsListSource } from "@revenexx/sdk";
+import { Client, ProductsAssets, DocumentsDocumentsListSource } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -16,11 +16,15 @@ const result = await productsAssets.productsAssetsList({
     id: '', // optional
     assetFamilyId: '', // optional
     code: 'acme-4711-blk_packshot_1', // optional
-    source: ProductsAssetsListSource.Storage, // optional
+    source: DocumentsDocumentsListSource.Storage, // optional
     storageAssetId: 'ast_01J8ZQ0000000000000000', // optional
     deliveryPath: 'packshots/acme-4711-blk_1.jpg', // optional
     externalUrl: 'https://cdn.example.com/packshots/acme-4711-blk_1.jpg', // optional
     attributeValues: '{}', // optional
+    externalId: 'DAM-88231', // optional
+    externalRefs: '{}', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: '{}', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z' // optional
 });

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Products, Kind } from "@revenexx/sdk";
+import { Client, Products, ProductsListKind } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -14,7 +14,7 @@ const result = await products.productsGrid({
     offset: 1, // optional
     order: 'created_at.desc', // optional
     q: 'cordless drill', // optional
-    kind: Kind.Simple, // optional
+    kind: ProductsListKind.Simple, // optional
     enabled: true, // optional
     familyId: '' // optional
 });

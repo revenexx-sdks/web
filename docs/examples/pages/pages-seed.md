@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Pages } from "@revenexx/sdk";
+import { Client, Pages, PagesSeedMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,8 +10,11 @@ const client = new Client()
 const pages = new Pages(client);
 
 const result = await pages.pagesSeed({
+    library: [], // optional
     menus: [], // optional
-    pages: [] // optional
+    mode: PagesSeedMode.Fill, // optional
+    pages: [], // optional
+    settings: {} // optional
 });
 
 console.log(result);

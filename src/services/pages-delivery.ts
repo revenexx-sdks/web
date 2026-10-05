@@ -273,4 +273,86 @@ export class PagesDelivery {
             apiPayload
         );
     }
+
+    /**
+     * What a theme styles the whole storefront with, in one object keyed by setting name. `appearance`, `design` and `customCss` are always present — `null` when the tenant has not set them, which is the theme's cue to use its own default — and any other key the tenant set is answered alongside them.
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DefaultDeliverySiteSettings>}
+     */
+    pagesDeliverySiteSettings(): Promise<Models.DefaultDeliverySiteSettings> {
+
+        const apiPath = '/v1/pages/delivery/site-settings';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Which page a product or a category renders with: `GET /pages/delivery/template?type=product&id=5137` answers `{ "slug": "product-detail" }`, and the theme then renders that page through `GET /pages/delivery/page`. 404 means "use the default template" — no page is assigned, or the one assigned is hidden or not published, so a visitor is never sent to a page delivery would refuse.
+     *
+     * @param {string} params.type - The kind of record: `product`, `category`, …
+     * @param {string} params.id - The record's id in the app that owns it.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DeliveryTemplate>}
+     */
+    pagesDeliveryTemplate(params?: { type?: string, id?: string }): Promise<Models.DeliveryTemplate>;
+    /**
+     * Which page a product or a category renders with: `GET /pages/delivery/template?type=product&id=5137` answers `{ "slug": "product-detail" }`, and the theme then renders that page through `GET /pages/delivery/page`. 404 means "use the default template" — no page is assigned, or the one assigned is hidden or not published, so a visitor is never sent to a page delivery would refuse.
+     *
+     * @param {string} type - The kind of record: `product`, `category`, …
+     * @param {string} id - The record's id in the app that owns it.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DeliveryTemplate>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesDeliveryTemplate(type?: string, id?: string): Promise<Models.DeliveryTemplate>;
+    pagesDeliveryTemplate(
+        paramsOrFirst?: { type?: string, id?: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.DeliveryTemplate> {
+        let params: { type?: string, id?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { type?: string, id?: string };
+        } else {
+            params = {
+                type: paramsOrFirst as string,
+                id: rest[0] as string            
+            };
+        }
+        
+        const type = params.type;
+        const id = params.id;
+
+
+        const apiPath = '/v1/pages/delivery/template';
+        const apiPayload: Payload = {};
+        if (typeof type !== 'undefined') {
+            apiPayload['type'] = type;
+        }
+        if (typeof id !== 'undefined') {
+            apiPayload['id'] = id;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
 }

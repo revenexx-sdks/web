@@ -52,6 +52,11 @@ const result = await products.productsUpdate({
     }, // optional
     deletedAt: '2026-01-01T12:00:00Z', // optional
     enabled: true, // optional
+    externalId: 'ART-4711', // optional
+    externalRefs: {
+        "entitys": "4711",
+        "gtin": "4012345000009"
+    }, // optional
     familyId: '', // optional
     familyVariantId: '', // optional
     kind: ProductsKind.Simple, // optional
@@ -68,6 +73,14 @@ const result = await products.productsUpdate({
         }
     }, // optional
     sku: 'ACME-4711-BLK', // optional
+    sourceData: {
+        "etag": "W\/\"JzQ0O0c2\"",
+        "raw": {
+            "BMECAT_GROUP": "EL-4711"
+        },
+        "system": "pim"
+    }, // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
     taxClass: 'standard' // optional
 });
 

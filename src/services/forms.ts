@@ -397,6 +397,8 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
     /**
      * The storefront's path, and the moment a lead enters the platform. A stored submission emits `form.submitted` onto the tenant event bus with the row itself as the payload — that is the event an Integration Studio workflow or a notification email listens to, and it is the only event this app raises about a submission. A call that is refused therefore leaves no trace anywhere: no row, and no automation that ever hears about it.
      * 
+     * Only a `live` form accepts submissions: a draft is still being built and an archived form is no longer offered, so either is a 422 and nothing is stored. A submission arrives `new` — or `spam` when the honeypot caught it — and is filed under its form's own slug; a body that names a `status` or a `form_slug` is not refused, and neither is read. Triage is the inbox's, and which form collected a lead is the form's.
+     * 
      * It is also the only moment anything is known about a submission, so the tenant's policy is applied here. If honeypot_field names a decoy and the submission filled it in, the field is stripped — it is a trap, not an answer the visitor gave, so it never reaches `data` — and spam_handling (flag | reject) decides between storing the row as 'spam' and refusing outright with 422.
      * 
      * The notification recipient is resolved once, here: the form's own notify_email, else the tenant's, stamped into metadata.notify_email with metadata.notify_source naming which of the two won. It is resolved at insert rather than at delivery because the row IS the event payload — a workflow reads the address off the event instead of re-resolving a form's settings that may since have changed.
@@ -409,16 +411,16 @@ The VALUE type follows the input type, which is why this object is not typed fur
 
 Two values are NOT here: the honeypot field, if the tenant configured one, is stripped before the row is written (it is a trap, not an answer the visitor gave), and the resolved notification recipient lives in `metadata`, not in what somebody typed.
      * @param {string} params.formId - The form this submission was made against. It is resolved at insert, so an id no form in this tenant holds is a 404 and nothing is stored — a submission with no form is a lead nobody can read. Required on a create: it is the only thing that says which form was filled in.
-     * @param {string} params.formSlug - The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. On a write the body's value WINS; omit it and the form's own slug is copied in. So: OPTIONAL — send it and it is stored as sent, even if it disagrees with the form; omit it and the form's own slug is filled in from `form_id`.
      * @param {object} params.metadata - Free-form metadata, yours to key as an integration needs. The resolved notification recipient is merged OVER it at insert, so `notify_email` and `notify_source` sent here are overwritten — see the `FormSubmissionMetadata` schema.
      * @param {string} params.source - Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
-     * @param {FormSubmissionStatus} params.status - Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. A create may set it — an inbox importer records a submission that is already read — but nothing needs to: omit it and the row is 'new'.
      * @throws {RevenexxException}
      * @returns {Promise<Models.FormSubmission>}
      */
-    formsSubmissionsCreate(params: { data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus }): Promise<Models.FormSubmission>;
+    formsSubmissionsCreate(params: { data: object, formId: string, metadata?: object, source?: string }): Promise<Models.FormSubmission>;
     /**
      * The storefront's path, and the moment a lead enters the platform. A stored submission emits `form.submitted` onto the tenant event bus with the row itself as the payload — that is the event an Integration Studio workflow or a notification email listens to, and it is the only event this app raises about a submission. A call that is refused therefore leaves no trace anywhere: no row, and no automation that ever hears about it.
+     * 
+     * Only a `live` form accepts submissions: a draft is still being built and an archived form is no longer offered, so either is a 422 and nothing is stored. A submission arrives `new` — or `spam` when the honeypot caught it — and is filed under its form's own slug; a body that names a `status` or a `form_slug` is not refused, and neither is read. Triage is the inbox's, and which form collected a lead is the form's.
      * 
      * It is also the only moment anything is known about a submission, so the tenant's policy is applied here. If honeypot_field names a decoy and the submission filled it in, the field is stripped — it is a trap, not an answer the visitor gave, so it never reaches `data` — and spam_handling (flag | reject) decides between storing the row as 'spam' and refusing outright with 422.
      * 
@@ -432,40 +434,34 @@ The VALUE type follows the input type, which is why this object is not typed fur
 
 Two values are NOT here: the honeypot field, if the tenant configured one, is stripped before the row is written (it is a trap, not an answer the visitor gave), and the resolved notification recipient lives in `metadata`, not in what somebody typed.
      * @param {string} formId - The form this submission was made against. It is resolved at insert, so an id no form in this tenant holds is a 404 and nothing is stored — a submission with no form is a lead nobody can read. Required on a create: it is the only thing that says which form was filled in.
-     * @param {string} formSlug - The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. On a write the body's value WINS; omit it and the form's own slug is copied in. So: OPTIONAL — send it and it is stored as sent, even if it disagrees with the form; omit it and the form's own slug is filled in from `form_id`.
      * @param {object} metadata - Free-form metadata, yours to key as an integration needs. The resolved notification recipient is merged OVER it at insert, so `notify_email` and `notify_source` sent here are overwritten — see the `FormSubmissionMetadata` schema.
      * @param {string} source - Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
-     * @param {FormSubmissionStatus} status - Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. A create may set it — an inbox importer records a submission that is already read — but nothing needs to: omit it and the row is 'new'.
      * @throws {RevenexxException}
      * @returns {Promise<Models.FormSubmission>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsSubmissionsCreate(data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus): Promise<Models.FormSubmission>;
+    formsSubmissionsCreate(data: object, formId: string, metadata?: object, source?: string): Promise<Models.FormSubmission>;
     formsSubmissionsCreate(
-        paramsOrFirst: { data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus } | object,
-        ...rest: [(string)?, (string)?, (object)?, (string)?, (FormSubmissionStatus)?]    
+        paramsOrFirst: { data: object, formId: string, metadata?: object, source?: string } | object,
+        ...rest: [(string)?, (object)?, (string)?]    
     ): Promise<Models.FormSubmission> {
-        let params: { data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus };
+        let params: { data: object, formId: string, metadata?: object, source?: string };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst || 'formId' in paramsOrFirst || 'formSlug' in paramsOrFirst || 'metadata' in paramsOrFirst || 'source' in paramsOrFirst || 'status' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { data: object, formId: string, formSlug?: string, metadata?: object, source?: string, status?: FormSubmissionStatus };
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst || 'formId' in paramsOrFirst || 'metadata' in paramsOrFirst || 'source' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { data: object, formId: string, metadata?: object, source?: string };
         } else {
             params = {
                 data: paramsOrFirst as object,
                 formId: rest[0] as string,
-                formSlug: rest[1] as string,
-                metadata: rest[2] as object,
-                source: rest[3] as string,
-                status: rest[4] as FormSubmissionStatus            
+                metadata: rest[1] as object,
+                source: rest[2] as string            
             };
         }
         
         const data = params.data;
         const formId = params.formId;
-        const formSlug = params.formSlug;
         const metadata = params.metadata;
         const source = params.source;
-        const status = params.status;
 
         if (typeof data === 'undefined') {
             throw new RevenexxException('Missing required parameter: "data"');
@@ -482,17 +478,11 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
         if (typeof formId !== 'undefined') {
             apiPayload['form_id'] = formId;
         }
-        if (typeof formSlug !== 'undefined') {
-            apiPayload['form_slug'] = formSlug;
-        }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
         }
         if (typeof source !== 'undefined') {
             apiPayload['source'] = source;
-        }
-        if (typeof status !== 'undefined') {
-            apiPayload['status'] = status;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -736,10 +726,10 @@ The VALUE type follows the input type, which is why this object is not typed fur
 
 Two values are NOT here: the honeypot field, if the tenant configured one, is stripped before the row is written (it is a trap, not an answer the visitor gave), and the resolved notification recipient lives in `metadata`, not in what somebody typed.
      * @param {string} params.formId - The form this submission was made against. It is resolved at insert, so an id no form in this tenant holds is a 404 and nothing is stored — a submission with no form is a lead nobody can read. Required on a create: it is the only thing that says which form was filled in.
-     * @param {string} params.formSlug - The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. On a write the body's value WINS; omit it and the form's own slug is copied in. So: OPTIONAL — send it and it is stored as sent, even if it disagrees with the form; omit it and the form's own slug is filled in from `form_id`.
+     * @param {string} params.formSlug - The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. A create always copies the form's own slug; a body cannot name another. Changeable only where submission_edit allows a rewrite.
      * @param {object} params.metadata - Free-form metadata, yours to key as an integration needs. The resolved notification recipient is merged OVER it at insert, so `notify_email` and `notify_source` sent here are overwritten — see the `FormSubmissionMetadata` schema.
      * @param {string} params.source - Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
-     * @param {FormSubmissionStatus} params.status - Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. A create may set it — an inbox importer records a submission that is already read — but nothing needs to: omit it and the row is 'new'.
+     * @param {FormSubmissionStatus} params.status - Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. Moves freely between the four in any direction, including back to 'new' — an inbox re-opens what it filed. Not settable on a create: a submission arrives 'new', or 'spam' when the honeypot caught it.
      * @throws {RevenexxException}
      * @returns {Promise<Models.FormSubmission>}
      */
@@ -760,10 +750,10 @@ The VALUE type follows the input type, which is why this object is not typed fur
 
 Two values are NOT here: the honeypot field, if the tenant configured one, is stripped before the row is written (it is a trap, not an answer the visitor gave), and the resolved notification recipient lives in `metadata`, not in what somebody typed.
      * @param {string} formId - The form this submission was made against. It is resolved at insert, so an id no form in this tenant holds is a 404 and nothing is stored — a submission with no form is a lead nobody can read. Required on a create: it is the only thing that says which form was filled in.
-     * @param {string} formSlug - The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. On a write the body's value WINS; omit it and the form's own slug is copied in. So: OPTIONAL — send it and it is stored as sent, even if it disagrees with the form; omit it and the form's own slug is filled in from `form_id`.
+     * @param {string} formSlug - The form's slug as it stood when this submission arrived, copied onto the row: the inbox filters by form without a join, and a submission still says which form collected it after that form has been renamed. It does not outlive a DELETED form — the foreign key cascades and takes the submission with it. A create always copies the form's own slug; a body cannot name another. Changeable only where submission_edit allows a rewrite.
      * @param {object} metadata - Free-form metadata, yours to key as an integration needs. The resolved notification recipient is merged OVER it at insert, so `notify_email` and `notify_source` sent here are overwritten — see the `FormSubmissionMetadata` schema.
      * @param {string} source - Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
-     * @param {FormSubmissionStatus} status - Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. A create may set it — an inbox importer records a submission that is already read — but nothing needs to: omit it and the row is 'new'.
+     * @param {FormSubmissionStatus} status - Inbox triage. `new` until somebody opens it, then `read`, and `archived` once it is dealt with. `spam` is set by code in exactly one place — the honeypot, and only while the tenant's spam_handling is 'flag'; under 'reject' the submission is never stored at all. Default 'new'. Moves freely between the four in any direction, including back to 'new' — an inbox re-opens what it filed. Not settable on a create: a submission arrives 'new', or 'spam' when the honeypot caught it.
      * @throws {RevenexxException}
      * @returns {Promise<Models.FormSubmission>}
      * @deprecated Use the object parameter style method for a better developer experience.

@@ -31,11 +31,17 @@ const result = await orders.ordersList({
     shippingTotal: 5.9, // optional
     shippingTaxRate: 19, // optional
     shippingTaxAmount: 1.12, // optional
+    paymentFeeAmount: 2.5, // optional
+    paymentFeeTaxRate: 19, // optional
+    paymentFeeTaxAmount: 0.48, // optional
     taxTotal: 29.56, // optional
     grandTotal: 185.16, // optional
     placedAt: '2026-01-01T12:00:00Z', // optional
     completedAt: '2026-01-01T12:00:00Z', // optional
     cancelledAt: '2026-01-01T12:00:00Z', // optional
+    externalId: 'SO-004711', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    requestedDeliveryDate: '2026-01-01', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z', // optional
     limit: 50, // optional

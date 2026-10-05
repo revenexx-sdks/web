@@ -10,8 +10,8 @@ const client = new Client()
 const customers = new Customers(client);
 
 const result = await customers.customersAuthMe({
-    userId: '',
-    sessionId: '' // optional
+    sessionId: '',
+    userId: ''
 });
 
 console.log(result);

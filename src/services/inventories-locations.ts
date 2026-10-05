@@ -27,12 +27,16 @@ export class InventoriesLocations {
      * @param {boolean} params.enabled - Exact-match filter on `enabled`. Only enabled locations are ever served by availability or reserve, so `true` is the operational subset.
      * @param {string} params.address - Exact-match filter on `address`. Where the location physically is. The WHOLE jsonb document is compared, serialized as JSON — this is equality, not a key lookup or a containment query, and a value that does not parse is answered 400.
      * @param {string} params.metadata - Exact-match filter on `metadata`. Free-form data the tenant keeps on the location — an ERP site number, a contact, a cut-off time. The WHOLE jsonb document is compared, serialized as JSON — this is equality, not a key lookup or a containment query, and a value that does not parse is answered 400.
+     * @param {string} params.externalId - Exact-match filter on `external_id`. The key this row has in the system that OWNS it.
+     * @param {string} params.externalRefs - Exact-match filter on `external_refs`. Every OTHER system that knows this row, keyed by system name. The WHOLE jsonb document is compared, serialized as JSON — this is equality, not a key lookup or a containment query, and a value that does not parse is answered 400.
+     * @param {string} params.sourceSyncedAt - Exact-match filter on `source_synced_at`. When this row was last confirmed against its source.
+     * @param {string} params.sourceData - Exact-match filter on `source_data`. What the source said about this row, kept as it said it. The WHOLE jsonb document is compared, serialized as JSON — this is equality, not a key lookup or a containment query, and a value that does not parse is answered 400.
      * @param {string} params.createdAt - Exact-match filter on `created_at`. When the row was created.
      * @param {string} params.updatedAt - Exact-match filter on `updated_at`. When the row was last written.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    inventoriesLocationsList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    inventoriesLocationsList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * A location is WHERE stock is kept — a warehouse, a shop floor, a supplier that dropships, or a virtual bucket for pre-orders and quarantine. It holds no quantity of its own: what is at it is a stock level. `type` is descriptive and nothing branches on it; `priority` is the number that decides which location a reservation is served from, and `enabled` decides whether it is offered at all. This is the list a `location_code` is resolved against on every stock call, so it is the first thing to read when a receipt answers "unknown location". It answers no quantities at all — how much is at a location is GET /inventories/stock?location_id=…, and what may still be sold is POST /inventories/availability. Filter `?enabled=true` for the operational subset: availability and reserve only ever look at enabled locations, so a disabled one is invisible to a shop while keeping every row that points at it.
      *
@@ -48,21 +52,25 @@ export class InventoriesLocations {
      * @param {boolean} enabled - Exact-match filter on `enabled`. Only enabled locations are ever served by availability or reserve, so `true` is the operational subset.
      * @param {string} address - Exact-match filter on `address`. Where the location physically is. The WHOLE jsonb document is compared, serialized as JSON — this is equality, not a key lookup or a containment query, and a value that does not parse is answered 400.
      * @param {string} metadata - Exact-match filter on `metadata`. Free-form data the tenant keeps on the location — an ERP site number, a contact, a cut-off time. The WHOLE jsonb document is compared, serialized as JSON — this is equality, not a key lookup or a containment query, and a value that does not parse is answered 400.
+     * @param {string} externalId - Exact-match filter on `external_id`. The key this row has in the system that OWNS it.
+     * @param {string} externalRefs - Exact-match filter on `external_refs`. Every OTHER system that knows this row, keyed by system name. The WHOLE jsonb document is compared, serialized as JSON — this is equality, not a key lookup or a containment query, and a value that does not parse is answered 400.
+     * @param {string} sourceSyncedAt - Exact-match filter on `source_synced_at`. When this row was last confirmed against its source.
+     * @param {string} sourceData - Exact-match filter on `source_data`. What the source said about this row, kept as it said it. The WHOLE jsonb document is compared, serialized as JSON — this is equality, not a key lookup or a containment query, and a value that does not parse is answered 400.
      * @param {string} createdAt - Exact-match filter on `created_at`. When the row was created.
      * @param {string} updatedAt - Exact-match filter on `updated_at`. When the row was last written.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesLocationsList(limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
+    inventoriesLocationsList(limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     inventoriesLocationsList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (InventoriesLocationsListType)?, (number)?, (boolean)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (InventoriesLocationsListType)?, (number)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, name?: string, labels?: string, type?: InventoriesLocationsListType, priority?: number, enabled?: boolean, address?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -77,8 +85,12 @@ export class InventoriesLocations {
                 enabled: rest[8] as boolean,
                 address: rest[9] as string,
                 metadata: rest[10] as string,
-                createdAt: rest[11] as string,
-                updatedAt: rest[12] as string            
+                externalId: rest[11] as string,
+                externalRefs: rest[12] as string,
+                sourceSyncedAt: rest[13] as string,
+                sourceData: rest[14] as string,
+                createdAt: rest[15] as string,
+                updatedAt: rest[16] as string            
             };
         }
         
@@ -94,6 +106,10 @@ export class InventoriesLocations {
         const enabled = params.enabled;
         const address = params.address;
         const metadata = params.metadata;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
+        const sourceSyncedAt = params.sourceSyncedAt;
+        const sourceData = params.sourceData;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
 
@@ -136,6 +152,18 @@ export class InventoriesLocations {
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
         }
@@ -156,7 +184,7 @@ export class InventoriesLocations {
     }
 
     /**
-     * Registers a new place stock can be kept, and `type` says what kind of place it is: a warehouse of your own, a store whose shop floor a click-and-collect order draws on, a dropship supplier whose stock this row only tracks, or a virtual bucket that is not a building at all — pre-orders, consignment, a quarantine shelf. A create cannot omit `code` and `name`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert. A new location starts EMPTY and creating one moves nothing: stock arrives through POST /inventories/receive, or is transferred by two adjustments, one negative at the old location and one positive here. Mind the two columns that are not decoration — `priority` decides where a reservation is served from before `type` ever does (nothing branches on `type`), and `enabled` defaults to true, so a location created for a warehouse that has not opened yet starts being offered by availability and reserve immediately.
+     * Registers a new place stock can be kept, and `type` says what kind of place it is: a warehouse of your own, a store whose shop floor a click-and-collect order draws on, a dropship supplier whose stock this row only tracks, or a virtual bucket that is not a building at all — pre-orders, consignment, a quarantine shelf. A create cannot omit `code` and `name`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` and `external_id` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert. A new location starts EMPTY and creating one moves nothing: stock arrives through POST /inventories/receive, or is transferred by two adjustments, one negative at the old location and one positive here. Mind the two columns that are not decoration — `priority` decides where a reservation is served from before `type` ever does (nothing branches on `type`), and `enabled` defaults to true, so a location created for a warehouse that has not opened yet starts being offered by availability and reserve immediately.
      *
      * @param {string} params.code - The location's stable identifier, and the name every stock call uses instead of an id: `location_code` on receive / adjust / restock / reserve, and the `default_location_code` setting. Unique per tenant, at least one character (CHECK `length(code) > 0`). Every tenant starts with `main` — POST /inventories/locations/defaults seeds it and the app.installed event runs the same seed — so `main` is the one code that resolves everywhere.
      * @param {string} params.name - What the place is called for an operator, in the tenant's working language. At least one character (CHECK `length(name) > 0`). It is a label only: nothing addresses a location by name.
@@ -171,7 +199,7 @@ export class InventoriesLocations {
      */
     inventoriesLocationsCreate(params: { code: string, name: string, address?: object, enabled?: boolean, labels?: object, metadata?: object, priority?: number, type?: LocationType }): Promise<Models.Location>;
     /**
-     * Registers a new place stock can be kept, and `type` says what kind of place it is: a warehouse of your own, a store whose shop floor a click-and-collect order draws on, a dropship supplier whose stock this row only tracks, or a virtual bucket that is not a building at all — pre-orders, consignment, a quarantine shelf. A create cannot omit `code` and `name`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert. A new location starts EMPTY and creating one moves nothing: stock arrives through POST /inventories/receive, or is transferred by two adjustments, one negative at the old location and one positive here. Mind the two columns that are not decoration — `priority` decides where a reservation is served from before `type` ever does (nothing branches on `type`), and `enabled` defaults to true, so a location created for a warehouse that has not opened yet starts being offered by availability and reserve immediately.
+     * Registers a new place stock can be kept, and `type` says what kind of place it is: a warehouse of your own, a store whose shop floor a click-and-collect order draws on, a dropship supplier whose stock this row only tracks, or a virtual bucket that is not a building at all — pre-orders, consignment, a quarantine shelf. A create cannot omit `code` and `name`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` and `external_id` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert. A new location starts EMPTY and creating one moves nothing: stock arrives through POST /inventories/receive, or is transferred by two adjustments, one negative at the old location and one positive here. Mind the two columns that are not decoration — `priority` decides where a reservation is served from before `type` ever does (nothing branches on `type`), and `enabled` defaults to true, so a location created for a warehouse that has not opened yet starts being offered by availability and reserve immediately.
      *
      * @param {string} code - The location's stable identifier, and the name every stock call uses instead of an id: `location_code` on receive / adjust / restock / reserve, and the `default_location_code` setting. Unique per tenant, at least one character (CHECK `length(code) > 0`). Every tenant starts with `main` — POST /inventories/locations/defaults seeds it and the app.installed event runs the same seed — so `main` is the one code that resolves everywhere.
      * @param {string} name - What the place is called for an operator, in the tenant's working language. At least one character (CHECK `length(name) > 0`). It is a label only: nothing addresses a location by name.
@@ -264,7 +292,7 @@ export class InventoriesLocations {
     }
 
     /**
-     * Gives a tenant its first location, `main`, so the stock calls have somewhere to book into: `receive`, `adjust` and `restock` fall back to the `default_location_code` setting when a caller names no `location_code`, and a tenant with no location at all answers 400 on its first receipt. The platform already runs this on `app.installed`, so calling it by hand is the repair for an install that predates the event or a `main` somebody deleted. Idempotent by CODE, not by contents: a location already carrying that code is reported under `existing` and is NOT touched, so a renamed or disabled `main` stays renamed and disabled. It creates nothing else and never removes a location.
+     * Gives a tenant the two sets it cannot start without. First its first location, `main`, so the stock calls have somewhere to book into: `receive`, `adjust` and `restock` fall back to the `default_location_code` setting when a caller names no `location_code`, and a tenant with no location at all answers 400 on its first receipt. Then the four availability states this app ships with, reported under `availability_states` and kept out of the two lists above because a state is not a location. The platform already runs this on `app.installed`, so calling it by hand is the repair for an install that predates the event or a `main` somebody deleted. Idempotent by CODE, not by contents: a row already carrying that code is reported under `existing` and is NOT touched, so a renamed or disabled `main` stays renamed and disabled and a state whose `orderable` a merchant corrected keeps the correction. It creates nothing else and never removes anything.
      *
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
@@ -389,7 +417,7 @@ export class InventoriesLocations {
     }
 
     /**
-     * Partial update: send the fields that change. The one with consequences is `enabled` — setting it to false is how a location is taken out of service WITHOUT losing anything. Availability and reserve stop looking at it, so its stock stops being sellable, while every stock row, ledger booking and reservation that points at it survives untouched and comes back the moment it is enabled again. That is the reversible alternative to DELETE, which is not reversible at all. Changing `code` is the other sharp edge: rows keep their `location_id` so nothing moves, but every caller that names the old code in `location_code` starts getting 400 "unknown location". Two rows of this tenant may not share `code` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert.
+     * Partial update: send the fields that change. The one with consequences is `enabled` — setting it to false is how a location is taken out of service WITHOUT losing anything. Availability and reserve stop looking at it, so its stock stops being sellable, while every stock row, ledger booking and reservation that points at it survives untouched and comes back the moment it is enabled again. That is the reversible alternative to DELETE, which is not reversible at all. Changing `code` is the other sharp edge: rows keep their `location_id` so nothing moves, but every caller that names the old code in `location_code` starts getting 400 "unknown location". Two rows of this tenant may not share `code` and `external_id` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert.
      *
      * @param {string} params.id - The location.
      * @param {object} params.address - Where the location physically is. Free-form, and one key is READ: `country`, an ISO country code, which POST /inventories/reserve compares (case-insensitively) against `ship_to.country` when `allocation_strategy` is 'nearest' — that is what stops a German order pulling from the US warehouse because it happens to sort first. The keys the cockpit form writes are `street`, `postal_code`, `city`, `country`; anything else a tenant stores is kept and ignored.
@@ -405,7 +433,7 @@ export class InventoriesLocations {
      */
     inventoriesLocationsUpdate(params: { id: string, address?: object, code?: string, enabled?: boolean, labels?: object, metadata?: object, name?: string, priority?: number, type?: LocationType }): Promise<Models.Location>;
     /**
-     * Partial update: send the fields that change. The one with consequences is `enabled` — setting it to false is how a location is taken out of service WITHOUT losing anything. Availability and reserve stop looking at it, so its stock stops being sellable, while every stock row, ledger booking and reservation that points at it survives untouched and comes back the moment it is enabled again. That is the reversible alternative to DELETE, which is not reversible at all. Changing `code` is the other sharp edge: rows keep their `location_id` so nothing moves, but every caller that names the old code in `location_code` starts getting 400 "unknown location". Two rows of this tenant may not share `code` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert.
+     * Partial update: send the fields that change. The one with consequences is `enabled` — setting it to false is how a location is taken out of service WITHOUT losing anything. Availability and reserve stop looking at it, so its stock stops being sellable, while every stock row, ledger booking and reservation that points at it survives untouched and comes back the moment it is enabled again. That is the reversible alternative to DELETE, which is not reversible at all. Changing `code` is the other sharp edge: rows keep their `location_id` so nothing moves, but every caller that names the old code in `location_code` starts getting 400 "unknown location". Two rows of this tenant may not share `code` and `external_id` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert.
      *
      * @param {string} id - The location.
      * @param {object} address - Where the location physically is. Free-form, and one key is READ: `country`, an ISO country code, which POST /inventories/reserve compares (case-insensitively) against `ship_to.country` when `allocation_strategy` is 'nearest' — that is what stops a German order pulling from the US warehouse because it happens to sort first. The keys the cockpit form writes are `street`, `postal_code`, `city`, `country`; anything else a tenant stores is kept and ignored.

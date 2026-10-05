@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Forms, FormSubmissionStatus } from "@revenexx/sdk";
+import { Client, Forms } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -16,10 +16,8 @@ const result = await forms.formsSubmissionsCreate({
         "message": "Please quote 200 units of ACME-4711-BLK, delivered to Hamburg."
     },
     formId: '',
-    formSlug: 'contact', // optional
     metadata: {}, // optional
-    source: '/contact', // optional
-    status: FormSubmissionStatus.New // optional
+    source: '/contact' // optional
 });
 
 console.log(result);

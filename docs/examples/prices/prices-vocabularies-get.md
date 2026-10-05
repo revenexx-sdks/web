@@ -10,7 +10,7 @@ const client = new Client()
 const prices = new Prices(client);
 
 const result = await prices.pricesVocabulariesGet({
-    name: PricesVocabulariesGetName.ListStatuses
+    name: PricesVocabulariesGetName.Liststatuses
 });
 
 console.log(result);

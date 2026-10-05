@@ -16,6 +16,7 @@ const result = await customersOrganizations.customersAddressesList({
     type: 'shipping', // optional
     company: 'Beispiel Industrietechnik GmbH', // optional
     name: 'Anna Berger', // optional
+    name2: 'Abteilung Einkauf', // optional
     street: 'Musterstraße 12', // optional
     street2: 'Gebäude C, 2. OG', // optional
     zip: '10115', // optional
@@ -25,6 +26,7 @@ const result = await customersOrganizations.customersAddressesList({
     phone: '+49 30 5550123', // optional
     isDefault: true, // optional
     externalId: 'R_ADD000005', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z', // optional
     limit: 1, // optional

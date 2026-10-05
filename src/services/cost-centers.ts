@@ -2,8 +2,10 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+import { BudgetType } from '../enums/budget-type';
 import { Conditions } from '../enums/conditions';
 import { CostCentersRestrictionsCreateType } from '../enums/cost-centers-restrictions-create-type';
+import { CostCentersVocabularyName } from '../enums/cost-centers-vocabulary-name';
 
 export class CostCenters {
     client: Client;
@@ -621,55 +623,56 @@ export class CostCenters {
     /**
      *
      * @param {object[]} params.allocations - 
-     * @param {string} params.orderId - 
      * @param {string} params.contactId - 
      * @param {string} params.currency - ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+     * @param {boolean} params.dryRun - true runs the pre-flight (currency, no active budget, tracking-only centres) and answers as the real call would — same status, skipped and refusal — while writing nothing and claiming no key. The purchase request / order id may then be omitted.
      * @param {string} params.note - 
+     * @param {string} params.orderId - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.BudgetMovementResult>}
      */
-    costCentersCommit(params: { allocations: object[], orderId: string, contactId?: string, currency?: string, note?: string }): Promise<Models.BudgetMovementResult>;
+    costCentersCommit(params: { allocations: object[], contactId?: string, currency?: string, dryRun?: boolean, note?: string, orderId?: string }): Promise<Models.BudgetMovementResult>;
     /**
      *
      * @param {object[]} allocations - 
-     * @param {string} orderId - 
      * @param {string} contactId - 
      * @param {string} currency - ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+     * @param {boolean} dryRun - true runs the pre-flight (currency, no active budget, tracking-only centres) and answers as the real call would — same status, skipped and refusal — while writing nothing and claiming no key. The purchase request / order id may then be omitted.
      * @param {string} note - 
+     * @param {string} orderId - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.BudgetMovementResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    costCentersCommit(allocations: object[], orderId: string, contactId?: string, currency?: string, note?: string): Promise<Models.BudgetMovementResult>;
+    costCentersCommit(allocations: object[], contactId?: string, currency?: string, dryRun?: boolean, note?: string, orderId?: string): Promise<Models.BudgetMovementResult>;
     costCentersCommit(
-        paramsOrFirst: { allocations: object[], orderId: string, contactId?: string, currency?: string, note?: string } | object[],
-        ...rest: [(string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst: { allocations: object[], contactId?: string, currency?: string, dryRun?: boolean, note?: string, orderId?: string } | object[],
+        ...rest: [(string)?, (string)?, (boolean)?, (string)?, (string)?]    
     ): Promise<Models.BudgetMovementResult> {
-        let params: { allocations: object[], orderId: string, contactId?: string, currency?: string, note?: string };
+        let params: { allocations: object[], contactId?: string, currency?: string, dryRun?: boolean, note?: string, orderId?: string };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('allocations' in paramsOrFirst || 'orderId' in paramsOrFirst || 'contactId' in paramsOrFirst || 'currency' in paramsOrFirst || 'note' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { allocations: object[], orderId: string, contactId?: string, currency?: string, note?: string };
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('allocations' in paramsOrFirst || 'contactId' in paramsOrFirst || 'currency' in paramsOrFirst || 'dryRun' in paramsOrFirst || 'note' in paramsOrFirst || 'orderId' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { allocations: object[], contactId?: string, currency?: string, dryRun?: boolean, note?: string, orderId?: string };
         } else {
             params = {
                 allocations: paramsOrFirst as object[],
-                orderId: rest[0] as string,
-                contactId: rest[1] as string,
-                currency: rest[2] as string,
-                note: rest[3] as string            
+                contactId: rest[0] as string,
+                currency: rest[1] as string,
+                dryRun: rest[2] as boolean,
+                note: rest[3] as string,
+                orderId: rest[4] as string            
             };
         }
         
         const allocations = params.allocations;
-        const orderId = params.orderId;
         const contactId = params.contactId;
         const currency = params.currency;
+        const dryRun = params.dryRun;
         const note = params.note;
+        const orderId = params.orderId;
 
         if (typeof allocations === 'undefined') {
             throw new RevenexxException('Missing required parameter: "allocations"');
-        }
-        if (typeof orderId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "orderId"');
         }
 
         const apiPath = '/v1/cost-centers/commit';
@@ -682,6 +685,9 @@ export class CostCenters {
         }
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
+        }
+        if (typeof dryRun !== 'undefined') {
+            apiPayload['dry_run'] = dryRun;
         }
         if (typeof note !== 'undefined') {
             apiPayload['note'] = note;
@@ -706,16 +712,18 @@ export class CostCenters {
     /**
      *
      * @param {string} params.purchaseRequestId - 
+     * @param {object[]} params.allocations - Optional: the request's allocations (the reserve's shape; an empty array is the same as none, and only cost_center_id is read), used only to classify its cost centres by budget type. A request holding no reservation whose every centre is tracking-only is then settled with nothing written; one naming a monetary centre, or naming none, is refused with 409 as before. Amounts are read from the ledger, never from here.
      * @param {string} params.currency - ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
      * @param {string} params.note - 
      * @param {string} params.orderId - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.BudgetMovementResult>}
      */
-    costCentersConfirm(params: { purchaseRequestId: string, currency?: string, note?: string, orderId?: string }): Promise<Models.BudgetMovementResult>;
+    costCentersConfirm(params: { purchaseRequestId: string, allocations?: object[], currency?: string, note?: string, orderId?: string }): Promise<Models.BudgetMovementResult>;
     /**
      *
      * @param {string} purchaseRequestId - 
+     * @param {object[]} allocations - Optional: the request's allocations (the reserve's shape; an empty array is the same as none, and only cost_center_id is read), used only to classify its cost centres by budget type. A request holding no reservation whose every centre is tracking-only is then settled with nothing written; one naming a monetary centre, or naming none, is refused with 409 as before. Amounts are read from the ledger, never from here.
      * @param {string} currency - ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
      * @param {string} note - 
      * @param {string} orderId - 
@@ -723,25 +731,27 @@ export class CostCenters {
      * @returns {Promise<Models.BudgetMovementResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    costCentersConfirm(purchaseRequestId: string, currency?: string, note?: string, orderId?: string): Promise<Models.BudgetMovementResult>;
+    costCentersConfirm(purchaseRequestId: string, allocations?: object[], currency?: string, note?: string, orderId?: string): Promise<Models.BudgetMovementResult>;
     costCentersConfirm(
-        paramsOrFirst: { purchaseRequestId: string, currency?: string, note?: string, orderId?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?]    
+        paramsOrFirst: { purchaseRequestId: string, allocations?: object[], currency?: string, note?: string, orderId?: string } | string,
+        ...rest: [(object[])?, (string)?, (string)?, (string)?]    
     ): Promise<Models.BudgetMovementResult> {
-        let params: { purchaseRequestId: string, currency?: string, note?: string, orderId?: string };
+        let params: { purchaseRequestId: string, allocations?: object[], currency?: string, note?: string, orderId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { purchaseRequestId: string, currency?: string, note?: string, orderId?: string };
+            params = (paramsOrFirst || {}) as { purchaseRequestId: string, allocations?: object[], currency?: string, note?: string, orderId?: string };
         } else {
             params = {
                 purchaseRequestId: paramsOrFirst as string,
-                currency: rest[0] as string,
-                note: rest[1] as string,
-                orderId: rest[2] as string            
+                allocations: rest[0] as object[],
+                currency: rest[1] as string,
+                note: rest[2] as string,
+                orderId: rest[3] as string            
             };
         }
         
         const purchaseRequestId = params.purchaseRequestId;
+        const allocations = params.allocations;
         const currency = params.currency;
         const note = params.note;
         const orderId = params.orderId;
@@ -752,6 +762,9 @@ export class CostCenters {
 
         const apiPath = '/v1/cost-centers/confirm';
         const apiPayload: Payload = {};
+        if (typeof allocations !== 'undefined') {
+            apiPayload['allocations'] = Client.toWireKeys(allocations, {"costCenterId":{"wire":"cost_center_id","children":null}});
+        }
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
         }
@@ -1100,35 +1113,38 @@ export class CostCenters {
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @param {string} params.punchoutAccountCode - Code of the punchout account the list is read for. Centres a punchout restriction keeps out of reach of that account are left out (and the total counts only what is returned). Omit for the administrative list, which holds nothing back. A value that is not a non-empty string is refused with 400.
+     * @param {string} params.externalId - Exact-match filter on the key the system that OWNS the centre knows it by — how an import finds the row it wrote last run instead of opening a second centre and splitting a budget across the two. Unique per tenant, so this answers at most one centre; a centre nobody imported matches nothing.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    costCentersCostCentersList(params?: { limit?: number, offset?: number, order?: string, punchoutAccountCode?: string }): Promise<{}>;
+    costCentersCostCentersList(params?: { limit?: number, offset?: number, order?: string, punchoutAccountCode?: string, externalId?: string }): Promise<{}>;
     /**
      *
      * @param {number} limit - Page size (default 50, max 200).
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
      * @param {string} punchoutAccountCode - Code of the punchout account the list is read for. Centres a punchout restriction keeps out of reach of that account are left out (and the total counts only what is returned). Omit for the administrative list, which holds nothing back. A value that is not a non-empty string is refused with 400.
+     * @param {string} externalId - Exact-match filter on the key the system that OWNS the centre knows it by — how an import finds the row it wrote last run instead of opening a second centre and splitting a budget across the two. Unique per tenant, so this answers at most one centre; a centre nobody imported matches nothing.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    costCentersCostCentersList(limit?: number, offset?: number, order?: string, punchoutAccountCode?: string): Promise<{}>;
+    costCentersCostCentersList(limit?: number, offset?: number, order?: string, punchoutAccountCode?: string, externalId?: string): Promise<{}>;
     costCentersCostCentersList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, punchoutAccountCode?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, punchoutAccountCode?: string, externalId?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, punchoutAccountCode?: string };
+        let params: { limit?: number, offset?: number, order?: string, punchoutAccountCode?: string, externalId?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, punchoutAccountCode?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, punchoutAccountCode?: string, externalId?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
                 offset: rest[0] as number,
                 order: rest[1] as string,
-                punchoutAccountCode: rest[2] as string            
+                punchoutAccountCode: rest[2] as string,
+                externalId: rest[3] as string            
             };
         }
         
@@ -1136,6 +1152,7 @@ export class CostCenters {
         const offset = params.offset;
         const order = params.order;
         const punchoutAccountCode = params.punchoutAccountCode;
+        const externalId = params.externalId;
 
 
         const apiPath = '/v1/cost-centers/cost-centers';
@@ -1151,6 +1168,9 @@ export class CostCenters {
         }
         if (typeof punchoutAccountCode !== 'undefined') {
             apiPayload['punchout_account_code'] = punchoutAccountCode;
+        }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1171,44 +1191,59 @@ export class CostCenters {
      * @param {string} params.name - 
      * @param {string} params.accountableContactId - 
      * @param {boolean} params.active - 
+     * @param {BudgetType} params.budgetType - 
      * @param {string} params.currency - 
+     * @param {string} params.externalId - The key this cost centre has in the system that OWNS it — the dimension value an ERP books against, which is rarely the `code` a controller types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a centre opened in the Cockpit carries none and never will.
+     * @param {object} params.externalRefs - Every OTHER system that knows this cost centre, keyed by system name — a second ERP, the procurement platform a punchout session comes from, the shop this tenant migrated off. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: the store compares such a field as a WHOLE document, so a filter over part of one is refused. Look the centre up by `external_id` and read this off the answer.
      * @param {object} params.metadata - 
      * @param {string} params.organizationId - 
+     * @param {object} params.sourceData - What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
+     * @param {string} params.sourceSyncedAt - When this cost centre was last confirmed against its source. A delta run asks the source for what changed since it, and a controller reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what the ERP has stopped delivering.
      * @throws {RevenexxException}
      * @returns {Promise<Models.CostCenter>}
      */
-    costCentersCostCentersCreate(params: { code: string, name: string, accountableContactId?: string, active?: boolean, currency?: string, metadata?: object, organizationId?: string }): Promise<Models.CostCenter>;
+    costCentersCostCentersCreate(params: { code: string, name: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.CostCenter>;
     /**
      *
      * @param {string} code - 
      * @param {string} name - 
      * @param {string} accountableContactId - 
      * @param {boolean} active - 
+     * @param {BudgetType} budgetType - 
      * @param {string} currency - 
+     * @param {string} externalId - The key this cost centre has in the system that OWNS it — the dimension value an ERP books against, which is rarely the `code` a controller types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a centre opened in the Cockpit carries none and never will.
+     * @param {object} externalRefs - Every OTHER system that knows this cost centre, keyed by system name — a second ERP, the procurement platform a punchout session comes from, the shop this tenant migrated off. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: the store compares such a field as a WHOLE document, so a filter over part of one is refused. Look the centre up by `external_id` and read this off the answer.
      * @param {object} metadata - 
      * @param {string} organizationId - 
+     * @param {object} sourceData - What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
+     * @param {string} sourceSyncedAt - When this cost centre was last confirmed against its source. A delta run asks the source for what changed since it, and a controller reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what the ERP has stopped delivering.
      * @throws {RevenexxException}
      * @returns {Promise<Models.CostCenter>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    costCentersCostCentersCreate(code: string, name: string, accountableContactId?: string, active?: boolean, currency?: string, metadata?: object, organizationId?: string): Promise<Models.CostCenter>;
+    costCentersCostCentersCreate(code: string, name: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, sourceData?: object, sourceSyncedAt?: string): Promise<Models.CostCenter>;
     costCentersCostCentersCreate(
-        paramsOrFirst: { code: string, name: string, accountableContactId?: string, active?: boolean, currency?: string, metadata?: object, organizationId?: string } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (string)?, (object)?, (string)?]    
+        paramsOrFirst: { code: string, name: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (BudgetType)?, (string)?, (string)?, (object)?, (object)?, (string)?, (object)?, (string)?]    
     ): Promise<Models.CostCenter> {
-        let params: { code: string, name: string, accountableContactId?: string, active?: boolean, currency?: string, metadata?: object, organizationId?: string };
+        let params: { code: string, name: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, name: string, accountableContactId?: string, active?: boolean, currency?: string, metadata?: object, organizationId?: string };
+            params = (paramsOrFirst || {}) as { code: string, name: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 name: rest[0] as string,
                 accountableContactId: rest[1] as string,
                 active: rest[2] as boolean,
-                currency: rest[3] as string,
-                metadata: rest[4] as object,
-                organizationId: rest[5] as string            
+                budgetType: rest[3] as BudgetType,
+                currency: rest[4] as string,
+                externalId: rest[5] as string,
+                externalRefs: rest[6] as object,
+                metadata: rest[7] as object,
+                organizationId: rest[8] as string,
+                sourceData: rest[9] as object,
+                sourceSyncedAt: rest[10] as string            
             };
         }
         
@@ -1216,9 +1251,14 @@ export class CostCenters {
         const name = params.name;
         const accountableContactId = params.accountableContactId;
         const active = params.active;
+        const budgetType = params.budgetType;
         const currency = params.currency;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const metadata = params.metadata;
         const organizationId = params.organizationId;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof code === 'undefined') {
             throw new RevenexxException('Missing required parameter: "code"');
@@ -1235,11 +1275,20 @@ export class CostCenters {
         if (typeof active !== 'undefined') {
             apiPayload['active'] = active;
         }
+        if (typeof budgetType !== 'undefined') {
+            apiPayload['budget_type'] = budgetType;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
+        }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
         }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
@@ -1249,6 +1298,12 @@ export class CostCenters {
         }
         if (typeof organizationId !== 'undefined') {
             apiPayload['organization_id'] = organizationId;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1367,59 +1422,79 @@ export class CostCenters {
      * @param {string} params.id - 
      * @param {string} params.accountableContactId - 
      * @param {boolean} params.active - 
+     * @param {BudgetType} params.budgetType - 
      * @param {string} params.code - 
      * @param {string} params.currency - 
+     * @param {string} params.externalId - The key this cost centre has in the system that OWNS it — the dimension value an ERP books against, which is rarely the `code` a controller types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a centre opened in the Cockpit carries none and never will.
+     * @param {object} params.externalRefs - Every OTHER system that knows this cost centre, keyed by system name — a second ERP, the procurement platform a punchout session comes from, the shop this tenant migrated off. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: the store compares such a field as a WHOLE document, so a filter over part of one is refused. Look the centre up by `external_id` and read this off the answer.
      * @param {object} params.metadata - 
      * @param {string} params.name - 
      * @param {string} params.organizationId - 
+     * @param {object} params.sourceData - What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
+     * @param {string} params.sourceSyncedAt - When this cost centre was last confirmed against its source. A delta run asks the source for what changed since it, and a controller reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what the ERP has stopped delivering.
      * @throws {RevenexxException}
      * @returns {Promise<Models.CostCenter>}
      */
-    costCentersCostCentersUpdate(params: { id: string, accountableContactId?: string, active?: boolean, code?: string, currency?: string, metadata?: object, name?: string, organizationId?: string }): Promise<Models.CostCenter>;
+    costCentersCostCentersUpdate(params: { id: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, code?: string, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, name?: string, organizationId?: string, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.CostCenter>;
     /**
      *
      * @param {string} id - 
      * @param {string} accountableContactId - 
      * @param {boolean} active - 
+     * @param {BudgetType} budgetType - 
      * @param {string} code - 
      * @param {string} currency - 
+     * @param {string} externalId - The key this cost centre has in the system that OWNS it — the dimension value an ERP books against, which is rarely the `code` a controller types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a centre opened in the Cockpit carries none and never will.
+     * @param {object} externalRefs - Every OTHER system that knows this cost centre, keyed by system name — a second ERP, the procurement platform a punchout session comes from, the shop this tenant migrated off. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: the store compares such a field as a WHOLE document, so a filter over part of one is refused. Look the centre up by `external_id` and read this off the answer.
      * @param {object} metadata - 
      * @param {string} name - 
      * @param {string} organizationId - 
+     * @param {object} sourceData - What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
+     * @param {string} sourceSyncedAt - When this cost centre was last confirmed against its source. A delta run asks the source for what changed since it, and a controller reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what the ERP has stopped delivering.
      * @throws {RevenexxException}
      * @returns {Promise<Models.CostCenter>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    costCentersCostCentersUpdate(id: string, accountableContactId?: string, active?: boolean, code?: string, currency?: string, metadata?: object, name?: string, organizationId?: string): Promise<Models.CostCenter>;
+    costCentersCostCentersUpdate(id: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, code?: string, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, name?: string, organizationId?: string, sourceData?: object, sourceSyncedAt?: string): Promise<Models.CostCenter>;
     costCentersCostCentersUpdate(
-        paramsOrFirst: { id: string, accountableContactId?: string, active?: boolean, code?: string, currency?: string, metadata?: object, name?: string, organizationId?: string } | string,
-        ...rest: [(string)?, (boolean)?, (string)?, (string)?, (object)?, (string)?, (string)?]    
+        paramsOrFirst: { id: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, code?: string, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, name?: string, organizationId?: string, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (boolean)?, (BudgetType)?, (string)?, (string)?, (string)?, (object)?, (object)?, (string)?, (string)?, (object)?, (string)?]    
     ): Promise<Models.CostCenter> {
-        let params: { id: string, accountableContactId?: string, active?: boolean, code?: string, currency?: string, metadata?: object, name?: string, organizationId?: string };
+        let params: { id: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, code?: string, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, name?: string, organizationId?: string, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, accountableContactId?: string, active?: boolean, code?: string, currency?: string, metadata?: object, name?: string, organizationId?: string };
+            params = (paramsOrFirst || {}) as { id: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, code?: string, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, name?: string, organizationId?: string, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 accountableContactId: rest[0] as string,
                 active: rest[1] as boolean,
-                code: rest[2] as string,
-                currency: rest[3] as string,
-                metadata: rest[4] as object,
-                name: rest[5] as string,
-                organizationId: rest[6] as string            
+                budgetType: rest[2] as BudgetType,
+                code: rest[3] as string,
+                currency: rest[4] as string,
+                externalId: rest[5] as string,
+                externalRefs: rest[6] as object,
+                metadata: rest[7] as object,
+                name: rest[8] as string,
+                organizationId: rest[9] as string,
+                sourceData: rest[10] as object,
+                sourceSyncedAt: rest[11] as string            
             };
         }
         
         const id = params.id;
         const accountableContactId = params.accountableContactId;
         const active = params.active;
+        const budgetType = params.budgetType;
         const code = params.code;
         const currency = params.currency;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const metadata = params.metadata;
         const name = params.name;
         const organizationId = params.organizationId;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
@@ -1433,11 +1508,20 @@ export class CostCenters {
         if (typeof active !== 'undefined') {
             apiPayload['active'] = active;
         }
+        if (typeof budgetType !== 'undefined') {
+            apiPayload['budget_type'] = budgetType;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
+        }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
         }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
@@ -1447,6 +1531,12 @@ export class CostCenters {
         }
         if (typeof organizationId !== 'undefined') {
             apiPayload['organization_id'] = organizationId;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1649,19 +1739,21 @@ export class CostCenters {
 
     /**
      *
-     * @param {object[]} params.allocations - 
-     * @param {string} params.purchaseRequestId - 
+     * @param {string} params.key - Idempotency key of this cancellation within the order (e.g. the cancellation id, or cancellation_id:item_id for one item). A repeat under the same key gives nothing back again.
+     * @param {string} params.orderId - 
+     * @param {object[]} params.allocations - Optional: the amount to give back per cost centre, capped at what the order booked there. Omit to give back everything still booked for the order.
      * @param {string} params.contactId - 
      * @param {string} params.currency - ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
      * @param {string} params.note - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.BudgetMovementResult>}
      */
-    costCentersReserve(params: { allocations: object[], purchaseRequestId: string, contactId?: string, currency?: string, note?: string }): Promise<Models.BudgetMovementResult>;
+    costCentersRelease(params: { key: string, orderId: string, allocations?: object[], contactId?: string, currency?: string, note?: string }): Promise<Models.BudgetMovementResult>;
     /**
      *
-     * @param {object[]} allocations - 
-     * @param {string} purchaseRequestId - 
+     * @param {string} key - Idempotency key of this cancellation within the order (e.g. the cancellation id, or cancellation_id:item_id for one item). A repeat under the same key gives nothing back again.
+     * @param {string} orderId - 
+     * @param {object[]} allocations - Optional: the amount to give back per cost centre, capped at what the order booked there. Omit to give back everything still booked for the order.
      * @param {string} contactId - 
      * @param {string} currency - ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
      * @param {string} note - 
@@ -1669,36 +1761,127 @@ export class CostCenters {
      * @returns {Promise<Models.BudgetMovementResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    costCentersReserve(allocations: object[], purchaseRequestId: string, contactId?: string, currency?: string, note?: string): Promise<Models.BudgetMovementResult>;
-    costCentersReserve(
-        paramsOrFirst: { allocations: object[], purchaseRequestId: string, contactId?: string, currency?: string, note?: string } | object[],
-        ...rest: [(string)?, (string)?, (string)?, (string)?]    
+    costCentersRelease(key: string, orderId: string, allocations?: object[], contactId?: string, currency?: string, note?: string): Promise<Models.BudgetMovementResult>;
+    costCentersRelease(
+        paramsOrFirst: { key: string, orderId: string, allocations?: object[], contactId?: string, currency?: string, note?: string } | string,
+        ...rest: [(string)?, (object[])?, (string)?, (string)?, (string)?]    
     ): Promise<Models.BudgetMovementResult> {
-        let params: { allocations: object[], purchaseRequestId: string, contactId?: string, currency?: string, note?: string };
+        let params: { key: string, orderId: string, allocations?: object[], contactId?: string, currency?: string, note?: string };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('allocations' in paramsOrFirst || 'purchaseRequestId' in paramsOrFirst || 'contactId' in paramsOrFirst || 'currency' in paramsOrFirst || 'note' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { allocations: object[], purchaseRequestId: string, contactId?: string, currency?: string, note?: string };
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { key: string, orderId: string, allocations?: object[], contactId?: string, currency?: string, note?: string };
         } else {
             params = {
-                allocations: paramsOrFirst as object[],
-                purchaseRequestId: rest[0] as string,
-                contactId: rest[1] as string,
-                currency: rest[2] as string,
-                note: rest[3] as string            
+                key: paramsOrFirst as string,
+                orderId: rest[0] as string,
+                allocations: rest[1] as object[],
+                contactId: rest[2] as string,
+                currency: rest[3] as string,
+                note: rest[4] as string            
             };
         }
         
+        const key = params.key;
+        const orderId = params.orderId;
         const allocations = params.allocations;
-        const purchaseRequestId = params.purchaseRequestId;
         const contactId = params.contactId;
         const currency = params.currency;
         const note = params.note;
 
+        if (typeof key === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "key"');
+        }
+        if (typeof orderId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "orderId"');
+        }
+
+        const apiPath = '/v1/cost-centers/release';
+        const apiPayload: Payload = {};
+        if (typeof allocations !== 'undefined') {
+            apiPayload['allocations'] = Client.toWireKeys(allocations, {"costCenterId":{"wire":"cost_center_id","children":null}});
+        }
+        if (typeof contactId !== 'undefined') {
+            apiPayload['contact_id'] = contactId;
+        }
+        if (typeof currency !== 'undefined') {
+            apiPayload['currency'] = currency;
+        }
+        if (typeof key !== 'undefined') {
+            apiPayload['key'] = key;
+        }
+        if (typeof note !== 'undefined') {
+            apiPayload['note'] = note;
+        }
+        if (typeof orderId !== 'undefined') {
+            apiPayload['order_id'] = orderId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {object[]} params.allocations - 
+     * @param {string} params.contactId - 
+     * @param {string} params.currency - ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+     * @param {boolean} params.dryRun - true runs the pre-flight (currency, no active budget, tracking-only centres) and answers as the real call would — same status, skipped and refusal — while writing nothing and claiming no key. The purchase request / order id may then be omitted.
+     * @param {string} params.note - 
+     * @param {string} params.purchaseRequestId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.BudgetMovementResult>}
+     */
+    costCentersReserve(params: { allocations: object[], contactId?: string, currency?: string, dryRun?: boolean, note?: string, purchaseRequestId?: string }): Promise<Models.BudgetMovementResult>;
+    /**
+     *
+     * @param {object[]} allocations - 
+     * @param {string} contactId - 
+     * @param {string} currency - ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
+     * @param {boolean} dryRun - true runs the pre-flight (currency, no active budget, tracking-only centres) and answers as the real call would — same status, skipped and refusal — while writing nothing and claiming no key. The purchase request / order id may then be omitted.
+     * @param {string} note - 
+     * @param {string} purchaseRequestId - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.BudgetMovementResult>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    costCentersReserve(allocations: object[], contactId?: string, currency?: string, dryRun?: boolean, note?: string, purchaseRequestId?: string): Promise<Models.BudgetMovementResult>;
+    costCentersReserve(
+        paramsOrFirst: { allocations: object[], contactId?: string, currency?: string, dryRun?: boolean, note?: string, purchaseRequestId?: string } | object[],
+        ...rest: [(string)?, (string)?, (boolean)?, (string)?, (string)?]    
+    ): Promise<Models.BudgetMovementResult> {
+        let params: { allocations: object[], contactId?: string, currency?: string, dryRun?: boolean, note?: string, purchaseRequestId?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('allocations' in paramsOrFirst || 'contactId' in paramsOrFirst || 'currency' in paramsOrFirst || 'dryRun' in paramsOrFirst || 'note' in paramsOrFirst || 'purchaseRequestId' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { allocations: object[], contactId?: string, currency?: string, dryRun?: boolean, note?: string, purchaseRequestId?: string };
+        } else {
+            params = {
+                allocations: paramsOrFirst as object[],
+                contactId: rest[0] as string,
+                currency: rest[1] as string,
+                dryRun: rest[2] as boolean,
+                note: rest[3] as string,
+                purchaseRequestId: rest[4] as string            
+            };
+        }
+        
+        const allocations = params.allocations;
+        const contactId = params.contactId;
+        const currency = params.currency;
+        const dryRun = params.dryRun;
+        const note = params.note;
+        const purchaseRequestId = params.purchaseRequestId;
+
         if (typeof allocations === 'undefined') {
             throw new RevenexxException('Missing required parameter: "allocations"');
-        }
-        if (typeof purchaseRequestId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "purchaseRequestId"');
         }
 
         const apiPath = '/v1/cost-centers/reserve';
@@ -1711,6 +1894,9 @@ export class CostCenters {
         }
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
+        }
+        if (typeof dryRun !== 'undefined') {
+            apiPayload['dry_run'] = dryRun;
         }
         if (typeof note !== 'undefined') {
             apiPayload['note'] = note;
@@ -2223,40 +2409,115 @@ export class CostCenters {
 
     /**
      *
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.CostCentersVocabularyIndex>}
+     */
+    costCentersVocabularies(): Promise<Models.CostCentersVocabularyIndex> {
+
+        const apiPath = '/v1/cost-centers/vocabularies';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {CostCentersVocabularyName} params.name - Which vocabulary to read. The enum is exhaustive; anything else is a 404.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.CostCentersVocabulary>}
+     */
+    costCentersVocabulary(params: { name: CostCentersVocabularyName }): Promise<Models.CostCentersVocabulary>;
+    /**
+     *
+     * @param {CostCentersVocabularyName} name - Which vocabulary to read. The enum is exhaustive; anything else is a 404.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.CostCentersVocabulary>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    costCentersVocabulary(name: CostCentersVocabularyName): Promise<Models.CostCentersVocabulary>;
+    costCentersVocabulary(
+        paramsOrFirst: { name: CostCentersVocabularyName } | CostCentersVocabularyName    
+    ): Promise<Models.CostCentersVocabulary> {
+        let params: { name: CostCentersVocabularyName };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('name' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { name: CostCentersVocabularyName };
+        } else {
+            params = {
+                name: paramsOrFirst as CostCentersVocabularyName            
+            };
+        }
+        
+        const name = params.name;
+
+        if (typeof name === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "name"');
+        }
+
+        const apiPath = '/v1/cost-centers/vocabularies/{name}'.replace('{name}', name);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
      * @param {string} params.purchaseRequestId - 
+     * @param {object[]} params.allocations - Optional: the request's allocations (the reserve's shape; an empty array is the same as none, and only cost_center_id is read), used only to classify its cost centres by budget type. A request holding no reservation whose every centre is tracking-only is then settled with nothing written; one naming a monetary centre, or naming none, is refused with 409 as before. Amounts are read from the ledger, never from here.
      * @param {string} params.currency - ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
      * @param {string} params.note - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.BudgetMovementResult>}
      */
-    costCentersWithdraw(params: { purchaseRequestId: string, currency?: string, note?: string }): Promise<Models.BudgetMovementResult>;
+    costCentersWithdraw(params: { purchaseRequestId: string, allocations?: object[], currency?: string, note?: string }): Promise<Models.BudgetMovementResult>;
     /**
      *
      * @param {string} purchaseRequestId - 
+     * @param {object[]} allocations - Optional: the request's allocations (the reserve's shape; an empty array is the same as none, and only cost_center_id is read), used only to classify its cost centres by budget type. A request holding no reservation whose every centre is tracking-only is then settled with nothing written; one naming a monetary centre, or naming none, is refused with 409 as before. Amounts are read from the ledger, never from here.
      * @param {string} currency - ISO 4217 code the amount is stated in. Omit to be read in the cost centre's (or the personal limit's) own currency; a code that differs from it is refused with 409 currency_mismatch.
      * @param {string} note - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.BudgetMovementResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    costCentersWithdraw(purchaseRequestId: string, currency?: string, note?: string): Promise<Models.BudgetMovementResult>;
+    costCentersWithdraw(purchaseRequestId: string, allocations?: object[], currency?: string, note?: string): Promise<Models.BudgetMovementResult>;
     costCentersWithdraw(
-        paramsOrFirst: { purchaseRequestId: string, currency?: string, note?: string } | string,
-        ...rest: [(string)?, (string)?]    
+        paramsOrFirst: { purchaseRequestId: string, allocations?: object[], currency?: string, note?: string } | string,
+        ...rest: [(object[])?, (string)?, (string)?]    
     ): Promise<Models.BudgetMovementResult> {
-        let params: { purchaseRequestId: string, currency?: string, note?: string };
+        let params: { purchaseRequestId: string, allocations?: object[], currency?: string, note?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { purchaseRequestId: string, currency?: string, note?: string };
+            params = (paramsOrFirst || {}) as { purchaseRequestId: string, allocations?: object[], currency?: string, note?: string };
         } else {
             params = {
                 purchaseRequestId: paramsOrFirst as string,
-                currency: rest[0] as string,
-                note: rest[1] as string            
+                allocations: rest[0] as object[],
+                currency: rest[1] as string,
+                note: rest[2] as string            
             };
         }
         
         const purchaseRequestId = params.purchaseRequestId;
+        const allocations = params.allocations;
         const currency = params.currency;
         const note = params.note;
 
@@ -2266,6 +2527,9 @@ export class CostCenters {
 
         const apiPath = '/v1/cost-centers/withdraw';
         const apiPayload: Payload = {};
+        if (typeof allocations !== 'undefined') {
+            apiPayload['allocations'] = Client.toWireKeys(allocations, {"costCenterId":{"wire":"cost_center_id","children":null}});
+        }
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
         }

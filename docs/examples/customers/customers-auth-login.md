@@ -10,8 +10,9 @@ const client = new Client()
 const customers = new Customers(client);
 
 const result = await customers.customersAuthLogin({
-    email: 'einkauf@example.com',
-    password: ''
+    password: '',
+    email: 'einkauf@example.com', // optional
+    identifier: 'einkauf@example.com' // optional
 });
 
 console.log(result);

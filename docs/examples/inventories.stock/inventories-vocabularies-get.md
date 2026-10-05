@@ -10,7 +10,7 @@ const client = new Client()
 const inventoriesStock = new InventoriesStock(client);
 
 const result = await inventoriesStock.inventoriesVocabulariesGet({
-    name: InventoriesVocabulariesGetName.LocationTypes
+    name: InventoriesVocabulariesGetName.Availabilitystates
 });
 
 console.log(result);

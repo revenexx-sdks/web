@@ -1,5 +1,7 @@
 export enum Kind {
-    Simple = 'simple',
-    Model = 'model',
-    Variant = 'variant',
+    Cookie = 'cookie',
+    LocalStorage = 'local_storage',
+    SessionStorage = 'session_storage',
+    Indexeddb = 'indexeddb',
+    Pixel = 'pixel',
 }

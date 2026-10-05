@@ -12,9 +12,18 @@ const productsCategories = new ProductsCategories(client);
 const result = await productsCategories.productsCategoriesUpdate({
     id: '',
     code: 'cordless_drills', // optional
+    externalId: 'EG000024', // optional
+    externalRefs: {
+        "entitys": "4711",
+        "gtin": "4012345000009"
+    }, // optional
     labels: {
         "de": "Akku-Bohrschrauber",
         "en": "Cordless drills"
+    }, // optional
+    metadata: {
+        "do_not_export": true,
+        "sync_owner": "erp-nightly"
     }, // optional
     parentId: '', // optional
     path: 'tools/power_tools/cordless_drills', // optional
@@ -38,6 +47,14 @@ const result = await productsCategories.productsCategoriesUpdate({
         ]
     }, // optional
     rulesComputedAt: '2026-01-01T12:00:00Z', // optional
+    sourceData: {
+        "etag": "W\/\"JzQ0O0c2\"",
+        "raw": {
+            "BMECAT_GROUP": "EL-4711"
+        },
+        "system": "pim"
+    }, // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
     values: {
         "hero_asset": "packshots\/cordless_drills_hero",
         "seo_title": "Cordless drills"

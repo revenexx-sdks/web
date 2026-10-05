@@ -15,13 +15,16 @@ const result = await paymentsLedger.paymentsList({
     order: 'created_at.desc', // optional
     cartId: '', // optional
     contactId: '', // optional
+    orderId: '', // optional
     status: PaymentStatus.Created, // optional
     orderRef: 'ORD-10042', // optional
     methodCode: 'invoice', // optional
     kind: PaymentMethodKind.SelfManaged, // optional
     provider: 'stripe', // optional
     dunningStage: PaymentDunningStage.None, // optional
-    idempotencyKey: 'checkout-2f9c41' // optional
+    idempotencyKey: 'checkout-2f9c41', // optional
+    externalId: 'ZAHL-4711', // optional
+    sourceSyncedAt: '2026-01-01T12:00:00Z' // optional
 });
 
 console.log(result);

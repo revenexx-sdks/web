@@ -1,5 +1,5 @@
 ```javascript
-import { Client, CustomersContacts, CustomersContactsCreateRegistrationStatus, ContactStatus } from "@revenexx/sdk";
+import { Client, CustomersContacts, OrderApprovalMode, CustomersContactsCreateRegistrationStatus, ContactStatus } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -11,6 +11,7 @@ const customersContacts = new CustomersContacts(client);
 
 const result = await customersContacts.customersContactsCreate({
     email: 'einkauf@example.com',
+    createdAt: '2026-01-01T12:00:00Z', // optional
     externalId: 'ASP000047', // optional
     firstName: 'Anna', // optional
     isPrimary: true, // optional
@@ -18,6 +19,7 @@ const result = await customersContacts.customersContactsCreate({
     lastName: 'Berger', // optional
     locale: 'de-DE', // optional
     orderApprovalLimit: 25000, // optional
+    orderApprovalMode: OrderApprovalMode.Limited, // optional
     organizationId: '', // optional
     phone: '+49 30 5550123', // optional
     registrationStatus: CustomersContactsCreateRegistrationStatus.Pending, // optional

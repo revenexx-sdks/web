@@ -19,7 +19,8 @@ const result = await productsDataModel.productsFamilyAttributesList({
     position: 1, // optional
     isRequired: true, // optional
     requiredChannels: '[]', // optional
-    createdAt: '2026-01-01T12:00:00Z' // optional
+    createdAt: '2026-01-01T12:00:00Z', // optional
+    updatedAt: '2026-01-01T12:00:00Z' // optional
 });
 
 console.log(result);

@@ -10,7 +10,7 @@ const client = new Client()
 const customersValueLists = new CustomersValueLists(client);
 
 const result = await customersValueLists.customersVocabulariesGet({
-    name: CustomersVocabulariesGetName.AddressTypes
+    name: CustomersVocabulariesGetName.Addresstypes
 });
 
 console.log(result);

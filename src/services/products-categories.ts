@@ -5,7 +5,7 @@ import type { Models } from '../models';
 import { RuleMatch } from '../enums/rule-match';
 import { CategoriesRuleMatch } from '../enums/categories-rule-match';
 import { CategoryRuleMatch } from '../enums/category-rule-match';
-import { Source } from '../enums/source';
+import { ProductsProductCategoriesListSource } from '../enums/products-product-categories-list-source';
 import { ProductCategoriesSource } from '../enums/product-categories-source';
 
 export class ProductsCategories {
@@ -35,12 +35,17 @@ export class ProductsCategories {
      * @param {string} params.rules - Exact match on `rules`. The selector that makes this a RULE-DRIVEN category. Null means hand-picked. Matching products are MATERIALIZED as `product_categories` rows with source `rule`, next to the hand-picked ones a recompute never touches; `POST /products/categories/{category_id}/rules/preview` dry-runs this exact document before it is stored. Conditions address the `common` bucket of a product's values — a value held per locale or per channel has no single answer for a rule to test. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {RuleMatch} params.ruleMatch - Exact match on `rule_match`. How the conditions combine: 'all' ANDs them (the default), 'any' ORs them. It is a column of its own rather than a key of `rules` because the compiler reads the two separately.
      * @param {string} params.rulesComputedAt - Exact match on `rules_computed_at`. When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
+     * @param {string} params.externalId - Exact match on `external_id`. The key this category has in the system that owns the classification — an ETIM or eCl@ss group, a BMEcat catalogue group, the ERP's own product group. Unique per tenant where set. `code` stays this app's identifier and a merchant may rename it; this is what the source calls the same node, which is what keeps the next import pointing at it.
+     * @param {string} params.externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} params.sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} params.metadata - Exact match on `metadata`. Free-form jsonb this tenant owns for the INTEGRATION's account of this node — kept apart from `values`, which is the catalog's own pocket and the one a merchant edits, so a sync and a person never overwrite each other. Nothing in this app reads either. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsCategoriesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, parentId?: string, xpath?: string, position?: number, labels?: string, values?: string, rules?: string, ruleMatch?: RuleMatch, rulesComputedAt?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    productsCategoriesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, parentId?: string, xpath?: string, position?: number, labels?: string, values?: string, rules?: string, ruleMatch?: RuleMatch, rulesComputedAt?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * One node of the category tree. `parent_id` is the structure this app navigates — null is a root — while `path` is kept only for importers that carry one and nothing here reads or writes it. A category is hand-picked or RULE-DRIVEN: a non-null `rules` selector makes every matching product a `product_categories` row with source `rule`, alongside the hand-picked ones, and `rules_computed_at` says when that last completed.
      * 
@@ -61,21 +66,26 @@ export class ProductsCategories {
      * @param {string} rules - Exact match on `rules`. The selector that makes this a RULE-DRIVEN category. Null means hand-picked. Matching products are MATERIALIZED as `product_categories` rows with source `rule`, next to the hand-picked ones a recompute never touches; `POST /products/categories/{category_id}/rules/preview` dry-runs this exact document before it is stored. Conditions address the `common` bucket of a product's values — a value held per locale or per channel has no single answer for a rule to test. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {RuleMatch} ruleMatch - Exact match on `rule_match`. How the conditions combine: 'all' ANDs them (the default), 'any' ORs them. It is a column of its own rather than a key of `rules` because the compiler reads the two separately.
      * @param {string} rulesComputedAt - Exact match on `rules_computed_at`. When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
+     * @param {string} externalId - Exact match on `external_id`. The key this category has in the system that owns the classification — an ETIM or eCl@ss group, a BMEcat catalogue group, the ERP's own product group. Unique per tenant where set. `code` stays this app's identifier and a merchant may rename it; this is what the source calls the same node, which is what keeps the next import pointing at it.
+     * @param {string} externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
+     * @param {string} sourceData - Exact match on `source_data`. What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {string} metadata - Exact match on `metadata`. Free-form jsonb this tenant owns for the INTEGRATION's account of this node — kept apart from `values`, which is the catalog's own pocket and the one a merchant edits, so a sync and a person never overwrite each other. Nothing in this app reads either. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
      * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, parentId?: string, xpath?: string, position?: number, labels?: string, values?: string, rules?: string, ruleMatch?: RuleMatch, rulesComputedAt?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
+    productsCategoriesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, parentId?: string, xpath?: string, position?: number, labels?: string, values?: string, rules?: string, ruleMatch?: RuleMatch, rulesComputedAt?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsCategoriesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, parentId?: string, xpath?: string, position?: number, labels?: string, values?: string, rules?: string, ruleMatch?: RuleMatch, rulesComputedAt?: string, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (RuleMatch)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, parentId?: string, xpath?: string, position?: number, labels?: string, values?: string, rules?: string, ruleMatch?: RuleMatch, rulesComputedAt?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (RuleMatch)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, parentId?: string, xpath?: string, position?: number, labels?: string, values?: string, rules?: string, ruleMatch?: RuleMatch, rulesComputedAt?: string, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, parentId?: string, xpath?: string, position?: number, labels?: string, values?: string, rules?: string, ruleMatch?: RuleMatch, rulesComputedAt?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, parentId?: string, xpath?: string, position?: number, labels?: string, values?: string, rules?: string, ruleMatch?: RuleMatch, rulesComputedAt?: string, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, parentId?: string, xpath?: string, position?: number, labels?: string, values?: string, rules?: string, ruleMatch?: RuleMatch, rulesComputedAt?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -91,8 +101,13 @@ export class ProductsCategories {
                 rules: rest[9] as string,
                 ruleMatch: rest[10] as RuleMatch,
                 rulesComputedAt: rest[11] as string,
-                createdAt: rest[12] as string,
-                updatedAt: rest[13] as string            
+                externalId: rest[12] as string,
+                externalRefs: rest[13] as string,
+                sourceSyncedAt: rest[14] as string,
+                sourceData: rest[15] as string,
+                metadata: rest[16] as string,
+                createdAt: rest[17] as string,
+                updatedAt: rest[18] as string            
             };
         }
         
@@ -109,6 +124,11 @@ export class ProductsCategories {
         const rules = params.rules;
         const ruleMatch = params.ruleMatch;
         const rulesComputedAt = params.rulesComputedAt;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
+        const sourceSyncedAt = params.sourceSyncedAt;
+        const sourceData = params.sourceData;
+        const metadata = params.metadata;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
 
@@ -154,6 +174,21 @@ export class ProductsCategories {
         if (typeof rulesComputedAt !== 'undefined') {
             apiPayload['rules_computed_at'] = rulesComputedAt;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
         }
@@ -181,18 +216,23 @@ export class ProductsCategories {
      * `code` is the only column the database refuses the row without; everything else has a default or is nullable. A second row with the same `code` answers 409.
      *
      * @param {string} params.code - The category's stable identifier — what an import and a storefront join on, and what survives a rename of the label. Unique per tenant.
+     * @param {string} params.externalId - The key this category has in the system that owns the classification — an ETIM or eCl@ss group, a BMEcat catalogue group, the ERP's own product group. Unique per tenant where set. `code` stays this app's identifier and a merchant may rename it; this is what the source calls the same node, which is what keeps the next import pointing at it.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} params.labels - The category name a person sees, per language tag. The catalog reads by name, not by code — a locale left blank falls back to the next filled one.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns for the INTEGRATION's account of this node — kept apart from `values`, which is the catalog's own pocket and the one a merchant edits, so a sync and a person never overwrite each other. Nothing in this app reads either.
      * @param {string} params.parentId - The category this one hangs under. Null is a root of the tree. Deleting a parent lifts its children to the root rather than deleting them, so a mis-click never takes a subtree with it.
      * @param {string} params.xpath - A materialized position in the tree, kept for importers that carry one (`tools/power_tools/cordless_drills`). Nothing in this app writes or reads it — `parent_id` is the structure this app navigates.
      * @param {number} params.position - Order among the siblings under the same parent, ascending.
      * @param {CategoriesRuleMatch} params.ruleMatch - How the conditions combine: 'all' ANDs them (the default), 'any' ORs them. It is a column of its own rather than a key of `rules` because the compiler reads the two separately.
      * @param {object} params.rules - The selector that makes this a RULE-DRIVEN category. Null means hand-picked. Matching products are MATERIALIZED as `product_categories` rows with source `rule`, next to the hand-picked ones a recompute never touches; `POST /products/categories/{category_id}/rules/preview` dry-runs this exact document before it is stored. Conditions address the `common` bucket of a product's values — a value held per locale or per channel has no single answer for a rule to test.
      * @param {string} params.rulesComputedAt - When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {object} params.values - Whatever this catalog keeps on a category beyond the model — the keys belong to the tenant, not to this app, and nothing here reads them.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Categories>}
      */
-    productsCategoriesCreate(params: { code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object }): Promise<Models.Categories>;
+    productsCategoriesCreate(params: { code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, sourceData?: object, sourceSyncedAt?: string, values?: object }): Promise<Models.Categories>;
     /**
      * Creates one category and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -201,49 +241,64 @@ export class ProductsCategories {
      * `code` is the only column the database refuses the row without; everything else has a default or is nullable. A second row with the same `code` answers 409.
      *
      * @param {string} code - The category's stable identifier — what an import and a storefront join on, and what survives a rename of the label. Unique per tenant.
+     * @param {string} externalId - The key this category has in the system that owns the classification — an ETIM or eCl@ss group, a BMEcat catalogue group, the ERP's own product group. Unique per tenant where set. `code` stays this app's identifier and a merchant may rename it; this is what the source calls the same node, which is what keeps the next import pointing at it.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} labels - The category name a person sees, per language tag. The catalog reads by name, not by code — a locale left blank falls back to the next filled one.
+     * @param {object} metadata - Free-form jsonb this tenant owns for the INTEGRATION's account of this node — kept apart from `values`, which is the catalog's own pocket and the one a merchant edits, so a sync and a person never overwrite each other. Nothing in this app reads either.
      * @param {string} parentId - The category this one hangs under. Null is a root of the tree. Deleting a parent lifts its children to the root rather than deleting them, so a mis-click never takes a subtree with it.
      * @param {string} xpath - A materialized position in the tree, kept for importers that carry one (`tools/power_tools/cordless_drills`). Nothing in this app writes or reads it — `parent_id` is the structure this app navigates.
      * @param {number} position - Order among the siblings under the same parent, ascending.
      * @param {CategoriesRuleMatch} ruleMatch - How the conditions combine: 'all' ANDs them (the default), 'any' ORs them. It is a column of its own rather than a key of `rules` because the compiler reads the two separately.
      * @param {object} rules - The selector that makes this a RULE-DRIVEN category. Null means hand-picked. Matching products are MATERIALIZED as `product_categories` rows with source `rule`, next to the hand-picked ones a recompute never touches; `POST /products/categories/{category_id}/rules/preview` dry-runs this exact document before it is stored. Conditions address the `common` bucket of a product's values — a value held per locale or per channel has no single answer for a rule to test.
      * @param {string} rulesComputedAt - When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {object} values - Whatever this catalog keeps on a category beyond the model — the keys belong to the tenant, not to this app, and nothing here reads them.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Categories>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesCreate(code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object): Promise<Models.Categories>;
+    productsCategoriesCreate(code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, sourceData?: object, sourceSyncedAt?: string, values?: object): Promise<Models.Categories>;
     productsCategoriesCreate(
-        paramsOrFirst: { code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object } | string,
-        ...rest: [(object)?, (string)?, (string)?, (number)?, (CategoriesRuleMatch)?, (object)?, (string)?, (object)?]    
+        paramsOrFirst: { code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, sourceData?: object, sourceSyncedAt?: string, values?: object } | string,
+        ...rest: [(string)?, (object)?, (object)?, (object)?, (string)?, (string)?, (number)?, (CategoriesRuleMatch)?, (object)?, (string)?, (object)?, (string)?, (object)?]    
     ): Promise<Models.Categories> {
-        let params: { code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object };
+        let params: { code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, sourceData?: object, sourceSyncedAt?: string, values?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object };
+            params = (paramsOrFirst || {}) as { code: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, sourceData?: object, sourceSyncedAt?: string, values?: object };
         } else {
             params = {
                 code: paramsOrFirst as string,
-                labels: rest[0] as object,
-                parentId: rest[1] as string,
-                xpath: rest[2] as string,
-                position: rest[3] as number,
-                ruleMatch: rest[4] as CategoriesRuleMatch,
-                rules: rest[5] as object,
-                rulesComputedAt: rest[6] as string,
-                values: rest[7] as object            
+                externalId: rest[0] as string,
+                externalRefs: rest[1] as object,
+                labels: rest[2] as object,
+                metadata: rest[3] as object,
+                parentId: rest[4] as string,
+                xpath: rest[5] as string,
+                position: rest[6] as number,
+                ruleMatch: rest[7] as CategoriesRuleMatch,
+                rules: rest[8] as object,
+                rulesComputedAt: rest[9] as string,
+                sourceData: rest[10] as object,
+                sourceSyncedAt: rest[11] as string,
+                values: rest[12] as object            
             };
         }
         
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const labels = params.labels;
+        const metadata = params.metadata;
         const parentId = params.parentId;
         const xpath = params.xpath;
         const position = params.position;
         const ruleMatch = params.ruleMatch;
         const rules = params.rules;
         const rulesComputedAt = params.rulesComputedAt;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
         const values = params.values;
 
         if (typeof code === 'undefined') {
@@ -255,8 +310,17 @@ export class ProductsCategories {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
         }
         if (typeof parentId !== 'undefined') {
             apiPayload['parent_id'] = parentId;
@@ -275,6 +339,12 @@ export class ProductsCategories {
         }
         if (typeof rulesComputedAt !== 'undefined') {
             apiPayload['rules_computed_at'] = rulesComputedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         if (typeof values !== 'undefined') {
             apiPayload['values'] = values;
@@ -613,18 +683,23 @@ export class ProductsCategories {
      *
      * @param {string} params.id - The `categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/categories`. An id no categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} params.code - The category's stable identifier — what an import and a storefront join on, and what survives a rename of the label. Unique per tenant.
+     * @param {string} params.externalId - The key this category has in the system that owns the classification — an ETIM or eCl@ss group, a BMEcat catalogue group, the ERP's own product group. Unique per tenant where set. `code` stays this app's identifier and a merchant may rename it; this is what the source calls the same node, which is what keeps the next import pointing at it.
+     * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} params.labels - The category name a person sees, per language tag. The catalog reads by name, not by code — a locale left blank falls back to the next filled one.
+     * @param {object} params.metadata - Free-form jsonb this tenant owns for the INTEGRATION's account of this node — kept apart from `values`, which is the catalog's own pocket and the one a merchant edits, so a sync and a person never overwrite each other. Nothing in this app reads either.
      * @param {string} params.parentId - The category this one hangs under. Null is a root of the tree. Deleting a parent lifts its children to the root rather than deleting them, so a mis-click never takes a subtree with it.
      * @param {string} params.xpath - A materialized position in the tree, kept for importers that carry one (`tools/power_tools/cordless_drills`). Nothing in this app writes or reads it — `parent_id` is the structure this app navigates.
      * @param {number} params.position - Order among the siblings under the same parent, ascending.
      * @param {CategoriesRuleMatch} params.ruleMatch - How the conditions combine: 'all' ANDs them (the default), 'any' ORs them. It is a column of its own rather than a key of `rules` because the compiler reads the two separately.
      * @param {object} params.rules - The selector that makes this a RULE-DRIVEN category. Null means hand-picked. Matching products are MATERIALIZED as `product_categories` rows with source `rule`, next to the hand-picked ones a recompute never touches; `POST /products/categories/{category_id}/rules/preview` dry-runs this exact document before it is stored. Conditions address the `common` bucket of a product's values — a value held per locale or per channel has no single answer for a rule to test.
      * @param {string} params.rulesComputedAt - When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
+     * @param {object} params.sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} params.sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {object} params.values - Whatever this catalog keeps on a category beyond the model — the keys belong to the tenant, not to this app, and nothing here reads them.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Categories>}
      */
-    productsCategoriesUpdate(params: { id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object }): Promise<Models.Categories>;
+    productsCategoriesUpdate(params: { id: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, sourceData?: object, sourceSyncedAt?: string, values?: object }): Promise<Models.Categories>;
     /**
      * Updates one category by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -634,51 +709,66 @@ export class ProductsCategories {
      *
      * @param {string} id - The `categories` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/categories`. An id no categorie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
      * @param {string} code - The category's stable identifier — what an import and a storefront join on, and what survives a rename of the label. Unique per tenant.
+     * @param {string} externalId - The key this category has in the system that owns the classification — an ETIM or eCl@ss group, a BMEcat catalogue group, the ERP's own product group. Unique per tenant where set. `code` stays this app's identifier and a merchant may rename it; this is what the source calls the same node, which is what keeps the next import pointing at it.
+     * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {object} labels - The category name a person sees, per language tag. The catalog reads by name, not by code — a locale left blank falls back to the next filled one.
+     * @param {object} metadata - Free-form jsonb this tenant owns for the INTEGRATION's account of this node — kept apart from `values`, which is the catalog's own pocket and the one a merchant edits, so a sync and a person never overwrite each other. Nothing in this app reads either.
      * @param {string} parentId - The category this one hangs under. Null is a root of the tree. Deleting a parent lifts its children to the root rather than deleting them, so a mis-click never takes a subtree with it.
      * @param {string} xpath - A materialized position in the tree, kept for importers that carry one (`tools/power_tools/cordless_drills`). Nothing in this app writes or reads it — `parent_id` is the structure this app navigates.
      * @param {number} position - Order among the siblings under the same parent, ascending.
      * @param {CategoriesRuleMatch} ruleMatch - How the conditions combine: 'all' ANDs them (the default), 'any' ORs them. It is a column of its own rather than a key of `rules` because the compiler reads the two separately.
      * @param {object} rules - The selector that makes this a RULE-DRIVEN category. Null means hand-picked. Matching products are MATERIALIZED as `product_categories` rows with source `rule`, next to the hand-picked ones a recompute never touches; `POST /products/categories/{category_id}/rules/preview` dry-runs this exact document before it is stored. Conditions address the `common` bucket of a product's values — a value held per locale or per channel has no single answer for a rule to test.
      * @param {string} rulesComputedAt - When the rule last ran TO COMPLETION and its memberships were synced. Null means no pass has ever finished — a recompute is chunked, so a half-finished pass leaves this untouched.
+     * @param {object} sourceData - What the source said about this row, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to hand back in `If-Match`, and between two runs there is nowhere else to keep it. `raw` carries the source fields this app does not model, so they survive a round trip instead of being lost the first time somebody edits here. Written by whatever imports the row; nothing in this app reads or maintains it.
+     * @param {string} sourceSyncedAt - When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
      * @param {object} values - Whatever this catalog keeps on a category beyond the model — the keys belong to the tenant, not to this app, and nothing here reads them.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Categories>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsCategoriesUpdate(id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object): Promise<Models.Categories>;
+    productsCategoriesUpdate(id: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, sourceData?: object, sourceSyncedAt?: string, values?: object): Promise<Models.Categories>;
     productsCategoriesUpdate(
-        paramsOrFirst: { id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object } | string,
-        ...rest: [(string)?, (object)?, (string)?, (string)?, (number)?, (CategoriesRuleMatch)?, (object)?, (string)?, (object)?]    
+        paramsOrFirst: { id: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, sourceData?: object, sourceSyncedAt?: string, values?: object } | string,
+        ...rest: [(string)?, (string)?, (object)?, (object)?, (object)?, (string)?, (string)?, (number)?, (CategoriesRuleMatch)?, (object)?, (string)?, (object)?, (string)?, (object)?]    
     ): Promise<Models.Categories> {
-        let params: { id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object };
+        let params: { id: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, sourceData?: object, sourceSyncedAt?: string, values?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, labels?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, values?: object };
+            params = (paramsOrFirst || {}) as { id: string, code?: string, externalId?: string, externalRefs?: object, labels?: object, metadata?: object, parentId?: string, xpath?: string, position?: number, ruleMatch?: CategoriesRuleMatch, rules?: object, rulesComputedAt?: string, sourceData?: object, sourceSyncedAt?: string, values?: object };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 code: rest[0] as string,
-                labels: rest[1] as object,
-                parentId: rest[2] as string,
-                xpath: rest[3] as string,
-                position: rest[4] as number,
-                ruleMatch: rest[5] as CategoriesRuleMatch,
-                rules: rest[6] as object,
-                rulesComputedAt: rest[7] as string,
-                values: rest[8] as object            
+                externalId: rest[1] as string,
+                externalRefs: rest[2] as object,
+                labels: rest[3] as object,
+                metadata: rest[4] as object,
+                parentId: rest[5] as string,
+                xpath: rest[6] as string,
+                position: rest[7] as number,
+                ruleMatch: rest[8] as CategoriesRuleMatch,
+                rules: rest[9] as object,
+                rulesComputedAt: rest[10] as string,
+                sourceData: rest[11] as object,
+                sourceSyncedAt: rest[12] as string,
+                values: rest[13] as object            
             };
         }
         
         const id = params.id;
         const code = params.code;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const labels = params.labels;
+        const metadata = params.metadata;
         const parentId = params.parentId;
         const xpath = params.xpath;
         const position = params.position;
         const ruleMatch = params.ruleMatch;
         const rules = params.rules;
         const rulesComputedAt = params.rulesComputedAt;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
         const values = params.values;
 
         if (typeof id === 'undefined') {
@@ -690,8 +780,17 @@ export class ProductsCategories {
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof labels !== 'undefined') {
             apiPayload['labels'] = labels;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
         }
         if (typeof parentId !== 'undefined') {
             apiPayload['parent_id'] = parentId;
@@ -710,6 +809,12 @@ export class ProductsCategories {
         }
         if (typeof rulesComputedAt !== 'undefined') {
             apiPayload['rules_computed_at'] = rulesComputedAt;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         if (typeof values !== 'undefined') {
             apiPayload['values'] = values;
@@ -742,12 +847,13 @@ export class ProductsCategories {
      * @param {string} params.productId - Exact match on `product_id`. The product filed into the category. Deleting the product deletes the membership with it.
      * @param {string} params.categoryId - Exact match on `category_id`. The category it is filed into. One row per (product, category), whichever way it got there.
      * @param {number} params.position - Exact match on `position`. Sort order of this product inside the category.
-     * @param {Source} params.source - Exact match on `source`. How the membership came about: 'manual' is hand-picked, 'rule' was materialized by a category rule. The two never touch each other — a recompute only ever inserts and deletes `rule` rows, so a hand-picked membership survives every pass.
+     * @param {ProductsProductCategoriesListSource} params.source - Exact match on `source`. How the membership came about: 'manual' is hand-picked, 'rule' was materialized by a category rule. The two never touch each other — a recompute only ever inserts and deletes `rule` rows, so a hand-picked membership survives every pass.
      * @param {string} params.createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
+     * @param {string} params.updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsProductCategoriesList(params?: { limit?: number, offset?: number, order?: string, id?: string, productId?: string, categoryId?: string, position?: number, source?: Source, createdAt?: string }): Promise<{}>;
+    productsProductCategoriesList(params?: { limit?: number, offset?: number, order?: string, id?: string, productId?: string, categoryId?: string, position?: number, source?: ProductsProductCategoriesListSource, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * One membership: this product is filed in this category. `source` says how it got there — `manual` is hand-picked, `rule` was materialized by a category rule — and the two never touch each other: a recompute only ever inserts and deletes `rule` rows, so a hand-picked membership survives every pass. `POST /products/{id}/categories` is the friendlier way to create one, because it takes the product from the path and answers with the category code and the SKU.
      * 
@@ -762,21 +868,22 @@ export class ProductsCategories {
      * @param {string} productId - Exact match on `product_id`. The product filed into the category. Deleting the product deletes the membership with it.
      * @param {string} categoryId - Exact match on `category_id`. The category it is filed into. One row per (product, category), whichever way it got there.
      * @param {number} position - Exact match on `position`. Sort order of this product inside the category.
-     * @param {Source} source - Exact match on `source`. How the membership came about: 'manual' is hand-picked, 'rule' was materialized by a category rule. The two never touch each other — a recompute only ever inserts and deletes `rule` rows, so a hand-picked membership survives every pass.
+     * @param {ProductsProductCategoriesListSource} source - Exact match on `source`. How the membership came about: 'manual' is hand-picked, 'rule' was materialized by a category rule. The two never touch each other — a recompute only ever inserts and deletes `rule` rows, so a hand-picked membership survives every pass.
      * @param {string} createdAt - Exact match on `created_at`. When the row was created. Server-set — it is not part of any request body.
+     * @param {string} updatedAt - Exact match on `updated_at`. When the row was last written. Server-set — it is not part of any request body.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsProductCategoriesList(limit?: number, offset?: number, order?: string, id?: string, productId?: string, categoryId?: string, position?: number, source?: Source, createdAt?: string): Promise<{}>;
+    productsProductCategoriesList(limit?: number, offset?: number, order?: string, id?: string, productId?: string, categoryId?: string, position?: number, source?: ProductsProductCategoriesListSource, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsProductCategoriesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, productId?: string, categoryId?: string, position?: number, source?: Source, createdAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (number)?, (Source)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, productId?: string, categoryId?: string, position?: number, source?: ProductsProductCategoriesListSource, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (number)?, (ProductsProductCategoriesListSource)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, productId?: string, categoryId?: string, position?: number, source?: Source, createdAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, productId?: string, categoryId?: string, position?: number, source?: ProductsProductCategoriesListSource, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, productId?: string, categoryId?: string, position?: number, source?: Source, createdAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, productId?: string, categoryId?: string, position?: number, source?: ProductsProductCategoriesListSource, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -786,8 +893,9 @@ export class ProductsCategories {
                 productId: rest[3] as string,
                 categoryId: rest[4] as string,
                 position: rest[5] as number,
-                source: rest[6] as Source,
-                createdAt: rest[7] as string            
+                source: rest[6] as ProductsProductCategoriesListSource,
+                createdAt: rest[7] as string,
+                updatedAt: rest[8] as string            
             };
         }
         
@@ -800,6 +908,7 @@ export class ProductsCategories {
         const position = params.position;
         const source = params.source;
         const createdAt = params.createdAt;
+        const updatedAt = params.updatedAt;
 
 
         const apiPath = '/v1/products/product_categories';
@@ -830,6 +939,9 @@ export class ProductsCategories {
         }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
+        }
+        if (typeof updatedAt !== 'undefined') {
+            apiPayload['updated_at'] = updatedAt;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
