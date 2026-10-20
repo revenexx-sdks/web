@@ -29636,7 +29636,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         dunning_stage?: PaymentDunningStage;
         /**
-         * The class of failure, out of a fixed taxonomy — the value to branch on. null unless the payment failed. The five classes say what a caller can DO: 'provider_unavailable', 'provider_unreachable', 'provider_not_configured', 'provider_declined', 'provider_error' — a provider that is unreachable or unavailable is worth a retry, a declined payment needs a different method from the buyer, and a provider that is not configured needs an operator.
+         * The class of failure, out of a fixed taxonomy — the value to branch on. null unless the payment failed. The classes say what a caller can DO: 'provider_unavailable', 'provider_unreachable', 'provider_not_configured', 'provider_declined', 'payment_method_not_supported', 'provider_error' — a provider that is unreachable or unavailable is worth a retry, a declined payment needs a different method from the buyer, a payment method the provider does not support needs another method from the buyer and a look at the method's setup, and a provider that is not configured needs an operator.
          */
         error_code?: PaymentFailureCode;
         /**
@@ -30118,6 +30118,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         test_mode?: boolean;
         /**
+         * Whether the connector has a connection check, from the catalog's `testable`. False means POST /payments/providers/{id}/check answers 422 `not_testable` and the credentials are first tried by a payment.
+         */
+        testable?: boolean;
+        /**
          * When its configuration last changed — including a credential rotation, which is otherwise invisible from the outside.
          */
         updated_at?: string;
@@ -30183,6 +30187,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * Whether the driver talks to the PSP's sandbox. New configurations start in test mode: a provider nobody verified must not touch live money.
          */
         test_mode?: boolean;
+        /**
+         * Whether the connector has a connection check, from the catalog's `testable`. False means POST /payments/providers/{id}/check answers 422 `not_testable` and the credentials are first tried by a payment.
+         */
+        testable?: boolean;
         /**
          * When its configuration last changed — including a credential rotation, which is otherwise invisible from the outside.
          */

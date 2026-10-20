@@ -745,7 +745,7 @@ export class ConsentManagerRegistry {
      *
      * @param {string} params.code - The purpose's fixed identity — `necessary`, `statistics`, `marketing`, `comfort`, `external_media` or one the tenant adds. Vendors, the catalogue, the Tag Manager, the visitor's cookie and every record name it, so it never changes once created.
      * @param {LegalBasis} params.legalBasis - Why this purpose may process data at all, and therefore whether its tools load before a decision: `consent` waits for the visitor, `legitimate_interest` runs until the visitor objects, `necessary` always runs. A vendor may override it with its own `legal_basis_override`.
-     * @param {object} params.name - What a visitor reads for this purpose. A text per language tag, e.g. { "de": "…", "en": "…" }.
+     * @param {object | null} params.name - What a visitor reads for this purpose. A text per language tag, e.g. { "de": "…", "en": "…" }.
      * @param {object} params.description - The sentence under the purpose in the banner's second layer. A text per language tag, e.g. { "de": "…", "en": "…" }.
      * @param {GoogleSignals[]} params.googleSignals - The Google Consent Mode v2 signals this purpose releases when granted — e.g. statistics releases `analytics_storage`. A list drawn from the google-signals vocabulary.
      * @param {boolean} params.isActive - Whether this row takes part in the next published version. Switching it off keeps the row and leaves it out of every version published afterwards; versions already published are untouched.
@@ -753,13 +753,13 @@ export class ConsentManagerRegistry {
      * @throws {RevenexxException}
      * @returns {Promise<Models.Purpose>}
      */
-    consentManagerPurposesCreate(params: { code: string, legalBasis: LegalBasis, name?: object, description?: object, googleSignals?: GoogleSignals[], isActive?: boolean, position?: number }): Promise<Models.Purpose>;
+    consentManagerPurposesCreate(params: { code: string, legalBasis: LegalBasis, name: object | null, description?: object, googleSignals?: GoogleSignals[], isActive?: boolean, position?: number }): Promise<Models.Purpose>;
     /**
      * Add a purpose beyond the five seeded ones. `code`, `name` and `legal_basis` are owed; the code is fixed once created.
      *
      * @param {string} code - The purpose's fixed identity — `necessary`, `statistics`, `marketing`, `comfort`, `external_media` or one the tenant adds. Vendors, the catalogue, the Tag Manager, the visitor's cookie and every record name it, so it never changes once created.
      * @param {LegalBasis} legalBasis - Why this purpose may process data at all, and therefore whether its tools load before a decision: `consent` waits for the visitor, `legitimate_interest` runs until the visitor objects, `necessary` always runs. A vendor may override it with its own `legal_basis_override`.
-     * @param {object} name - What a visitor reads for this purpose. A text per language tag, e.g. { "de": "…", "en": "…" }.
+     * @param {object | null} name - What a visitor reads for this purpose. A text per language tag, e.g. { "de": "…", "en": "…" }.
      * @param {object} description - The sentence under the purpose in the banner's second layer. A text per language tag, e.g. { "de": "…", "en": "…" }.
      * @param {GoogleSignals[]} googleSignals - The Google Consent Mode v2 signals this purpose releases when granted — e.g. statistics releases `analytics_storage`. A list drawn from the google-signals vocabulary.
      * @param {boolean} isActive - Whether this row takes part in the next published version. Switching it off keeps the row and leaves it out of every version published afterwards; versions already published are untouched.
@@ -768,20 +768,20 @@ export class ConsentManagerRegistry {
      * @returns {Promise<Models.Purpose>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    consentManagerPurposesCreate(code: string, legalBasis: LegalBasis, name?: object, description?: object, googleSignals?: GoogleSignals[], isActive?: boolean, position?: number): Promise<Models.Purpose>;
+    consentManagerPurposesCreate(code: string, legalBasis: LegalBasis, name: object | null, description?: object, googleSignals?: GoogleSignals[], isActive?: boolean, position?: number): Promise<Models.Purpose>;
     consentManagerPurposesCreate(
-        paramsOrFirst: { code: string, legalBasis: LegalBasis, name?: object, description?: object, googleSignals?: GoogleSignals[], isActive?: boolean, position?: number } | string,
-        ...rest: [(LegalBasis)?, (object)?, (object)?, (GoogleSignals[])?, (boolean)?, (number)?]    
+        paramsOrFirst: { code: string, legalBasis: LegalBasis, name: object | null, description?: object, googleSignals?: GoogleSignals[], isActive?: boolean, position?: number } | string,
+        ...rest: [(LegalBasis)?, (object | null)?, (object)?, (GoogleSignals[])?, (boolean)?, (number)?]    
     ): Promise<Models.Purpose> {
-        let params: { code: string, legalBasis: LegalBasis, name?: object, description?: object, googleSignals?: GoogleSignals[], isActive?: boolean, position?: number };
+        let params: { code: string, legalBasis: LegalBasis, name: object | null, description?: object, googleSignals?: GoogleSignals[], isActive?: boolean, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, legalBasis: LegalBasis, name?: object, description?: object, googleSignals?: GoogleSignals[], isActive?: boolean, position?: number };
+            params = (paramsOrFirst || {}) as { code: string, legalBasis: LegalBasis, name: object | null, description?: object, googleSignals?: GoogleSignals[], isActive?: boolean, position?: number };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 legalBasis: rest[0] as LegalBasis,
-                name: rest[1] as object,
+                name: rest[1] as object | null,
                 description: rest[2] as object,
                 googleSignals: rest[3] as GoogleSignals[],
                 isActive: rest[4] as boolean,

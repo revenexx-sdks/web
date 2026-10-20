@@ -3,5 +3,6 @@ export enum PaymentFailureCode {
     ProviderUnreachable = 'provider_unreachable',
     ProviderNotConfigured = 'provider_not_configured',
     ProviderDeclined = 'provider_declined',
+    PaymentMethodNotSupported = 'payment_method_not_supported',
     ProviderError = 'provider_error',
 }

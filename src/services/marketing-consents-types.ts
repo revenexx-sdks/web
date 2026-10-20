@@ -781,7 +781,7 @@ export class MarketingConsentsTypes {
      * A new purpose to write about. `code` and `labels` are owed; it needs a published consent text before anybody can sign up.
      *
      * @param {string} params.code - The type's fixed identity, named by every mailing, journey step, eligibility call and bus event. Lowercase letters, digits and '_'; never changes once created. Sent on create only; an update may repeat it unchanged.
-     * @param {object} params.labels - What a recipient reads for the type in the preference centre and the confirmation mail. A text per language tag, e.g. { "de": "…", "en": "…" }.
+     * @param {object | null} params.labels - What a recipient reads for the type in the preference centre and the confirmation mail. A text per language tag, e.g. { "de": "…", "en": "…" }.
      * @param {boolean} params.allowsExistingCustomer - Whether a placed order may open the existing-customer basis of §7 (3) UWG for this type. Needs `similar_goods_note`. Defaults to false.
      * @param {Channels[]} params.channels - The channels this type is offered by, drawn from email, sms and whatsapp. A subscription holds exactly one of them. Defaults to ["email"] on create.
      * @param {object} params.descriptions - The sentence under the type in the preference centre — what and how often. A text per language tag, e.g. { "de": "…", "en": "…" }.
@@ -791,12 +791,12 @@ export class MarketingConsentsTypes {
      * @throws {RevenexxException}
      * @returns {Promise<Models.SubscriptionType>}
      */
-    marketingConsentsSubscriptionTypesCreate(params: { code: string, labels?: object, allowsExistingCustomer?: boolean, channels?: Channels[], descriptions?: object, position?: number, requiresDoi?: boolean, similarGoodsNote?: object }): Promise<Models.SubscriptionType>;
+    marketingConsentsSubscriptionTypesCreate(params: { code: string, labels: object | null, allowsExistingCustomer?: boolean, channels?: Channels[], descriptions?: object, position?: number, requiresDoi?: boolean, similarGoodsNote?: object }): Promise<Models.SubscriptionType>;
     /**
      * A new purpose to write about. `code` and `labels` are owed; it needs a published consent text before anybody can sign up.
      *
      * @param {string} code - The type's fixed identity, named by every mailing, journey step, eligibility call and bus event. Lowercase letters, digits and '_'; never changes once created. Sent on create only; an update may repeat it unchanged.
-     * @param {object} labels - What a recipient reads for the type in the preference centre and the confirmation mail. A text per language tag, e.g. { "de": "…", "en": "…" }.
+     * @param {object | null} labels - What a recipient reads for the type in the preference centre and the confirmation mail. A text per language tag, e.g. { "de": "…", "en": "…" }.
      * @param {boolean} allowsExistingCustomer - Whether a placed order may open the existing-customer basis of §7 (3) UWG for this type. Needs `similar_goods_note`. Defaults to false.
      * @param {Channels[]} channels - The channels this type is offered by, drawn from email, sms and whatsapp. A subscription holds exactly one of them. Defaults to ["email"] on create.
      * @param {object} descriptions - The sentence under the type in the preference centre — what and how often. A text per language tag, e.g. { "de": "…", "en": "…" }.
@@ -807,19 +807,19 @@ export class MarketingConsentsTypes {
      * @returns {Promise<Models.SubscriptionType>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketingConsentsSubscriptionTypesCreate(code: string, labels?: object, allowsExistingCustomer?: boolean, channels?: Channels[], descriptions?: object, position?: number, requiresDoi?: boolean, similarGoodsNote?: object): Promise<Models.SubscriptionType>;
+    marketingConsentsSubscriptionTypesCreate(code: string, labels: object | null, allowsExistingCustomer?: boolean, channels?: Channels[], descriptions?: object, position?: number, requiresDoi?: boolean, similarGoodsNote?: object): Promise<Models.SubscriptionType>;
     marketingConsentsSubscriptionTypesCreate(
-        paramsOrFirst: { code: string, labels?: object, allowsExistingCustomer?: boolean, channels?: Channels[], descriptions?: object, position?: number, requiresDoi?: boolean, similarGoodsNote?: object } | string,
-        ...rest: [(object)?, (boolean)?, (Channels[])?, (object)?, (number)?, (boolean)?, (object)?]    
+        paramsOrFirst: { code: string, labels: object | null, allowsExistingCustomer?: boolean, channels?: Channels[], descriptions?: object, position?: number, requiresDoi?: boolean, similarGoodsNote?: object } | string,
+        ...rest: [(object | null)?, (boolean)?, (Channels[])?, (object)?, (number)?, (boolean)?, (object)?]    
     ): Promise<Models.SubscriptionType> {
-        let params: { code: string, labels?: object, allowsExistingCustomer?: boolean, channels?: Channels[], descriptions?: object, position?: number, requiresDoi?: boolean, similarGoodsNote?: object };
+        let params: { code: string, labels: object | null, allowsExistingCustomer?: boolean, channels?: Channels[], descriptions?: object, position?: number, requiresDoi?: boolean, similarGoodsNote?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, labels?: object, allowsExistingCustomer?: boolean, channels?: Channels[], descriptions?: object, position?: number, requiresDoi?: boolean, similarGoodsNote?: object };
+            params = (paramsOrFirst || {}) as { code: string, labels: object | null, allowsExistingCustomer?: boolean, channels?: Channels[], descriptions?: object, position?: number, requiresDoi?: boolean, similarGoodsNote?: object };
         } else {
             params = {
                 code: paramsOrFirst as string,
-                labels: rest[0] as object,
+                labels: rest[0] as object | null,
                 allowsExistingCustomer: rest[1] as boolean,
                 channels: rest[2] as Channels[],
                 descriptions: rest[3] as object,

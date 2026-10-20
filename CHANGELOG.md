@@ -1,3 +1,6 @@
+## v0.5.0
+- Required + nullable parameters are now required and typed T | null (fixes the 0.4.0 build); includes ordersApprove / ordersReject.
+
 ## v0.4.0
 - Regenerated from the latest API specification
 
