@@ -270,41 +270,45 @@ export class Orderlists {
     }
 
     /**
-     * What a saved list may be FOR — the tenant's own taxonomy, and the set every `kind` on a list is drawn from. This used to be a CHECK constraint, which meant a merchant who keeps reagent lists or sample lists needed a release of this app to say so — and the app never branched on the value, it only checked membership. The set is the tenant's rows now. Reading this route on a tenant that has none seeds them, so it never answers an empty set on a fresh install and a client may treat the first read as the install step it no longer has to make. Rows come back in `position` order, ascending, which is the order a select should offer them in, and each carries the `is_default` flag that decides what a create with no `kind` falls back to. It takes NO filters: `limit` and `offset` are the only query keys it reads, and any other is ignored rather than refused — which is also why this collection alone answers no `filter` echo, since echoing an empty one would be noise. The `code` on each row, not the `id`, is what `lists.kind` stores and what `?kind=` on GET /orderlists matches.
+     * What a saved list may be FOR — the tenant's own taxonomy, and the set every `kind` on a list is drawn from. This used to be a CHECK constraint, which meant a merchant who keeps reagent lists or sample lists needed a release of this app to say so — and the app never branched on the value, it only checked membership. The set is the tenant's rows now. Reading this route on a tenant that has none seeds them, so it never answers an empty set on a fresh install and a client may treat the first read as the install step it no longer has to make. Rows come back in `position` order, ascending, which is the order a select should offer them in, and each carries the `is_default` flag that decides what a create with no `kind` falls back to. Its one filter is `active`: omitted, every kind is answered, the retired ones included, so a screen rendering a list's stored kind finds it; `?active=true` is what a picker for a new list reads. Besides it, `limit` and `offset` are the only query keys it reads, and any other is ignored rather than refused — which is also why this collection answers no `filter` echo. The `code` on each row, not the `id`, is what `lists.kind` stores and what `?kind=` on GET /orderlists matches.
      *
      * @param {number} params.limit - Page size (default 50, max 200). A larger value is clamped rather than refused.
      * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {boolean} params.active - `true` answers only the kinds a new list may take — what a picker offers; `false` only the kinds a merchant retired. Omitted, every kind is answered, active or not. Anything other than true or false is a 400.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    orderlistsKindsList(params?: { limit?: number, offset?: number }): Promise<{}>;
+    orderlistsKindsList(params?: { limit?: number, offset?: number, active?: boolean }): Promise<{}>;
     /**
-     * What a saved list may be FOR — the tenant's own taxonomy, and the set every `kind` on a list is drawn from. This used to be a CHECK constraint, which meant a merchant who keeps reagent lists or sample lists needed a release of this app to say so — and the app never branched on the value, it only checked membership. The set is the tenant's rows now. Reading this route on a tenant that has none seeds them, so it never answers an empty set on a fresh install and a client may treat the first read as the install step it no longer has to make. Rows come back in `position` order, ascending, which is the order a select should offer them in, and each carries the `is_default` flag that decides what a create with no `kind` falls back to. It takes NO filters: `limit` and `offset` are the only query keys it reads, and any other is ignored rather than refused — which is also why this collection alone answers no `filter` echo, since echoing an empty one would be noise. The `code` on each row, not the `id`, is what `lists.kind` stores and what `?kind=` on GET /orderlists matches.
+     * What a saved list may be FOR — the tenant's own taxonomy, and the set every `kind` on a list is drawn from. This used to be a CHECK constraint, which meant a merchant who keeps reagent lists or sample lists needed a release of this app to say so — and the app never branched on the value, it only checked membership. The set is the tenant's rows now. Reading this route on a tenant that has none seeds them, so it never answers an empty set on a fresh install and a client may treat the first read as the install step it no longer has to make. Rows come back in `position` order, ascending, which is the order a select should offer them in, and each carries the `is_default` flag that decides what a create with no `kind` falls back to. Its one filter is `active`: omitted, every kind is answered, the retired ones included, so a screen rendering a list's stored kind finds it; `?active=true` is what a picker for a new list reads. Besides it, `limit` and `offset` are the only query keys it reads, and any other is ignored rather than refused — which is also why this collection answers no `filter` echo. The `code` on each row, not the `id`, is what `lists.kind` stores and what `?kind=` on GET /orderlists matches.
      *
      * @param {number} limit - Page size (default 50, max 200). A larger value is clamped rather than refused.
      * @param {number} offset - Row offset for pagination (default 0).
+     * @param {boolean} active - `true` answers only the kinds a new list may take — what a picker offers; `false` only the kinds a merchant retired. Omitted, every kind is answered, active or not. Anything other than true or false is a 400.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    orderlistsKindsList(limit?: number, offset?: number): Promise<{}>;
+    orderlistsKindsList(limit?: number, offset?: number, active?: boolean): Promise<{}>;
     orderlistsKindsList(
-        paramsOrFirst?: { limit?: number, offset?: number } | number,
-        ...rest: [(number)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, active?: boolean } | number,
+        ...rest: [(number)?, (boolean)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number };
+        let params: { limit?: number, offset?: number, active?: boolean };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, active?: boolean };
         } else {
             params = {
                 limit: paramsOrFirst as number,
-                offset: rest[0] as number            
+                offset: rest[0] as number,
+                active: rest[1] as boolean            
             };
         }
         
         const limit = params.limit;
         const offset = params.offset;
+        const active = params.active;
 
 
         const apiPath = '/v1/orderlists/kinds';
@@ -314,6 +318,9 @@ export class Orderlists {
         }
         if (typeof offset !== 'undefined') {
             apiPayload['offset'] = offset;
+        }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -333,24 +340,26 @@ export class Orderlists {
      *
      * @param {string} params.code - What `lists.kind` will store. Lowercased on the way in and immutable afterwards — a merchant who wants a different code creates a new kind and moves the lists over.
      * @param {string} params.title - What a person reads. `labels` adds the localized forms on top; this one is the fallback.
+     * @param {boolean} params.active - Whether a new list may take this kind. Omitted means true.
      * @param {string} params.description - What this kind is for, in one sentence — the line a select shows under the title.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag.
-     * @param {boolean} params.isDefault - Promote this kind; the previous default is demoted.
+     * @param {boolean} params.isDefault - Promote this kind; the previous default is demoted. Refused with 409 together with `active: false`.
      * @param {object} params.labels - Localized titles, keyed by language tag.
      * @param {number} params.position - Where the kind sits in a select, ascending. Omitted means 0, which puts it first among the unpositioned.
      * @param {OrderListKindTone} params.tone - Semantic badge colour. The client owns what each tone looks like; omitted means `neutral`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.OrderListKindRow>}
      */
-    orderlistsKindsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: OrderListKindTone }): Promise<Models.OrderListKindRow>;
+    orderlistsKindsCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: OrderListKindTone }): Promise<Models.OrderListKindRow>;
     /**
      * Adds a kind to the tenant's own taxonomy — reagent lists, sample lists, whatever a merchant sorts their saved lists by — without a release of this app, because nothing here branches on the value. `code` and `title` are required, and they are exactly the two columns of `list_kinds` the database will not fill in. The code is lowercased on the way in and immutable afterwards: renaming it would orphan every list carrying it, since a list stores the code and not the id. `is_default: true` promotes the new kind and demotes whoever held the flag. Creating a kind changes no existing list.
      *
      * @param {string} code - What `lists.kind` will store. Lowercased on the way in and immutable afterwards — a merchant who wants a different code creates a new kind and moves the lists over.
      * @param {string} title - What a person reads. `labels` adds the localized forms on top; this one is the fallback.
+     * @param {boolean} active - Whether a new list may take this kind. Omitted means true.
      * @param {string} description - What this kind is for, in one sentence — the line a select shows under the title.
      * @param {object} descriptions - Localized descriptions, keyed by language tag.
-     * @param {boolean} isDefault - Promote this kind; the previous default is demoted.
+     * @param {boolean} isDefault - Promote this kind; the previous default is demoted. Refused with 409 together with `active: false`.
      * @param {object} labels - Localized titles, keyed by language tag.
      * @param {number} position - Where the kind sits in a select, ascending. Omitted means 0, which puts it first among the unpositioned.
      * @param {OrderListKindTone} tone - Semantic badge colour. The client owns what each tone looks like; omitted means `neutral`.
@@ -358,30 +367,32 @@ export class Orderlists {
      * @returns {Promise<Models.OrderListKindRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    orderlistsKindsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: OrderListKindTone): Promise<Models.OrderListKindRow>;
+    orderlistsKindsCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: OrderListKindTone): Promise<Models.OrderListKindRow>;
     orderlistsKindsCreate(
-        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: OrderListKindTone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (OrderListKindTone)?]    
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: OrderListKindTone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (OrderListKindTone)?]    
     ): Promise<Models.OrderListKindRow> {
-        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: OrderListKindTone };
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: OrderListKindTone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: OrderListKindTone };
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: OrderListKindTone };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 title: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                labels: rest[4] as object,
-                position: rest[5] as number,
-                tone: rest[6] as OrderListKindTone            
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                labels: rest[5] as object,
+                position: rest[6] as number,
+                tone: rest[7] as OrderListKindTone            
             };
         }
         
         const code = params.code;
         const title = params.title;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -398,6 +409,9 @@ export class Orderlists {
 
         const apiPath = '/v1/orderlists/kinds';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -542,6 +556,7 @@ export class Orderlists {
      * Everything a kind has except its code: the title a person reads, the sentence underneath it, the localized forms of both, the badge tone, and where it sits in a select. The code is not among them and cannot be reached from here at all: sending a different one is a 400 rather than a silent no-op, because `lists.kind` stores the code and a rename would orphan every list that carries it with no foreign key to stop it. So a rename is never how a list comes to name a code nothing defines — only a delete can do that. Renaming the TITLE touches no list, for the same reason. A blank title, an unknown tone and a body that changes nothing are 400s; an explicit null clears the description; `labels` and `descriptions` replace the whole map rather than merging into it. `is_default: true` makes the same move POST /orderlists/kinds/{id}/make-default makes on its own. A system kind is editable like any other.
      *
      * @param {string} params.id - The list kind, by id.
+     * @param {boolean} params.active - False retires the kind from new lists; the lists that carry it keep it. The default kind cannot be deactivated.
      * @param {string} params.description - What this kind is for, in one sentence. Explicit null clears it.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag. Replaces the whole map rather than merging into it.
      * @param {boolean} params.isDefault - True promotes this kind and demotes the previous default — the same move POST /orderlists/kinds/{id}/make-default makes on its own. False is accepted only on a kind that is not the default: the flag moves by promoting another kind.
@@ -552,11 +567,12 @@ export class Orderlists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.OrderListKindRow>}
      */
-    orderlistsKindsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: OrderListKindTone }): Promise<Models.OrderListKindRow>;
+    orderlistsKindsUpdate(params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: OrderListKindTone }): Promise<Models.OrderListKindRow>;
     /**
      * Everything a kind has except its code: the title a person reads, the sentence underneath it, the localized forms of both, the badge tone, and where it sits in a select. The code is not among them and cannot be reached from here at all: sending a different one is a 400 rather than a silent no-op, because `lists.kind` stores the code and a rename would orphan every list that carries it with no foreign key to stop it. So a rename is never how a list comes to name a code nothing defines — only a delete can do that. Renaming the TITLE touches no list, for the same reason. A blank title, an unknown tone and a body that changes nothing are 400s; an explicit null clears the description; `labels` and `descriptions` replace the whole map rather than merging into it. `is_default: true` makes the same move POST /orderlists/kinds/{id}/make-default makes on its own. A system kind is editable like any other.
      *
      * @param {string} id - The list kind, by id.
+     * @param {boolean} active - False retires the kind from new lists; the lists that carry it keep it. The default kind cannot be deactivated.
      * @param {string} description - What this kind is for, in one sentence. Explicit null clears it.
      * @param {object} descriptions - Localized descriptions, keyed by language tag. Replaces the whole map rather than merging into it.
      * @param {boolean} isDefault - True promotes this kind and demotes the previous default — the same move POST /orderlists/kinds/{id}/make-default makes on its own. False is accepted only on a kind that is not the default: the flag moves by promoting another kind.
@@ -568,29 +584,31 @@ export class Orderlists {
      * @returns {Promise<Models.OrderListKindRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    orderlistsKindsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: OrderListKindTone): Promise<Models.OrderListKindRow>;
+    orderlistsKindsUpdate(id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: OrderListKindTone): Promise<Models.OrderListKindRow>;
     orderlistsKindsUpdate(
-        paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: OrderListKindTone } | string,
-        ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (OrderListKindTone)?]    
+        paramsOrFirst: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: OrderListKindTone } | string,
+        ...rest: [(boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (OrderListKindTone)?]    
     ): Promise<Models.OrderListKindRow> {
-        let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: OrderListKindTone };
+        let params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: OrderListKindTone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: OrderListKindTone };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: OrderListKindTone };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                description: rest[0] as string,
-                descriptions: rest[1] as object,
-                isDefault: rest[2] as boolean,
-                labels: rest[3] as object,
-                position: rest[4] as number,
-                title: rest[5] as string,
-                tone: rest[6] as OrderListKindTone            
+                active: rest[0] as boolean,
+                description: rest[1] as string,
+                descriptions: rest[2] as object,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                position: rest[5] as number,
+                title: rest[6] as string,
+                tone: rest[7] as OrderListKindTone            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -605,6 +623,9 @@ export class Orderlists {
 
         const apiPath = '/v1/orderlists/kinds/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof description !== 'undefined') {
             apiPayload['description'] = description;
         }
@@ -1084,6 +1105,69 @@ export class Orderlists {
     }
 
     /**
+     * The buyer who kept a list has left, and the list is still how the company orders: this hands it to another contact of the same organization, with its positions, kind and sharing exactly as they were. Back office only — a buyer can neither give a list away nor take a colleague's, so a call with an acting contact is a 403. The new owner has to be a contact the customers app knows and, when the list belongs to an organization, one of that organization's contacts; only the customers app can say either, so this route asks it (customers.contacts.get) and refuses when it cannot be asked rather than moving a list out of the account it is shared in. The stored owner name follows the new owner. Naming the owner the list already has changes nothing and answers the list. The tenant's `max_lists_per_owner` applies to the new owner as it does on a create. This is the only way a list changes owner: PUT /orderlists/{id} refuses `owner_id`.
+     *
+     * @param {string} params.id - The order list, by id.
+     * @param {string} params.ownerId - The contact who keeps the list from now on. A contact of the list's organization.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.OrderList>}
+     */
+    orderlistsTransferOwner(params: { id: string, ownerId: string }): Promise<Models.OrderList>;
+    /**
+     * The buyer who kept a list has left, and the list is still how the company orders: this hands it to another contact of the same organization, with its positions, kind and sharing exactly as they were. Back office only — a buyer can neither give a list away nor take a colleague's, so a call with an acting contact is a 403. The new owner has to be a contact the customers app knows and, when the list belongs to an organization, one of that organization's contacts; only the customers app can say either, so this route asks it (customers.contacts.get) and refuses when it cannot be asked rather than moving a list out of the account it is shared in. The stored owner name follows the new owner. Naming the owner the list already has changes nothing and answers the list. The tenant's `max_lists_per_owner` applies to the new owner as it does on a create. This is the only way a list changes owner: PUT /orderlists/{id} refuses `owner_id`.
+     *
+     * @param {string} id - The order list, by id.
+     * @param {string} ownerId - The contact who keeps the list from now on. A contact of the list's organization.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.OrderList>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    orderlistsTransferOwner(id: string, ownerId: string): Promise<Models.OrderList>;
+    orderlistsTransferOwner(
+        paramsOrFirst: { id: string, ownerId: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.OrderList> {
+        let params: { id: string, ownerId: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, ownerId: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                ownerId: rest[0] as string            
+            };
+        }
+        
+        const id = params.id;
+        const ownerId = params.ownerId;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof ownerId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "ownerId"');
+        }
+
+        const apiPath = '/v1/orderlists/{id}/transfer-owner'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof ownerId !== 'undefined') {
+            apiPayload['owner_id'] = ownerId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
      * Every column of a position is an exact-match filter — eighteen of them, which is the whole row — and they combine as AND. `list_id` is not among them: it comes from the path and overwrites anything the query says. The list must be one the caller may READ — a colleague's private list answers 404 here exactly as it does on GET /orderlists/{id}, so an acting contact cannot reach its positions through this collection. The default sort is `position.asc`, and `position` is neither dense nor unique: removing a position leaves its number behind while the next add takes the list's current COUNT, so a delete from the middle followed by an add produces two rows sharing a number and the tie falls to whatever the database returns first. Sort by `created_at` where the order has to be unambiguous.
      *
      * @param {string} params.listId - The list the position belongs to. An id no list in this tenant has — or one the caller may not read — answers 404.
@@ -1095,6 +1179,7 @@ export class Orderlists {
      * @param {number} params.quantity - Exact-match filter on `quantity`. An exact quantity, which is a needle-in-a-haystack filter — there is no range filter on this collection.
      * @param {string} params.unit - Exact-match filter on `unit`. One unit, in the tenant's own words. Open text, so the value must match what was written.
      * @param {number} params.price - Exact-match filter on `price`. An exact snapshotted unit price. Equality on a decimal, so it finds the rows written at exactly this price and nothing near it.
+     * @param {string} params.currency - Exact-match filter on `currency`. An exact ISO 4217 code, upper case, as stored.
      * @param {number} params.taxRate - Exact-match filter on `tax_rate`. An exact VAT rate as a percent (19 = 19 %).
      * @param {string} params.costCenterId - Exact-match filter on `cost_center_id`. Every position booked to one cost centre, as the tenant's ERP names it. The filter a controller uses to see what a department has saved up.
      * @param {string} params.positionTexts - Exact-match filter on `position_texts`. The whole notes ARRAY, serialized as JSON — equality on the document, not a search inside it.
@@ -1115,7 +1200,7 @@ export class Orderlists {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    orderlistsItemsList(params: { listId: string, id?: string, productId?: string, sku?: string, name?: string, image?: string, quantity?: number, unit?: string, price?: number, taxRate?: number, costCenterId?: string, positionTexts?: string, customSku?: string, categorySlug?: string, subcategorySlug?: string, position?: number, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    orderlistsItemsList(params: { listId: string, id?: string, productId?: string, sku?: string, name?: string, image?: string, quantity?: number, unit?: string, price?: number, currency?: string, taxRate?: number, costCenterId?: string, positionTexts?: string, customSku?: string, categorySlug?: string, subcategorySlug?: string, position?: number, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * Every column of a position is an exact-match filter — eighteen of them, which is the whole row — and they combine as AND. `list_id` is not among them: it comes from the path and overwrites anything the query says. The list must be one the caller may READ — a colleague's private list answers 404 here exactly as it does on GET /orderlists/{id}, so an acting contact cannot reach its positions through this collection. The default sort is `position.asc`, and `position` is neither dense nor unique: removing a position leaves its number behind while the next add takes the list's current COUNT, so a delete from the middle followed by an add produces two rows sharing a number and the tie falls to whatever the database returns first. Sort by `created_at` where the order has to be unambiguous.
      *
@@ -1128,6 +1213,7 @@ export class Orderlists {
      * @param {number} quantity - Exact-match filter on `quantity`. An exact quantity, which is a needle-in-a-haystack filter — there is no range filter on this collection.
      * @param {string} unit - Exact-match filter on `unit`. One unit, in the tenant's own words. Open text, so the value must match what was written.
      * @param {number} price - Exact-match filter on `price`. An exact snapshotted unit price. Equality on a decimal, so it finds the rows written at exactly this price and nothing near it.
+     * @param {string} currency - Exact-match filter on `currency`. An exact ISO 4217 code, upper case, as stored.
      * @param {number} taxRate - Exact-match filter on `tax_rate`. An exact VAT rate as a percent (19 = 19 %).
      * @param {string} costCenterId - Exact-match filter on `cost_center_id`. Every position booked to one cost centre, as the tenant's ERP names it. The filter a controller uses to see what a department has saved up.
      * @param {string} positionTexts - Exact-match filter on `position_texts`. The whole notes ARRAY, serialized as JSON — equality on the document, not a search inside it.
@@ -1149,15 +1235,15 @@ export class Orderlists {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    orderlistsItemsList(listId: string, id?: string, productId?: string, sku?: string, name?: string, image?: string, quantity?: number, unit?: string, price?: number, taxRate?: number, costCenterId?: string, positionTexts?: string, customSku?: string, categorySlug?: string, subcategorySlug?: string, position?: number, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    orderlistsItemsList(listId: string, id?: string, productId?: string, sku?: string, name?: string, image?: string, quantity?: number, unit?: string, price?: number, currency?: string, taxRate?: number, costCenterId?: string, positionTexts?: string, customSku?: string, categorySlug?: string, subcategorySlug?: string, position?: number, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     orderlistsItemsList(
-        paramsOrFirst: { listId: string, id?: string, productId?: string, sku?: string, name?: string, image?: string, quantity?: number, unit?: string, price?: number, taxRate?: number, costCenterId?: string, positionTexts?: string, customSku?: string, categorySlug?: string, subcategorySlug?: string, position?: number, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (number)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst: { listId: string, id?: string, productId?: string, sku?: string, name?: string, image?: string, quantity?: number, unit?: string, price?: number, currency?: string, taxRate?: number, costCenterId?: string, positionTexts?: string, customSku?: string, categorySlug?: string, subcategorySlug?: string, position?: number, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (number)?, (string)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { listId: string, id?: string, productId?: string, sku?: string, name?: string, image?: string, quantity?: number, unit?: string, price?: number, taxRate?: number, costCenterId?: string, positionTexts?: string, customSku?: string, categorySlug?: string, subcategorySlug?: string, position?: number, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { listId: string, id?: string, productId?: string, sku?: string, name?: string, image?: string, quantity?: number, unit?: string, price?: number, currency?: string, taxRate?: number, costCenterId?: string, positionTexts?: string, customSku?: string, categorySlug?: string, subcategorySlug?: string, position?: number, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { listId: string, id?: string, productId?: string, sku?: string, name?: string, image?: string, quantity?: number, unit?: string, price?: number, taxRate?: number, costCenterId?: string, positionTexts?: string, customSku?: string, categorySlug?: string, subcategorySlug?: string, position?: number, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { listId: string, id?: string, productId?: string, sku?: string, name?: string, image?: string, quantity?: number, unit?: string, price?: number, currency?: string, taxRate?: number, costCenterId?: string, positionTexts?: string, customSku?: string, categorySlug?: string, subcategorySlug?: string, position?: number, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 listId: paramsOrFirst as string,
@@ -1169,23 +1255,24 @@ export class Orderlists {
                 quantity: rest[5] as number,
                 unit: rest[6] as string,
                 price: rest[7] as number,
-                taxRate: rest[8] as number,
-                costCenterId: rest[9] as string,
-                positionTexts: rest[10] as string,
-                customSku: rest[11] as string,
-                categorySlug: rest[12] as string,
-                subcategorySlug: rest[13] as string,
-                position: rest[14] as number,
-                metadata: rest[15] as string,
-                externalId: rest[16] as string,
-                externalRefs: rest[17] as string,
-                sourceSyncedAt: rest[18] as string,
-                sourceData: rest[19] as string,
-                createdAt: rest[20] as string,
-                updatedAt: rest[21] as string,
-                limit: rest[22] as number,
-                offset: rest[23] as number,
-                order: rest[24] as string            
+                currency: rest[8] as string,
+                taxRate: rest[9] as number,
+                costCenterId: rest[10] as string,
+                positionTexts: rest[11] as string,
+                customSku: rest[12] as string,
+                categorySlug: rest[13] as string,
+                subcategorySlug: rest[14] as string,
+                position: rest[15] as number,
+                metadata: rest[16] as string,
+                externalId: rest[17] as string,
+                externalRefs: rest[18] as string,
+                sourceSyncedAt: rest[19] as string,
+                sourceData: rest[20] as string,
+                createdAt: rest[21] as string,
+                updatedAt: rest[22] as string,
+                limit: rest[23] as number,
+                offset: rest[24] as number,
+                order: rest[25] as string            
             };
         }
         
@@ -1198,6 +1285,7 @@ export class Orderlists {
         const quantity = params.quantity;
         const unit = params.unit;
         const price = params.price;
+        const currency = params.currency;
         const taxRate = params.taxRate;
         const costCenterId = params.costCenterId;
         const positionTexts = params.positionTexts;
@@ -1245,6 +1333,9 @@ export class Orderlists {
         }
         if (typeof price !== 'undefined') {
             apiPayload['price'] = price;
+        }
+        if (typeof currency !== 'undefined') {
+            apiPayload['currency'] = currency;
         }
         if (typeof taxRate !== 'undefined') {
             apiPayload['tax_rate'] = taxRate;
@@ -1317,6 +1408,7 @@ export class Orderlists {
      * @param {string} params.name - The article name AS IT WAS when the position was saved. A snapshot on purpose: the list is the buyer's own record, so a renamed or withdrawn article still reads the way they wrote it down.
      * @param {string} params.categorySlug - The catalogue category the article sat in when the position was saved, as a slug. Kept so a long list can be grouped the way the shop groups it without a call to the catalogue.
      * @param {string} params.costCenterId - The cost centre this position books to, as the tenant's ERP names it. Free text and not our enum. A cart line has no column for it, so the cart conversion carries it in the line snapshot.
+     * @param {string} params.currency - The ISO 4217 code `price` is in, upper case. Named by the caller, or — when a position with a price names none — the currency the prices app quotes in for the request (the market's, else the tenant's default), asked once per write; EUR when the prices app cannot be asked or the position has no price. Informational like `price`: the cart conversion takes its own `currency`.
      * @param {string} params.customSku - The buyer's OWN article number for this article — what their purchasing system calls it, which is rarely what the shop calls it. Free text, and the field a B2B buyer searches their own lists by.
      * @param {string} params.externalId - The id this position has in the system that OWNS it — the line as the shop this tenant migrated from numbered it, usually the old list id and the line number. Unique per tenant where it is set. It is what makes a re-run of the migration update the line rather than append a second one, which on a list of two hundred positions is the difference between a correction and a mess.
      * @param {object} params.externalRefs - Every OTHER system that knows this position, keyed by system name. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the position up by `external_id` and read this off the answer.
@@ -1336,7 +1428,7 @@ export class Orderlists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.OrderListItem>}
      */
-    orderlistsItemsCreate(params: { listId: string, name: string, categorySlug?: string, costCenterId?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string }): Promise<Models.OrderListItem>;
+    orderlistsItemsCreate(params: { listId: string, name: string, categorySlug?: string, costCenterId?: string, currency?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string }): Promise<Models.OrderListItem>;
     /**
      * A position is a whole saved line, not a pointer at a product. `name` is required and one of `product_id` / `sku` must be set — the two things the database itself insists on — and everything else is a snapshot of what the buyer saw. Nothing here deduplicates: adding the same article twice makes two positions, because it is the CART that merges lines by product and price, not the list. The new row takes the list's current position COUNT unless the payload names a `position` of its own, so it collides with an existing number whenever an earlier position was deleted from the middle. The list's `updated_at` is touched, which is what the default sort of GET /orderlists reads.
      *
@@ -1344,6 +1436,7 @@ export class Orderlists {
      * @param {string} name - The article name AS IT WAS when the position was saved. A snapshot on purpose: the list is the buyer's own record, so a renamed or withdrawn article still reads the way they wrote it down.
      * @param {string} categorySlug - The catalogue category the article sat in when the position was saved, as a slug. Kept so a long list can be grouped the way the shop groups it without a call to the catalogue.
      * @param {string} costCenterId - The cost centre this position books to, as the tenant's ERP names it. Free text and not our enum. A cart line has no column for it, so the cart conversion carries it in the line snapshot.
+     * @param {string} currency - The ISO 4217 code `price` is in, upper case. Named by the caller, or — when a position with a price names none — the currency the prices app quotes in for the request (the market's, else the tenant's default), asked once per write; EUR when the prices app cannot be asked or the position has no price. Informational like `price`: the cart conversion takes its own `currency`.
      * @param {string} customSku - The buyer's OWN article number for this article — what their purchasing system calls it, which is rarely what the shop calls it. Free text, and the field a B2B buyer searches their own lists by.
      * @param {string} externalId - The id this position has in the system that OWNS it — the line as the shop this tenant migrated from numbered it, usually the old list id and the line number. Unique per tenant where it is set. It is what makes a re-run of the migration update the line rather than append a second one, which on a list of two hundred positions is the difference between a correction and a mess.
      * @param {object} externalRefs - Every OTHER system that knows this position, keyed by system name. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the position up by `external_id` and read this off the answer.
@@ -1364,37 +1457,38 @@ export class Orderlists {
      * @returns {Promise<Models.OrderListItem>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    orderlistsItemsCreate(listId: string, name: string, categorySlug?: string, costCenterId?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string): Promise<Models.OrderListItem>;
+    orderlistsItemsCreate(listId: string, name: string, categorySlug?: string, costCenterId?: string, currency?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string): Promise<Models.OrderListItem>;
     orderlistsItemsCreate(
-        paramsOrFirst: { listId: string, name: string, categorySlug?: string, costCenterId?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (object)?, (number)?, (string[])?, (number)?, (string)?, (number)?, (string)?, (object)?, (string)?, (string)?, (number)?, (string)?]    
+        paramsOrFirst: { listId: string, name: string, categorySlug?: string, costCenterId?: string, currency?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (object)?, (number)?, (string[])?, (number)?, (string)?, (number)?, (string)?, (object)?, (string)?, (string)?, (number)?, (string)?]    
     ): Promise<Models.OrderListItem> {
-        let params: { listId: string, name: string, categorySlug?: string, costCenterId?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string };
+        let params: { listId: string, name: string, categorySlug?: string, costCenterId?: string, currency?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { listId: string, name: string, categorySlug?: string, costCenterId?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string };
+            params = (paramsOrFirst || {}) as { listId: string, name: string, categorySlug?: string, costCenterId?: string, currency?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string };
         } else {
             params = {
                 listId: paramsOrFirst as string,
                 name: rest[0] as string,
                 categorySlug: rest[1] as string,
                 costCenterId: rest[2] as string,
-                customSku: rest[3] as string,
-                externalId: rest[4] as string,
-                externalRefs: rest[5] as object,
-                image: rest[6] as string,
-                metadata: rest[7] as object,
-                position: rest[8] as number,
-                positionTexts: rest[9] as string[],
-                price: rest[10] as number,
-                productId: rest[11] as string,
-                quantity: rest[12] as number,
-                sku: rest[13] as string,
-                sourceData: rest[14] as object,
-                sourceSyncedAt: rest[15] as string,
-                subcategorySlug: rest[16] as string,
-                taxRate: rest[17] as number,
-                unit: rest[18] as string            
+                currency: rest[3] as string,
+                customSku: rest[4] as string,
+                externalId: rest[5] as string,
+                externalRefs: rest[6] as object,
+                image: rest[7] as string,
+                metadata: rest[8] as object,
+                position: rest[9] as number,
+                positionTexts: rest[10] as string[],
+                price: rest[11] as number,
+                productId: rest[12] as string,
+                quantity: rest[13] as number,
+                sku: rest[14] as string,
+                sourceData: rest[15] as object,
+                sourceSyncedAt: rest[16] as string,
+                subcategorySlug: rest[17] as string,
+                taxRate: rest[18] as number,
+                unit: rest[19] as string            
             };
         }
         
@@ -1402,6 +1496,7 @@ export class Orderlists {
         const name = params.name;
         const categorySlug = params.categorySlug;
         const costCenterId = params.costCenterId;
+        const currency = params.currency;
         const customSku = params.customSku;
         const externalId = params.externalId;
         const externalRefs = params.externalRefs;
@@ -1433,6 +1528,9 @@ export class Orderlists {
         }
         if (typeof costCenterId !== 'undefined') {
             apiPayload['cost_center_id'] = costCenterId;
+        }
+        if (typeof currency !== 'undefined') {
+            apiPayload['currency'] = currency;
         }
         if (typeof customSku !== 'undefined') {
             apiPayload['custom_sku'] = customSku;
@@ -1687,6 +1785,7 @@ export class Orderlists {
      * @param {string} params.id - The position, by id. A position that belongs to another list answers 404.
      * @param {string} params.categorySlug - The catalogue category the article sat in when the position was saved, as a slug. Kept so a long list can be grouped the way the shop groups it without a call to the catalogue.
      * @param {string} params.costCenterId - The cost centre this position books to, as the tenant's ERP names it. Free text and not our enum. A cart line has no column for it, so the cart conversion carries it in the line snapshot.
+     * @param {string} params.currency - The ISO 4217 code `price` is in, upper case. Named by the caller, or — when a position with a price names none — the currency the prices app quotes in for the request (the market's, else the tenant's default), asked once per write; EUR when the prices app cannot be asked or the position has no price. Informational like `price`: the cart conversion takes its own `currency`.
      * @param {string} params.customSku - The buyer's OWN article number for this article — what their purchasing system calls it, which is rarely what the shop calls it. Free text, and the field a B2B buyer searches their own lists by.
      * @param {string} params.externalId - The id this position has in the system that OWNS it — the line as the shop this tenant migrated from numbered it, usually the old list id and the line number. Unique per tenant where it is set. It is what makes a re-run of the migration update the line rather than append a second one, which on a list of two hundred positions is the difference between a correction and a mess.
      * @param {object} params.externalRefs - Every OTHER system that knows this position, keyed by system name. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the position up by `external_id` and read this off the answer.
@@ -1707,7 +1806,7 @@ export class Orderlists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.OrderListItem>}
      */
-    orderlistsItemsUpdate(params: { listId: string, id: string, categorySlug?: string, costCenterId?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, name?: string, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string }): Promise<Models.OrderListItem>;
+    orderlistsItemsUpdate(params: { listId: string, id: string, categorySlug?: string, costCenterId?: string, currency?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, name?: string, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string }): Promise<Models.OrderListItem>;
     /**
      * A partial update: omitted fields keep the value they have, and an explicit null is the only way to clear one. `quantity` is re-checked (> 0), and where `reject_unknown_articles` is on the article is re-checked against the MERGED row rather than the payload — so changing only the name cannot smuggle an unknown article past the guard that the create applied. `position` is set, not shifted: writing 3 puts this row at 3 and moves nothing else, which is the other way two positions come to share a number. The list's `updated_at` is touched.
      *
@@ -1715,6 +1814,7 @@ export class Orderlists {
      * @param {string} id - The position, by id. A position that belongs to another list answers 404.
      * @param {string} categorySlug - The catalogue category the article sat in when the position was saved, as a slug. Kept so a long list can be grouped the way the shop groups it without a call to the catalogue.
      * @param {string} costCenterId - The cost centre this position books to, as the tenant's ERP names it. Free text and not our enum. A cart line has no column for it, so the cart conversion carries it in the line snapshot.
+     * @param {string} currency - The ISO 4217 code `price` is in, upper case. Named by the caller, or — when a position with a price names none — the currency the prices app quotes in for the request (the market's, else the tenant's default), asked once per write; EUR when the prices app cannot be asked or the position has no price. Informational like `price`: the cart conversion takes its own `currency`.
      * @param {string} customSku - The buyer's OWN article number for this article — what their purchasing system calls it, which is rarely what the shop calls it. Free text, and the field a B2B buyer searches their own lists by.
      * @param {string} externalId - The id this position has in the system that OWNS it — the line as the shop this tenant migrated from numbered it, usually the old list id and the line number. Unique per tenant where it is set. It is what makes a re-run of the migration update the line rather than append a second one, which on a list of two hundred positions is the difference between a correction and a mess.
      * @param {object} externalRefs - Every OTHER system that knows this position, keyed by system name. Answered on read and carrying no query parameter of its own — a jsonb field is compared as a WHOLE document, so a filter over part of one is refused. Look the position up by `external_id` and read this off the answer.
@@ -1736,38 +1836,39 @@ export class Orderlists {
      * @returns {Promise<Models.OrderListItem>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    orderlistsItemsUpdate(listId: string, id: string, categorySlug?: string, costCenterId?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, name?: string, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string): Promise<Models.OrderListItem>;
+    orderlistsItemsUpdate(listId: string, id: string, categorySlug?: string, costCenterId?: string, currency?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, name?: string, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string): Promise<Models.OrderListItem>;
     orderlistsItemsUpdate(
-        paramsOrFirst: { listId: string, id: string, categorySlug?: string, costCenterId?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, name?: string, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (object)?, (string)?, (number)?, (string[])?, (number)?, (string)?, (number)?, (string)?, (object)?, (string)?, (string)?, (number)?, (string)?]    
+        paramsOrFirst: { listId: string, id: string, categorySlug?: string, costCenterId?: string, currency?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, name?: string, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (object)?, (string)?, (number)?, (string[])?, (number)?, (string)?, (number)?, (string)?, (object)?, (string)?, (string)?, (number)?, (string)?]    
     ): Promise<Models.OrderListItem> {
-        let params: { listId: string, id: string, categorySlug?: string, costCenterId?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, name?: string, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string };
+        let params: { listId: string, id: string, categorySlug?: string, costCenterId?: string, currency?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, name?: string, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { listId: string, id: string, categorySlug?: string, costCenterId?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, name?: string, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string };
+            params = (paramsOrFirst || {}) as { listId: string, id: string, categorySlug?: string, costCenterId?: string, currency?: string, customSku?: string, externalId?: string, externalRefs?: object, image?: string, metadata?: object, name?: string, position?: number, positionTexts?: string[], price?: number, productId?: string, quantity?: number, sku?: string, sourceData?: object, sourceSyncedAt?: string, subcategorySlug?: string, taxRate?: number, unit?: string };
         } else {
             params = {
                 listId: paramsOrFirst as string,
                 id: rest[0] as string,
                 categorySlug: rest[1] as string,
                 costCenterId: rest[2] as string,
-                customSku: rest[3] as string,
-                externalId: rest[4] as string,
-                externalRefs: rest[5] as object,
-                image: rest[6] as string,
-                metadata: rest[7] as object,
-                name: rest[8] as string,
-                position: rest[9] as number,
-                positionTexts: rest[10] as string[],
-                price: rest[11] as number,
-                productId: rest[12] as string,
-                quantity: rest[13] as number,
-                sku: rest[14] as string,
-                sourceData: rest[15] as object,
-                sourceSyncedAt: rest[16] as string,
-                subcategorySlug: rest[17] as string,
-                taxRate: rest[18] as number,
-                unit: rest[19] as string            
+                currency: rest[3] as string,
+                customSku: rest[4] as string,
+                externalId: rest[5] as string,
+                externalRefs: rest[6] as object,
+                image: rest[7] as string,
+                metadata: rest[8] as object,
+                name: rest[9] as string,
+                position: rest[10] as number,
+                positionTexts: rest[11] as string[],
+                price: rest[12] as number,
+                productId: rest[13] as string,
+                quantity: rest[14] as number,
+                sku: rest[15] as string,
+                sourceData: rest[16] as object,
+                sourceSyncedAt: rest[17] as string,
+                subcategorySlug: rest[18] as string,
+                taxRate: rest[19] as number,
+                unit: rest[20] as string            
             };
         }
         
@@ -1775,6 +1876,7 @@ export class Orderlists {
         const id = params.id;
         const categorySlug = params.categorySlug;
         const costCenterId = params.costCenterId;
+        const currency = params.currency;
         const customSku = params.customSku;
         const externalId = params.externalId;
         const externalRefs = params.externalRefs;
@@ -1807,6 +1909,9 @@ export class Orderlists {
         }
         if (typeof costCenterId !== 'undefined') {
             apiPayload['cost_center_id'] = costCenterId;
+        }
+        if (typeof currency !== 'undefined') {
+            apiPayload['currency'] = currency;
         }
         if (typeof customSku !== 'undefined') {
             apiPayload['custom_sku'] = customSku;

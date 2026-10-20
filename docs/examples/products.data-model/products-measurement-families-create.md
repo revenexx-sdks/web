@@ -12,6 +12,7 @@ const productsDataModel = new ProductsDataModel(client);
 const result = await productsDataModel.productsMeasurementFamiliesCreate({
     code: 'weight',
     standardUnit: 'kilogram',
+    active: true, // optional
     labels: {
         "de": "Gewicht",
         "en": "Weight"

@@ -11,7 +11,9 @@ const forms = new Forms(client);
 
 const result = await forms.formsUpdate({
     id: '',
+    campaignRef: '', // optional
     definition: [{"$formkit":"text","label":"Company","name":"company","validation":"required"},{"$formkit":"email","label":"Email","name":"email","validation":"required|email"},{"$formkit":"textarea","label":"What do you need a price for?","name":"message","rows":4},{"$el":"p","children":"We answer price requests within one working day."}], // optional
+    leadStage: 'lead', // optional
     metadata: {}, // optional
     name: 'Price request', // optional
     settings: {}, // optional

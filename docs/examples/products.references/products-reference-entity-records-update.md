@@ -11,13 +11,14 @@ const productsReferences = new ProductsReferences(client);
 
 const result = await productsReferences.productsReferenceEntityRecordsUpdate({
     id: '',
+    active: true, // optional
     attributeValues: {
         "common": {
             "country": "DE",
             "founded": 1946
         },
         "locale_specific": {
-            "de_DE": {
+            "de": {
                 "description": "Werkzeughersteller aus S\u00fcddeutschland."
             }
         }

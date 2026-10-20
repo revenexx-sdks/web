@@ -5,6 +5,8 @@ import type { Models } from '../models';
 import { Source } from '../enums/source';
 import { SegmentMemberSource } from '../enums/segment-member-source';
 import { RuleMatch } from '../enums/rule-match';
+import { MemberType } from '../enums/member-type';
+import { Trashed } from '../enums/trashed';
 import { SegmentRuleMatch } from '../enums/segment-rule-match';
 import { Target } from '../enums/target';
 
@@ -21,6 +23,7 @@ export class CustomersSegments {
      * @param {string} params.id - Filter to rows whose `id` is exactly this value. Primary key of the membership row.
      * @param {string} params.segmentId - Filter to one segment — its members.
      * @param {string} params.organizationId - Filter to one company — the segments it belongs to. The same route answers both questions.
+     * @param {string} params.contactId - Filter to rows whose `contact_id` is exactly this value. The member person, in a contact segment. Null in an organization segment.
      * @param {Source} params.source - Filter by how the membership came about. `manual` is the hand-picked set a recompute will never touch, `sync` the set an import from the owning system wrote, and `rule` the only one a recompute rewrites.
      * @param {string} params.createdAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the organization joined the segment.
      * @param {number} params.limit - Page size (default 50, max 200).
@@ -29,13 +32,14 @@ export class CustomersSegments {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    customersSegmentMembersList(params?: { id?: string, segmentId?: string, organizationId?: string, source?: Source, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    customersSegmentMembersList(params?: { id?: string, segmentId?: string, organizationId?: string, contactId?: string, source?: Source, createdAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. The membership rows themselves — the answer to "which companies are in this segment" (`segment_id`) and to "which segments is this company in" (`organization_id`). Paged with `limit`/`offset`/`order`.
      *
      * @param {string} id - Filter to rows whose `id` is exactly this value. Primary key of the membership row.
      * @param {string} segmentId - Filter to one segment — its members.
      * @param {string} organizationId - Filter to one company — the segments it belongs to. The same route answers both questions.
+     * @param {string} contactId - Filter to rows whose `contact_id` is exactly this value. The member person, in a contact segment. Null in an organization segment.
      * @param {Source} source - Filter by how the membership came about. `manual` is the hand-picked set a recompute will never touch, `sync` the set an import from the owning system wrote, and `rule` the only one a recompute rewrites.
      * @param {string} createdAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the organization joined the segment.
      * @param {number} limit - Page size (default 50, max 200).
@@ -45,31 +49,33 @@ export class CustomersSegments {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentMembersList(id?: string, segmentId?: string, organizationId?: string, source?: Source, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    customersSegmentMembersList(id?: string, segmentId?: string, organizationId?: string, contactId?: string, source?: Source, createdAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     customersSegmentMembersList(
-        paramsOrFirst?: { id?: string, segmentId?: string, organizationId?: string, source?: Source, createdAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (Source)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, segmentId?: string, organizationId?: string, contactId?: string, source?: Source, createdAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (Source)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { id?: string, segmentId?: string, organizationId?: string, source?: Source, createdAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, segmentId?: string, organizationId?: string, contactId?: string, source?: Source, createdAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, segmentId?: string, organizationId?: string, source?: Source, createdAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, segmentId?: string, organizationId?: string, contactId?: string, source?: Source, createdAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 segmentId: rest[0] as string,
                 organizationId: rest[1] as string,
-                source: rest[2] as Source,
-                createdAt: rest[3] as string,
-                limit: rest[4] as number,
-                offset: rest[5] as number,
-                order: rest[6] as string            
+                contactId: rest[2] as string,
+                source: rest[3] as Source,
+                createdAt: rest[4] as string,
+                limit: rest[5] as number,
+                offset: rest[6] as number,
+                order: rest[7] as string            
             };
         }
         
         const id = params.id;
         const segmentId = params.segmentId;
         const organizationId = params.organizationId;
+        const contactId = params.contactId;
         const source = params.source;
         const createdAt = params.createdAt;
         const limit = params.limit;
@@ -87,6 +93,9 @@ export class CustomersSegments {
         }
         if (typeof organizationId !== 'undefined') {
             apiPayload['organization_id'] = organizationId;
+        }
+        if (typeof contactId !== 'undefined') {
+            apiPayload['contact_id'] = contactId;
         }
         if (typeof source !== 'undefined') {
             apiPayload['source'] = source;
@@ -117,7 +126,7 @@ export class CustomersSegments {
     }
 
     /**
-     * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. Adds a company to a segment BY HAND. The row is `source: "manual"`, which is what protects it: a rule recompute rewrites the rule-derived rows of that segment and never touches this one. A create cannot omit `segment_id` and `organization_id`; everything else is optional or defaulted by the database. Two rows of this tenant may not share the combination of `segment_id` + `organization_id`.
+     * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. Adds a company to a segment BY HAND. The row is `source: "manual"`, which is what protects it: a rule recompute rewrites the rule-derived rows of that segment and never touches this one. A create cannot omit `segment_id` and `organization_id`; everything else is optional or defaulted by the database. Two rows of this tenant may not share the combination of `segment_id` + `organization_id` (while contact_id IS NULL) or the combination of `segment_id` + `contact_id` (while contact_id IS NOT NULL).
      *
      * @param {string} params.organizationId - The member company. Segments group companies, never people — a person is reached through their organization.
      * @param {string} params.segmentId - The segment.
@@ -128,7 +137,7 @@ export class CustomersSegments {
      */
     customersSegmentMembersCreate(params: { organizationId: string, segmentId: string, createdAt?: string, source?: SegmentMemberSource }): Promise<Models.SegmentMember>;
     /**
-     * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. Adds a company to a segment BY HAND. The row is `source: "manual"`, which is what protects it: a rule recompute rewrites the rule-derived rows of that segment and never touches this one. A create cannot omit `segment_id` and `organization_id`; everything else is optional or defaulted by the database. Two rows of this tenant may not share the combination of `segment_id` + `organization_id`.
+     * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. Adds a company to a segment BY HAND. The row is `source: "manual"`, which is what protects it: a rule recompute rewrites the rule-derived rows of that segment and never touches this one. A create cannot omit `segment_id` and `organization_id`; everything else is optional or defaulted by the database. Two rows of this tenant may not share the combination of `segment_id` + `organization_id` (while contact_id IS NULL) or the combination of `segment_id` + `contact_id` (while contact_id IS NOT NULL).
      *
      * @param {string} organizationId - The member company. Segments group companies, never people — a person is reached through their organization.
      * @param {string} segmentId - The segment.
@@ -299,7 +308,7 @@ export class CustomersSegments {
     }
 
     /**
-     * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. A partial update. In practice there is little to change — a membership is a pair of ids — so this exists for the `source` correction rather than as the normal path. Two rows of this tenant may not share the combination of `segment_id` + `organization_id`.
+     * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. A partial update. In practice there is little to change — a membership is a pair of ids — so this exists for the `source` correction rather than as the normal path. Two rows of this tenant may not share the combination of `segment_id` + `organization_id` (while contact_id IS NULL) or the combination of `segment_id` + `contact_id` (while contact_id IS NOT NULL).
      *
      * @param {string} params.id - The segment membership to update.
      * @param {string} params.organizationId - The member company. Segments group companies, never people — a person is reached through their organization.
@@ -310,7 +319,7 @@ export class CustomersSegments {
      */
     customersSegmentMembersUpdate(params: { id: string, organizationId?: string, segmentId?: string, source?: SegmentMemberSource }): Promise<Models.SegmentMember>;
     /**
-     * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. A partial update. In practice there is little to change — a membership is a pair of ids — so this exists for the `source` correction rather than as the normal path. Two rows of this tenant may not share the combination of `segment_id` + `organization_id`.
+     * One organization inside one segment, plus the record of how it got there: `source: "manual"` for a company somebody put in, `source: "rule"` for one the rule engine matched. That distinction is what lets a recompute rewrite its own rows and leave every hand-picked one alone. A partial update. In practice there is little to change — a membership is a pair of ids — so this exists for the `source` correction rather than as the normal path. Two rows of this tenant may not share the combination of `segment_id` + `organization_id` (while contact_id IS NULL) or the combination of `segment_id` + `contact_id` (while contact_id IS NOT NULL).
      *
      * @param {string} id - The segment membership to update.
      * @param {string} organizationId - The member company. Segments group companies, never people — a person is reached through their organization.
@@ -378,31 +387,49 @@ export class CustomersSegments {
      * @param {string} params.id - Filter to rows whose `id` is exactly this value. Primary key of the segment.
      * @param {string} params.code - Filter by exact segment code.
      * @param {number} params.position - Filter to rows whose `position` is exactly this value. Sort order in the cockpit, ascending. Ties fall back to insertion order.
+     * @param {boolean} params.active - Filter to rows whose `active` is exactly this value. False when the merchant retired the segment. Its memberships stay exactly as they are and it still applies wherever it is named; it is only no longer offered as a choice, and its rules are not recomputed — neither by the schedule nor by hand — until it is active again. `?active=true` is the list of segments a picker should offer.
      * @param {RuleMatch} params.ruleMatch - Filter to rows whose `rule_match` is exactly this value. How the conditions combine: 'all' (default) is AND, 'any' is OR. Null means the same as 'all'.
+     * @param {MemberType} params.memberType - Filter to rows whose `member_type` is exactly this value. What the segment holds: 'organization' (companies, the default) or 'contact' (people, each row naming their company too). Fixed once the segment has members.
      * @param {string} params.rulesComputedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the rule last finished a COMPLETE recompute. Null after a rule change, and while a chunked recompute is still running — so it doubles as "are the rule memberships trustworthy right now?".
      * @param {string} params.externalId - Filter to rows whose `external_id` is exactly this value. The key this group has in the system that owns it — an ERP price group, discount group or bonus group arrives as a segment, and this is what it was called there. Unique per tenant where set.
      * @param {string} params.sourceSyncedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
+     * @param {string} params.deletedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this segment was moved to the trash, or null while it is live. A segment in the trash is left out of every list unless `trashed` asks for it, so it stops applying: its memberships stay but act nowhere, its rules are not recomputed, and its code stays reserved. A second DELETE or the daily purge deletes it for good.
+     * @param {string} params.deletedBy - Filter to rows whose `deleted_by` is exactly this value. Who moved it to the trash, as the platform named them — an email, or `system`. Null while it is live.
+     * @param {string} params.deletedById - Filter to rows whose `deleted_by_id` is exactly this value. The platform subject of whoever moved it to the trash. Kept beside the name so the person can be pseudonymised later without losing who acted. Null while it is live, and for the system.
+     * @param {string} params.trashBatch - Filter to rows whose `trash_batch` is exactly this value. The trash action this record went with. An organization and the contacts it took along share one; a restore brings back exactly the records that carry it.
+     * @param {string} params.purgeAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the daily purge deletes it for good unless it is restored first: `deleted_at` plus the tenant's trash retention (90 days unless the tenant says otherwise). Null while it is live.
+     * @param {string} params.purgeBlockedReason - Filter to rows whose `purge_blocked_reason` is exactly this value. Why the purge could not delete it for good — an active price list or promotion that still names its code, or a check nobody answered. Null when nothing stopped it. Cleared by a restore.
      * @param {string} params.createdAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the segment was created.
      * @param {string} params.updatedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When any column of this row last changed.
+     * @param {Trashed} params.trashed - Whether the trash is part of the answer. `exclude` (the default) leaves records in the trash out, `only` answers the trash itself, `include` both. A call acting for a buyer is always `exclude`.
      * @param {number} params.limit - Page size (default 50, max 200).
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    customersSegmentsList(params?: { id?: string, code?: string, position?: number, ruleMatch?: RuleMatch, rulesComputedAt?: string, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    customersSegmentsList(params?: { id?: string, code?: string, position?: number, active?: boolean, ruleMatch?: RuleMatch, memberType?: MemberType, rulesComputedAt?: string, externalId?: string, sourceSyncedAt?: string, deletedAt?: string, deletedBy?: string, deletedById?: string, trashBatch?: string, purgeAt?: string, purgeBlockedReason?: string, createdAt?: string, updatedAt?: string, trashed?: Trashed, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". Every segment this tenant keeps, with its stored rules. Any column filters and the page is `limit`/`offset`/`order`. Which companies are actually IN one is `segment_members`, because the rule half is materialized rather than evaluated on read.
      *
      * @param {string} id - Filter to rows whose `id` is exactly this value. Primary key of the segment.
      * @param {string} code - Filter by exact segment code.
      * @param {number} position - Filter to rows whose `position` is exactly this value. Sort order in the cockpit, ascending. Ties fall back to insertion order.
+     * @param {boolean} active - Filter to rows whose `active` is exactly this value. False when the merchant retired the segment. Its memberships stay exactly as they are and it still applies wherever it is named; it is only no longer offered as a choice, and its rules are not recomputed — neither by the schedule nor by hand — until it is active again. `?active=true` is the list of segments a picker should offer.
      * @param {RuleMatch} ruleMatch - Filter to rows whose `rule_match` is exactly this value. How the conditions combine: 'all' (default) is AND, 'any' is OR. Null means the same as 'all'.
+     * @param {MemberType} memberType - Filter to rows whose `member_type` is exactly this value. What the segment holds: 'organization' (companies, the default) or 'contact' (people, each row naming their company too). Fixed once the segment has members.
      * @param {string} rulesComputedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the rule last finished a COMPLETE recompute. Null after a rule change, and while a chunked recompute is still running — so it doubles as "are the rule memberships trustworthy right now?".
      * @param {string} externalId - Filter to rows whose `external_id` is exactly this value. The key this group has in the system that owns it — an ERP price group, discount group or bonus group arrives as a segment, and this is what it was called there. Unique per tenant where set.
      * @param {string} sourceSyncedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
+     * @param {string} deletedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this segment was moved to the trash, or null while it is live. A segment in the trash is left out of every list unless `trashed` asks for it, so it stops applying: its memberships stay but act nowhere, its rules are not recomputed, and its code stays reserved. A second DELETE or the daily purge deletes it for good.
+     * @param {string} deletedBy - Filter to rows whose `deleted_by` is exactly this value. Who moved it to the trash, as the platform named them — an email, or `system`. Null while it is live.
+     * @param {string} deletedById - Filter to rows whose `deleted_by_id` is exactly this value. The platform subject of whoever moved it to the trash. Kept beside the name so the person can be pseudonymised later without losing who acted. Null while it is live, and for the system.
+     * @param {string} trashBatch - Filter to rows whose `trash_batch` is exactly this value. The trash action this record went with. An organization and the contacts it took along share one; a restore brings back exactly the records that carry it.
+     * @param {string} purgeAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the daily purge deletes it for good unless it is restored first: `deleted_at` plus the tenant's trash retention (90 days unless the tenant says otherwise). Null while it is live.
+     * @param {string} purgeBlockedReason - Filter to rows whose `purge_blocked_reason` is exactly this value. Why the purge could not delete it for good — an active price list or promotion that still names its code, or a check nobody answered. Null when nothing stopped it. Cleared by a restore.
      * @param {string} createdAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the segment was created.
      * @param {string} updatedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When any column of this row last changed.
+     * @param {Trashed} trashed - Whether the trash is part of the answer. `exclude` (the default) leaves records in the trash out, `only` answers the trash itself, `include` both. A call acting for a buyer is always `exclude`.
      * @param {number} limit - Page size (default 50, max 200).
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
@@ -410,41 +437,59 @@ export class CustomersSegments {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsList(id?: string, code?: string, position?: number, ruleMatch?: RuleMatch, rulesComputedAt?: string, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    customersSegmentsList(id?: string, code?: string, position?: number, active?: boolean, ruleMatch?: RuleMatch, memberType?: MemberType, rulesComputedAt?: string, externalId?: string, sourceSyncedAt?: string, deletedAt?: string, deletedBy?: string, deletedById?: string, trashBatch?: string, purgeAt?: string, purgeBlockedReason?: string, createdAt?: string, updatedAt?: string, trashed?: Trashed, limit?: number, offset?: number, order?: string): Promise<{}>;
     customersSegmentsList(
-        paramsOrFirst?: { id?: string, code?: string, position?: number, ruleMatch?: RuleMatch, rulesComputedAt?: string, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (number)?, (RuleMatch)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, code?: string, position?: number, active?: boolean, ruleMatch?: RuleMatch, memberType?: MemberType, rulesComputedAt?: string, externalId?: string, sourceSyncedAt?: string, deletedAt?: string, deletedBy?: string, deletedById?: string, trashBatch?: string, purgeAt?: string, purgeBlockedReason?: string, createdAt?: string, updatedAt?: string, trashed?: Trashed, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (number)?, (boolean)?, (RuleMatch)?, (MemberType)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (Trashed)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { id?: string, code?: string, position?: number, ruleMatch?: RuleMatch, rulesComputedAt?: string, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, code?: string, position?: number, active?: boolean, ruleMatch?: RuleMatch, memberType?: MemberType, rulesComputedAt?: string, externalId?: string, sourceSyncedAt?: string, deletedAt?: string, deletedBy?: string, deletedById?: string, trashBatch?: string, purgeAt?: string, purgeBlockedReason?: string, createdAt?: string, updatedAt?: string, trashed?: Trashed, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, code?: string, position?: number, ruleMatch?: RuleMatch, rulesComputedAt?: string, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, code?: string, position?: number, active?: boolean, ruleMatch?: RuleMatch, memberType?: MemberType, rulesComputedAt?: string, externalId?: string, sourceSyncedAt?: string, deletedAt?: string, deletedBy?: string, deletedById?: string, trashBatch?: string, purgeAt?: string, purgeBlockedReason?: string, createdAt?: string, updatedAt?: string, trashed?: Trashed, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 code: rest[0] as string,
                 position: rest[1] as number,
-                ruleMatch: rest[2] as RuleMatch,
-                rulesComputedAt: rest[3] as string,
-                externalId: rest[4] as string,
-                sourceSyncedAt: rest[5] as string,
-                createdAt: rest[6] as string,
-                updatedAt: rest[7] as string,
-                limit: rest[8] as number,
-                offset: rest[9] as number,
-                order: rest[10] as string            
+                active: rest[2] as boolean,
+                ruleMatch: rest[3] as RuleMatch,
+                memberType: rest[4] as MemberType,
+                rulesComputedAt: rest[5] as string,
+                externalId: rest[6] as string,
+                sourceSyncedAt: rest[7] as string,
+                deletedAt: rest[8] as string,
+                deletedBy: rest[9] as string,
+                deletedById: rest[10] as string,
+                trashBatch: rest[11] as string,
+                purgeAt: rest[12] as string,
+                purgeBlockedReason: rest[13] as string,
+                createdAt: rest[14] as string,
+                updatedAt: rest[15] as string,
+                trashed: rest[16] as Trashed,
+                limit: rest[17] as number,
+                offset: rest[18] as number,
+                order: rest[19] as string            
             };
         }
         
         const id = params.id;
         const code = params.code;
         const position = params.position;
+        const active = params.active;
         const ruleMatch = params.ruleMatch;
+        const memberType = params.memberType;
         const rulesComputedAt = params.rulesComputedAt;
         const externalId = params.externalId;
         const sourceSyncedAt = params.sourceSyncedAt;
+        const deletedAt = params.deletedAt;
+        const deletedBy = params.deletedBy;
+        const deletedById = params.deletedById;
+        const trashBatch = params.trashBatch;
+        const purgeAt = params.purgeAt;
+        const purgeBlockedReason = params.purgeBlockedReason;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
+        const trashed = params.trashed;
         const limit = params.limit;
         const offset = params.offset;
         const order = params.order;
@@ -461,8 +506,14 @@ export class CustomersSegments {
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
         }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof ruleMatch !== 'undefined') {
             apiPayload['rule_match'] = ruleMatch;
+        }
+        if (typeof memberType !== 'undefined') {
+            apiPayload['member_type'] = memberType;
         }
         if (typeof rulesComputedAt !== 'undefined') {
             apiPayload['rules_computed_at'] = rulesComputedAt;
@@ -473,11 +524,32 @@ export class CustomersSegments {
         if (typeof sourceSyncedAt !== 'undefined') {
             apiPayload['source_synced_at'] = sourceSyncedAt;
         }
+        if (typeof deletedAt !== 'undefined') {
+            apiPayload['deleted_at'] = deletedAt;
+        }
+        if (typeof deletedBy !== 'undefined') {
+            apiPayload['deleted_by'] = deletedBy;
+        }
+        if (typeof deletedById !== 'undefined') {
+            apiPayload['deleted_by_id'] = deletedById;
+        }
+        if (typeof trashBatch !== 'undefined') {
+            apiPayload['trash_batch'] = trashBatch;
+        }
+        if (typeof purgeAt !== 'undefined') {
+            apiPayload['purge_at'] = purgeAt;
+        }
+        if (typeof purgeBlockedReason !== 'undefined') {
+            apiPayload['purge_blocked_reason'] = purgeBlockedReason;
+        }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
         }
         if (typeof updatedAt !== 'undefined') {
             apiPayload['updated_at'] = updatedAt;
+        }
+        if (typeof trashed !== 'undefined') {
+            apiPayload['trashed'] = trashed;
         }
         if (typeof limit !== 'undefined') {
             apiPayload['limit'] = limit;
@@ -504,6 +576,7 @@ export class CustomersSegments {
     /**
      * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". Creates the group. Rules are optional: leave them out for a hand-picked list, or store a rule document and let the recompute keep the membership up to date. The `code` is what other apps point at, so pick it deliberately. `code` is the only field a create cannot omit; everything else is optional or defaulted by the database. Two rows of this tenant may not share `code` or `external_id` (while external_id IS NOT NULL).
      *
+     * @param {boolean} params.active - False when the merchant retired the segment. Its memberships stay exactly as they are and it still applies wherever it is named; it is only no longer offered as a choice, and its rules are not recomputed — neither by the schedule nor by hand — until it is active again. `?active=true` is the list of segments a picker should offer. Default true.
      * @param {string} params.code - Stable identifier, unique per tenant — what other apps and integrations name the segment by. Free text, but lowercase with underscores is the convention every seeded vocabulary follows.
      * @param {string} params.createdAt - When the segment was created. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
      * @param {object} params.labels - Localized display names keyed by language tag. Null means nobody translated it and a client falls back to showing the code.
@@ -513,10 +586,11 @@ export class CustomersSegments {
      * @throws {RevenexxException}
      * @returns {Promise<Models.Segment>}
      */
-    customersSegmentsCreate(params: { code: string, createdAt?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object }): Promise<Models.Segment>;
+    customersSegmentsCreate(params?: { active?: boolean, code?: string, createdAt?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object }): Promise<Models.Segment>;
     /**
      * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". Creates the group. Rules are optional: leave them out for a hand-picked list, or store a rule document and let the recompute keep the membership up to date. The `code` is what other apps point at, so pick it deliberately. `code` is the only field a create cannot omit; everything else is optional or defaulted by the database. Two rows of this tenant may not share `code` or `external_id` (while external_id IS NOT NULL).
      *
+     * @param {boolean} active - False when the merchant retired the segment. Its memberships stay exactly as they are and it still applies wherever it is named; it is only no longer offered as a choice, and its rules are not recomputed — neither by the schedule nor by hand — until it is active again. `?active=true` is the list of segments a picker should offer. Default true.
      * @param {string} code - Stable identifier, unique per tenant — what other apps and integrations name the segment by. Free text, but lowercase with underscores is the convention every seeded vocabulary follows.
      * @param {string} createdAt - When the segment was created. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
      * @param {object} labels - Localized display names keyed by language tag. Null means nobody translated it and a client falls back to showing the code.
@@ -527,26 +601,28 @@ export class CustomersSegments {
      * @returns {Promise<Models.Segment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsCreate(code: string, createdAt?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object): Promise<Models.Segment>;
+    customersSegmentsCreate(active?: boolean, code?: string, createdAt?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object): Promise<Models.Segment>;
     customersSegmentsCreate(
-        paramsOrFirst: { code: string, createdAt?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object } | string,
-        ...rest: [(string)?, (object)?, (number)?, (SegmentRuleMatch)?, (object)?]    
+        paramsOrFirst?: { active?: boolean, code?: string, createdAt?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object } | boolean,
+        ...rest: [(string)?, (string)?, (object)?, (number)?, (SegmentRuleMatch)?, (object)?]    
     ): Promise<Models.Segment> {
-        let params: { code: string, createdAt?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object };
+        let params: { active?: boolean, code?: string, createdAt?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, createdAt?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object };
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { active?: boolean, code?: string, createdAt?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object };
         } else {
             params = {
-                code: paramsOrFirst as string,
-                createdAt: rest[0] as string,
-                labels: rest[1] as object,
-                position: rest[2] as number,
-                ruleMatch: rest[3] as SegmentRuleMatch,
-                rules: rest[4] as object            
+                active: paramsOrFirst as boolean,
+                code: rest[0] as string,
+                createdAt: rest[1] as string,
+                labels: rest[2] as object,
+                position: rest[3] as number,
+                ruleMatch: rest[4] as SegmentRuleMatch,
+                rules: rest[5] as object            
             };
         }
         
+        const active = params.active;
         const code = params.code;
         const createdAt = params.createdAt;
         const labels = params.labels;
@@ -554,12 +630,12 @@ export class CustomersSegments {
         const ruleMatch = params.ruleMatch;
         const rules = params.rules;
 
-        if (typeof code === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "code"');
-        }
 
         const apiPath = '/v1/customers/segments';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -648,25 +724,48 @@ export class CustomersSegments {
     }
 
     /**
-     * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". Removes the segment. Anything in another app that points at its `code` — a price list, a campaign — is left pointing at nothing, because no app may hold a foreign key into another (ADR-0055). Deleting one takes every `segment_members` row that points at it with it — the foreign keys decide, not this route.
+     * Deletes every segment in the trash for good, oldest first and at most fifty per call, each checked on its own exactly like a second DELETE. A segment an active price list or promotion still names stays in the trash and is listed with the reason; the rest go. POST again while `more` is true. An administrator's right, never a buyer's.
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.SegmentTrashEmptyResult>}
+     */
+    customersSegmentsTrashEmpty(): Promise<Models.SegmentTrashEmptyResult> {
+
+        const apiPath = '/v1/customers/segments/trash/empty';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". The first DELETE moves the segment to the trash. Nothing is refused there: its memberships stay but stop applying, its rules are no longer recomputed, its market assignment stays, and its `code` stays reserved, so a restore loses nothing. The answer warns, with counts, about the members, and about the price lists and promotions that name the code. A second DELETE on a segment already in the trash deletes it for good, with its memberships — refused while an ACTIVE price list or an ACTIVE promotion still names its code. An app that does not answer blocks too; an app the tenant has not installed blocks nothing. The daily purge runs the same delete once the tenant's trash retention has run out.
      *
      * @param {string} params.id - The segment to delete.
      * @throws {RevenexxException}
-     * @returns {Promise<{}>}
+     * @returns {Promise<Models.SegmentDeleteResult>}
      */
-    customersSegmentsDelete(params: { id: string }): Promise<{}>;
+    customersSegmentsDelete(params: { id: string }): Promise<Models.SegmentDeleteResult>;
     /**
-     * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". Removes the segment. Anything in another app that points at its `code` — a price list, a campaign — is left pointing at nothing, because no app may hold a foreign key into another (ADR-0055). Deleting one takes every `segment_members` row that points at it with it — the foreign keys decide, not this route.
+     * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". The first DELETE moves the segment to the trash. Nothing is refused there: its memberships stay but stop applying, its rules are no longer recomputed, its market assignment stays, and its `code` stays reserved, so a restore loses nothing. The answer warns, with counts, about the members, and about the price lists and promotions that name the code. A second DELETE on a segment already in the trash deletes it for good, with its memberships — refused while an ACTIVE price list or an ACTIVE promotion still names its code. An app that does not answer blocks too; an app the tenant has not installed blocks nothing. The daily purge runs the same delete once the tenant's trash retention has run out.
      *
      * @param {string} id - The segment to delete.
      * @throws {RevenexxException}
-     * @returns {Promise<{}>}
+     * @returns {Promise<Models.SegmentDeleteResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsDelete(id: string): Promise<{}>;
+    customersSegmentsDelete(id: string): Promise<Models.SegmentDeleteResult>;
     customersSegmentsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<{}> {
+    ): Promise<Models.SegmentDeleteResult> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -753,6 +852,7 @@ export class CustomersSegments {
      * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". A partial update — send only what changes. Editing the rules does NOT re-evaluate them: that is `POST /customers/segments/{segment_id}/rules/recompute`, so a half-typed rule never silently empties a live segment. Two rows of this tenant may not share `code` or `external_id` (while external_id IS NOT NULL).
      *
      * @param {string} params.id - The segment to update.
+     * @param {boolean} params.active - False when the merchant retired the segment. Its memberships stay exactly as they are and it still applies wherever it is named; it is only no longer offered as a choice, and its rules are not recomputed — neither by the schedule nor by hand — until it is active again. `?active=true` is the list of segments a picker should offer. Default true.
      * @param {string} params.code - Stable identifier, unique per tenant — what other apps and integrations name the segment by. Free text, but lowercase with underscores is the convention every seeded vocabulary follows.
      * @param {object} params.labels - Localized display names keyed by language tag. Null means nobody translated it and a client falls back to showing the code.
      * @param {number} params.position - Sort order in the cockpit, ascending. Ties fall back to insertion order. Default 0.
@@ -761,11 +861,12 @@ export class CustomersSegments {
      * @throws {RevenexxException}
      * @returns {Promise<Models.Segment>}
      */
-    customersSegmentsUpdate(params: { id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object }): Promise<Models.Segment>;
+    customersSegmentsUpdate(params: { id: string, active?: boolean, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object }): Promise<Models.Segment>;
     /**
      * A segment is a named group of ORGANIZATIONS — never of people — built by hand, by rule, or both at once. It is what a price list, a campaign or a shipping option is pointed at when the answer is "these customers, not those". A partial update — send only what changes. Editing the rules does NOT re-evaluate them: that is `POST /customers/segments/{segment_id}/rules/recompute`, so a half-typed rule never silently empties a live segment. Two rows of this tenant may not share `code` or `external_id` (while external_id IS NOT NULL).
      *
      * @param {string} id - The segment to update.
+     * @param {boolean} active - False when the merchant retired the segment. Its memberships stay exactly as they are and it still applies wherever it is named; it is only no longer offered as a choice, and its rules are not recomputed — neither by the schedule nor by hand — until it is active again. `?active=true` is the list of segments a picker should offer. Default true.
      * @param {string} code - Stable identifier, unique per tenant — what other apps and integrations name the segment by. Free text, but lowercase with underscores is the convention every seeded vocabulary follows.
      * @param {object} labels - Localized display names keyed by language tag. Null means nobody translated it and a client falls back to showing the code.
      * @param {number} position - Sort order in the cockpit, ascending. Ties fall back to insertion order. Default 0.
@@ -775,27 +876,29 @@ export class CustomersSegments {
      * @returns {Promise<Models.Segment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersSegmentsUpdate(id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object): Promise<Models.Segment>;
+    customersSegmentsUpdate(id: string, active?: boolean, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object): Promise<Models.Segment>;
     customersSegmentsUpdate(
-        paramsOrFirst: { id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object } | string,
-        ...rest: [(string)?, (object)?, (number)?, (SegmentRuleMatch)?, (object)?]    
+        paramsOrFirst: { id: string, active?: boolean, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object } | string,
+        ...rest: [(boolean)?, (string)?, (object)?, (number)?, (SegmentRuleMatch)?, (object)?]    
     ): Promise<Models.Segment> {
-        let params: { id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object };
+        let params: { id: string, active?: boolean, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, code?: string, labels?: object, position?: number, ruleMatch?: SegmentRuleMatch, rules?: object };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                code: rest[0] as string,
-                labels: rest[1] as object,
-                position: rest[2] as number,
-                ruleMatch: rest[3] as SegmentRuleMatch,
-                rules: rest[4] as object            
+                active: rest[0] as boolean,
+                code: rest[1] as string,
+                labels: rest[2] as object,
+                position: rest[3] as number,
+                ruleMatch: rest[4] as SegmentRuleMatch,
+                rules: rest[5] as object            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const code = params.code;
         const labels = params.labels;
         const position = params.position;
@@ -808,6 +911,9 @@ export class CustomersSegments {
 
         const apiPath = '/v1/customers/segments/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -831,6 +937,57 @@ export class CustomersSegments {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Brings a segment back from the trash. Its memberships, its market assignment and every price list or promotion naming its code apply again as they did, because nothing was changed when it went. Needs the same right as the delete.
+     *
+     * @param {string} params.id - The segment to restore.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.SegmentRestoreResult>}
+     */
+    customersSegmentsRestore(params: { id: string }): Promise<Models.SegmentRestoreResult>;
+    /**
+     * Brings a segment back from the trash. Its memberships, its market assignment and every price list or promotion naming its code apply again as they did, because nothing was changed when it went. Needs the same right as the delete.
+     *
+     * @param {string} id - The segment to restore.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.SegmentRestoreResult>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersSegmentsRestore(id: string): Promise<Models.SegmentRestoreResult>;
+    customersSegmentsRestore(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.SegmentRestoreResult> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/customers/segments/{id}/restore'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload

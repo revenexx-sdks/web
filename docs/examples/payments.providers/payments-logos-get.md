@@ -1,5 +1,5 @@
 ```javascript
-import { Client, PaymentsProviders } from "@revenexx/sdk";
+import { Client, PaymentsProviders, Variant } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -10,7 +10,8 @@ const client = new Client()
 const paymentsProviders = new PaymentsProviders(client);
 
 const result = await paymentsProviders.paymentsLogosGet({
-    slug: 'stripe'
+    slug: 'stripe',
+    variant: Variant.Logo // optional
 });
 
 console.log(result);

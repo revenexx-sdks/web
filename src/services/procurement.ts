@@ -910,6 +910,82 @@ export class Procurement {
     }
 
     /**
+     * The lines of purchase requests still going somewhere — waiting, or approved and not yet ordered — that name one product. Asked before a product is deleted for good (RAD-247): a request that names it would become an order line pointing at nothing. `status` widens or narrows which request states count. Each line carries its request's `request_number` and `request_status`; lines are ordered by request number, then position. Not narrowed for a storefront contact, like every read address here.
+     *
+     * @param {string} params.productId - The product whose open request lines to list. Required; 400 without it or when it is not a uuid.
+     * @param {string} params.status - Purchase-request states separated by commas (default `pending,approved`); one of pending, approved, ordered, declined, cancelled each, 400 otherwise.
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.OpenRequestItemList>}
+     */
+    procurementPurchaseRequestItemsOpen(params: { productId: string, status?: string, limit?: number, offset?: number }): Promise<Models.OpenRequestItemList>;
+    /**
+     * The lines of purchase requests still going somewhere — waiting, or approved and not yet ordered — that name one product. Asked before a product is deleted for good (RAD-247): a request that names it would become an order line pointing at nothing. `status` widens or narrows which request states count. Each line carries its request's `request_number` and `request_status`; lines are ordered by request number, then position. Not narrowed for a storefront contact, like every read address here.
+     *
+     * @param {string} productId - The product whose open request lines to list. Required; 400 without it or when it is not a uuid.
+     * @param {string} status - Purchase-request states separated by commas (default `pending,approved`); one of pending, approved, ordered, declined, cancelled each, 400 otherwise.
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.OpenRequestItemList>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementPurchaseRequestItemsOpen(productId: string, status?: string, limit?: number, offset?: number): Promise<Models.OpenRequestItemList>;
+    procurementPurchaseRequestItemsOpen(
+        paramsOrFirst: { productId: string, status?: string, limit?: number, offset?: number } | string,
+        ...rest: [(string)?, (number)?, (number)?]    
+    ): Promise<Models.OpenRequestItemList> {
+        let params: { productId: string, status?: string, limit?: number, offset?: number };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { productId: string, status?: string, limit?: number, offset?: number };
+        } else {
+            params = {
+                productId: paramsOrFirst as string,
+                status: rest[0] as string,
+                limit: rest[1] as number,
+                offset: rest[2] as number            
+            };
+        }
+        
+        const productId = params.productId;
+        const status = params.status;
+        const limit = params.limit;
+        const offset = params.offset;
+
+        if (typeof productId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "productId"');
+        }
+
+        const apiPath = '/v1/procurement/open-request-items';
+        const apiPayload: Payload = {};
+        if (typeof productId !== 'undefined') {
+            apiPayload['product_id'] = productId;
+        }
+        if (typeof status !== 'undefined') {
+            apiPayload['status'] = status;
+        }
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
      *
      * @param {number} params.limit - Page size (default 50, max 200).
      * @param {number} params.offset - Row offset for pagination (default 0).
@@ -1885,7 +1961,7 @@ export class Procurement {
     /**
      *
      * @param {string} params.id - 
-     * @param {object} params.billingAddress - 
+     * @param {object} params.billingAddress - An address of the platform address type (customers, https://schemas.revenexx.com/apps/customers/address/). The old flat shape (street, zip, city, country, …) and the storefront shape (companyName, contactName, postalCode, id) are accepted and stored as the type; an `id` becomes `source_address_id`; an invalid address is refused (400) naming the field. From submission on it carries `formatted` (the lines as printed) and `source_address_id`. Reads answer the type plus the old flat keys derived from it, until the storefront moves. Not correctable once the request is ordered (409).
      * @param {object} params.buyer - 
      * @param {string} params.cartId - 
      * @param {string} params.channelId - 
@@ -1899,8 +1975,9 @@ export class Procurement {
      * @param {string} params.number - 
      * @param {string} params.organizationId - 
      * @param {object} params.payment - 
+     * @param {string} params.senderCountry - The country the goods are sent from, ISO 3166-1 alpha-2 (DE). It decides what the frozen address lines print in capitals: a destination's capitalised fields when the request goes abroad, none at home. Omit it and the sender country the request was submitted for counts (for a request stored without one, the market's). Used to print, not stored. Anything that is not a country's code is a 400.
      * @param {object} params.shipping - 
-     * @param {object} params.shippingAddress - 
+     * @param {object} params.shippingAddress - An address of the platform address type (customers, https://schemas.revenexx.com/apps/customers/address/). The old flat shape (street, zip, city, country, …) and the storefront shape (companyName, contactName, postalCode, id) are accepted and stored as the type; an `id` becomes `source_address_id`; an invalid address is refused (400) naming the field. From submission on it carries `formatted` (the lines as printed) and `source_address_id`. Reads answer the type plus the old flat keys derived from it, until the storefront moves. Not correctable once the request is ordered (409).
      * @param {number} params.shippingTotal - 
      * @param {number} params.subtotal - 
      * @param {number} params.taxTotal - 
@@ -1908,11 +1985,11 @@ export class Procurement {
      * @throws {RevenexxException}
      * @returns {Promise<Models.PurchaseRequest>}
      */
-    procurementPurchaseRequestsUpdate(params: { id: string, billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, grandTotal?: number, itemCount?: number, metadata?: object, number?: string, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, subtotal?: number, taxTotal?: number, userData?: object }): Promise<Models.PurchaseRequest>;
+    procurementPurchaseRequestsUpdate(params: { id: string, billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, grandTotal?: number, itemCount?: number, metadata?: object, number?: string, organizationId?: string, payment?: object, senderCountry?: string, shipping?: object, shippingAddress?: object, shippingTotal?: number, subtotal?: number, taxTotal?: number, userData?: object }): Promise<Models.PurchaseRequest>;
     /**
      *
      * @param {string} id - 
-     * @param {object} billingAddress - 
+     * @param {object} billingAddress - An address of the platform address type (customers, https://schemas.revenexx.com/apps/customers/address/). The old flat shape (street, zip, city, country, …) and the storefront shape (companyName, contactName, postalCode, id) are accepted and stored as the type; an `id` becomes `source_address_id`; an invalid address is refused (400) naming the field. From submission on it carries `formatted` (the lines as printed) and `source_address_id`. Reads answer the type plus the old flat keys derived from it, until the storefront moves. Not correctable once the request is ordered (409).
      * @param {object} buyer - 
      * @param {string} cartId - 
      * @param {string} channelId - 
@@ -1926,8 +2003,9 @@ export class Procurement {
      * @param {string} number - 
      * @param {string} organizationId - 
      * @param {object} payment - 
+     * @param {string} senderCountry - The country the goods are sent from, ISO 3166-1 alpha-2 (DE). It decides what the frozen address lines print in capitals: a destination's capitalised fields when the request goes abroad, none at home. Omit it and the sender country the request was submitted for counts (for a request stored without one, the market's). Used to print, not stored. Anything that is not a country's code is a 400.
      * @param {object} shipping - 
-     * @param {object} shippingAddress - 
+     * @param {object} shippingAddress - An address of the platform address type (customers, https://schemas.revenexx.com/apps/customers/address/). The old flat shape (street, zip, city, country, …) and the storefront shape (companyName, contactName, postalCode, id) are accepted and stored as the type; an `id` becomes `source_address_id`; an invalid address is refused (400) naming the field. From submission on it carries `formatted` (the lines as printed) and `source_address_id`. Reads answer the type plus the old flat keys derived from it, until the storefront moves. Not correctable once the request is ordered (409).
      * @param {number} shippingTotal - 
      * @param {number} subtotal - 
      * @param {number} taxTotal - 
@@ -1936,15 +2014,15 @@ export class Procurement {
      * @returns {Promise<Models.PurchaseRequest>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    procurementPurchaseRequestsUpdate(id: string, billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, grandTotal?: number, itemCount?: number, metadata?: object, number?: string, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, subtotal?: number, taxTotal?: number, userData?: object): Promise<Models.PurchaseRequest>;
+    procurementPurchaseRequestsUpdate(id: string, billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, grandTotal?: number, itemCount?: number, metadata?: object, number?: string, organizationId?: string, payment?: object, senderCountry?: string, shipping?: object, shippingAddress?: object, shippingTotal?: number, subtotal?: number, taxTotal?: number, userData?: object): Promise<Models.PurchaseRequest>;
     procurementPurchaseRequestsUpdate(
-        paramsOrFirst: { id: string, billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, grandTotal?: number, itemCount?: number, metadata?: object, number?: string, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, subtotal?: number, taxTotal?: number, userData?: object } | string,
-        ...rest: [(object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (object)?, (string)?, (string)?, (object)?, (object)?, (object)?, (number)?, (number)?, (number)?, (object)?]    
+        paramsOrFirst: { id: string, billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, grandTotal?: number, itemCount?: number, metadata?: object, number?: string, organizationId?: string, payment?: object, senderCountry?: string, shipping?: object, shippingAddress?: object, shippingTotal?: number, subtotal?: number, taxTotal?: number, userData?: object } | string,
+        ...rest: [(object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (object)?, (string)?, (string)?, (object)?, (string)?, (object)?, (object)?, (number)?, (number)?, (number)?, (object)?]    
     ): Promise<Models.PurchaseRequest> {
-        let params: { id: string, billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, grandTotal?: number, itemCount?: number, metadata?: object, number?: string, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, subtotal?: number, taxTotal?: number, userData?: object };
+        let params: { id: string, billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, grandTotal?: number, itemCount?: number, metadata?: object, number?: string, organizationId?: string, payment?: object, senderCountry?: string, shipping?: object, shippingAddress?: object, shippingTotal?: number, subtotal?: number, taxTotal?: number, userData?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, grandTotal?: number, itemCount?: number, metadata?: object, number?: string, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, shippingTotal?: number, subtotal?: number, taxTotal?: number, userData?: object };
+            params = (paramsOrFirst || {}) as { id: string, billingAddress?: object, buyer?: object, cartId?: string, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, grandTotal?: number, itemCount?: number, metadata?: object, number?: string, organizationId?: string, payment?: object, senderCountry?: string, shipping?: object, shippingAddress?: object, shippingTotal?: number, subtotal?: number, taxTotal?: number, userData?: object };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -1962,12 +2040,13 @@ export class Procurement {
                 number: rest[11] as string,
                 organizationId: rest[12] as string,
                 payment: rest[13] as object,
-                shipping: rest[14] as object,
-                shippingAddress: rest[15] as object,
-                shippingTotal: rest[16] as number,
-                subtotal: rest[17] as number,
-                taxTotal: rest[18] as number,
-                userData: rest[19] as object            
+                senderCountry: rest[14] as string,
+                shipping: rest[15] as object,
+                shippingAddress: rest[16] as object,
+                shippingTotal: rest[17] as number,
+                subtotal: rest[18] as number,
+                taxTotal: rest[19] as number,
+                userData: rest[20] as object            
             };
         }
         
@@ -1986,6 +2065,7 @@ export class Procurement {
         const number = params.number;
         const organizationId = params.organizationId;
         const payment = params.payment;
+        const senderCountry = params.senderCountry;
         const shipping = params.shipping;
         const shippingAddress = params.shippingAddress;
         const shippingTotal = params.shippingTotal;
@@ -2040,6 +2120,9 @@ export class Procurement {
         }
         if (typeof payment !== 'undefined') {
             apiPayload['payment'] = payment;
+        }
+        if (typeof senderCountry !== 'undefined') {
+            apiPayload['sender_country'] = senderCountry;
         }
         if (typeof shipping !== 'undefined') {
             apiPayload['shipping'] = shipping;
@@ -2292,7 +2375,7 @@ export class Procurement {
      *
      * @param {string} params.cartId - Idempotency key — a re-submit for the same cart returns the existing PR/Order; a cart whose request was declined or cancelled is refused (409).
      * @param {Models.SubmitItem[]} params.items - 
-     * @param {object} params.billingAddress - 
+     * @param {object} params.billingAddress - An address of the platform address type (customers, https://schemas.revenexx.com/apps/customers/address/). The old flat shape (street, zip, city, country, …) and the storefront shape (companyName, contactName, postalCode, id) are accepted and stored as the type; an `id` becomes `source_address_id`; an invalid address is refused (400) naming the field. From submission on it carries `formatted` (the lines as printed) and `source_address_id`. Reads answer the type plus the old flat keys derived from it, until the storefront moves. Not correctable once the request is ordered (409).
      * @param {object} params.buyer - 
      * @param {string} params.channelId - 
      * @param {string} params.contactId - 
@@ -2302,18 +2385,19 @@ export class Procurement {
      * @param {object} params.metadata - 
      * @param {string} params.organizationId - 
      * @param {object} params.payment - 
+     * @param {string} params.senderCountry - The country the goods are sent from, ISO 3166-1 alpha-2 (DE). It decides what the frozen address lines print in capitals: a destination's capitalised fields when the request goes abroad, none at home. Omit it and the market's ship-from country counts, else the market code when it is a country's code (de, at); otherwise nothing but the country line is in capitals. Stored on the request as what it was submitted for, with the market; the order an approval places is handed it and placed in that market. Anything that is not a country's code is a 400.
      * @param {object} params.shipping - 
-     * @param {object} params.shippingAddress - 
+     * @param {object} params.shippingAddress - An address of the platform address type (customers, https://schemas.revenexx.com/apps/customers/address/). The old flat shape (street, zip, city, country, …) and the storefront shape (companyName, contactName, postalCode, id) are accepted and stored as the type; an `id` becomes `source_address_id`; an invalid address is refused (400) naming the field. From submission on it carries `formatted` (the lines as printed) and `source_address_id`. Reads answer the type plus the old flat keys derived from it, until the storefront moves. Not correctable once the request is ordered (409).
      * @param {object} params.userData - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.SubmitResult>}
      */
-    procurementSubmit(params: { cartId: string, items: Models.SubmitItem[], billingAddress?: object, buyer?: object, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, userData?: object }): Promise<Models.SubmitResult>;
+    procurementSubmit(params: { cartId: string, items: Models.SubmitItem[], billingAddress?: object, buyer?: object, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, metadata?: object, organizationId?: string, payment?: object, senderCountry?: string, shipping?: object, shippingAddress?: object, userData?: object }): Promise<Models.SubmitResult>;
     /**
      *
      * @param {string} cartId - Idempotency key — a re-submit for the same cart returns the existing PR/Order; a cart whose request was declined or cancelled is refused (409).
      * @param {Models.SubmitItem[]} items - 
-     * @param {object} billingAddress - 
+     * @param {object} billingAddress - An address of the platform address type (customers, https://schemas.revenexx.com/apps/customers/address/). The old flat shape (street, zip, city, country, …) and the storefront shape (companyName, contactName, postalCode, id) are accepted and stored as the type; an `id` becomes `source_address_id`; an invalid address is refused (400) naming the field. From submission on it carries `formatted` (the lines as printed) and `source_address_id`. Reads answer the type plus the old flat keys derived from it, until the storefront moves. Not correctable once the request is ordered (409).
      * @param {object} buyer - 
      * @param {string} channelId - 
      * @param {string} contactId - 
@@ -2323,22 +2407,23 @@ export class Procurement {
      * @param {object} metadata - 
      * @param {string} organizationId - 
      * @param {object} payment - 
+     * @param {string} senderCountry - The country the goods are sent from, ISO 3166-1 alpha-2 (DE). It decides what the frozen address lines print in capitals: a destination's capitalised fields when the request goes abroad, none at home. Omit it and the market's ship-from country counts, else the market code when it is a country's code (de, at); otherwise nothing but the country line is in capitals. Stored on the request as what it was submitted for, with the market; the order an approval places is handed it and placed in that market. Anything that is not a country's code is a 400.
      * @param {object} shipping - 
-     * @param {object} shippingAddress - 
+     * @param {object} shippingAddress - An address of the platform address type (customers, https://schemas.revenexx.com/apps/customers/address/). The old flat shape (street, zip, city, country, …) and the storefront shape (companyName, contactName, postalCode, id) are accepted and stored as the type; an `id` becomes `source_address_id`; an invalid address is refused (400) naming the field. From submission on it carries `formatted` (the lines as printed) and `source_address_id`. Reads answer the type plus the old flat keys derived from it, until the storefront moves. Not correctable once the request is ordered (409).
      * @param {object} userData - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.SubmitResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    procurementSubmit(cartId: string, items: Models.SubmitItem[], billingAddress?: object, buyer?: object, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, userData?: object): Promise<Models.SubmitResult>;
+    procurementSubmit(cartId: string, items: Models.SubmitItem[], billingAddress?: object, buyer?: object, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, metadata?: object, organizationId?: string, payment?: object, senderCountry?: string, shipping?: object, shippingAddress?: object, userData?: object): Promise<Models.SubmitResult>;
     procurementSubmit(
-        paramsOrFirst: { cartId: string, items: Models.SubmitItem[], billingAddress?: object, buyer?: object, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, userData?: object } | string,
-        ...rest: [(Models.SubmitItem[])?, (object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (object)?]    
+        paramsOrFirst: { cartId: string, items: Models.SubmitItem[], billingAddress?: object, buyer?: object, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, metadata?: object, organizationId?: string, payment?: object, senderCountry?: string, shipping?: object, shippingAddress?: object, userData?: object } | string,
+        ...rest: [(Models.SubmitItem[])?, (object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (object)?, (string)?, (object)?, (object)?, (object)?]    
     ): Promise<Models.SubmitResult> {
-        let params: { cartId: string, items: Models.SubmitItem[], billingAddress?: object, buyer?: object, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, userData?: object };
+        let params: { cartId: string, items: Models.SubmitItem[], billingAddress?: object, buyer?: object, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, metadata?: object, organizationId?: string, payment?: object, senderCountry?: string, shipping?: object, shippingAddress?: object, userData?: object };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { cartId: string, items: Models.SubmitItem[], billingAddress?: object, buyer?: object, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, metadata?: object, organizationId?: string, payment?: object, shipping?: object, shippingAddress?: object, userData?: object };
+            params = (paramsOrFirst || {}) as { cartId: string, items: Models.SubmitItem[], billingAddress?: object, buyer?: object, channelId?: string, contactId?: string, currency?: string, customerOrderNumber?: string, externalRef?: string, metadata?: object, organizationId?: string, payment?: object, senderCountry?: string, shipping?: object, shippingAddress?: object, userData?: object };
         } else {
             params = {
                 cartId: paramsOrFirst as string,
@@ -2353,9 +2438,10 @@ export class Procurement {
                 metadata: rest[8] as object,
                 organizationId: rest[9] as string,
                 payment: rest[10] as object,
-                shipping: rest[11] as object,
-                shippingAddress: rest[12] as object,
-                userData: rest[13] as object            
+                senderCountry: rest[11] as string,
+                shipping: rest[12] as object,
+                shippingAddress: rest[13] as object,
+                userData: rest[14] as object            
             };
         }
         
@@ -2371,6 +2457,7 @@ export class Procurement {
         const metadata = params.metadata;
         const organizationId = params.organizationId;
         const payment = params.payment;
+        const senderCountry = params.senderCountry;
         const shipping = params.shipping;
         const shippingAddress = params.shippingAddress;
         const userData = params.userData;
@@ -2420,6 +2507,9 @@ export class Procurement {
         if (typeof payment !== 'undefined') {
             apiPayload['payment'] = payment;
         }
+        if (typeof senderCountry !== 'undefined') {
+            apiPayload['sender_country'] = senderCountry;
+        }
         if (typeof shipping !== 'undefined') {
             apiPayload['shipping'] = shipping;
         }
@@ -2428,6 +2518,74 @@ export class Procurement {
         }
         if (typeof userData !== 'undefined') {
             apiPayload['user_data'] = userData;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.cartId - The cart to check out. It must be active (409 `cart_not_active` otherwise); a re-submit answers the order or request already made for it.
+     * @param {string} params.costCenterId - The cost centre every line books to. A cart line names none, so without one no budget moves.
+     * @param {string} params.customerOrderNumber - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.SubmitCartResult>}
+     */
+    procurementSubmitCart(params: { cartId: string, costCenterId?: string, customerOrderNumber?: string }): Promise<Models.SubmitCartResult>;
+    /**
+     *
+     * @param {string} cartId - The cart to check out. It must be active (409 `cart_not_active` otherwise); a re-submit answers the order or request already made for it.
+     * @param {string} costCenterId - The cost centre every line books to. A cart line names none, so without one no budget moves.
+     * @param {string} customerOrderNumber - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.SubmitCartResult>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    procurementSubmitCart(cartId: string, costCenterId?: string, customerOrderNumber?: string): Promise<Models.SubmitCartResult>;
+    procurementSubmitCart(
+        paramsOrFirst: { cartId: string, costCenterId?: string, customerOrderNumber?: string } | string,
+        ...rest: [(string)?, (string)?]    
+    ): Promise<Models.SubmitCartResult> {
+        let params: { cartId: string, costCenterId?: string, customerOrderNumber?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { cartId: string, costCenterId?: string, customerOrderNumber?: string };
+        } else {
+            params = {
+                cartId: paramsOrFirst as string,
+                costCenterId: rest[0] as string,
+                customerOrderNumber: rest[1] as string            
+            };
+        }
+        
+        const cartId = params.cartId;
+        const costCenterId = params.costCenterId;
+        const customerOrderNumber = params.customerOrderNumber;
+
+        if (typeof cartId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "cartId"');
+        }
+
+        const apiPath = '/v1/procurement/submit-cart';
+        const apiPayload: Payload = {};
+        if (typeof cartId !== 'undefined') {
+            apiPayload['cart_id'] = cartId;
+        }
+        if (typeof costCenterId !== 'undefined') {
+            apiPayload['cost_center_id'] = costCenterId;
+        }
+        if (typeof customerOrderNumber !== 'undefined') {
+            apiPayload['customer_order_number'] = customerOrderNumber;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

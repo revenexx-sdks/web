@@ -1,5 +1,5 @@
 export enum Status {
-    Invited = 'invited',
-    Active = 'active',
-    Blocked = 'blocked',
+    Connected = 'connected',
+    Error = 'error',
+    Disconnected = 'disconnected',
 }

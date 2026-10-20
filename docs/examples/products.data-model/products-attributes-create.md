@@ -12,6 +12,7 @@ const productsDataModel = new ProductsDataModel(client);
 const result = await productsDataModel.productsAttributesCreate({
     code: 'net_weight',
     type: 'select',
+    active: true, // optional
     config: {
         "reference_entity": "brand"
     }, // optional

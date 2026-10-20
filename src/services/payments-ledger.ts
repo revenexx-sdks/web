@@ -23,6 +23,7 @@ export class PaymentsLedger {
      * @param {string} params.cartId - The cart a payment pays for. Indexed.
      * @param {string} params.contactId - The paying customer contact. Indexed.
      * @param {string} params.orderId - The order a payment is for, as the orders app knows it. Indexed — this is how an order finds what has been paid against it.
+     * @param {string} params.organizationId - The buyer's organization, projected from the order when the payment was created. Indexed — one customer's payments across every order.
      * @param {PaymentStatus} params.status - Restrict to one lifecycle state. Indexed.
      * @param {string} params.orderRef - Exact external order reference.
      * @param {string} params.methodCode - Exact code of the method the payment was made with.
@@ -31,11 +32,12 @@ export class PaymentsLedger {
      * @param {PaymentDunningStage} params.dunningStage - Restrict to one dunning stage — what the daily scan wrote.
      * @param {string} params.idempotencyKey - Exact idempotency key. Unique per tenant, so this answers at most one row.
      * @param {string} params.externalId - Exact key of the system that booked the payment — the ERP's document number, not the provider's own transaction id. This is the reconciliation lookup. Not unique: a payment cannot be updated here, so several rows may legitimately carry one key, and this may answer more than one.
+     * @param {string} params.reference - Exact reference — what the payment is called by: the provider transaction id, else the external id, else the order reference, else the method code. Indexed; the same value other apps' payment pickers show.
      * @param {string} params.sourceSyncedAt - Exact instant a payment was last confirmed against its source. The index behind it is what makes a delta run cheap, and a delta run SORTS (`?order=source_synced_at.desc`) rather than naming one instant — `external_refs` and `source_data` carry no parameter at all, because such a column is compared as a whole document.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    paymentsList(params?: { limit?: number, offset?: number, order?: string, cartId?: string, contactId?: string, orderId?: string, status?: PaymentStatus, orderRef?: string, methodCode?: string, kind?: PaymentMethodKind, provider?: string, dunningStage?: PaymentDunningStage, idempotencyKey?: string, externalId?: string, sourceSyncedAt?: string }): Promise<{}>;
+    paymentsList(params?: { limit?: number, offset?: number, order?: string, cartId?: string, contactId?: string, orderId?: string, organizationId?: string, status?: PaymentStatus, orderRef?: string, methodCode?: string, kind?: PaymentMethodKind, provider?: string, dunningStage?: PaymentDunningStage, idempotencyKey?: string, externalId?: string, reference?: string, sourceSyncedAt?: string }): Promise<{}>;
     /**
      * The ledger, paged and filtered — the Payments screen, the reconciliation query and the way an order or a cart finds out what has been paid against it. Every column of the entity is an exact-match filter, which is what makes it useful: `?cart_id=` and `?contact_id=` are indexed, `?status=authorized&kind=self_managed` is the awaiting-payment queue the dunning scan classifies, and `?order_ref=` is the only way to resolve a payment by its external reference. Rows come back in the database's own order, so a newest-first list needs `?order=created_at.desc`. `error_message` is answered from the failure taxonomy rather than echoed out of the column, so what a driver or a PSP actually wrote is never serialized here. On a buyer's own call the list holds that buyer's payments only, and a `contact_id` naming anyone else answers 400 `buyer_mismatch`.
      *
@@ -45,6 +47,7 @@ export class PaymentsLedger {
      * @param {string} cartId - The cart a payment pays for. Indexed.
      * @param {string} contactId - The paying customer contact. Indexed.
      * @param {string} orderId - The order a payment is for, as the orders app knows it. Indexed — this is how an order finds what has been paid against it.
+     * @param {string} organizationId - The buyer's organization, projected from the order when the payment was created. Indexed — one customer's payments across every order.
      * @param {PaymentStatus} status - Restrict to one lifecycle state. Indexed.
      * @param {string} orderRef - Exact external order reference.
      * @param {string} methodCode - Exact code of the method the payment was made with.
@@ -53,20 +56,21 @@ export class PaymentsLedger {
      * @param {PaymentDunningStage} dunningStage - Restrict to one dunning stage — what the daily scan wrote.
      * @param {string} idempotencyKey - Exact idempotency key. Unique per tenant, so this answers at most one row.
      * @param {string} externalId - Exact key of the system that booked the payment — the ERP's document number, not the provider's own transaction id. This is the reconciliation lookup. Not unique: a payment cannot be updated here, so several rows may legitimately carry one key, and this may answer more than one.
+     * @param {string} reference - Exact reference — what the payment is called by: the provider transaction id, else the external id, else the order reference, else the method code. Indexed; the same value other apps' payment pickers show.
      * @param {string} sourceSyncedAt - Exact instant a payment was last confirmed against its source. The index behind it is what makes a delta run cheap, and a delta run SORTS (`?order=source_synced_at.desc`) rather than naming one instant — `external_refs` and `source_data` carry no parameter at all, because such a column is compared as a whole document.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsList(limit?: number, offset?: number, order?: string, cartId?: string, contactId?: string, orderId?: string, status?: PaymentStatus, orderRef?: string, methodCode?: string, kind?: PaymentMethodKind, provider?: string, dunningStage?: PaymentDunningStage, idempotencyKey?: string, externalId?: string, sourceSyncedAt?: string): Promise<{}>;
+    paymentsList(limit?: number, offset?: number, order?: string, cartId?: string, contactId?: string, orderId?: string, organizationId?: string, status?: PaymentStatus, orderRef?: string, methodCode?: string, kind?: PaymentMethodKind, provider?: string, dunningStage?: PaymentDunningStage, idempotencyKey?: string, externalId?: string, reference?: string, sourceSyncedAt?: string): Promise<{}>;
     paymentsList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, cartId?: string, contactId?: string, orderId?: string, status?: PaymentStatus, orderRef?: string, methodCode?: string, kind?: PaymentMethodKind, provider?: string, dunningStage?: PaymentDunningStage, idempotencyKey?: string, externalId?: string, sourceSyncedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (PaymentStatus)?, (string)?, (string)?, (PaymentMethodKind)?, (string)?, (PaymentDunningStage)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, cartId?: string, contactId?: string, orderId?: string, organizationId?: string, status?: PaymentStatus, orderRef?: string, methodCode?: string, kind?: PaymentMethodKind, provider?: string, dunningStage?: PaymentDunningStage, idempotencyKey?: string, externalId?: string, reference?: string, sourceSyncedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (PaymentStatus)?, (string)?, (string)?, (PaymentMethodKind)?, (string)?, (PaymentDunningStage)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, cartId?: string, contactId?: string, orderId?: string, status?: PaymentStatus, orderRef?: string, methodCode?: string, kind?: PaymentMethodKind, provider?: string, dunningStage?: PaymentDunningStage, idempotencyKey?: string, externalId?: string, sourceSyncedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, cartId?: string, contactId?: string, orderId?: string, organizationId?: string, status?: PaymentStatus, orderRef?: string, methodCode?: string, kind?: PaymentMethodKind, provider?: string, dunningStage?: PaymentDunningStage, idempotencyKey?: string, externalId?: string, reference?: string, sourceSyncedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, cartId?: string, contactId?: string, orderId?: string, status?: PaymentStatus, orderRef?: string, methodCode?: string, kind?: PaymentMethodKind, provider?: string, dunningStage?: PaymentDunningStage, idempotencyKey?: string, externalId?: string, sourceSyncedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, cartId?: string, contactId?: string, orderId?: string, organizationId?: string, status?: PaymentStatus, orderRef?: string, methodCode?: string, kind?: PaymentMethodKind, provider?: string, dunningStage?: PaymentDunningStage, idempotencyKey?: string, externalId?: string, reference?: string, sourceSyncedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -75,15 +79,17 @@ export class PaymentsLedger {
                 cartId: rest[2] as string,
                 contactId: rest[3] as string,
                 orderId: rest[4] as string,
-                status: rest[5] as PaymentStatus,
-                orderRef: rest[6] as string,
-                methodCode: rest[7] as string,
-                kind: rest[8] as PaymentMethodKind,
-                provider: rest[9] as string,
-                dunningStage: rest[10] as PaymentDunningStage,
-                idempotencyKey: rest[11] as string,
-                externalId: rest[12] as string,
-                sourceSyncedAt: rest[13] as string            
+                organizationId: rest[5] as string,
+                status: rest[6] as PaymentStatus,
+                orderRef: rest[7] as string,
+                methodCode: rest[8] as string,
+                kind: rest[9] as PaymentMethodKind,
+                provider: rest[10] as string,
+                dunningStage: rest[11] as PaymentDunningStage,
+                idempotencyKey: rest[12] as string,
+                externalId: rest[13] as string,
+                reference: rest[14] as string,
+                sourceSyncedAt: rest[15] as string            
             };
         }
         
@@ -93,6 +99,7 @@ export class PaymentsLedger {
         const cartId = params.cartId;
         const contactId = params.contactId;
         const orderId = params.orderId;
+        const organizationId = params.organizationId;
         const status = params.status;
         const orderRef = params.orderRef;
         const methodCode = params.methodCode;
@@ -101,6 +108,7 @@ export class PaymentsLedger {
         const dunningStage = params.dunningStage;
         const idempotencyKey = params.idempotencyKey;
         const externalId = params.externalId;
+        const reference = params.reference;
         const sourceSyncedAt = params.sourceSyncedAt;
 
 
@@ -123,6 +131,9 @@ export class PaymentsLedger {
         }
         if (typeof orderId !== 'undefined') {
             apiPayload['order_id'] = orderId;
+        }
+        if (typeof organizationId !== 'undefined') {
+            apiPayload['organization_id'] = organizationId;
         }
         if (typeof status !== 'undefined') {
             apiPayload['status'] = status;
@@ -147,6 +158,9 @@ export class PaymentsLedger {
         }
         if (typeof externalId !== 'undefined') {
             apiPayload['external_id'] = externalId;
+        }
+        if (typeof reference !== 'undefined') {
+            apiPayload['reference'] = reference;
         }
         if (typeof sourceSyncedAt !== 'undefined') {
             apiPayload['source_synced_at'] = sourceSyncedAt;
@@ -178,7 +192,7 @@ export class PaymentsLedger {
      * @param {string} params.idempotencyKey - The caller's own key for this creation attempt. Sending it again answers the SAME payment with 200 instead of creating a second one — which is what makes a retried checkout safe. Unique per tenant, so a filter on it answers at most one row. The replay answers 200, not 201.
      * @param {object} params.metadata - Free-form data to keep on the payment. Merged with the keys this app writes itself (`provider_method`, `return_url`, later the cancel/refund reasons), which win on a collision.
      * @param {string} params.orderId - The order this payment is for, as the orders app knows it (its uuid). Optional. When it is sent, the payment is checked against the order before anything is written: its currency must be the order's (409 `currency_mismatch`), and together with every payment of the order that is created, requires_action, authorized or captured it must not exceed the order's `grand_total` (409 `amount_exceeds_order`) — several payments per order are fine. A `cancelled` order takes no payment (409 `order_not_payable`); every other order status passes. An order that does not exist is 400 `unknown_order`; an orders app that cannot be asked is 502 `orders_unavailable` and nothing is created. On a buyer's own call the order must be the buyer's (400 `buyer_mismatch`). Left out, the payment is accepted unchecked, as before 1.0 — a purchase under approval has no order yet.
-     * @param {string} params.orderRef - The external order reference the checkout wrote onto the payment. It is what POST /payments/orders/{order_ref}/capture resolves and the fallback key a PSP webhook is matched on when it carries no transaction id — so an integration that leaves it null gives up both. Free text with no uniqueness: several payments may share one reference.
+     * @param {string} params.orderRef - The external order reference the checkout wrote onto the payment. It is what POST /payments/orders/{order_ref}/capture resolves and the fallback key a PSP webhook is matched on when it carries no transaction id — so an integration that leaves it null gives up both. Free text with no uniqueness: several payments may share one reference. When a payment is created without `order_id`, a reference that names exactly one order of the tenant — its id or its number — in the payment's currency, with a total the payment fits into, links the payment to that order (`order_id`, `organization_id`); one that does not, or an orders app that does not answer within three seconds, leaves the payment unlinked and is never a refusal.
      * @param {string} params.returnUrl - Where the PSP sends the buyer back after a redirect or a 3-D Secure challenge. Kept in `metadata.return_url` and handed to the driver — a PSP method that needs a redirect and has none leaves the buyer stranded at the provider.
      * @param {object} params.sourceData - What the source said about this payment, kept as it said it. `system` names it, `etag` is the token an `If-Match` write-back has to hand back — there is nowhere else to keep it between two runs — and `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost. Free jsonb; nothing here is read by this app.
      * @param {string} params.sourceSyncedAt - When this payment was last confirmed against the system that booked it. What a delta run asks for changes since, and what tells an operator a feed has gone quiet — a capture or a refund does not touch it, because it says when the SOURCE was last seen and not when the row moved. Indexed, and null for a payment no source owns.
@@ -200,7 +214,7 @@ export class PaymentsLedger {
      * @param {string} idempotencyKey - The caller's own key for this creation attempt. Sending it again answers the SAME payment with 200 instead of creating a second one — which is what makes a retried checkout safe. Unique per tenant, so a filter on it answers at most one row. The replay answers 200, not 201.
      * @param {object} metadata - Free-form data to keep on the payment. Merged with the keys this app writes itself (`provider_method`, `return_url`, later the cancel/refund reasons), which win on a collision.
      * @param {string} orderId - The order this payment is for, as the orders app knows it (its uuid). Optional. When it is sent, the payment is checked against the order before anything is written: its currency must be the order's (409 `currency_mismatch`), and together with every payment of the order that is created, requires_action, authorized or captured it must not exceed the order's `grand_total` (409 `amount_exceeds_order`) — several payments per order are fine. A `cancelled` order takes no payment (409 `order_not_payable`); every other order status passes. An order that does not exist is 400 `unknown_order`; an orders app that cannot be asked is 502 `orders_unavailable` and nothing is created. On a buyer's own call the order must be the buyer's (400 `buyer_mismatch`). Left out, the payment is accepted unchecked, as before 1.0 — a purchase under approval has no order yet.
-     * @param {string} orderRef - The external order reference the checkout wrote onto the payment. It is what POST /payments/orders/{order_ref}/capture resolves and the fallback key a PSP webhook is matched on when it carries no transaction id — so an integration that leaves it null gives up both. Free text with no uniqueness: several payments may share one reference.
+     * @param {string} orderRef - The external order reference the checkout wrote onto the payment. It is what POST /payments/orders/{order_ref}/capture resolves and the fallback key a PSP webhook is matched on when it carries no transaction id — so an integration that leaves it null gives up both. Free text with no uniqueness: several payments may share one reference. When a payment is created without `order_id`, a reference that names exactly one order of the tenant — its id or its number — in the payment's currency, with a total the payment fits into, links the payment to that order (`order_id`, `organization_id`); one that does not, or an orders app that does not answer within three seconds, leaves the payment unlinked and is never a refusal.
      * @param {string} returnUrl - Where the PSP sends the buyer back after a redirect or a 3-D Secure challenge. Kept in `metadata.return_url` and handed to the driver — a PSP method that needs a redirect and has none leaves the buyer stranded at the provider.
      * @param {object} sourceData - What the source said about this payment, kept as it said it. `system` names it, `etag` is the token an `If-Match` write-back has to hand back — there is nowhere else to keep it between two runs — and `raw` holds the source fields this app does not model, so they survive a round trip instead of being lost. Free jsonb; nothing here is read by this app.
      * @param {string} sourceSyncedAt - When this payment was last confirmed against the system that booked it. What a delta run asks for changes since, and what tells an operator a feed has gone quiet — a capture or a refund does not touch it, because it says when the SOURCE was last seen and not when the row moved. Indexed, and null for a payment no source owns.
@@ -384,6 +398,73 @@ export class PaymentsLedger {
 
         const apiPath = '/v1/payments/errors/redact';
         const apiPayload: Payload = {};
+        if (typeof apply !== 'undefined') {
+            apiPayload['apply'] = apply;
+        }
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Resolves the `order_ref` of payments that name no `order_id` to the order it names — by id when it is one, otherwise by number through the orders app — and writes `order_id` and the order's `organization_id`, nothing else. A payment that already names its order but no organization gets the order's organization. A match is linked only when it can have been this payment's order: the same currency, an amount within the order's total, and an order no younger than the payment — a number a later order reuses is reported, never linked. It is the same resolution creating a payment now runs, for payments written before it did. Dry-run by default — reports what it would link and changes nothing until apply:true. Oldest first, `limit` rows a run; `after` continues from the `next` of the previous run. Idempotent: a linked payment is no longer scanned. An orders app that cannot be asked answers 502 `orders_unavailable` and the run stops where it was.
+     *
+     * @param {string} params.after - Continue after this creation time — the `next` a previous run answered. Left out, the scan starts at the oldest payment.
+     * @param {boolean} params.apply - Write the links. Defaults to false, which reports what WOULD be linked and touches nothing.
+     * @param {number} params.limit - How many payments without an organization to scan, oldest first. Defaults to 100, capped at 500.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    paymentsOrdersRelink(params?: { after?: string, apply?: boolean, limit?: number }): Promise<{}>;
+    /**
+     * Resolves the `order_ref` of payments that name no `order_id` to the order it names — by id when it is one, otherwise by number through the orders app — and writes `order_id` and the order's `organization_id`, nothing else. A payment that already names its order but no organization gets the order's organization. A match is linked only when it can have been this payment's order: the same currency, an amount within the order's total, and an order no younger than the payment — a number a later order reuses is reported, never linked. It is the same resolution creating a payment now runs, for payments written before it did. Dry-run by default — reports what it would link and changes nothing until apply:true. Oldest first, `limit` rows a run; `after` continues from the `next` of the previous run. Idempotent: a linked payment is no longer scanned. An orders app that cannot be asked answers 502 `orders_unavailable` and the run stops where it was.
+     *
+     * @param {string} after - Continue after this creation time — the `next` a previous run answered. Left out, the scan starts at the oldest payment.
+     * @param {boolean} apply - Write the links. Defaults to false, which reports what WOULD be linked and touches nothing.
+     * @param {number} limit - How many payments without an organization to scan, oldest first. Defaults to 100, capped at 500.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    paymentsOrdersRelink(after?: string, apply?: boolean, limit?: number): Promise<{}>;
+    paymentsOrdersRelink(
+        paramsOrFirst?: { after?: string, apply?: boolean, limit?: number } | string,
+        ...rest: [(boolean)?, (number)?]    
+    ): Promise<{}> {
+        let params: { after?: string, apply?: boolean, limit?: number };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { after?: string, apply?: boolean, limit?: number };
+        } else {
+            params = {
+                after: paramsOrFirst as string,
+                apply: rest[0] as boolean,
+                limit: rest[1] as number            
+            };
+        }
+        
+        const after = params.after;
+        const apply = params.apply;
+        const limit = params.limit;
+
+
+        const apiPath = '/v1/payments/orders/relink';
+        const apiPayload: Payload = {};
+        if (typeof after !== 'undefined') {
+            apiPayload['after'] = after;
+        }
         if (typeof apply !== 'undefined') {
             apiPayload['apply'] = apply;
         }

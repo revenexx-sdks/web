@@ -11,8 +11,8 @@ const customersContacts = new CustomersContacts(client);
 
 const result = await customersContacts.customersContactsInvite({
     contactId: '',
-    url: 'https://shop.example.com/anmelden',
-    invitedBy: '' // optional
+    invitedBy: '', // optional
+    url: 'https://shop.example.com/anmelden' // optional
 });
 
 console.log(result);

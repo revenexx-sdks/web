@@ -13,7 +13,7 @@ const result = await promotionsVouchers.promotionsBatchesCreate({
     name: '',
     promotionId: '',
     alphabet: '', // optional
-    metadata: {}, // optional
+    metadata: null, // optional
     pattern: '', // optional
     requestRef: '', // optional
     requested: 1, // optional

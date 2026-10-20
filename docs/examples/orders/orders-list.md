@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Orders, OrderStatus, OrderPaymentStatus, OrderFulfillmentStatus } from "@revenexx/sdk";
+import { Client, Orders, OrderStatus, OrderPaymentStatus, OrderFulfillmentStatus, OrderCancellationKind } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -37,11 +37,17 @@ const result = await orders.ordersList({
     taxTotal: 29.56, // optional
     grandTotal: 185.16, // optional
     placedAt: '2026-01-01T12:00:00Z', // optional
+    placedOn: '2026-01-01', // optional
     completedAt: '2026-01-01T12:00:00Z', // optional
     cancelledAt: '2026-01-01T12:00:00Z', // optional
+    cancellationKind: OrderCancellationKind.Cancellation, // optional
+    cancelledBy: '66666666-6666-4666-8666-666666666666', // optional
+    cancellationReason: 'Over the quarterly budget', // optional
     externalId: 'SO-004711', // optional
     sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
     requestedDeliveryDate: '2026-01-01', // optional
+    utmCampaign: 'herbst-2026', // optional
+    campaignRef: '', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z', // optional
     limit: 50, // optional

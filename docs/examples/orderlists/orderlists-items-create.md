@@ -14,6 +14,7 @@ const result = await orderlists.orderlistsItemsCreate({
     name: 'Copy paper A4, 80 g/m², white',
     categorySlug: 'office-supplies', // optional
     costCenterId: 'CC-100', // optional
+    currency: 'EUR', // optional
     customSku: 'CUST-4711', // optional
     externalId: 'MERKZETTEL-20481/7', // optional
     externalRefs: {

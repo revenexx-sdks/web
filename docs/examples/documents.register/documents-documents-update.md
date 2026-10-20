@@ -31,6 +31,7 @@ const result = await documentsRegister.documentsDocumentsUpdate({
         "erp_series": "RE"
     }, // optional
     number: 'RE-2026-004711', // optional
+    organizationId: '', // optional
     source: DocumentSource.Storage, // optional
     sourceData: {
         "etag": "W\/\"JzQ0O0c2\"",

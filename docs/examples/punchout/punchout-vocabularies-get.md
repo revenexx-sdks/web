@@ -10,7 +10,7 @@ const client = new Client()
 const punchout = new Punchout(client);
 
 const result = await punchout.punchoutVocabulariesGet({
-    name: PunchoutVocabulariesGetName.Entryprobeoutcome
+    name: PunchoutVocabulariesGetName.Authstrategies
 });
 
 console.log(result);

@@ -19,6 +19,8 @@ const result = await inventoriesStock.inventoriesStockList({
     sku: 'ACME-4711-BLK', // optional
     onHand: 42, // optional
     reserved: 5, // optional
+    available: 37, // optional
+    belowReorder: true, // optional
     reorderPoint: 10, // optional
     expectedAt: '2026-11-14', // optional
     availabilityCode: 'available', // optional

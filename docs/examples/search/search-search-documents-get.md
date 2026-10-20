@@ -10,7 +10,7 @@ const client = new Client()
 const search = new Search(client);
 
 const result = await search.searchSearchDocumentsGet({
-    collection: Collection.Products,
+    collection: Collection.Categories,
     q: '', // optional
     queryBy: '', // optional
     filterBy: '', // optional

@@ -13,10 +13,14 @@ const result = await inventoriesLocations.inventoriesLocationsCreate({
     code: 'main',
     name: 'Main warehouse',
     address: {
-        "city": "Nuremberg",
-        "country": "DE",
-        "postal_code": "90402",
-        "street": "Industriering 4"
+        "address_line1": "Industriering 4",
+        "country_code": "DE",
+        "formatted": [
+            "Industriering 4",
+            "90402 Nuremberg"
+        ],
+        "locality": "Nuremberg",
+        "postal_code": "90402"
     }, // optional
     enabled: true, // optional
     labels: {

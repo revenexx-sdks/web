@@ -7,4 +7,5 @@ export enum BudgetChangeReason {
     Rollover = 'rollover',
     Lapsed = 'lapsed',
     Cancellation = 'cancellation',
+    Discarded = 'discarded',
 }

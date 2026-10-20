@@ -13,6 +13,7 @@ const result = await markets.marketsTaxClassesCreate({
     marketId: '',
     code: 'standard',
     name: 'Standard rate',
+    active: true, // optional
     isDefault: true, // optional
     labels: {
         "de-DE": "Regelsatz",

@@ -10,7 +10,7 @@ const client = new Client()
 const search = new Search(client);
 
 const result = await search.searchGetCollection({
-    collection: Collection.Products
+    collection: Collection.Categories
 });
 
 console.log(result);

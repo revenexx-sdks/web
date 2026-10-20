@@ -13,6 +13,7 @@ const result = await documentsRegister.documentsDocumentsList({
     id: '', // optional
     entityType: 'order', // optional
     entityId: '', // optional
+    organizationId: '', // optional
     kind: 'invoice', // optional
     number: 'RE-2026-004711', // optional
     source: DocumentsDocumentsListSource.Storage, // optional

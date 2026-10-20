@@ -12,45 +12,49 @@ export class QuotesRanges {
     }
 
     /**
-     * The counters quote numbers are drawn from. A market points at one by its `code`; the app seeds `quote` with the prefix `ANG-`.
+     * The counters quote numbers are drawn from. A market points at one by its `code`; the app seeds `quote` with the prefix `ANG-`. Every range is listed, switched off or not, unless `active` asks for one kind.
      *
      * @param {number} params.limit - Page size (default 50, max 200). A larger value is clamped rather than refused.
      * @param {number} params.offset - Row offset for pagination (default 0). Page with `page.total` and `page.hasMore`.
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. The column has to be one this entity has.
+     * @param {boolean} params.active - Only the ranges that are switched on (`true`) or off (`false`). Omitted lists both.
      * @throws {RevenexxException}
      * @returns {Promise<Models.NumberRangeList>}
      */
-    quotesRangesList(params?: { limit?: number, offset?: number, order?: string }): Promise<Models.NumberRangeList>;
+    quotesRangesList(params?: { limit?: number, offset?: number, order?: string, active?: boolean }): Promise<Models.NumberRangeList>;
     /**
-     * The counters quote numbers are drawn from. A market points at one by its `code`; the app seeds `quote` with the prefix `ANG-`.
+     * The counters quote numbers are drawn from. A market points at one by its `code`; the app seeds `quote` with the prefix `ANG-`. Every range is listed, switched off or not, unless `active` asks for one kind.
      *
      * @param {number} limit - Page size (default 50, max 200). A larger value is clamped rather than refused.
      * @param {number} offset - Row offset for pagination (default 0). Page with `page.total` and `page.hasMore`.
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. The column has to be one this entity has.
+     * @param {boolean} active - Only the ranges that are switched on (`true`) or off (`false`). Omitted lists both.
      * @throws {RevenexxException}
      * @returns {Promise<Models.NumberRangeList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    quotesRangesList(limit?: number, offset?: number, order?: string): Promise<Models.NumberRangeList>;
+    quotesRangesList(limit?: number, offset?: number, order?: string, active?: boolean): Promise<Models.NumberRangeList>;
     quotesRangesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
-        ...rest: [(number)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, active?: boolean } | number,
+        ...rest: [(number)?, (string)?, (boolean)?]    
     ): Promise<Models.NumberRangeList> {
-        let params: { limit?: number, offset?: number, order?: string };
+        let params: { limit?: number, offset?: number, order?: string, active?: boolean };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, active?: boolean };
         } else {
             params = {
                 limit: paramsOrFirst as number,
                 offset: rest[0] as number,
-                order: rest[1] as string            
+                order: rest[1] as string,
+                active: rest[2] as boolean            
             };
         }
         
         const limit = params.limit;
         const offset = params.offset;
         const order = params.order;
+        const active = params.active;
 
 
         const apiPath = '/v1/quotes/number-ranges';
@@ -63,6 +67,9 @@ export class QuotesRanges {
         }
         if (typeof order !== 'undefined') {
             apiPayload['order'] = order;
+        }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -81,73 +88,85 @@ export class QuotesRanges {
      * Adds a counter, so one market can number its quotes differently from another. The code is unique per tenant.
      *
      * @param {string} params.code - What a market points at to draw from this range. Unique per tenant; `quote` is the one this app seeds.
+     * @param {boolean} params.active - Whether quote numbers may be drawn from this range. True by default. A quote that would draw from an inactive range is refused with 422 `number_range_inactive` — never recreated or drawn from another range. Numbers already issued stay, and seeding never switches a range back on.
      * @param {number} params.counter - The last number drawn. The next draw adds `step` and stores the result, so a number is never handed out twice.
      * @param {string} params.createdAt - When the row was written, stamped by the database.
      * @param {string} params.id - The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+     * @param {object} params.labels - The name per locale, keyed by locale code, e.g. `{"de": "Angebotsnummern", "en": "Quote numbers"}`. Falls back to `title` for a locale that is missing. A standard range created before names existed is given them by the next seed or draw; a name already there is never overwritten.
      * @param {number} params.padding - How many digits the counter is padded to. 6 gives `000001`.
      * @param {number} params.positionStep - How far apart position numbers sit on a new quote — 10 leaves room to insert a line later without renumbering.
      * @param {string} params.prefix - Put in front of the counter — `ANG-` produces `ANG-000001`.
      * @param {number} params.step - How far the counter moves per draw. 1 is consecutive; a larger step leaves gaps on purpose.
      * @param {string} params.suffix - Put after the counter. Empty on the standard range.
      * @param {string} params.tenantId - The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+     * @param {string} params.title - The range's name, what a list and a breadcrumb show: the fallback for every locale `labels` does not carry. The standard `quote` range is named `Quote numbers`; a range of the merchant's own has none until they give it one, and a screen shows the code instead.
      * @param {string} params.updatedAt - When the row last changed, stamped by the app on every write.
      * @throws {RevenexxException}
      * @returns {Promise<Models.NumberRange>}
      */
-    quotesRangesCreate(params: { code: string, counter?: number, createdAt?: string, id?: string, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, updatedAt?: string }): Promise<Models.NumberRange>;
+    quotesRangesCreate(params: { code: string, active?: boolean, counter?: number, createdAt?: string, id?: string, labels?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, title?: string, updatedAt?: string }): Promise<Models.NumberRange>;
     /**
      * Adds a counter, so one market can number its quotes differently from another. The code is unique per tenant.
      *
      * @param {string} code - What a market points at to draw from this range. Unique per tenant; `quote` is the one this app seeds.
+     * @param {boolean} active - Whether quote numbers may be drawn from this range. True by default. A quote that would draw from an inactive range is refused with 422 `number_range_inactive` — never recreated or drawn from another range. Numbers already issued stay, and seeding never switches a range back on.
      * @param {number} counter - The last number drawn. The next draw adds `step` and stores the result, so a number is never handed out twice.
      * @param {string} createdAt - When the row was written, stamped by the database.
      * @param {string} id - The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+     * @param {object} labels - The name per locale, keyed by locale code, e.g. `{"de": "Angebotsnummern", "en": "Quote numbers"}`. Falls back to `title` for a locale that is missing. A standard range created before names existed is given them by the next seed or draw; a name already there is never overwritten.
      * @param {number} padding - How many digits the counter is padded to. 6 gives `000001`.
      * @param {number} positionStep - How far apart position numbers sit on a new quote — 10 leaves room to insert a line later without renumbering.
      * @param {string} prefix - Put in front of the counter — `ANG-` produces `ANG-000001`.
      * @param {number} step - How far the counter moves per draw. 1 is consecutive; a larger step leaves gaps on purpose.
      * @param {string} suffix - Put after the counter. Empty on the standard range.
      * @param {string} tenantId - The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+     * @param {string} title - The range's name, what a list and a breadcrumb show: the fallback for every locale `labels` does not carry. The standard `quote` range is named `Quote numbers`; a range of the merchant's own has none until they give it one, and a screen shows the code instead.
      * @param {string} updatedAt - When the row last changed, stamped by the app on every write.
      * @throws {RevenexxException}
      * @returns {Promise<Models.NumberRange>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    quotesRangesCreate(code: string, counter?: number, createdAt?: string, id?: string, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, updatedAt?: string): Promise<Models.NumberRange>;
+    quotesRangesCreate(code: string, active?: boolean, counter?: number, createdAt?: string, id?: string, labels?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, title?: string, updatedAt?: string): Promise<Models.NumberRange>;
     quotesRangesCreate(
-        paramsOrFirst: { code: string, counter?: number, createdAt?: string, id?: string, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, updatedAt?: string } | string,
-        ...rest: [(number)?, (string)?, (string)?, (number)?, (number)?, (string)?, (number)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst: { code: string, active?: boolean, counter?: number, createdAt?: string, id?: string, labels?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, title?: string, updatedAt?: string } | string,
+        ...rest: [(boolean)?, (number)?, (string)?, (string)?, (object)?, (number)?, (number)?, (string)?, (number)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.NumberRange> {
-        let params: { code: string, counter?: number, createdAt?: string, id?: string, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, updatedAt?: string };
+        let params: { code: string, active?: boolean, counter?: number, createdAt?: string, id?: string, labels?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, title?: string, updatedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, counter?: number, createdAt?: string, id?: string, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { code: string, active?: boolean, counter?: number, createdAt?: string, id?: string, labels?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, title?: string, updatedAt?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
-                counter: rest[0] as number,
-                createdAt: rest[1] as string,
-                id: rest[2] as string,
-                padding: rest[3] as number,
-                positionStep: rest[4] as number,
-                prefix: rest[5] as string,
-                step: rest[6] as number,
-                suffix: rest[7] as string,
-                tenantId: rest[8] as string,
-                updatedAt: rest[9] as string            
+                active: rest[0] as boolean,
+                counter: rest[1] as number,
+                createdAt: rest[2] as string,
+                id: rest[3] as string,
+                labels: rest[4] as object,
+                padding: rest[5] as number,
+                positionStep: rest[6] as number,
+                prefix: rest[7] as string,
+                step: rest[8] as number,
+                suffix: rest[9] as string,
+                tenantId: rest[10] as string,
+                title: rest[11] as string,
+                updatedAt: rest[12] as string            
             };
         }
         
         const code = params.code;
+        const active = params.active;
         const counter = params.counter;
         const createdAt = params.createdAt;
         const id = params.id;
+        const labels = params.labels;
         const padding = params.padding;
         const positionStep = params.positionStep;
         const prefix = params.prefix;
         const step = params.step;
         const suffix = params.suffix;
         const tenantId = params.tenantId;
+        const title = params.title;
         const updatedAt = params.updatedAt;
 
         if (typeof code === 'undefined') {
@@ -156,6 +175,9 @@ export class QuotesRanges {
 
         const apiPath = '/v1/quotes/number-ranges';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -167,6 +189,9 @@ export class QuotesRanges {
         }
         if (typeof id !== 'undefined') {
             apiPayload['id'] = id;
+        }
+        if (typeof labels !== 'undefined') {
+            apiPayload['labels'] = labels;
         }
         if (typeof padding !== 'undefined') {
             apiPayload['padding'] = padding;
@@ -186,6 +211,9 @@ export class QuotesRanges {
         if (typeof tenantId !== 'undefined') {
             apiPayload['tenant_id'] = tenantId;
         }
+        if (typeof title !== 'undefined') {
+            apiPayload['title'] = title;
+        }
         if (typeof updatedAt !== 'undefined') {
             apiPayload['updated_at'] = updatedAt;
         }
@@ -204,7 +232,7 @@ export class QuotesRanges {
     }
 
     /**
-     * Creates the `quote` range if it is missing. Idempotent, and what an integration calls first — the install event does not reliably fire on a marketplace install.
+     * Creates the `quote` range if it is missing. Idempotent, and what an integration calls first — the install event does not reliably fire on a marketplace install. A range that exists is left as it is, so one a merchant switched off stays off.
      *
      * @param {object[]} params.library - The reusable blocks to create. Idempotent by label among live items. One without a label or without a block tree is reported under `skipped`.
      * @param {object[]} params.menus - The menus to create. One with no key or no label is reported under `skipped`.
@@ -216,7 +244,7 @@ export class QuotesRanges {
      */
     quotesRangesDefaults(params?: { library?: object[], menus?: object[], mode?: PagesSeedMode, pages?: object[], settings?: object }): Promise<Models.SeedResult>;
     /**
-     * Creates the `quote` range if it is missing. Idempotent, and what an integration calls first — the install event does not reliably fire on a marketplace install.
+     * Creates the `quote` range if it is missing. Idempotent, and what an integration calls first — the install event does not reliably fire on a marketplace install. A range that exists is left as it is, so one a merchant switched off stays off.
      *
      * @param {object[]} library - The reusable blocks to create. Idempotent by label among live items. One without a label or without a block tree is reported under `skipped`.
      * @param {object[]} menus - The menus to create. One with no key or no label is reported under `skipped`.
@@ -390,77 +418,89 @@ export class QuotesRanges {
      * Changes a counter — its prefix, its padding, or the counter itself. Lowering the counter will hand out numbers that already exist, which the unique index then refuses.
      *
      * @param {string} params.id - The number range.
+     * @param {boolean} params.active - Whether quote numbers may be drawn from this range. True by default. A quote that would draw from an inactive range is refused with 422 `number_range_inactive` — never recreated or drawn from another range. Numbers already issued stay, and seeding never switches a range back on.
      * @param {string} params.code - What a market points at to draw from this range. Unique per tenant; `quote` is the one this app seeds.
      * @param {number} params.counter - The last number drawn. The next draw adds `step` and stores the result, so a number is never handed out twice.
      * @param {string} params.createdAt - When the row was written, stamped by the database.
      * @param {string} params.idBody - The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+     * @param {object} params.labels - The name per locale, keyed by locale code, e.g. `{"de": "Angebotsnummern", "en": "Quote numbers"}`. Falls back to `title` for a locale that is missing. A standard range created before names existed is given them by the next seed or draw; a name already there is never overwritten.
      * @param {number} params.padding - How many digits the counter is padded to. 6 gives `000001`.
      * @param {number} params.positionStep - How far apart position numbers sit on a new quote — 10 leaves room to insert a line later without renumbering.
      * @param {string} params.prefix - Put in front of the counter — `ANG-` produces `ANG-000001`.
      * @param {number} params.step - How far the counter moves per draw. 1 is consecutive; a larger step leaves gaps on purpose.
      * @param {string} params.suffix - Put after the counter. Empty on the standard range.
      * @param {string} params.tenantId - The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+     * @param {string} params.title - The range's name, what a list and a breadcrumb show: the fallback for every locale `labels` does not carry. The standard `quote` range is named `Quote numbers`; a range of the merchant's own has none until they give it one, and a screen shows the code instead.
      * @param {string} params.updatedAt - When the row last changed, stamped by the app on every write.
      * @throws {RevenexxException}
      * @returns {Promise<Models.NumberRange>}
      */
-    quotesRangesUpdate(params: { id: string, code?: string, counter?: number, createdAt?: string, idBody?: string, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, updatedAt?: string }): Promise<Models.NumberRange>;
+    quotesRangesUpdate(params: { id: string, active?: boolean, code?: string, counter?: number, createdAt?: string, idBody?: string, labels?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, title?: string, updatedAt?: string }): Promise<Models.NumberRange>;
     /**
      * Changes a counter — its prefix, its padding, or the counter itself. Lowering the counter will hand out numbers that already exist, which the unique index then refuses.
      *
      * @param {string} id - The number range.
+     * @param {boolean} active - Whether quote numbers may be drawn from this range. True by default. A quote that would draw from an inactive range is refused with 422 `number_range_inactive` — never recreated or drawn from another range. Numbers already issued stay, and seeding never switches a range back on.
      * @param {string} code - What a market points at to draw from this range. Unique per tenant; `quote` is the one this app seeds.
      * @param {number} counter - The last number drawn. The next draw adds `step` and stores the result, so a number is never handed out twice.
      * @param {string} createdAt - When the row was written, stamped by the database.
      * @param {string} idBody - The row's own id, generated by the database. A caller never sends one — it reads one back and puts it in the path of every later call.
+     * @param {object} labels - The name per locale, keyed by locale code, e.g. `{"de": "Angebotsnummern", "en": "Quote numbers"}`. Falls back to `title` for a locale that is missing. A standard range created before names existed is given them by the next seed or draw; a name already there is never overwritten.
      * @param {number} padding - How many digits the counter is padded to. 6 gives `000001`.
      * @param {number} positionStep - How far apart position numbers sit on a new quote — 10 leaves room to insert a line later without renumbering.
      * @param {string} prefix - Put in front of the counter — `ANG-` produces `ANG-000001`.
      * @param {number} step - How far the counter moves per draw. 1 is consecutive; a larger step leaves gaps on purpose.
      * @param {string} suffix - Put after the counter. Empty on the standard range.
      * @param {string} tenantId - The tenant this row belongs to. Set by the data plane from the request identity and never accepted from a caller.
+     * @param {string} title - The range's name, what a list and a breadcrumb show: the fallback for every locale `labels` does not carry. The standard `quote` range is named `Quote numbers`; a range of the merchant's own has none until they give it one, and a screen shows the code instead.
      * @param {string} updatedAt - When the row last changed, stamped by the app on every write.
      * @throws {RevenexxException}
      * @returns {Promise<Models.NumberRange>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    quotesRangesUpdate(id: string, code?: string, counter?: number, createdAt?: string, idBody?: string, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, updatedAt?: string): Promise<Models.NumberRange>;
+    quotesRangesUpdate(id: string, active?: boolean, code?: string, counter?: number, createdAt?: string, idBody?: string, labels?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, title?: string, updatedAt?: string): Promise<Models.NumberRange>;
     quotesRangesUpdate(
-        paramsOrFirst: { id: string, code?: string, counter?: number, createdAt?: string, idBody?: string, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, updatedAt?: string } | string,
-        ...rest: [(string)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?, (number)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst: { id: string, active?: boolean, code?: string, counter?: number, createdAt?: string, idBody?: string, labels?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, title?: string, updatedAt?: string } | string,
+        ...rest: [(boolean)?, (string)?, (number)?, (string)?, (string)?, (object)?, (number)?, (number)?, (string)?, (number)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.NumberRange> {
-        let params: { id: string, code?: string, counter?: number, createdAt?: string, idBody?: string, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, updatedAt?: string };
+        let params: { id: string, active?: boolean, code?: string, counter?: number, createdAt?: string, idBody?: string, labels?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, title?: string, updatedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, counter?: number, createdAt?: string, idBody?: string, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, code?: string, counter?: number, createdAt?: string, idBody?: string, labels?: object, padding?: number, positionStep?: number, prefix?: string, step?: number, suffix?: string, tenantId?: string, title?: string, updatedAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                code: rest[0] as string,
-                counter: rest[1] as number,
-                createdAt: rest[2] as string,
-                idBody: rest[3] as string,
-                padding: rest[4] as number,
-                positionStep: rest[5] as number,
-                prefix: rest[6] as string,
-                step: rest[7] as number,
-                suffix: rest[8] as string,
-                tenantId: rest[9] as string,
-                updatedAt: rest[10] as string            
+                active: rest[0] as boolean,
+                code: rest[1] as string,
+                counter: rest[2] as number,
+                createdAt: rest[3] as string,
+                idBody: rest[4] as string,
+                labels: rest[5] as object,
+                padding: rest[6] as number,
+                positionStep: rest[7] as number,
+                prefix: rest[8] as string,
+                step: rest[9] as number,
+                suffix: rest[10] as string,
+                tenantId: rest[11] as string,
+                title: rest[12] as string,
+                updatedAt: rest[13] as string            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const code = params.code;
         const counter = params.counter;
         const createdAt = params.createdAt;
         const idBody = params.idBody;
+        const labels = params.labels;
         const padding = params.padding;
         const positionStep = params.positionStep;
         const prefix = params.prefix;
         const step = params.step;
         const suffix = params.suffix;
         const tenantId = params.tenantId;
+        const title = params.title;
         const updatedAt = params.updatedAt;
 
         if (typeof id === 'undefined') {
@@ -469,6 +509,9 @@ export class QuotesRanges {
 
         const apiPath = '/v1/quotes/number-ranges/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -480,6 +523,9 @@ export class QuotesRanges {
         }
         if (typeof idBody !== 'undefined') {
             apiPayload['id'] = idBody;
+        }
+        if (typeof labels !== 'undefined') {
+            apiPayload['labels'] = labels;
         }
         if (typeof padding !== 'undefined') {
             apiPayload['padding'] = padding;
@@ -498,6 +544,9 @@ export class QuotesRanges {
         }
         if (typeof tenantId !== 'undefined') {
             apiPayload['tenant_id'] = tenantId;
+        }
+        if (typeof title !== 'undefined') {
+            apiPayload['title'] = title;
         }
         if (typeof updatedAt !== 'undefined') {
             apiPayload['updated_at'] = updatedAt;

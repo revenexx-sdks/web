@@ -1194,6 +1194,251 @@ export class Pages {
     }
 
     /**
+     * The library items of the bundle `popup` — the Cockpit list, and the read the campaigns calendar makes for one campaign (`?campaign_ref=`). Never a soft-deleted one.
+     *
+     * @param {number} params.limit - Page size (default 50, max 200).
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. A column this entity does not have, or any other shape, is refused with 400.
+     * @param {string} params.campaignRef - Only the pop-ups one campaign claimed.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    pagesPopupsList(params?: { limit?: number, offset?: number, order?: string, campaignRef?: string }): Promise<{}>;
+    /**
+     * The library items of the bundle `popup` — the Cockpit list, and the read the campaigns calendar makes for one campaign (`?campaign_ref=`). Never a soft-deleted one.
+     *
+     * @param {number} limit - Page size (default 50, max 200).
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. A column this entity does not have, or any other shape, is refused with 400.
+     * @param {string} campaignRef - Only the pop-ups one campaign claimed.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesPopupsList(limit?: number, offset?: number, order?: string, campaignRef?: string): Promise<{}>;
+    pagesPopupsList(
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, campaignRef?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?]    
+    ): Promise<{}> {
+        let params: { limit?: number, offset?: number, order?: string, campaignRef?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, campaignRef?: string };
+        } else {
+            params = {
+                limit: paramsOrFirst as number,
+                offset: rest[0] as number,
+                order: rest[1] as string,
+                campaignRef: rest[2] as string            
+            };
+        }
+        
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+        const campaignRef = params.campaignRef;
+
+
+        const apiPath = '/v1/pages/popups';
+        const apiPayload: Payload = {};
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
+        if (typeof campaignRef !== 'undefined') {
+            apiPayload['campaign_ref'] = campaignRef;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * A pop-up is a library item of the bundle `popup`: `tree` is its content (edited like any library item), `popup` how it appears, `campaign_ref` the campaign it counts for. The settings are checked here; the storefront reads the live ones from `GET /pages/delivery/popups`.
+     *
+     * @param {string} params.label - What the pop-up is called in the library.
+     * @param {string} params.campaignRef - The campaign it belongs to.
+     * @param {object} params.metadata - The item's own bag, stored as given.
+     * @param {object} params.popup - How a pop-up appears. Unknown keys are refused (400 `invalid_popup`).
+     * @param {object} params.tree - The content as a block tree `{ bundle, props, props_i18n, children }`. Default an empty `popup` block.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.LibraryItem>}
+     */
+    pagesPopupsCreate(params: { label: string, campaignRef?: string, metadata?: object, popup?: object, tree?: object }): Promise<Models.LibraryItem>;
+    /**
+     * A pop-up is a library item of the bundle `popup`: `tree` is its content (edited like any library item), `popup` how it appears, `campaign_ref` the campaign it counts for. The settings are checked here; the storefront reads the live ones from `GET /pages/delivery/popups`.
+     *
+     * @param {string} label - What the pop-up is called in the library.
+     * @param {string} campaignRef - The campaign it belongs to.
+     * @param {object} metadata - The item's own bag, stored as given.
+     * @param {object} popup - How a pop-up appears. Unknown keys are refused (400 `invalid_popup`).
+     * @param {object} tree - The content as a block tree `{ bundle, props, props_i18n, children }`. Default an empty `popup` block.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.LibraryItem>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesPopupsCreate(label: string, campaignRef?: string, metadata?: object, popup?: object, tree?: object): Promise<Models.LibraryItem>;
+    pagesPopupsCreate(
+        paramsOrFirst: { label: string, campaignRef?: string, metadata?: object, popup?: object, tree?: object } | string,
+        ...rest: [(string)?, (object)?, (object)?, (object)?]    
+    ): Promise<Models.LibraryItem> {
+        let params: { label: string, campaignRef?: string, metadata?: object, popup?: object, tree?: object };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { label: string, campaignRef?: string, metadata?: object, popup?: object, tree?: object };
+        } else {
+            params = {
+                label: paramsOrFirst as string,
+                campaignRef: rest[0] as string,
+                metadata: rest[1] as object,
+                popup: rest[2] as object,
+                tree: rest[3] as object            
+            };
+        }
+        
+        const label = params.label;
+        const campaignRef = params.campaignRef;
+        const metadata = params.metadata;
+        const popup = params.popup;
+        const tree = params.tree;
+
+        if (typeof label === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "label"');
+        }
+
+        const apiPath = '/v1/pages/popups';
+        const apiPayload: Payload = {};
+        if (typeof campaignRef !== 'undefined') {
+            apiPayload['campaign_ref'] = campaignRef;
+        }
+        if (typeof label !== 'undefined') {
+            apiPayload['label'] = label;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
+        if (typeof popup !== 'undefined') {
+            apiPayload['popup'] = Client.toWireKeys(popup, {"delaySeconds":{"wire":"delay_seconds","children":null},"endsAt":{"wire":"ends_at","children":null},"formId":{"wire":"form_id","children":null},"scrollPercent":{"wire":"scroll_percent","children":null},"startsAt":{"wire":"starts_at","children":null},"visibility":{"wire":"visibility","children":{"consentPurpose":{"wire":"consent_purpose","children":null},"excludeAudiences":{"wire":"exclude_audiences","children":null}}}});
+        }
+        if (typeof tree !== 'undefined') {
+            apiPayload['tree'] = tree;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Partial update. `popup` is merged over what is stored and then checked whole, so a caller may send only what it changes; `campaign_ref: null` releases it from its campaign.
+     *
+     * @param {string} params.id - The pop-up (library item) id.
+     * @param {string} params.campaignRef - Claim for a campaign, or null to release.
+     * @param {string} params.label - A new name.
+     * @param {object} params.metadata - Replace the bag.
+     * @param {object} params.popup - What changes; merged over the stored settings and checked whole.
+     * @param {object} params.tree - Replace the content.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.LibraryItem>}
+     */
+    pagesPopupsUpdate(params: { id: string, campaignRef?: string, label?: string, metadata?: object, popup?: object, tree?: object }): Promise<Models.LibraryItem>;
+    /**
+     * Partial update. `popup` is merged over what is stored and then checked whole, so a caller may send only what it changes; `campaign_ref: null` releases it from its campaign.
+     *
+     * @param {string} id - The pop-up (library item) id.
+     * @param {string} campaignRef - Claim for a campaign, or null to release.
+     * @param {string} label - A new name.
+     * @param {object} metadata - Replace the bag.
+     * @param {object} popup - What changes; merged over the stored settings and checked whole.
+     * @param {object} tree - Replace the content.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.LibraryItem>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesPopupsUpdate(id: string, campaignRef?: string, label?: string, metadata?: object, popup?: object, tree?: object): Promise<Models.LibraryItem>;
+    pagesPopupsUpdate(
+        paramsOrFirst: { id: string, campaignRef?: string, label?: string, metadata?: object, popup?: object, tree?: object } | string,
+        ...rest: [(string)?, (string)?, (object)?, (object)?, (object)?]    
+    ): Promise<Models.LibraryItem> {
+        let params: { id: string, campaignRef?: string, label?: string, metadata?: object, popup?: object, tree?: object };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, campaignRef?: string, label?: string, metadata?: object, popup?: object, tree?: object };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                campaignRef: rest[0] as string,
+                label: rest[1] as string,
+                metadata: rest[2] as object,
+                popup: rest[3] as object,
+                tree: rest[4] as object            
+            };
+        }
+        
+        const id = params.id;
+        const campaignRef = params.campaignRef;
+        const label = params.label;
+        const metadata = params.metadata;
+        const popup = params.popup;
+        const tree = params.tree;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/pages/popups/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof campaignRef !== 'undefined') {
+            apiPayload['campaign_ref'] = campaignRef;
+        }
+        if (typeof label !== 'undefined') {
+            apiPayload['label'] = label;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
+        }
+        if (typeof popup !== 'undefined') {
+            apiPayload['popup'] = Client.toWireKeys(popup, {"delaySeconds":{"wire":"delay_seconds","children":null},"endsAt":{"wire":"ends_at","children":null},"formId":{"wire":"form_id","children":null},"scrollPercent":{"wire":"scroll_percent","children":null},"startsAt":{"wire":"starts_at","children":null},"visibility":{"wire":"visibility","children":{"consentPurpose":{"wire":"consent_purpose","children":null},"excludeAudiences":{"wire":"exclude_audiences","children":null}}}});
+        }
+        if (typeof tree !== 'undefined') {
+            apiPayload['tree'] = tree;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
      * The target of a theme install: hand it the theme's default pages, menus, library items and site settings. In `fill` mode — the default — it creates whatever is missing and leaves everything else alone: idempotent by page `slug`, menu key, library item label and setting key, so re-running after a theme update adds only the new ones and never overwrites what an editor has since changed, and a setting the tenant has set keeps its value. In `reset` mode every section the body carries REPLACES the tenant's own content of that kind: the live pages, menus or library items are soft-deleted first, exactly as their delete does it — so they wait in the trash and can be restored — and the site settings are removed, then the section is seeded as in fill. A section the body leaves out is not touched in either mode, and nothing reaches beyond the calling tenant. A seeded page is published on the spot, immediately servable by delivery: the default_page_status setting deliberately does not apply, because a theme that activates with invisible pages looks broken.
      *
      * @param {object[]} params.library - The reusable blocks to create. Idempotent by label among live items. One without a label or without a block tree is reported under `skipped`.

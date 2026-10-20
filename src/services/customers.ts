@@ -1084,23 +1084,23 @@ export class Customers {
      * @param {string} params.contactId - The contact the caller asserted it is acting for.
      * @param {string} params.userId - The platform login the gateway authenticated, matched against `contacts.external_user_id` — the identity mirror this app maintains when it registers or invites a contact. Not a uuid: it is whatever the identity service issues as a subject.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.ContactPermissions>}
+     * @returns {Promise<Models.PrincipalResolution>}
      */
-    customersPrincipalResolve(params?: { contactId?: string, userId?: string }): Promise<Models.ContactPermissions>;
+    customersPrincipalResolve(params?: { contactId?: string, userId?: string }): Promise<Models.PrincipalResolution>;
     /**
      * The capability the API gateway calls to turn whoever is acting into the permission set it forwards to every other app as X-Revenexx-Permissions. This app is the platform's role provider (manifest#provides_roles), and this is the hot path of every attributed request — one contact read plus the tenant's role map. Send EXACTLY ONE of two references. `contact_id` is the storefront plane: a BFF holding the tenant API key asserted a contact, and the gateway is resolving the assertion. `user_id` is the authenticated plane (RAD-12): the gateway verified a person's own Zitadel token and is resolving its subject against `contacts.external_user_id`, so the answer stands on a proven identity rather than a claimed one. The answer is the same shape either way — which plane a request came from is the gateway's business, not this app's. A blocked or pending contact always resolves with active=false; what its `permissions` then say is the tenant's blocked_contact_behavior setting — 'keep' (the default, the role's grants), 'catalog_only' or 'deny_all'.
      *
      * @param {string} contactId - The contact the caller asserted it is acting for.
      * @param {string} userId - The platform login the gateway authenticated, matched against `contacts.external_user_id` — the identity mirror this app maintains when it registers or invites a contact. Not a uuid: it is whatever the identity service issues as a subject.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.ContactPermissions>}
+     * @returns {Promise<Models.PrincipalResolution>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersPrincipalResolve(contactId?: string, userId?: string): Promise<Models.ContactPermissions>;
+    customersPrincipalResolve(contactId?: string, userId?: string): Promise<Models.PrincipalResolution>;
     customersPrincipalResolve(
         paramsOrFirst?: { contactId?: string, userId?: string } | string,
         ...rest: [(string)?]    
-    ): Promise<Models.ContactPermissions> {
+    ): Promise<Models.PrincipalResolution> {
         let params: { contactId?: string, userId?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {

@@ -1,4 +1,4 @@
-export enum PromotionsConditionsCreateKind {
+export enum AudiencesRulesCreateKind {
     Group = 'group',
     Question = 'question',
 }

@@ -12,6 +12,7 @@ const orders = new Orders(client);
 const result = await orders.ordersShip({
     id: '',
     carrier: 'DHL', // optional
+    carrierCode: 'dhl-paket', // optional
     externalId: 'WS-000815', // optional
     externalRefs: {
         "carrier_portal": "DHL-2026-77120"

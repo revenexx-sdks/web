@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Messaging, Reason, Scope } from "@revenexx/sdk";
+import { Client, Messaging, SuppressionIndexReason, Scope } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -12,7 +12,7 @@ const messaging = new Messaging(client);
 const result = await messaging.suppressionStore({
     address: '',
     channel: '',
-    reason: Reason.HardBounce,
+    reason: SuppressionIndexReason.HardBounce,
     expiresAt: '2026-01-01T12:00:00Z', // optional
     note: '', // optional
     scope: Scope.All // optional

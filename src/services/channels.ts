@@ -340,41 +340,45 @@ export class Channels {
     }
 
     /**
-     * What a channel may BE. This used to be a CHECK constraint over five values, which meant the merchant who runs a feed channel or a print channel needed a release of this app to say so — and nothing in the app ever branched on the value, only on membership. The set is the tenant's rows now. Seeds itself on first read, so the list is never empty and a channel can always carry a type. Rows come back in `position` order, always: this route is not the generic list mount and takes no `order` — `limit` and `offset` are the whole of its query, and it takes no filters, so a caller looking for one code reads the list and matches. The set is bounded: a tenant keeps at most 200 types, which is the size this app can check a channel's type against in one query, and POST /channels/types refuses the 201st rather than build a set it could not read back. `page.total` counts the rows that exist, not the ones this answer carries, and the order is total — `position` then `code`, because `position` is not unique and an order that leaves rows tied is one the database is free to answer differently on the next page, which is how a walk serves a row twice and skips another.
+     * What a channel may BE. This used to be a CHECK constraint over five values, which meant the merchant who runs a feed channel or a print channel needed a release of this app to say so — and nothing in the app ever branched on the value, only on membership. The set is the tenant's rows now. Seeds itself on first read, so the list is never empty and a channel can always carry a type. Rows come back in `position` order, always: this route is not the generic list mount and takes no `order` — `limit` and `offset` are the whole of its query, and it takes one filter, `active`, and no other, so a caller looking for one code reads the list and matches. The set is bounded: a tenant keeps at most 200 types, which is the size this app can check a channel's type against in one query, and POST /channels/types refuses the 201st rather than build a set it could not read back. `page.total` counts the rows that exist, not the ones this answer carries, and the order is total — `position` then `code`, because `position` is not unique and an order that leaves rows tied is one the database is free to answer differently on the next page, which is how a walk serves a row twice and skips another.
      *
      * @param {number} params.limit - Page size (default 50, max 200).
      * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {boolean} params.active - The one filter this list honours (RAD-255): true answers the types still offered for new channels, false the retired ones. Any other value is a 400 `invalid_value`. Every other column filter is ignored.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    channelsTypesList(params?: { limit?: number, offset?: number }): Promise<{}>;
+    channelsTypesList(params?: { limit?: number, offset?: number, active?: boolean }): Promise<{}>;
     /**
-     * What a channel may BE. This used to be a CHECK constraint over five values, which meant the merchant who runs a feed channel or a print channel needed a release of this app to say so — and nothing in the app ever branched on the value, only on membership. The set is the tenant's rows now. Seeds itself on first read, so the list is never empty and a channel can always carry a type. Rows come back in `position` order, always: this route is not the generic list mount and takes no `order` — `limit` and `offset` are the whole of its query, and it takes no filters, so a caller looking for one code reads the list and matches. The set is bounded: a tenant keeps at most 200 types, which is the size this app can check a channel's type against in one query, and POST /channels/types refuses the 201st rather than build a set it could not read back. `page.total` counts the rows that exist, not the ones this answer carries, and the order is total — `position` then `code`, because `position` is not unique and an order that leaves rows tied is one the database is free to answer differently on the next page, which is how a walk serves a row twice and skips another.
+     * What a channel may BE. This used to be a CHECK constraint over five values, which meant the merchant who runs a feed channel or a print channel needed a release of this app to say so — and nothing in the app ever branched on the value, only on membership. The set is the tenant's rows now. Seeds itself on first read, so the list is never empty and a channel can always carry a type. Rows come back in `position` order, always: this route is not the generic list mount and takes no `order` — `limit` and `offset` are the whole of its query, and it takes one filter, `active`, and no other, so a caller looking for one code reads the list and matches. The set is bounded: a tenant keeps at most 200 types, which is the size this app can check a channel's type against in one query, and POST /channels/types refuses the 201st rather than build a set it could not read back. `page.total` counts the rows that exist, not the ones this answer carries, and the order is total — `position` then `code`, because `position` is not unique and an order that leaves rows tied is one the database is free to answer differently on the next page, which is how a walk serves a row twice and skips another.
      *
      * @param {number} limit - Page size (default 50, max 200).
      * @param {number} offset - Row offset for pagination (default 0).
+     * @param {boolean} active - The one filter this list honours (RAD-255): true answers the types still offered for new channels, false the retired ones. Any other value is a 400 `invalid_value`. Every other column filter is ignored.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    channelsTypesList(limit?: number, offset?: number): Promise<{}>;
+    channelsTypesList(limit?: number, offset?: number, active?: boolean): Promise<{}>;
     channelsTypesList(
-        paramsOrFirst?: { limit?: number, offset?: number } | number,
-        ...rest: [(number)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, active?: boolean } | number,
+        ...rest: [(number)?, (boolean)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number };
+        let params: { limit?: number, offset?: number, active?: boolean };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, active?: boolean };
         } else {
             params = {
                 limit: paramsOrFirst as number,
-                offset: rest[0] as number            
+                offset: rest[0] as number,
+                active: rest[1] as boolean            
             };
         }
         
         const limit = params.limit;
         const offset = params.offset;
+        const active = params.active;
 
 
         const apiPath = '/v1/channels/types';
@@ -384,6 +388,9 @@ export class Channels {
         }
         if (typeof offset !== 'undefined') {
             apiPayload['offset'] = offset;
+        }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -403,24 +410,26 @@ export class Channels {
      *
      * @param {string} params.code - What `channels.type` will store. Lowercased and trimmed before it is written, and fixed from then on — a rename would orphan every channel carrying it.
      * @param {string} params.title - The fallback name. `labels` carries the per-locale ones.
+     * @param {boolean} params.active - Whether the type is offered for new channels (default true). Anything but a boolean is a 400 `invalid_active`.
      * @param {string} params.description - One sentence on what kind of place this type of channel is, for the merchant choosing between them. Plain text, in the tenant's primary language; `descriptions` carries the per-locale ones.
      * @param {object} params.descriptions - A locale map keyed by language tag: {"en": …, "de": …}. Read the requested tag and fall back to the plain column beside it.
-     * @param {boolean} params.isDefault - Promote this type; the previous default is demoted. The default is the type a channel created without one gets.
+     * @param {boolean} params.isDefault - Promote this type; the previous default is demoted. The default is the type a channel created without one gets. An inactive type cannot be the default (409 `inactive_cannot_be_default`).
      * @param {object} params.labels - A locale map keyed by language tag: {"en": …, "de": …}. Read the requested tag and fall back to the plain column beside it.
      * @param {number} params.position - Sort position (default 0). GET /channels/types answers in this order; ties fall back to the code.
      * @param {ChannelTypeTone} params.tone - Badge colour (default 'neutral'). A value outside the palette is ignored rather than refused.
      * @throws {RevenexxException}
      * @returns {Promise<Models.ChannelTypeRow>}
      */
-    channelsTypesCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: ChannelTypeTone }): Promise<Models.ChannelTypeRow>;
+    channelsTypesCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: ChannelTypeTone }): Promise<Models.ChannelTypeRow>;
     /**
      * What lets a merchant name a kind of channel this app never thought of — a feed, a print catalogue, a kiosk — without waiting for a release. `code` and `title` are the only two the database will not fill in; everything else has a default. The code is trimmed and lowercased and becomes exactly what `channels.type` stores, and it is fixed from then on, because there is no foreign key behind that column to carry a rename: every channel holding the old string would be left pointing at nothing. The title is the part a merchant renames later. A duplicate code is a 409, and it is worth knowing that the collision is wider than this tenant — `channel_types.code` is unique on the column alone, so a code held by another tenant collides too and the read this route does before inserting cannot see it. A tenant keeps at most 200 types; the 201st is a 409 `type_limit_reached` rather than a row the app would then be unable to read back. Creating a type changes nothing about existing channels: it is a name that becomes available, not one that gets applied. Adding a type does not make it the default either — pass `is_default: true` for that, which demotes the current holder.
      *
      * @param {string} code - What `channels.type` will store. Lowercased and trimmed before it is written, and fixed from then on — a rename would orphan every channel carrying it.
      * @param {string} title - The fallback name. `labels` carries the per-locale ones.
+     * @param {boolean} active - Whether the type is offered for new channels (default true). Anything but a boolean is a 400 `invalid_active`.
      * @param {string} description - One sentence on what kind of place this type of channel is, for the merchant choosing between them. Plain text, in the tenant's primary language; `descriptions` carries the per-locale ones.
      * @param {object} descriptions - A locale map keyed by language tag: {"en": …, "de": …}. Read the requested tag and fall back to the plain column beside it.
-     * @param {boolean} isDefault - Promote this type; the previous default is demoted. The default is the type a channel created without one gets.
+     * @param {boolean} isDefault - Promote this type; the previous default is demoted. The default is the type a channel created without one gets. An inactive type cannot be the default (409 `inactive_cannot_be_default`).
      * @param {object} labels - A locale map keyed by language tag: {"en": …, "de": …}. Read the requested tag and fall back to the plain column beside it.
      * @param {number} position - Sort position (default 0). GET /channels/types answers in this order; ties fall back to the code.
      * @param {ChannelTypeTone} tone - Badge colour (default 'neutral'). A value outside the palette is ignored rather than refused.
@@ -428,30 +437,32 @@ export class Channels {
      * @returns {Promise<Models.ChannelTypeRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    channelsTypesCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: ChannelTypeTone): Promise<Models.ChannelTypeRow>;
+    channelsTypesCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: ChannelTypeTone): Promise<Models.ChannelTypeRow>;
     channelsTypesCreate(
-        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: ChannelTypeTone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (ChannelTypeTone)?]    
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: ChannelTypeTone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (ChannelTypeTone)?]    
     ): Promise<Models.ChannelTypeRow> {
-        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: ChannelTypeTone };
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: ChannelTypeTone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: ChannelTypeTone };
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: ChannelTypeTone };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 title: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                labels: rest[4] as object,
-                position: rest[5] as number,
-                tone: rest[6] as ChannelTypeTone            
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                labels: rest[5] as object,
+                position: rest[6] as number,
+                tone: rest[7] as ChannelTypeTone            
             };
         }
         
         const code = params.code;
         const title = params.title;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -468,6 +479,9 @@ export class Channels {
 
         const apiPath = '/v1/channels/types';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -507,7 +521,7 @@ export class Channels {
     }
 
     /**
-     * Retiring a type IS deleting the row — there is no retired flag on `channel_types` — which is why the two things that would make a deletion destructive are refused instead of allowed: a type at least one channel still carries is a 409, and so is the last remaining type. There is no foreign key behind `channels.type`, so those two checks are not a convenience on top of the database, they ARE the integrity. Move the channels to another type first and the delete goes through. Nothing else goes with it. A type has no dependents once no channel names it: no rows in this app point at it and none in Baseline do either, since assignments are made against a channel `code`, never a type. Deleting the type the tenant had flagged as default is allowed, and the flag is handed to the next type by position rather than left unheld, so a channel created afterwards still has something to fall back to. Because the guard is a read followed by a write with no transaction between them, and no constraint underneath it, a channel created against this type in the same instant can survive it. Worth knowing what that leaves, since it is not what "orphaned" usually means: the channel keeps working. `channels.type` is a stored string that nothing joins on, so the channel still reads, still filters under `?type=` by that same string, and still resolves in /channels/context and POST /channels/visibility — neither of which consults `type` at all. What it loses is its label, because the types vocabulary is built from the rows and there is no longer one to render a badge from. An update that does not mention `type` leaves the value alone; naming it is refused, which is how the channel is moved to a type that exists. One thing the deletion frees is wider than the tenant: `channel_types.code` is unique on the column alone, so the code becomes available platform-wide, not just here. And the seed does not know the row is gone — POST /channels/defaults and a re-install both put a deleted SEEDED type back, by design; see that operation.
+     * Retiring a type is `active: false` on an update (RAD-255); deleting removes the row, which is why the two things that would make a deletion destructive are refused instead of allowed: a type at least one channel still carries is a 409, and so is the last remaining type. There is no foreign key behind `channels.type`, so those two checks are not a convenience on top of the database, they ARE the integrity. Move the channels to another type first and the delete goes through. Nothing else goes with it. A type has no dependents once no channel names it: no rows in this app point at it and none in Baseline do either, since assignments are made against a channel `code`, never a type. Deleting the type the tenant had flagged as default is allowed, and the flag is handed to the next ACTIVE type by position rather than left unheld, so a channel created afterwards still has something to fall back to; with no other active type the delete is refused. Because the guard is a read followed by a write with no transaction between them, and no constraint underneath it, a channel created against this type in the same instant can survive it. Worth knowing what that leaves, since it is not what "orphaned" usually means: the channel keeps working. `channels.type` is a stored string that nothing joins on, so the channel still reads, still filters under `?type=` by that same string, and still resolves in /channels/context and POST /channels/visibility — neither of which consults `type` at all. What it loses is its label, because the types vocabulary is built from the rows and there is no longer one to render a badge from. An update that does not mention `type` leaves the value alone; naming it is refused, which is how the channel is moved to a type that exists. One thing the deletion frees is wider than the tenant: `channel_types.code` is unique on the column alone, so the code becomes available platform-wide, not just here. And the seed does not know the row is gone — POST /channels/defaults and a re-install both put a deleted SEEDED type back, by design; see that operation.
      *
      * @param {string} params.id - The channel type, by id. This is the uuid, not the type `code`.
      * @throws {RevenexxException}
@@ -515,7 +529,7 @@ export class Channels {
      */
     channelsTypesDelete(params: { id: string }): Promise<{}>;
     /**
-     * Retiring a type IS deleting the row — there is no retired flag on `channel_types` — which is why the two things that would make a deletion destructive are refused instead of allowed: a type at least one channel still carries is a 409, and so is the last remaining type. There is no foreign key behind `channels.type`, so those two checks are not a convenience on top of the database, they ARE the integrity. Move the channels to another type first and the delete goes through. Nothing else goes with it. A type has no dependents once no channel names it: no rows in this app point at it and none in Baseline do either, since assignments are made against a channel `code`, never a type. Deleting the type the tenant had flagged as default is allowed, and the flag is handed to the next type by position rather than left unheld, so a channel created afterwards still has something to fall back to. Because the guard is a read followed by a write with no transaction between them, and no constraint underneath it, a channel created against this type in the same instant can survive it. Worth knowing what that leaves, since it is not what "orphaned" usually means: the channel keeps working. `channels.type` is a stored string that nothing joins on, so the channel still reads, still filters under `?type=` by that same string, and still resolves in /channels/context and POST /channels/visibility — neither of which consults `type` at all. What it loses is its label, because the types vocabulary is built from the rows and there is no longer one to render a badge from. An update that does not mention `type` leaves the value alone; naming it is refused, which is how the channel is moved to a type that exists. One thing the deletion frees is wider than the tenant: `channel_types.code` is unique on the column alone, so the code becomes available platform-wide, not just here. And the seed does not know the row is gone — POST /channels/defaults and a re-install both put a deleted SEEDED type back, by design; see that operation.
+     * Retiring a type is `active: false` on an update (RAD-255); deleting removes the row, which is why the two things that would make a deletion destructive are refused instead of allowed: a type at least one channel still carries is a 409, and so is the last remaining type. There is no foreign key behind `channels.type`, so those two checks are not a convenience on top of the database, they ARE the integrity. Move the channels to another type first and the delete goes through. Nothing else goes with it. A type has no dependents once no channel names it: no rows in this app point at it and none in Baseline do either, since assignments are made against a channel `code`, never a type. Deleting the type the tenant had flagged as default is allowed, and the flag is handed to the next ACTIVE type by position rather than left unheld, so a channel created afterwards still has something to fall back to; with no other active type the delete is refused. Because the guard is a read followed by a write with no transaction between them, and no constraint underneath it, a channel created against this type in the same instant can survive it. Worth knowing what that leaves, since it is not what "orphaned" usually means: the channel keeps working. `channels.type` is a stored string that nothing joins on, so the channel still reads, still filters under `?type=` by that same string, and still resolves in /channels/context and POST /channels/visibility — neither of which consults `type` at all. What it loses is its label, because the types vocabulary is built from the rows and there is no longer one to render a badge from. An update that does not mention `type` leaves the value alone; naming it is refused, which is how the channel is moved to a type that exists. One thing the deletion frees is wider than the tenant: `channel_types.code` is unique on the column alone, so the code becomes available platform-wide, not just here. And the seed does not know the row is gone — POST /channels/defaults and a re-install both put a deleted SEEDED type back, by design; see that operation.
      *
      * @param {string} id - The channel type, by id. This is the uuid, not the type `code`.
      * @throws {RevenexxException}
@@ -612,9 +626,10 @@ export class Channels {
      * Everything but the code. This is where a merchant renames a seeded type into their own words, gives it its German, moves it in the list a person picks from, or hands it the default flag. Seeded types are as editable as ones the merchant added — `is_system` records where a row came from and grants it nothing. Sending a different `code` is a 400 rather than a silent no-op: it is what `channels.type` stores, there is no foreign key behind that column to carry the change — the database has none at all on these tables — and a rename would therefore move nothing. Every channel holding the old string would keep holding it, still working but with no type row to draw its name from. This refusal is the whole of the protection; to move channels to a new code, create the type and update the channels, in that order. Two fields are quietly forgiving rather than strict — a blank `title` and a `tone` outside the palette are both ignored and the stored value kept, so a client that sends a half-filled form does not clear what is there. `is_default` is one-way: true promotes this type and demotes the previous holder, false does nothing at all, because some type has to be the one a channel created without one gets.
      *
      * @param {string} params.id - The channel type, by id. This is the uuid, not the type `code`.
+     * @param {boolean} params.active - Retire the type (false) or bring it back (true). A retired type stays on the channels that carry it and is no longer offered for new ones. The default type cannot be retired (409 `default_must_stay_active`) — make another type the default first.
      * @param {string} params.description - Replace the one-sentence description. Sent as null it is cleared; omitted it is kept. `descriptions` carries the per-locale ones.
      * @param {object} params.descriptions - A locale map keyed by language tag: {"en": …, "de": …}. Read the requested tag and fall back to the plain column beside it.
-     * @param {boolean} params.isDefault - Promote this type; the previous default is demoted. Only `true` does anything — sending false does not demote this type, because some type must hold the flag.
+     * @param {boolean} params.isDefault - Promote this type; the previous default is demoted. Only `true` does anything — sending false does not demote this type, because some type must hold the flag. An inactive type cannot be promoted (409 `inactive_cannot_be_default`).
      * @param {object} params.labels - A locale map keyed by language tag: {"en": …, "de": …}. Read the requested tag and fall back to the plain column beside it.
      * @param {number} params.position - Move the type in the order GET /channels/types answers in.
      * @param {string} params.title - Rename the type. A blank or non-string title is ignored, not refused — the stored one is kept.
@@ -622,14 +637,15 @@ export class Channels {
      * @throws {RevenexxException}
      * @returns {Promise<Models.ChannelTypeRow>}
      */
-    channelsTypesUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: ChannelTypeTone }): Promise<Models.ChannelTypeRow>;
+    channelsTypesUpdate(params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: ChannelTypeTone }): Promise<Models.ChannelTypeRow>;
     /**
      * Everything but the code. This is where a merchant renames a seeded type into their own words, gives it its German, moves it in the list a person picks from, or hands it the default flag. Seeded types are as editable as ones the merchant added — `is_system` records where a row came from and grants it nothing. Sending a different `code` is a 400 rather than a silent no-op: it is what `channels.type` stores, there is no foreign key behind that column to carry the change — the database has none at all on these tables — and a rename would therefore move nothing. Every channel holding the old string would keep holding it, still working but with no type row to draw its name from. This refusal is the whole of the protection; to move channels to a new code, create the type and update the channels, in that order. Two fields are quietly forgiving rather than strict — a blank `title` and a `tone` outside the palette are both ignored and the stored value kept, so a client that sends a half-filled form does not clear what is there. `is_default` is one-way: true promotes this type and demotes the previous holder, false does nothing at all, because some type has to be the one a channel created without one gets.
      *
      * @param {string} id - The channel type, by id. This is the uuid, not the type `code`.
+     * @param {boolean} active - Retire the type (false) or bring it back (true). A retired type stays on the channels that carry it and is no longer offered for new ones. The default type cannot be retired (409 `default_must_stay_active`) — make another type the default first.
      * @param {string} description - Replace the one-sentence description. Sent as null it is cleared; omitted it is kept. `descriptions` carries the per-locale ones.
      * @param {object} descriptions - A locale map keyed by language tag: {"en": …, "de": …}. Read the requested tag and fall back to the plain column beside it.
-     * @param {boolean} isDefault - Promote this type; the previous default is demoted. Only `true` does anything — sending false does not demote this type, because some type must hold the flag.
+     * @param {boolean} isDefault - Promote this type; the previous default is demoted. Only `true` does anything — sending false does not demote this type, because some type must hold the flag. An inactive type cannot be promoted (409 `inactive_cannot_be_default`).
      * @param {object} labels - A locale map keyed by language tag: {"en": …, "de": …}. Read the requested tag and fall back to the plain column beside it.
      * @param {number} position - Move the type in the order GET /channels/types answers in.
      * @param {string} title - Rename the type. A blank or non-string title is ignored, not refused — the stored one is kept.
@@ -638,29 +654,31 @@ export class Channels {
      * @returns {Promise<Models.ChannelTypeRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    channelsTypesUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: ChannelTypeTone): Promise<Models.ChannelTypeRow>;
+    channelsTypesUpdate(id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: ChannelTypeTone): Promise<Models.ChannelTypeRow>;
     channelsTypesUpdate(
-        paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: ChannelTypeTone } | string,
-        ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (ChannelTypeTone)?]    
+        paramsOrFirst: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: ChannelTypeTone } | string,
+        ...rest: [(boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (ChannelTypeTone)?]    
     ): Promise<Models.ChannelTypeRow> {
-        let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: ChannelTypeTone };
+        let params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: ChannelTypeTone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: ChannelTypeTone };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: ChannelTypeTone };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                description: rest[0] as string,
-                descriptions: rest[1] as object,
-                isDefault: rest[2] as boolean,
-                labels: rest[3] as object,
-                position: rest[4] as number,
-                title: rest[5] as string,
-                tone: rest[6] as ChannelTypeTone            
+                active: rest[0] as boolean,
+                description: rest[1] as string,
+                descriptions: rest[2] as object,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                position: rest[5] as number,
+                title: rest[6] as string,
+                tone: rest[7] as ChannelTypeTone            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -675,6 +693,9 @@ export class Channels {
 
         const apiPath = '/v1/channels/types/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof description !== 'undefined') {
             apiPayload['description'] = description;
         }

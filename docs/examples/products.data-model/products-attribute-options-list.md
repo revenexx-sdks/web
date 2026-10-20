@@ -19,6 +19,7 @@ const result = await productsDataModel.productsAttributeOptionsList({
     position: 1, // optional
     swatch: '{}', // optional
     labels: '{}', // optional
+    active: true, // optional
     externalId: 'EV000456', // optional
     externalRefs: '{}', // optional
     sourceSyncedAt: '2026-01-01T12:00:00Z', // optional

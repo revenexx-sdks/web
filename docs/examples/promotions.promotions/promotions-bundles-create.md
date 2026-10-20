@@ -14,7 +14,7 @@ const result = await promotionsPromotions.promotionsBundlesCreate({
     promotionId: '',
     allocation: Allocation.BestForBuyer, // optional
     maxPerCart: 1, // optional
-    selectors: {}, // optional
+    selectors: null, // optional
     unitsRequired: 1 // optional
 });
 

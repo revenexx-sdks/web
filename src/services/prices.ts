@@ -2,8 +2,11 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+import { Lang } from '../enums/lang';
 import { PriceListStatus } from '../enums/price-list-status';
 import { PriceListTaxBasis } from '../enums/price-list-tax-basis';
+import { PriceListTrashed } from '../enums/price-list-trashed';
+import { Parts } from '../enums/parts';
 import { PriceEntryType } from '../enums/price-entry-type';
 import { PriceEndingRule } from '../enums/price-ending-rule';
 import { PriceEntriesBulkMode } from '../enums/price-entries-bulk-mode';
@@ -14,6 +17,133 @@ export class Prices {
 
     constructor(client: Client) {
         this.client = client;
+    }
+
+    /**
+     * The answer to "what does this item cost this customer in this market, and why?" for one item: the price, the list that won, its tier, the reason it won, the line total, and every other list that would have priced the item with the reason it lost. The resolution is exactly the one `POST /prices/resolve` runs — same candidate lists, same groups, same tier rule, same tie-break — so the answer matches what the shop quotes.
+     * 
+     * Configuration, not a buyer route: it names lists a buyer must not learn about. The market is the one `market` names, else the active market of the request; a market other than the request's is read through its own market-scoped view. Texts (`winning_list`, `tier`, `reason`, `why`, `summary`) are German or English after `lang`, else the first Accept-Language tag, else German; the `*_code` fields beside them are stable. Segments are taken as stated in `segment_codes`, not looked up from the organization.
+     *
+     * @param {string} params.at - The instant validity windows are read at. Absent is now.
+     * @param {string} params.channelId - The channel the question is asked for.
+     * @param {string} params.contactId - The buying contact, if any.
+     * @param {string} params.currency - A currency to price in instead of the market's, upper-case ISO 4217.
+     * @param {Lang} params.lang - The language of the texts in the answer.
+     * @param {string} params.market - The market code. Absent is the active market of the request.
+     * @param {string} params.organizationId - The buying organization, if any.
+     * @param {string} params.productId - The product. `product_id` or `sku` is required.
+     * @param {number} params.quantity - The quantity the tier is chosen for. Absent is 1.
+     * @param {string[]} params.segmentCodes - Segments the buyer is in, as codes.
+     * @param {string} params.sku - The SKU, matched exactly, for entries that carry no product id.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PriceCheckResponse>}
+     */
+    pricesCheck(params?: { at?: string, channelId?: string, contactId?: string, currency?: string, lang?: Lang, market?: string, organizationId?: string, productId?: string, quantity?: number, segmentCodes?: string[], sku?: string }): Promise<Models.PriceCheckResponse>;
+    /**
+     * The answer to "what does this item cost this customer in this market, and why?" for one item: the price, the list that won, its tier, the reason it won, the line total, and every other list that would have priced the item with the reason it lost. The resolution is exactly the one `POST /prices/resolve` runs — same candidate lists, same groups, same tier rule, same tie-break — so the answer matches what the shop quotes.
+     * 
+     * Configuration, not a buyer route: it names lists a buyer must not learn about. The market is the one `market` names, else the active market of the request; a market other than the request's is read through its own market-scoped view. Texts (`winning_list`, `tier`, `reason`, `why`, `summary`) are German or English after `lang`, else the first Accept-Language tag, else German; the `*_code` fields beside them are stable. Segments are taken as stated in `segment_codes`, not looked up from the organization.
+     *
+     * @param {string} at - The instant validity windows are read at. Absent is now.
+     * @param {string} channelId - The channel the question is asked for.
+     * @param {string} contactId - The buying contact, if any.
+     * @param {string} currency - A currency to price in instead of the market's, upper-case ISO 4217.
+     * @param {Lang} lang - The language of the texts in the answer.
+     * @param {string} market - The market code. Absent is the active market of the request.
+     * @param {string} organizationId - The buying organization, if any.
+     * @param {string} productId - The product. `product_id` or `sku` is required.
+     * @param {number} quantity - The quantity the tier is chosen for. Absent is 1.
+     * @param {string[]} segmentCodes - Segments the buyer is in, as codes.
+     * @param {string} sku - The SKU, matched exactly, for entries that carry no product id.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PriceCheckResponse>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pricesCheck(at?: string, channelId?: string, contactId?: string, currency?: string, lang?: Lang, market?: string, organizationId?: string, productId?: string, quantity?: number, segmentCodes?: string[], sku?: string): Promise<Models.PriceCheckResponse>;
+    pricesCheck(
+        paramsOrFirst?: { at?: string, channelId?: string, contactId?: string, currency?: string, lang?: Lang, market?: string, organizationId?: string, productId?: string, quantity?: number, segmentCodes?: string[], sku?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (Lang)?, (string)?, (string)?, (string)?, (number)?, (string[])?, (string)?]    
+    ): Promise<Models.PriceCheckResponse> {
+        let params: { at?: string, channelId?: string, contactId?: string, currency?: string, lang?: Lang, market?: string, organizationId?: string, productId?: string, quantity?: number, segmentCodes?: string[], sku?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { at?: string, channelId?: string, contactId?: string, currency?: string, lang?: Lang, market?: string, organizationId?: string, productId?: string, quantity?: number, segmentCodes?: string[], sku?: string };
+        } else {
+            params = {
+                at: paramsOrFirst as string,
+                channelId: rest[0] as string,
+                contactId: rest[1] as string,
+                currency: rest[2] as string,
+                lang: rest[3] as Lang,
+                market: rest[4] as string,
+                organizationId: rest[5] as string,
+                productId: rest[6] as string,
+                quantity: rest[7] as number,
+                segmentCodes: rest[8] as string[],
+                sku: rest[9] as string            
+            };
+        }
+        
+        const at = params.at;
+        const channelId = params.channelId;
+        const contactId = params.contactId;
+        const currency = params.currency;
+        const lang = params.lang;
+        const market = params.market;
+        const organizationId = params.organizationId;
+        const productId = params.productId;
+        const quantity = params.quantity;
+        const segmentCodes = params.segmentCodes;
+        const sku = params.sku;
+
+
+        const apiPath = '/v1/prices/check';
+        const apiPayload: Payload = {};
+        if (typeof at !== 'undefined') {
+            apiPayload['at'] = at;
+        }
+        if (typeof channelId !== 'undefined') {
+            apiPayload['channel_id'] = channelId;
+        }
+        if (typeof contactId !== 'undefined') {
+            apiPayload['contact_id'] = contactId;
+        }
+        if (typeof currency !== 'undefined') {
+            apiPayload['currency'] = currency;
+        }
+        if (typeof lang !== 'undefined') {
+            apiPayload['lang'] = lang;
+        }
+        if (typeof market !== 'undefined') {
+            apiPayload['market'] = market;
+        }
+        if (typeof organizationId !== 'undefined') {
+            apiPayload['organization_id'] = organizationId;
+        }
+        if (typeof productId !== 'undefined') {
+            apiPayload['product_id'] = productId;
+        }
+        if (typeof quantity !== 'undefined') {
+            apiPayload['quantity'] = quantity;
+        }
+        if (typeof segmentCodes !== 'undefined') {
+            apiPayload['segment_codes'] = segmentCodes;
+        }
+        if (typeof sku !== 'undefined') {
+            apiPayload['sku'] = sku;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
     }
 
     /**
@@ -44,13 +174,14 @@ export class Prices {
      * @param {string} params.updatedAt - Exact equality on the last change — matched to the stored microsecond, not a range. This app publishes no from/until query; narrow a period client-side, or by `order` plus `limit`.
      * @param {string} params.externalId - Filter by the key the system that OWNS the price list knows it by — how an import finds the row it wrote last run. Exact match; a price list maintained here carries none and is never answered by it.
      * @param {string} params.sourceSyncedAt - Filter to the price lists last confirmed against their source at exactly this instant. A filter is an equality, so bounding a period means sorting with `order` and paging.
+     * @param {PriceListTrashed} params.trashed - Which lists the page holds with respect to the trash: `exclude` (default) leaves lists in the trash out, `only` answers the trash itself, `include` answers both. Anything else is refused with 400 `invalid_trashed`.
      * @param {number} params.limit - Page size (default 50, max 200).
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    pricesListsList(params?: { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, segmentCode?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, externalId?: string, sourceSyncedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    pricesListsList(params?: { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, segmentCode?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, externalId?: string, sourceSyncedAt?: string, trashed?: PriceListTrashed, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * One page of the tenant's price list HEADERS — code, currency, tax basis, status, priority, validity window, buyer scope and the default flag. Never the prices themselves: those are a separate page per list (`GET /prices/lists/{list_id}/entries`).
      * 
@@ -79,6 +210,7 @@ export class Prices {
      * @param {string} updatedAt - Exact equality on the last change — matched to the stored microsecond, not a range. This app publishes no from/until query; narrow a period client-side, or by `order` plus `limit`.
      * @param {string} externalId - Filter by the key the system that OWNS the price list knows it by — how an import finds the row it wrote last run. Exact match; a price list maintained here carries none and is never answered by it.
      * @param {string} sourceSyncedAt - Filter to the price lists last confirmed against their source at exactly this instant. A filter is an equality, so bounding a period means sorting with `order` and paging.
+     * @param {PriceListTrashed} trashed - Which lists the page holds with respect to the trash: `exclude` (default) leaves lists in the trash out, `only` answers the trash itself, `include` answers both. Anything else is refused with 400 `invalid_trashed`.
      * @param {number} limit - Page size (default 50, max 200).
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
@@ -86,15 +218,15 @@ export class Prices {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesListsList(id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, segmentCode?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, externalId?: string, sourceSyncedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    pricesListsList(id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, segmentCode?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, externalId?: string, sourceSyncedAt?: string, trashed?: PriceListTrashed, limit?: number, offset?: number, order?: string): Promise<{}>;
     pricesListsList(
-        paramsOrFirst?: { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, segmentCode?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, externalId?: string, sourceSyncedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (PriceListStatus)?, (number)?, (boolean)?, (PriceListTaxBasis)?, (boolean)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, segmentCode?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, externalId?: string, sourceSyncedAt?: string, trashed?: PriceListTrashed, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (PriceListStatus)?, (number)?, (boolean)?, (PriceListTaxBasis)?, (boolean)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (PriceListTrashed)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, segmentCode?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, externalId?: string, sourceSyncedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, segmentCode?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, externalId?: string, sourceSyncedAt?: string, trashed?: PriceListTrashed, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, segmentCode?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, externalId?: string, sourceSyncedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, code?: string, name?: string, description?: string, currency?: string, status?: PriceListStatus, priority?: number, isDefault?: boolean, taxBasis?: PriceListTaxBasis, taxIncluded?: boolean, requiresAuth?: boolean, contactId?: string, organizationId?: string, segmentCode?: string, channelId?: string, validFrom?: string, validUntil?: string, createdAt?: string, updatedAt?: string, externalId?: string, sourceSyncedAt?: string, trashed?: PriceListTrashed, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -118,9 +250,10 @@ export class Prices {
                 updatedAt: rest[17] as string,
                 externalId: rest[18] as string,
                 sourceSyncedAt: rest[19] as string,
-                limit: rest[20] as number,
-                offset: rest[21] as number,
-                order: rest[22] as string            
+                trashed: rest[20] as PriceListTrashed,
+                limit: rest[21] as number,
+                offset: rest[22] as number,
+                order: rest[23] as string            
             };
         }
         
@@ -145,6 +278,7 @@ export class Prices {
         const updatedAt = params.updatedAt;
         const externalId = params.externalId;
         const sourceSyncedAt = params.sourceSyncedAt;
+        const trashed = params.trashed;
         const limit = params.limit;
         const offset = params.offset;
         const order = params.order;
@@ -214,6 +348,9 @@ export class Prices {
         }
         if (typeof sourceSyncedAt !== 'undefined') {
             apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof trashed !== 'undefined') {
+            apiPayload['trashed'] = trashed;
         }
         if (typeof limit !== 'undefined') {
             apiPayload['limit'] = limit;
@@ -459,33 +596,88 @@ export class Prices {
     }
 
     /**
-     * Deletes the list AND every price in it. `price_entries.price_list_id` references this row ON DELETE CASCADE, so the entries go in the same statement: nothing asks, nothing blocks, a book of 40 000 prices deletes exactly as fast as an empty one, and the answer is a bare `{deleted, id}` that never says how many prices went with it.
+     * Empties the trash: each list in it is deleted for good on its own, exactly as a second delete would, and a list something still needs stays with its reason. The answer lists both halves, so a partial success is visible. Nothing is recoverable afterwards.
+     *
+     * @param {object} params.data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PriceListEmptyTrashResponse>}
+     */
+    pricesListsEmptyTrash(params: { data: object }): Promise<Models.PriceListEmptyTrashResponse>;
+    /**
+     * Empties the trash: each list in it is deleted for good on its own, exactly as a second delete would, and a list something still needs stays with its reason. The answer lists both halves, so a partial success is visible. Nothing is recoverable afterwards.
+     *
+     * @param {object} data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PriceListEmptyTrashResponse>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pricesListsEmptyTrash(data: object): Promise<Models.PriceListEmptyTrashResponse>;
+    pricesListsEmptyTrash(
+        paramsOrFirst: { data: object } | object    
+    ): Promise<Models.PriceListEmptyTrashResponse> {
+        let params: { data: object };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { data: object };
+        } else {
+            params = {
+                data: paramsOrFirst as object            
+            };
+        }
+        
+        const data = params.data;
+
+        if (typeof data === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "data"');
+        }
+
+        const apiPath = '/v1/prices/lists/trash/empty';
+        const apiPayload: Payload = {};
+        if (typeof data !== 'undefined') {
+            Object.assign(apiPayload, data);
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * The first delete moves the list to the TRASH: it keeps its entries, prices nothing from the next resolve call on, is left out of the list read, refuses every write, and keeps its code reserved. The answer counts the entries that stay with it under `warnings`. Only the default list is refused (409 `default_price_list`) — every fallback price comes from it, so make another list the default first.
      * 
-     * What that means while a storefront is quoting: from the next resolve call the items this list priced fall through to the next candidate list, and where there is none the answer is `on_request` — "price on request" for something that had a price a second ago, never €0. The default list itself is never deleted: move the flag with `POST /prices/lists/{list_id}/make-default` first, otherwise the delete answers 409 `default_price_list`.
+     * A delete of a list that is already in the trash deletes it for good. Only then do its entries go — `price_entries.price_list_id` cascades — and only then does `price_list.deleted` fire. Carts, quotes and orders carry the resolved price as a snapshot and no list id, so nothing elsewhere blocks it. The daily purge does the same after the tenant's trash retention.
      * 
-     * This is not the way to take a list out of circulation. `status: "inactive"` does that immediately and reversibly and keeps the prices; deleting is for a list whose contents you are prepared to import again, because nothing here is recoverable.
+     * This is still not the way to take a list out of circulation for a while: `status: "inactive"` does that and keeps the list editable. The trash is for a list that should go; `POST /prices/lists/{id}/restore` is the way back while it is there.
      *
      * @param {string} params.id - The price list, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PriceDeleted>}
+     * @returns {Promise<Models.PriceListDeleteResult>}
      */
-    pricesListsDelete(params: { id: string }): Promise<Models.PriceDeleted>;
+    pricesListsDelete(params: { id: string }): Promise<Models.PriceListDeleteResult>;
     /**
-     * Deletes the list AND every price in it. `price_entries.price_list_id` references this row ON DELETE CASCADE, so the entries go in the same statement: nothing asks, nothing blocks, a book of 40 000 prices deletes exactly as fast as an empty one, and the answer is a bare `{deleted, id}` that never says how many prices went with it.
+     * The first delete moves the list to the TRASH: it keeps its entries, prices nothing from the next resolve call on, is left out of the list read, refuses every write, and keeps its code reserved. The answer counts the entries that stay with it under `warnings`. Only the default list is refused (409 `default_price_list`) — every fallback price comes from it, so make another list the default first.
      * 
-     * What that means while a storefront is quoting: from the next resolve call the items this list priced fall through to the next candidate list, and where there is none the answer is `on_request` — "price on request" for something that had a price a second ago, never €0. The default list itself is never deleted: move the flag with `POST /prices/lists/{list_id}/make-default` first, otherwise the delete answers 409 `default_price_list`.
+     * A delete of a list that is already in the trash deletes it for good. Only then do its entries go — `price_entries.price_list_id` cascades — and only then does `price_list.deleted` fire. Carts, quotes and orders carry the resolved price as a snapshot and no list id, so nothing elsewhere blocks it. The daily purge does the same after the tenant's trash retention.
      * 
-     * This is not the way to take a list out of circulation. `status: "inactive"` does that immediately and reversibly and keeps the prices; deleting is for a list whose contents you are prepared to import again, because nothing here is recoverable.
+     * This is still not the way to take a list out of circulation for a while: `status: "inactive"` does that and keeps the list editable. The trash is for a list that should go; `POST /prices/lists/{id}/restore` is the way back while it is there.
      *
      * @param {string} id - The price list, by id.
      * @throws {RevenexxException}
-     * @returns {Promise<Models.PriceDeleted>}
+     * @returns {Promise<Models.PriceListDeleteResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pricesListsDelete(id: string): Promise<Models.PriceDeleted>;
+    pricesListsDelete(id: string): Promise<Models.PriceListDeleteResult>;
     pricesListsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<Models.PriceDeleted> {
+    ): Promise<Models.PriceListDeleteResult> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -749,6 +941,139 @@ export class Prices {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * A new price list from this one (PE-1053, „Kopie anlegen“). It keeps every setting of the source — name, labels, currency, tax basis, buyer scope, priority, validity — starts `inactive` and never as the default, and takes the source's entries when `parts` names `prices`. Sync columns (`external_id`, `external_refs`, `source_*`) stay behind: the copy is nobody's import. The market assignment lives in the platform's scope registry, not on the row, so the copy starts global. A failure after the new list was written deletes it again, entries included.
+     *
+     * @param {string} params.id - The price list, by id.
+     * @param {string} params.code - The code of the new list, unique per tenant like every list code.
+     * @param {Parts[]} params.parts - What the copy takes along: `prices` copies every entry of the source. Empty or absent copies the list header only.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PriceListCopyResponse>}
+     */
+    pricesListsCopy(params: { id: string, code: string, parts?: Parts[] }): Promise<Models.PriceListCopyResponse>;
+    /**
+     * A new price list from this one (PE-1053, „Kopie anlegen“). It keeps every setting of the source — name, labels, currency, tax basis, buyer scope, priority, validity — starts `inactive` and never as the default, and takes the source's entries when `parts` names `prices`. Sync columns (`external_id`, `external_refs`, `source_*`) stay behind: the copy is nobody's import. The market assignment lives in the platform's scope registry, not on the row, so the copy starts global. A failure after the new list was written deletes it again, entries included.
+     *
+     * @param {string} id - The price list, by id.
+     * @param {string} code - The code of the new list, unique per tenant like every list code.
+     * @param {Parts[]} parts - What the copy takes along: `prices` copies every entry of the source. Empty or absent copies the list header only.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PriceListCopyResponse>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pricesListsCopy(id: string, code: string, parts?: Parts[]): Promise<Models.PriceListCopyResponse>;
+    pricesListsCopy(
+        paramsOrFirst: { id: string, code: string, parts?: Parts[] } | string,
+        ...rest: [(string)?, (Parts[])?]    
+    ): Promise<Models.PriceListCopyResponse> {
+        let params: { id: string, code: string, parts?: Parts[] };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, code: string, parts?: Parts[] };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                code: rest[0] as string,
+                parts: rest[1] as Parts[]            
+            };
+        }
+        
+        const id = params.id;
+        const code = params.code;
+        const parts = params.parts;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof code === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "code"');
+        }
+
+        const apiPath = '/v1/prices/lists/{id}/copy'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof code !== 'undefined') {
+            apiPayload['code'] = code;
+        }
+        if (typeof parts !== 'undefined') {
+            apiPayload['parts'] = parts;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Brings a list in the trash back as it was, entries included: from the next resolve call it prices again. Everything trashed in the same action comes back with it. Takes the same right as deleting. A list that is not in the trash answers 409 `not_in_trash`.
+     *
+     * @param {string} params.id - The price list, by id.
+     * @param {object} params.data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PriceListRestoreResponse>}
+     */
+    pricesListsRestore(params: { id: string, data: object }): Promise<Models.PriceListRestoreResponse>;
+    /**
+     * Brings a list in the trash back as it was, entries included: from the next resolve call it prices again. Everything trashed in the same action comes back with it. Takes the same right as deleting. A list that is not in the trash answers 409 `not_in_trash`.
+     *
+     * @param {string} id - The price list, by id.
+     * @param {object} data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PriceListRestoreResponse>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pricesListsRestore(id: string, data: object): Promise<Models.PriceListRestoreResponse>;
+    pricesListsRestore(
+        paramsOrFirst: { id: string, data: object } | string,
+        ...rest: [(object)?]    
+    ): Promise<Models.PriceListRestoreResponse> {
+        let params: { id: string, data: object };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, data: object };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                data: rest[0] as object            
+            };
+        }
+        
+        const id = params.id;
+        const data = params.data;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof data === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "data"');
+        }
+
+        const apiPath = '/v1/prices/lists/{id}/restore'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof data !== 'undefined') {
+            Object.assign(apiPayload, data);
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload

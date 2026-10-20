@@ -16,7 +16,7 @@ const result = await promotionsVouchers.promotionsVouchersCreate({
     contactId: '', // optional
     currency: '', // optional
     endsAt: '2026-01-01T12:00:00Z', // optional
-    metadata: {}, // optional
+    metadata: null, // optional
     organizationId: '', // optional
     reservationLimit: 1, // optional
     reservationRequired: true, // optional

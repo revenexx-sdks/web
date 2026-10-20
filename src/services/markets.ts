@@ -5,6 +5,7 @@ import type { Models } from '../models';
 import { MarketsListStatus } from '../enums/markets-list-status';
 import { MarketStatus } from '../enums/market-status';
 import { MarketsVocabularyName } from '../enums/markets-vocabulary-name';
+import { MarketsLocalesCreateStatus } from '../enums/markets-locales-create-status';
 
 export class Markets {
     client: Client;
@@ -21,6 +22,8 @@ export class Markets {
      * @param {string} params.name - Exact match on `name`. Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
      * @param {string} params.labels - Exact match on `labels`. Exact whole-document equality on the jsonb: the value is a whole JSON document and has to match every key, so this is not a path or a containment query. Key order and whitespace are irrelevant — the comparison is semantic. A value that does not parse as JSON is refused with 400 `invalid_value` rather than answered with zero rows. Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {string} params.currency - Exact match on `currency`. Base currency this market quotes in — ISO 4217, and schema.json's own default is 'EUR'. This is the single currency prices are STATED in; the currencies collection under the market is the wider set it accepts. A base currency missing from that collection is a blocking readiness failure.
+     * @param {string} params.shipFromCountry - Exact match on `ship_from_country`. The country this market ships from — upper-case ISO 3166-1 alpha-2 (RAD-246). Documents print an address for this country when they carry no sender address of their own, so it is what decides whether an address counts as abroad. The platform passes it to every app next to the market code. Required on every market written since 3.1.0: a create without it takes it from a code that is a country code (`de` → DE) and is refused otherwise; a market stored before then may answer null until the backfill has run.
+     * @param {boolean} params.shipFromCountryReview - Exact match on `ship_from_country_review`. True when the backfill could not take `ship_from_country` from the code and filled in the tenant's first market country as a guess. Readiness reports it as a warning until a write names the country, which clears it. Never written by a caller.
      * @param {MarketsListStatus} params.status - Exact match on `status`. Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
      * @param {boolean} params.isDefault - Exact match on `is_default`. The tenant default market — what a call naming no market falls back to. Exactly one market holds it, and it is moved only with POST /markets/{id}/make-default: a create may set it only while the tenant has none, and an update cannot change it.
      * @param {number} params.position - Exact match on `position`. Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
@@ -28,11 +31,11 @@ export class Markets {
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the market row was last written. Set by the database on every update; never writable.
      * @param {number} params.limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} params.offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, code, name, labels, currency, status, is_default, position, created_at, updated_at.
+     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, code, name, labels, currency, ship_from_country, ship_from_country_review, status, is_default, position, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketList>}
      */
-    marketsList(params?: { id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketList>;
+    marketsList(params?: { id?: string, code?: string, name?: string, labels?: string, currency?: string, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketList>;
     /**
      * Every column is an exact-match filter and they combine with AND (?code=northwind); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing.
      *
@@ -41,6 +44,8 @@ export class Markets {
      * @param {string} name - Exact match on `name`. Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
      * @param {string} labels - Exact match on `labels`. Exact whole-document equality on the jsonb: the value is a whole JSON document and has to match every key, so this is not a path or a containment query. Key order and whitespace are irrelevant — the comparison is semantic. A value that does not parse as JSON is refused with 400 `invalid_value` rather than answered with zero rows. Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {string} currency - Exact match on `currency`. Base currency this market quotes in — ISO 4217, and schema.json's own default is 'EUR'. This is the single currency prices are STATED in; the currencies collection under the market is the wider set it accepts. A base currency missing from that collection is a blocking readiness failure.
+     * @param {string} shipFromCountry - Exact match on `ship_from_country`. The country this market ships from — upper-case ISO 3166-1 alpha-2 (RAD-246). Documents print an address for this country when they carry no sender address of their own, so it is what decides whether an address counts as abroad. The platform passes it to every app next to the market code. Required on every market written since 3.1.0: a create without it takes it from a code that is a country code (`de` → DE) and is refused otherwise; a market stored before then may answer null until the backfill has run.
+     * @param {boolean} shipFromCountryReview - Exact match on `ship_from_country_review`. True when the backfill could not take `ship_from_country` from the code and filled in the tenant's first market country as a guess. Readiness reports it as a warning until a write names the country, which clears it. Never written by a caller.
      * @param {MarketsListStatus} status - Exact match on `status`. Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
      * @param {boolean} isDefault - Exact match on `is_default`. The tenant default market — what a call naming no market falls back to. Exactly one market holds it, and it is moved only with POST /markets/{id}/make-default: a create may set it only while the tenant has none, and an update cannot change it.
      * @param {number} position - Exact match on `position`. Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
@@ -48,20 +53,20 @@ export class Markets {
      * @param {string} updatedAt - Exact match on `updated_at`. When the market row was last written. Set by the database on every update; never writable.
      * @param {number} limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, code, name, labels, currency, status, is_default, position, created_at, updated_at.
+     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, code, name, labels, currency, ship_from_country, ship_from_country_review, status, is_default, position, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsList(id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketList>;
+    marketsList(id?: string, code?: string, name?: string, labels?: string, currency?: string, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketList>;
     marketsList(
-        paramsOrFirst?: { id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (MarketsListStatus)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, code?: string, name?: string, labels?: string, currency?: string, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (MarketsListStatus)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<Models.MarketList> {
-        let params: { id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, code?: string, name?: string, labels?: string, currency?: string, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, code?: string, name?: string, labels?: string, currency?: string, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, code?: string, name?: string, labels?: string, currency?: string, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketsListStatus, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -69,14 +74,16 @@ export class Markets {
                 name: rest[1] as string,
                 labels: rest[2] as string,
                 currency: rest[3] as string,
-                status: rest[4] as MarketsListStatus,
-                isDefault: rest[5] as boolean,
-                position: rest[6] as number,
-                createdAt: rest[7] as string,
-                updatedAt: rest[8] as string,
-                limit: rest[9] as number,
-                offset: rest[10] as number,
-                order: rest[11] as string            
+                shipFromCountry: rest[4] as string,
+                shipFromCountryReview: rest[5] as boolean,
+                status: rest[6] as MarketsListStatus,
+                isDefault: rest[7] as boolean,
+                position: rest[8] as number,
+                createdAt: rest[9] as string,
+                updatedAt: rest[10] as string,
+                limit: rest[11] as number,
+                offset: rest[12] as number,
+                order: rest[13] as string            
             };
         }
         
@@ -85,6 +92,8 @@ export class Markets {
         const name = params.name;
         const labels = params.labels;
         const currency = params.currency;
+        const shipFromCountry = params.shipFromCountry;
+        const shipFromCountryReview = params.shipFromCountryReview;
         const status = params.status;
         const isDefault = params.isDefault;
         const position = params.position;
@@ -111,6 +120,12 @@ export class Markets {
         }
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
+        }
+        if (typeof shipFromCountry !== 'undefined') {
+            apiPayload['ship_from_country'] = shipFromCountry;
+        }
+        if (typeof shipFromCountryReview !== 'undefined') {
+            apiPayload['ship_from_country_review'] = shipFromCountryReview;
         }
         if (typeof status !== 'undefined') {
             apiPayload['status'] = status;
@@ -158,11 +173,13 @@ export class Markets {
      * @param {boolean} params.isDefault - The tenant default flag. On a create, `true` is accepted only while the tenant has no default market (409 `default_exists` otherwise). On an update it cannot change — move it with POST /markets/{id}/make-default (400 `default_via_make_default`); the current value sent back is accepted and ignored.
      * @param {object} params.labels - Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {number} params.position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
+     * @param {string} params.shipFromCountry - Upper-case ISO 3166-1 alpha-2 country this market ships from, checked against the assigned codes (400 `invalid_country` otherwise — it is not uppercased for you). On a create it may be omitted only when the code is a country code, and is then taken from it (`de` → DE); otherwise 400 `ship_from_country_required`. On an update it cannot be cleared. Naming it confirms it and clears `ship_from_country_review`.
+     * @param {boolean} params.shipFromCountryReview - Set by the backfill only. A body may send back `false` or the stored value; anything else is refused with 400 `server_owned_field`.
      * @param {MarketStatus} params.status - Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Market>}
      */
-    marketsCreate(params: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus }): Promise<Models.Market>;
+    marketsCreate(params: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus }): Promise<Models.Market>;
     /**
      * A market needs a 'code' and a 'name' — currency defaults to EUR, status to active. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
      *
@@ -172,20 +189,22 @@ export class Markets {
      * @param {boolean} isDefault - The tenant default flag. On a create, `true` is accepted only while the tenant has no default market (409 `default_exists` otherwise). On an update it cannot change — move it with POST /markets/{id}/make-default (400 `default_via_make_default`); the current value sent back is accepted and ignored.
      * @param {object} labels - Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {number} position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
+     * @param {string} shipFromCountry - Upper-case ISO 3166-1 alpha-2 country this market ships from, checked against the assigned codes (400 `invalid_country` otherwise — it is not uppercased for you). On a create it may be omitted only when the code is a country code, and is then taken from it (`de` → DE); otherwise 400 `ship_from_country_required`. On an update it cannot be cleared. Naming it confirms it and clears `ship_from_country_review`.
+     * @param {boolean} shipFromCountryReview - Set by the backfill only. A body may send back `false` or the stored value; anything else is refused with 400 `server_owned_field`.
      * @param {MarketStatus} status - Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Market>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCreate(code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus): Promise<Models.Market>;
+    marketsCreate(code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus): Promise<Models.Market>;
     marketsCreate(
-        paramsOrFirst: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (object)?, (number)?, (MarketStatus)?]    
+        paramsOrFirst: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (object)?, (number)?, (string)?, (boolean)?, (MarketStatus)?]    
     ): Promise<Models.Market> {
-        let params: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus };
+        let params: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, status?: MarketStatus };
+            params = (paramsOrFirst || {}) as { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus };
         } else {
             params = {
                 code: paramsOrFirst as string,
@@ -194,7 +213,9 @@ export class Markets {
                 isDefault: rest[2] as boolean,
                 labels: rest[3] as object,
                 position: rest[4] as number,
-                status: rest[5] as MarketStatus            
+                shipFromCountry: rest[5] as string,
+                shipFromCountryReview: rest[6] as boolean,
+                status: rest[7] as MarketStatus            
             };
         }
         
@@ -204,6 +225,8 @@ export class Markets {
         const isDefault = params.isDefault;
         const labels = params.labels;
         const position = params.position;
+        const shipFromCountry = params.shipFromCountry;
+        const shipFromCountryReview = params.shipFromCountryReview;
         const status = params.status;
 
         if (typeof code === 'undefined') {
@@ -232,6 +255,12 @@ export class Markets {
         }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
+        }
+        if (typeof shipFromCountry !== 'undefined') {
+            apiPayload['ship_from_country'] = shipFromCountry;
+        }
+        if (typeof shipFromCountryReview !== 'undefined') {
+            apiPayload['ship_from_country_review'] = shipFromCountryReview;
         }
         if (typeof status !== 'undefined') {
             apiPayload['status'] = status;
@@ -459,11 +488,13 @@ export class Markets {
      * @param {object} params.labels - Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {string} params.name - Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
      * @param {number} params.position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
+     * @param {string} params.shipFromCountry - Upper-case ISO 3166-1 alpha-2 country this market ships from, checked against the assigned codes (400 `invalid_country` otherwise — it is not uppercased for you). On a create it may be omitted only when the code is a country code, and is then taken from it (`de` → DE); otherwise 400 `ship_from_country_required`. On an update it cannot be cleared. Naming it confirms it and clears `ship_from_country_review`.
+     * @param {boolean} params.shipFromCountryReview - Set by the backfill only. A body may send back `false` or the stored value; anything else is refused with 400 `server_owned_field`.
      * @param {MarketStatus} params.status - Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Market>}
      */
-    marketsUpdate(params: { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus }): Promise<Models.Market>;
+    marketsUpdate(params: { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus }): Promise<Models.Market>;
     /**
      * Partial: omitted fields keep their value.
      *
@@ -474,20 +505,22 @@ export class Markets {
      * @param {object} labels - Localized display names for storefronts, keyed by locale: a flat {locale: label} map, one level deep, string values. WHICH key to write is not free — GET /markets/{id}/context returns `locale_policy`, whose `write` is the key this tenant keys by (a full locale under regional granularity, a bare language under language granularity) and whose `read` is the order to try. Null means nothing is translated and `name` is all there is.
      * @param {string} name - Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
      * @param {number} position - Sort position among the tenant's markets, ascending, default 0. Presentation only — it decides the order the Cockpit and a market picker list them in, and nothing resolves a market by it.
+     * @param {string} shipFromCountry - Upper-case ISO 3166-1 alpha-2 country this market ships from, checked against the assigned codes (400 `invalid_country` otherwise — it is not uppercased for you). On a create it may be omitted only when the code is a country code, and is then taken from it (`de` → DE); otherwise 400 `ship_from_country_required`. On an update it cannot be cleared. Naming it confirms it and clears `ship_from_country_review`.
+     * @param {boolean} shipFromCountryReview - Set by the backfill only. A body may send back `false` or the stored value; anything else is refused with 400 `server_owned_field`.
      * @param {MarketStatus} status - Default 'active'. Only an active market serves a storefront; 'inactive' keeps the market and all its configuration but takes it out of service. Readiness reports an active market that cannot trade as `serving: true, ready: false` — live and broken.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Market>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsUpdate(id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus): Promise<Models.Market>;
+    marketsUpdate(id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus): Promise<Models.Market>;
     marketsUpdate(
-        paramsOrFirst: { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (object)?, (string)?, (number)?, (MarketStatus)?]    
+        paramsOrFirst: { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (object)?, (string)?, (number)?, (string)?, (boolean)?, (MarketStatus)?]    
     ): Promise<Models.Market> {
-        let params: { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus };
+        let params: { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, status?: MarketStatus };
+            params = (paramsOrFirst || {}) as { id: string, code?: string, currency?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -497,7 +530,9 @@ export class Markets {
                 labels: rest[3] as object,
                 name: rest[4] as string,
                 position: rest[5] as number,
-                status: rest[6] as MarketStatus            
+                shipFromCountry: rest[6] as string,
+                shipFromCountryReview: rest[7] as boolean,
+                status: rest[8] as MarketStatus            
             };
         }
         
@@ -508,6 +543,8 @@ export class Markets {
         const labels = params.labels;
         const name = params.name;
         const position = params.position;
+        const shipFromCountry = params.shipFromCountry;
+        const shipFromCountryReview = params.shipFromCountryReview;
         const status = params.status;
 
         if (typeof id === 'undefined') {
@@ -533,6 +570,12 @@ export class Markets {
         }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
+        }
+        if (typeof shipFromCountry !== 'undefined') {
+            apiPayload['ship_from_country'] = shipFromCountry;
+        }
+        if (typeof shipFromCountryReview !== 'undefined') {
+            apiPayload['ship_from_country_review'] = shipFromCountryReview;
         }
         if (typeof status !== 'undefined') {
             apiPayload['status'] = status;
@@ -645,11 +688,12 @@ export class Markets {
      * @param {boolean} params.copyTaxClasses - Copy the source's tax classes, rates and all. Default true. False leaves the market unable to tax anything, which readiness reports as blocking.
      * @param {string} params.currency - Base currency of the new market, upper-case ISO 4217 (400 `invalid_currency` — it is not uppercased for you). Defaults to the source market's, and is registered and marked default on the new one either way.
      * @param {string} params.name - Display name of the new market. Defaults to its code.
-     * @param {MarketStatus} params.status - Status of the new market. Defaults to 'active'; clone it 'inactive' to build it out before it serves anyone.
+     * @param {string} params.shipFromCountry - Country the new market ships from, upper-case ISO 3166-1 alpha-2 (400 `invalid_country`). Defaults to the country the new code names when it is a country code, else to the source market's; a clone that ends up with none is refused with 400 `ship_from_country_required`.
+     * @param {MarketStatus} params.status - Status of the new market. Defaults to 'inactive', so it is checked and built out before it serves anyone; send 'active' to put it live with the call.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCloneResult>}
      */
-    marketsClone(params: { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus }): Promise<Models.MarketCloneResult>;
+    marketsClone(params: { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, shipFromCountry?: string, status?: MarketStatus }): Promise<Models.MarketCloneResult>;
     /**
      * Creates a NEW market out of an existing one, taking its locales, its traded currencies and its tax classes with it in a single call. That is the difference between this and POST /markets: a plain create leaves a row that cannot serve anybody, while what comes back here is a market with a language to render in, a currency to price in and a rate to tax with. The path id is the SOURCE market, resolved by uuid OR by market code.
      *
@@ -660,20 +704,21 @@ export class Markets {
      * @param {boolean} copyTaxClasses - Copy the source's tax classes, rates and all. Default true. False leaves the market unable to tax anything, which readiness reports as blocking.
      * @param {string} currency - Base currency of the new market, upper-case ISO 4217 (400 `invalid_currency` — it is not uppercased for you). Defaults to the source market's, and is registered and marked default on the new one either way.
      * @param {string} name - Display name of the new market. Defaults to its code.
-     * @param {MarketStatus} status - Status of the new market. Defaults to 'active'; clone it 'inactive' to build it out before it serves anyone.
+     * @param {string} shipFromCountry - Country the new market ships from, upper-case ISO 3166-1 alpha-2 (400 `invalid_country`). Defaults to the country the new code names when it is a country code, else to the source market's; a clone that ends up with none is refused with 400 `ship_from_country_required`.
+     * @param {MarketStatus} status - Status of the new market. Defaults to 'inactive', so it is checked and built out before it serves anyone; send 'active' to put it live with the call.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCloneResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsClone(id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus): Promise<Models.MarketCloneResult>;
+    marketsClone(id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, shipFromCountry?: string, status?: MarketStatus): Promise<Models.MarketCloneResult>;
     marketsClone(
-        paramsOrFirst: { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus } | string,
-        ...rest: [(string)?, (boolean)?, (boolean)?, (boolean)?, (string)?, (string)?, (MarketStatus)?]    
+        paramsOrFirst: { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, shipFromCountry?: string, status?: MarketStatus } | string,
+        ...rest: [(string)?, (boolean)?, (boolean)?, (boolean)?, (string)?, (string)?, (string)?, (MarketStatus)?]    
     ): Promise<Models.MarketCloneResult> {
-        let params: { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus };
+        let params: { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, shipFromCountry?: string, status?: MarketStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, status?: MarketStatus };
+            params = (paramsOrFirst || {}) as { id: string, code: string, copyCurrencies?: boolean, copyLocales?: boolean, copyTaxClasses?: boolean, currency?: string, name?: string, shipFromCountry?: string, status?: MarketStatus };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -683,7 +728,8 @@ export class Markets {
                 copyTaxClasses: rest[3] as boolean,
                 currency: rest[4] as string,
                 name: rest[5] as string,
-                status: rest[6] as MarketStatus            
+                shipFromCountry: rest[6] as string,
+                status: rest[7] as MarketStatus            
             };
         }
         
@@ -694,6 +740,7 @@ export class Markets {
         const copyTaxClasses = params.copyTaxClasses;
         const currency = params.currency;
         const name = params.name;
+        const shipFromCountry = params.shipFromCountry;
         const status = params.status;
 
         if (typeof id === 'undefined') {
@@ -723,8 +770,74 @@ export class Markets {
         if (typeof name !== 'undefined') {
             apiPayload['name'] = name;
         }
+        if (typeof shipFromCountry !== 'undefined') {
+            apiPayload['ship_from_country'] = shipFromCountry;
+        }
         if (typeof status !== 'undefined') {
             apiPayload['status'] = status;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Clears `ship_from_country_review`, the flag the RAD-246 backfill set on a market whose ship-from country it had to guess. Editing the market clears it only when the country actually changes, because an edit form posts the stored value back and that confirms nothing; this is the call for "the guessed country is right as it is". Accepts an id or a market CODE. Answers the market; a market that carries no flag is answered unchanged and nothing is written.
+     *
+     * @param {string} params.id - The market whose ship-from country is confirmed — a uuid or a market code.
+     * @param {object} params.data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Market>}
+     */
+    marketsConfirmShipFrom(params: { id: string, data: object }): Promise<Models.Market>;
+    /**
+     * Clears `ship_from_country_review`, the flag the RAD-246 backfill set on a market whose ship-from country it had to guess. Editing the market clears it only when the country actually changes, because an edit form posts the stored value back and that confirms nothing; this is the call for "the guessed country is right as it is". Accepts an id or a market CODE. Answers the market; a market that carries no flag is answered unchanged and nothing is written.
+     *
+     * @param {string} id - The market whose ship-from country is confirmed — a uuid or a market code.
+     * @param {object} data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Market>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    marketsConfirmShipFrom(id: string, data: object): Promise<Models.Market>;
+    marketsConfirmShipFrom(
+        paramsOrFirst: { id: string, data: object } | string,
+        ...rest: [(object)?]    
+    ): Promise<Models.Market> {
+        let params: { id: string, data: object };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, data: object };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                data: rest[0] as object            
+            };
+        }
+        
+        const id = params.id;
+        const data = params.data;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof data === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "data"');
+        }
+
+        const apiPath = '/v1/markets/{id}/confirm-ship-from'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof data !== 'undefined') {
+            Object.assign(apiPayload, data);
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -912,16 +1025,17 @@ export class Markets {
      * @param {string} params.id - Exact match on `id`. Primary key of this currency registration. The currency is named by `code` everywhere else.
      * @param {string} params.code - Exact match on `code`. ISO 4217 code, unique per market — one entry in the set of currencies this market TRADES in, as opposed to the single base currency on the market row that its prices are quoted in. The base currency must appear here or the market cannot serve; clone and backfill register it for you.
      * @param {boolean} params.isDefault - Exact match on `is_default`. The currency offered first to a buyer who states no preference. At most one per market — a write flagging one takes it from the others — and it should be the market's base currency — readiness reports it as a warning when it is not.
+     * @param {boolean} params.active - Exact match on `active`. Whether this currency is offered for new records (default true) — a picker lists `?active=true`. An inactive currency stays on the market and on every record that already carries it, and is no longer offered as the market's booking currency. The market's default currency and its booking currency are always active.
      * @param {number} params.position - Exact match on `position`. Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @param {string} params.createdAt - Exact match on `created_at`. When the currency was registered on this market. Set by the database; never writable.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the currency registration was last written. Set by the database on every update; never writable. A currency is changed in place — its default flag and its position move — so this is the column that says when that last happened.
      * @param {number} params.limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} params.offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, is_default, position, created_at, updated_at.
+     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, is_default, active, position, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrencyList>}
      */
-    marketsCurrenciesList(params: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketCurrencyList>;
+    marketsCurrenciesList(params: { marketId: string, id?: string, code?: string, isDefault?: boolean, active?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketCurrencyList>;
     /**
      * Every column is an exact-match filter and they combine with AND (?code=EUR); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing. `market_id` is not among them: the owning market comes from the path and overwrites anything the query says. An unknown but well-formed market lists empty rather than 404 — the parent is filtered on, not verified.
      *
@@ -929,37 +1043,39 @@ export class Markets {
      * @param {string} id - Exact match on `id`. Primary key of this currency registration. The currency is named by `code` everywhere else.
      * @param {string} code - Exact match on `code`. ISO 4217 code, unique per market — one entry in the set of currencies this market TRADES in, as opposed to the single base currency on the market row that its prices are quoted in. The base currency must appear here or the market cannot serve; clone and backfill register it for you.
      * @param {boolean} isDefault - Exact match on `is_default`. The currency offered first to a buyer who states no preference. At most one per market — a write flagging one takes it from the others — and it should be the market's base currency — readiness reports it as a warning when it is not.
+     * @param {boolean} active - Exact match on `active`. Whether this currency is offered for new records (default true) — a picker lists `?active=true`. An inactive currency stays on the market and on every record that already carries it, and is no longer offered as the market's booking currency. The market's default currency and its booking currency are always active.
      * @param {number} position - Exact match on `position`. Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @param {string} createdAt - Exact match on `created_at`. When the currency was registered on this market. Set by the database; never writable.
      * @param {string} updatedAt - Exact match on `updated_at`. When the currency registration was last written. Set by the database on every update; never writable. A currency is changed in place — its default flag and its position move — so this is the column that says when that last happened.
      * @param {number} limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, is_default, position, created_at, updated_at.
+     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, is_default, active, position, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrencyList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCurrenciesList(marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketCurrencyList>;
+    marketsCurrenciesList(marketId: string, id?: string, code?: string, isDefault?: boolean, active?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketCurrencyList>;
     marketsCurrenciesList(
-        paramsOrFirst: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst: { marketId: string, id?: string, code?: string, isDefault?: boolean, active?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<Models.MarketCurrencyList> {
-        let params: { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { marketId: string, id?: string, code?: string, isDefault?: boolean, active?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, id?: string, code?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { marketId: string, id?: string, code?: string, isDefault?: boolean, active?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
                 id: rest[0] as string,
                 code: rest[1] as string,
                 isDefault: rest[2] as boolean,
-                position: rest[3] as number,
-                createdAt: rest[4] as string,
-                updatedAt: rest[5] as string,
-                limit: rest[6] as number,
-                offset: rest[7] as number,
-                order: rest[8] as string            
+                active: rest[3] as boolean,
+                position: rest[4] as number,
+                createdAt: rest[5] as string,
+                updatedAt: rest[6] as string,
+                limit: rest[7] as number,
+                offset: rest[8] as number,
+                order: rest[9] as string            
             };
         }
         
@@ -967,6 +1083,7 @@ export class Markets {
         const id = params.id;
         const code = params.code;
         const isDefault = params.isDefault;
+        const active = params.active;
         const position = params.position;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
@@ -988,6 +1105,9 @@ export class Markets {
         }
         if (typeof isDefault !== 'undefined') {
             apiPayload['is_default'] = isDefault;
+        }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
         }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
@@ -1025,43 +1145,47 @@ export class Markets {
      *
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.code - Upper-case ISO 4217 code (400 `invalid_currency` otherwise — it is not uppercased for you). Unique per market.
-     * @param {boolean} params.isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call.
+     * @param {boolean} params.active - False takes the currency out of the choices for new records; records that already carry it keep it. The default currency cannot be deactivated (409 `default_must_stay_active`), nor the market's booking currency (409 `booking_currency`, naming the market).
+     * @param {boolean} params.isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call. An inactive currency cannot be flagged (409 `inactive_cannot_be_default`).
      * @param {number} params.position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrency>}
      */
-    marketsCurrenciesCreate(params: { marketId: string, code: string, isDefault?: boolean, position?: number }): Promise<Models.MarketCurrency>;
+    marketsCurrenciesCreate(params: { marketId: string, code: string, active?: boolean, isDefault?: boolean, position?: number }): Promise<Models.MarketCurrency>;
     /**
      * The owning market comes from the path and overrides anything in the body.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} code - Upper-case ISO 4217 code (400 `invalid_currency` otherwise — it is not uppercased for you). Unique per market.
-     * @param {boolean} isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call.
+     * @param {boolean} active - False takes the currency out of the choices for new records; records that already carry it keep it. The default currency cannot be deactivated (409 `default_must_stay_active`), nor the market's booking currency (409 `booking_currency`, naming the market).
+     * @param {boolean} isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call. An inactive currency cannot be flagged (409 `inactive_cannot_be_default`).
      * @param {number} position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrency>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCurrenciesCreate(marketId: string, code: string, isDefault?: boolean, position?: number): Promise<Models.MarketCurrency>;
+    marketsCurrenciesCreate(marketId: string, code: string, active?: boolean, isDefault?: boolean, position?: number): Promise<Models.MarketCurrency>;
     marketsCurrenciesCreate(
-        paramsOrFirst: { marketId: string, code: string, isDefault?: boolean, position?: number } | string,
-        ...rest: [(string)?, (boolean)?, (number)?]    
+        paramsOrFirst: { marketId: string, code: string, active?: boolean, isDefault?: boolean, position?: number } | string,
+        ...rest: [(string)?, (boolean)?, (boolean)?, (number)?]    
     ): Promise<Models.MarketCurrency> {
-        let params: { marketId: string, code: string, isDefault?: boolean, position?: number };
+        let params: { marketId: string, code: string, active?: boolean, isDefault?: boolean, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, code: string, isDefault?: boolean, position?: number };
+            params = (paramsOrFirst || {}) as { marketId: string, code: string, active?: boolean, isDefault?: boolean, position?: number };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
                 code: rest[0] as string,
-                isDefault: rest[1] as boolean,
-                position: rest[2] as number            
+                active: rest[1] as boolean,
+                isDefault: rest[2] as boolean,
+                position: rest[3] as number            
             };
         }
         
         const marketId = params.marketId;
         const code = params.code;
+        const active = params.active;
         const isDefault = params.isDefault;
         const position = params.position;
 
@@ -1074,6 +1198,9 @@ export class Markets {
 
         const apiPath = '/v1/markets/{market_id}/currencies'.replace('{market_id}', marketId);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -1220,46 +1347,50 @@ export class Markets {
      *
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The currency of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
+     * @param {boolean} params.active - False takes the currency out of the choices for new records; records that already carry it keep it. The default currency cannot be deactivated (409 `default_must_stay_active`), nor the market's booking currency (409 `booking_currency`, naming the market).
      * @param {string} params.code - Upper-case ISO 4217 code (400 `invalid_currency` otherwise — it is not uppercased for you). Unique per market.
-     * @param {boolean} params.isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call.
+     * @param {boolean} params.isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call. An inactive currency cannot be flagged (409 `inactive_cannot_be_default`).
      * @param {number} params.position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrency>}
      */
-    marketsCurrenciesUpdate(params: { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number }): Promise<Models.MarketCurrency>;
+    marketsCurrenciesUpdate(params: { marketId: string, id: string, active?: boolean, code?: string, isDefault?: boolean, position?: number }): Promise<Models.MarketCurrency>;
     /**
      * Partial: omitted fields keep their value.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The currency of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
+     * @param {boolean} active - False takes the currency out of the choices for new records; records that already carry it keep it. The default currency cannot be deactivated (409 `default_must_stay_active`), nor the market's booking currency (409 `booking_currency`, naming the market).
      * @param {string} code - Upper-case ISO 4217 code (400 `invalid_currency` otherwise — it is not uppercased for you). Unique per market.
-     * @param {boolean} isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call.
+     * @param {boolean} isDefault - Flag this currency as the market's default. The flag MOVES: every other currency of the market loses it in the same call. An inactive currency cannot be flagged (409 `inactive_cannot_be_default`).
      * @param {number} position - Sort position among this market's currencies, ascending, default 0 — the order a currency switcher lists them in.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketCurrency>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsCurrenciesUpdate(marketId: string, id: string, code?: string, isDefault?: boolean, position?: number): Promise<Models.MarketCurrency>;
+    marketsCurrenciesUpdate(marketId: string, id: string, active?: boolean, code?: string, isDefault?: boolean, position?: number): Promise<Models.MarketCurrency>;
     marketsCurrenciesUpdate(
-        paramsOrFirst: { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (number)?]    
+        paramsOrFirst: { marketId: string, id: string, active?: boolean, code?: string, isDefault?: boolean, position?: number } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (boolean)?, (number)?]    
     ): Promise<Models.MarketCurrency> {
-        let params: { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number };
+        let params: { marketId: string, id: string, active?: boolean, code?: string, isDefault?: boolean, position?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, id: string, code?: string, isDefault?: boolean, position?: number };
+            params = (paramsOrFirst || {}) as { marketId: string, id: string, active?: boolean, code?: string, isDefault?: boolean, position?: number };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
                 id: rest[0] as string,
-                code: rest[1] as string,
-                isDefault: rest[2] as boolean,
-                position: rest[3] as number            
+                active: rest[1] as boolean,
+                code: rest[2] as string,
+                isDefault: rest[3] as boolean,
+                position: rest[4] as number            
             };
         }
         
         const marketId = params.marketId;
         const id = params.id;
+        const active = params.active;
         const code = params.code;
         const isDefault = params.isDefault;
         const position = params.position;
@@ -1273,6 +1404,9 @@ export class Markets {
 
         const apiPath = '/v1/markets/{market_id}/currencies/{id}'.replace('{market_id}', marketId).replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -1306,15 +1440,16 @@ export class Markets {
      * @param {string} params.country - Exact match on `country`. ISO 3166-1 alpha-2 country code — the region half of `code`. It is a spelling of the language, not a shipping destination: a market may register de-AT without trading in Austria.
      * @param {boolean} params.isDefault - Exact match on `is_default`. The locale a storefront renders this market in when the request asks for none. At most one per market — a write flagging one takes it from the others; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
      * @param {number} params.position - Exact match on `position`. Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
+     * @param {string} params.status - Exact match on `status`. 'preparing' while the search index for this language is still being built, 'active' once a storefront may offer it. A storefront offers active locales only, and a preparing locale is never the one `default_locale` renders in. Defaults to active.
      * @param {string} params.createdAt - Exact match on `created_at`. When the locale was registered on this market. Set by the database; never writable.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the locale registration was last written. Set by the database on every update; never writable. A locale is changed in place — its default flag and its position move — so this is the column that says when that last happened.
      * @param {number} params.limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} params.offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, language, country, is_default, position, created_at, updated_at.
+     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, language, country, is_default, position, status, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocaleList>}
      */
-    marketsLocalesList(params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketLocaleList>;
+    marketsLocalesList(params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, status?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketLocaleList>;
     /**
      * Every column is an exact-match filter and they combine with AND (?code=de-DE); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing. `market_id` is not among them: the owning market comes from the path and overwrites anything the query says. An unknown but well-formed market lists empty rather than 404 — the parent is filtered on, not verified.
      *
@@ -1325,24 +1460,25 @@ export class Markets {
      * @param {string} country - Exact match on `country`. ISO 3166-1 alpha-2 country code — the region half of `code`. It is a spelling of the language, not a shipping destination: a market may register de-AT without trading in Austria.
      * @param {boolean} isDefault - Exact match on `is_default`. The locale a storefront renders this market in when the request asks for none. At most one per market — a write flagging one takes it from the others; where none carries the flag the first by position is used, and `default_locale.source` on the context says which of the two happened.
      * @param {number} position - Exact match on `position`. Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
+     * @param {string} status - Exact match on `status`. 'preparing' while the search index for this language is still being built, 'active' once a storefront may offer it. A storefront offers active locales only, and a preparing locale is never the one `default_locale` renders in. Defaults to active.
      * @param {string} createdAt - Exact match on `created_at`. When the locale was registered on this market. Set by the database; never writable.
      * @param {string} updatedAt - Exact match on `updated_at`. When the locale registration was last written. Set by the database on every update; never writable. A locale is changed in place — its default flag and its position move — so this is the column that says when that last happened.
      * @param {number} limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, language, country, is_default, position, created_at, updated_at.
+     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, language, country, is_default, position, status, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocaleList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesList(marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketLocaleList>;
+    marketsLocalesList(marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, status?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketLocaleList>;
     marketsLocalesList(
-        paramsOrFirst: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, status?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (boolean)?, (number)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<Models.MarketLocaleList> {
-        let params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, status?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { marketId: string, id?: string, code?: string, language?: string, country?: string, isDefault?: boolean, position?: number, status?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
@@ -1352,11 +1488,12 @@ export class Markets {
                 country: rest[3] as string,
                 isDefault: rest[4] as boolean,
                 position: rest[5] as number,
-                createdAt: rest[6] as string,
-                updatedAt: rest[7] as string,
-                limit: rest[8] as number,
-                offset: rest[9] as number,
-                order: rest[10] as string            
+                status: rest[6] as string,
+                createdAt: rest[7] as string,
+                updatedAt: rest[8] as string,
+                limit: rest[9] as number,
+                offset: rest[10] as number,
+                order: rest[11] as string            
             };
         }
         
@@ -1367,6 +1504,7 @@ export class Markets {
         const country = params.country;
         const isDefault = params.isDefault;
         const position = params.position;
+        const status = params.status;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
         const limit = params.limit;
@@ -1396,6 +1534,9 @@ export class Markets {
         }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
+        }
+        if (typeof status !== 'undefined') {
+            apiPayload['status'] = status;
         }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
@@ -1434,10 +1575,11 @@ export class Markets {
      * @param {boolean} params.isDefault - Flag this locale as the market's default. The flag MOVES: every other locale of the market loses it in the same call.
      * @param {string} params.language - The language half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
      * @param {number} params.position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
+     * @param {MarketsLocalesCreateStatus} params.status - 'preparing' or 'active' (400 `invalid_locale_status` otherwise); active when a new locale names none. Add a language as preparing, and switch it to active once its search index is ready.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocale>}
      */
-    marketsLocalesCreate(params: { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number }): Promise<Models.MarketLocale>;
+    marketsLocalesCreate(params: { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number, status?: MarketsLocalesCreateStatus }): Promise<Models.MarketLocale>;
     /**
      * The owning market comes from the path and overrides anything in the body.
      *
@@ -1447,19 +1589,20 @@ export class Markets {
      * @param {boolean} isDefault - Flag this locale as the market's default. The flag MOVES: every other locale of the market loses it in the same call.
      * @param {string} language - The language half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
      * @param {number} position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
+     * @param {MarketsLocalesCreateStatus} status - 'preparing' or 'active' (400 `invalid_locale_status` otherwise); active when a new locale names none. Add a language as preparing, and switch it to active once its search index is ready.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocale>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesCreate(marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number): Promise<Models.MarketLocale>;
+    marketsLocalesCreate(marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number, status?: MarketsLocalesCreateStatus): Promise<Models.MarketLocale>;
     marketsLocalesCreate(
-        paramsOrFirst: { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (string)?, (number)?]    
+        paramsOrFirst: { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number, status?: MarketsLocalesCreateStatus } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (string)?, (number)?, (MarketsLocalesCreateStatus)?]    
     ): Promise<Models.MarketLocale> {
-        let params: { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number };
+        let params: { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number, status?: MarketsLocalesCreateStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number };
+            params = (paramsOrFirst || {}) as { marketId: string, code: string, country?: string, isDefault?: boolean, language?: string, position?: number, status?: MarketsLocalesCreateStatus };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
@@ -1467,7 +1610,8 @@ export class Markets {
                 country: rest[1] as string,
                 isDefault: rest[2] as boolean,
                 language: rest[3] as string,
-                position: rest[4] as number            
+                position: rest[4] as number,
+                status: rest[5] as MarketsLocalesCreateStatus            
             };
         }
         
@@ -1477,6 +1621,7 @@ export class Markets {
         const isDefault = params.isDefault;
         const language = params.language;
         const position = params.position;
+        const status = params.status;
 
         if (typeof marketId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "marketId"');
@@ -1501,6 +1646,9 @@ export class Markets {
         }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
+        }
+        if (typeof status !== 'undefined') {
+            apiPayload['status'] = status;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1644,10 +1792,11 @@ export class Markets {
      * @param {boolean} params.isDefault - Flag this locale as the market's default. The flag MOVES: every other locale of the market loses it in the same call.
      * @param {string} params.language - The language half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
      * @param {number} params.position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
+     * @param {string} params.status - 'preparing' or 'active' (400 `invalid_locale_status` otherwise); active when a new locale names none. Add a language as preparing, and switch it to active once its search index is ready.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocale>}
      */
-    marketsLocalesUpdate(params: { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number }): Promise<Models.MarketLocale>;
+    marketsLocalesUpdate(params: { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number, status?: string }): Promise<Models.MarketLocale>;
     /**
      * Partial: omitted fields keep their value.
      *
@@ -1658,19 +1807,20 @@ export class Markets {
      * @param {boolean} isDefault - Flag this locale as the market's default. The flag MOVES: every other locale of the market loses it in the same call.
      * @param {string} language - The language half of `code`. Omit it and it is derived from the code; state it and it must agree (400 `locale_code_mismatch`).
      * @param {number} position - Sort position among this market's locales, ascending, default 0 — and the tie-break that picks a default when no locale is flagged.
+     * @param {string} status - 'preparing' or 'active' (400 `invalid_locale_status` otherwise); active when a new locale names none. Add a language as preparing, and switch it to active once its search index is ready.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketLocale>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsLocalesUpdate(marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number): Promise<Models.MarketLocale>;
+    marketsLocalesUpdate(marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number, status?: string): Promise<Models.MarketLocale>;
     marketsLocalesUpdate(
-        paramsOrFirst: { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number } | string,
-        ...rest: [(string)?, (string)?, (string)?, (boolean)?, (string)?, (number)?]    
+        paramsOrFirst: { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number, status?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (boolean)?, (string)?, (number)?, (string)?]    
     ): Promise<Models.MarketLocale> {
-        let params: { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number };
+        let params: { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number, status?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number };
+            params = (paramsOrFirst || {}) as { marketId: string, id: string, code?: string, country?: string, isDefault?: boolean, language?: string, position?: number, status?: string };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
@@ -1679,7 +1829,8 @@ export class Markets {
                 country: rest[2] as string,
                 isDefault: rest[3] as boolean,
                 language: rest[4] as string,
-                position: rest[5] as number            
+                position: rest[5] as number,
+                status: rest[6] as string            
             };
         }
         
@@ -1690,6 +1841,7 @@ export class Markets {
         const isDefault = params.isDefault;
         const language = params.language;
         const position = params.position;
+        const status = params.status;
 
         if (typeof marketId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "marketId"');
@@ -1715,6 +1867,9 @@ export class Markets {
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
         }
+        if (typeof status !== 'undefined') {
+            apiPayload['status'] = status;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1739,16 +1894,17 @@ export class Markets {
      * @param {string} params.labels - Exact match on `labels`. Exact whole-document equality on the jsonb: the value is a whole JSON document and has to match every key, so this is not a path or a containment query. Key order and whitespace are irrelevant — the comparison is semantic. A value that does not parse as JSON is refused with 400 `invalid_value` rather than answered with zero rows. Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {number} params.rate - Exact match on `rate`. Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
      * @param {boolean} params.isDefault - Exact match on `is_default`. The class applied to a line that names none. At most one per market — a write flagging one takes it from the others. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+     * @param {boolean} params.active - Exact match on `active`. Whether this class is offered for new records (default true). An inactive class stays valid wherever it is already named — it keeps its rate, the context still lists it, and a product or shipping method pointing at it keeps resolving — but a picker for a new record lists `?active=true` and leaves it out. The default class is always active.
      * @param {number} params.position - Exact match on `position`. Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {string} params.createdAt - Exact match on `created_at`. When the tax class was created on this market. Set by the database; never writable.
      * @param {string} params.updatedAt - Exact match on `updated_at`. When the tax class was last written. Set by the database on every update; never writable.
      * @param {number} params.limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} params.offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, name, labels, rate, is_default, position, created_at, updated_at.
+     * @param {string} params.order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, name, labels, rate, is_default, active, position, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketTaxClassList>}
      */
-    marketsTaxClassesList(params: { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketTaxClassList>;
+    marketsTaxClassesList(params: { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, active?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<Models.MarketTaxClassList>;
     /**
      * Every column is an exact-match filter and they combine with AND (?code=standard); each one is declared as a query parameter above. A `?column=value` this entity does not have is DROPPED rather than refused — the call answers 200 with the unfiltered list — and `filter` echoes what was actually applied, which is the only way to tell that apart from a filter that matched nothing. `market_id` is not among them: the owning market comes from the path and overwrites anything the query says. An unknown but well-formed market lists empty rather than 404 — the parent is filtered on, not verified.
      *
@@ -1759,25 +1915,26 @@ export class Markets {
      * @param {string} labels - Exact match on `labels`. Exact whole-document equality on the jsonb: the value is a whole JSON document and has to match every key, so this is not a path or a containment query. Key order and whitespace are irrelevant — the comparison is semantic. A value that does not parse as JSON is refused with 400 `invalid_value` rather than answered with zero rows. Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {number} rate - Exact match on `rate`. Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
      * @param {boolean} isDefault - Exact match on `is_default`. The class applied to a line that names none. At most one per market — a write flagging one takes it from the others. A market that stores GROSS prices and marks no default cannot break those prices back down into net, which is why readiness turns that combination from a warning into a blocking failure.
+     * @param {boolean} active - Exact match on `active`. Whether this class is offered for new records (default true). An inactive class stays valid wherever it is already named — it keeps its rate, the context still lists it, and a product or shipping method pointing at it keeps resolving — but a picker for a new record lists `?active=true` and leaves it out. The default class is always active.
      * @param {number} position - Exact match on `position`. Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {string} createdAt - Exact match on `created_at`. When the tax class was created on this market. Set by the database; never writable.
      * @param {string} updatedAt - Exact match on `updated_at`. When the tax class was last written. Set by the database on every update; never writable.
      * @param {number} limit - Page size (default 50, max 200). Out of range is CLAMPED, not refused — ?limit=999 answers 200 with 200 rows, and `page.limit` says so.
      * @param {number} offset - Row offset for pagination (default 0). A negative offset is clamped to 0 rather than refused.
-     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, name, labels, rate, is_default, position, created_at, updated_at.
+     * @param {string} order - Sort as 'column' | 'column.asc' | 'column.desc'. The direction is lower case, and the column has to exist: id, market_id, code, name, labels, rate, is_default, active, position, created_at, updated_at.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketTaxClassList>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsTaxClassesList(marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketTaxClassList>;
+    marketsTaxClassesList(marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, active?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<Models.MarketTaxClassList>;
     marketsTaxClassesList(
-        paramsOrFirst: { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (number)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst: { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, active?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (number)?, (boolean)?, (boolean)?, (number)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<Models.MarketTaxClassList> {
-        let params: { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, active?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { marketId: string, id?: string, code?: string, name?: string, labels?: string, rate?: number, isDefault?: boolean, active?: boolean, position?: number, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
@@ -1787,12 +1944,13 @@ export class Markets {
                 labels: rest[3] as string,
                 rate: rest[4] as number,
                 isDefault: rest[5] as boolean,
-                position: rest[6] as number,
-                createdAt: rest[7] as string,
-                updatedAt: rest[8] as string,
-                limit: rest[9] as number,
-                offset: rest[10] as number,
-                order: rest[11] as string            
+                active: rest[6] as boolean,
+                position: rest[7] as number,
+                createdAt: rest[8] as string,
+                updatedAt: rest[9] as string,
+                limit: rest[10] as number,
+                offset: rest[11] as number,
+                order: rest[12] as string            
             };
         }
         
@@ -1803,6 +1961,7 @@ export class Markets {
         const labels = params.labels;
         const rate = params.rate;
         const isDefault = params.isDefault;
+        const active = params.active;
         const position = params.position;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
@@ -1833,6 +1992,9 @@ export class Markets {
         }
         if (typeof isDefault !== 'undefined') {
             apiPayload['is_default'] = isDefault;
+        }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
         }
         if (typeof position !== 'undefined') {
             apiPayload['position'] = position;
@@ -1871,21 +2033,23 @@ export class Markets {
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.code - Tax class code, unique per market — the rate bucket a product or a shipping method is assigned to ('standard', 'reduced', 'zero'). Other apps name a class by THIS and by nothing else: there is no foreign key behind it and there cannot be (ADR-0055), which is why the delete route asks the shipping app what still points at the code before removing it.
      * @param {string} params.name - Display name of the rate bucket, in the operator's own language.
-     * @param {boolean} params.isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call.
+     * @param {boolean} params.active - False takes the class out of the choices for new records; records that already name it keep it. The default class cannot be deactivated (409 `default_must_stay_active`) — make another class the default first.
+     * @param {boolean} params.isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call. An inactive class cannot be flagged (409 `inactive_cannot_be_default`).
      * @param {object} params.labels - Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {number} params.position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {number} params.rate - Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketTaxClass>}
      */
-    marketsTaxClassesCreate(params: { marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number }): Promise<Models.MarketTaxClass>;
+    marketsTaxClassesCreate(params: { marketId: string, code: string, name: string, active?: boolean, isDefault?: boolean, labels?: object, position?: number, rate?: number }): Promise<Models.MarketTaxClass>;
     /**
      * The owning market comes from the path and overrides anything in the body.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} code - Tax class code, unique per market — the rate bucket a product or a shipping method is assigned to ('standard', 'reduced', 'zero'). Other apps name a class by THIS and by nothing else: there is no foreign key behind it and there cannot be (ADR-0055), which is why the delete route asks the shipping app what still points at the code before removing it.
      * @param {string} name - Display name of the rate bucket, in the operator's own language.
-     * @param {boolean} isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call.
+     * @param {boolean} active - False takes the class out of the choices for new records; records that already name it keep it. The default class cannot be deactivated (409 `default_must_stay_active`) — make another class the default first.
+     * @param {boolean} isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call. An inactive class cannot be flagged (409 `inactive_cannot_be_default`).
      * @param {object} labels - Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {number} position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
      * @param {number} rate - Tax rate in PERCENT, 0–100 (default 0) — 20 means 20 %, not 0.2. Whether a stored price already contains it is a separate question, answered per market by `pricing.tax_basis` on the context.
@@ -1893,30 +2057,32 @@ export class Markets {
      * @returns {Promise<Models.MarketTaxClass>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsTaxClassesCreate(marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number): Promise<Models.MarketTaxClass>;
+    marketsTaxClassesCreate(marketId: string, code: string, name: string, active?: boolean, isDefault?: boolean, labels?: object, position?: number, rate?: number): Promise<Models.MarketTaxClass>;
     marketsTaxClassesCreate(
-        paramsOrFirst: { marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (object)?, (number)?, (number)?]    
+        paramsOrFirst: { marketId: string, code: string, name: string, active?: boolean, isDefault?: boolean, labels?: object, position?: number, rate?: number } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (boolean)?, (object)?, (number)?, (number)?]    
     ): Promise<Models.MarketTaxClass> {
-        let params: { marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number };
+        let params: { marketId: string, code: string, name: string, active?: boolean, isDefault?: boolean, labels?: object, position?: number, rate?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, code: string, name: string, isDefault?: boolean, labels?: object, position?: number, rate?: number };
+            params = (paramsOrFirst || {}) as { marketId: string, code: string, name: string, active?: boolean, isDefault?: boolean, labels?: object, position?: number, rate?: number };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
                 code: rest[0] as string,
                 name: rest[1] as string,
-                isDefault: rest[2] as boolean,
-                labels: rest[3] as object,
-                position: rest[4] as number,
-                rate: rest[5] as number            
+                active: rest[2] as boolean,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                position: rest[5] as number,
+                rate: rest[6] as number            
             };
         }
         
         const marketId = params.marketId;
         const code = params.code;
         const name = params.name;
+        const active = params.active;
         const isDefault = params.isDefault;
         const labels = params.labels;
         const position = params.position;
@@ -1934,6 +2100,9 @@ export class Markets {
 
         const apiPath = '/v1/markets/{market_id}/tax_classes'.replace('{market_id}', marketId);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -2089,8 +2258,9 @@ export class Markets {
      *
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The tax class of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
+     * @param {boolean} params.active - False takes the class out of the choices for new records; records that already name it keep it. The default class cannot be deactivated (409 `default_must_stay_active`) — make another class the default first.
      * @param {string} params.code - Tax class code, unique per market — the rate bucket a product or a shipping method is assigned to ('standard', 'reduced', 'zero'). Other apps name a class by THIS and by nothing else: there is no foreign key behind it and there cannot be (ADR-0055), which is why the delete route asks the shipping app what still points at the code before removing it.
-     * @param {boolean} params.isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call.
+     * @param {boolean} params.isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call. An inactive class cannot be flagged (409 `inactive_cannot_be_default`).
      * @param {object} params.labels - Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {string} params.name - Display name of the rate bucket, in the operator's own language.
      * @param {number} params.position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
@@ -2098,14 +2268,15 @@ export class Markets {
      * @throws {RevenexxException}
      * @returns {Promise<Models.MarketTaxClass>}
      */
-    marketsTaxClassesUpdate(params: { marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number }): Promise<Models.MarketTaxClass>;
+    marketsTaxClassesUpdate(params: { marketId: string, id: string, active?: boolean, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number }): Promise<Models.MarketTaxClass>;
     /**
      * Partial: omitted fields keep their value.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The tax class of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
+     * @param {boolean} active - False takes the class out of the choices for new records; records that already name it keep it. The default class cannot be deactivated (409 `default_must_stay_active`) — make another class the default first.
      * @param {string} code - Tax class code, unique per market — the rate bucket a product or a shipping method is assigned to ('standard', 'reduced', 'zero'). Other apps name a class by THIS and by nothing else: there is no foreign key behind it and there cannot be (ADR-0055), which is why the delete route asks the shipping app what still points at the code before removing it.
-     * @param {boolean} isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call.
+     * @param {boolean} isDefault - Flag this class as the market's default. The flag MOVES: every other tax class of the market loses it in the same call. An inactive class cannot be flagged (409 `inactive_cannot_be_default`).
      * @param {object} labels - Localized display names for storefronts and invoices, keyed by locale: a flat {locale: label} map, one level deep, string values. The key to write is the `locale_policy.write` from GET /markets/{id}/context, exactly as for a market's labels. Null means nothing is translated and `name` is all there is.
      * @param {string} name - Display name of the rate bucket, in the operator's own language.
      * @param {number} position - Sort position among this market's tax classes, ascending, default 0 — and the tie-break that picks a class when none is flagged default.
@@ -2114,30 +2285,32 @@ export class Markets {
      * @returns {Promise<Models.MarketTaxClass>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    marketsTaxClassesUpdate(marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number): Promise<Models.MarketTaxClass>;
+    marketsTaxClassesUpdate(marketId: string, id: string, active?: boolean, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number): Promise<Models.MarketTaxClass>;
     marketsTaxClassesUpdate(
-        paramsOrFirst: { marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (object)?, (string)?, (number)?, (number)?]    
+        paramsOrFirst: { marketId: string, id: string, active?: boolean, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (boolean)?, (object)?, (string)?, (number)?, (number)?]    
     ): Promise<Models.MarketTaxClass> {
-        let params: { marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number };
+        let params: { marketId: string, id: string, active?: boolean, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { marketId: string, id: string, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number };
+            params = (paramsOrFirst || {}) as { marketId: string, id: string, active?: boolean, code?: string, isDefault?: boolean, labels?: object, name?: string, position?: number, rate?: number };
         } else {
             params = {
                 marketId: paramsOrFirst as string,
                 id: rest[0] as string,
-                code: rest[1] as string,
-                isDefault: rest[2] as boolean,
-                labels: rest[3] as object,
-                name: rest[4] as string,
-                position: rest[5] as number,
-                rate: rest[6] as number            
+                active: rest[1] as boolean,
+                code: rest[2] as string,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                name: rest[5] as string,
+                position: rest[6] as number,
+                rate: rest[7] as number            
             };
         }
         
         const marketId = params.marketId;
         const id = params.id;
+        const active = params.active;
         const code = params.code;
         const isDefault = params.isDefault;
         const labels = params.labels;
@@ -2154,6 +2327,9 @@ export class Markets {
 
         const apiPath = '/v1/markets/{market_id}/tax_classes/{id}'.replace('{market_id}', marketId).replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }

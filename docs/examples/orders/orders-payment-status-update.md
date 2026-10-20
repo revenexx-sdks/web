@@ -12,7 +12,8 @@ const orders = new Orders(client);
 const result = await orders.ordersPaymentStatusUpdate({
     id: '',
     status: OrderPaymentStatus.Open,
-    paymentId: 'pay_000000000001' // optional
+    paymentId: 'pay_000000000001', // optional
+    transactionReference: 'pay_000000000001' // optional
 });
 
 console.log(result);

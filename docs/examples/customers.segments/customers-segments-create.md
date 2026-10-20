@@ -10,7 +10,8 @@ const client = new Client()
 const customersSegments = new CustomersSegments(client);
 
 const result = await customersSegments.customersSegmentsCreate({
-    code: 'key_accounts',
+    active: true, // optional
+    code: 'key_accounts', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     labels: {
         "de": "Gro\u00dfkunden",

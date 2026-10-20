@@ -1,5 +1,5 @@
 ```javascript
-import { Client, CustomersOrganizations } from "@revenexx/sdk";
+import { Client, CustomersOrganizations, DeliveryPointType, ValidationStatus } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -24,6 +24,21 @@ const result = await customersOrganizations.customersAddressesList({
     region: 'Berlin', // optional
     country: 'DE', // optional
     phone: '+49 30 5550123', // optional
+    email: 'wareneingang@example.com', // optional
+    addressLine3: 'Building 4', // optional
+    dependentLocality: 'Copacabana', // optional
+    administrativeAreaCode: 'US-CA', // optional
+    sortingCode: 'CEDEX 01', // optional
+    streetName: 'Musterstraße', // optional
+    houseNumber: '12', // optional
+    houseNumberAddition: 'a', // optional
+    deliveryPointType: DeliveryPointType.Street, // optional
+    deliveryPointId: '123', // optional
+    languageCode: 'ja', // optional
+    script: 'Jpan', // optional
+    validationStatus: ValidationStatus.Unchecked, // optional
+    validatedAt: '2026-01-01T12:00:00Z', // optional
+    validationSource: 'endereco', // optional
     isDefault: true, // optional
     externalId: 'R_ADD000005', // optional
     sourceSyncedAt: '2026-01-01T12:00:00Z', // optional

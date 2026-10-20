@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Messaging, Scope, Reason } from "@revenexx/sdk";
+import { Client, Messaging, Scope, SuppressionIndexReason } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -12,7 +12,7 @@ const messaging = new Messaging(client);
 const result = await messaging.suppressionIndex({
     channel: '', // optional
     scope: Scope.All, // optional
-    reason: Reason.HardBounce, // optional
+    reason: SuppressionIndexReason.HardBounce, // optional
     address: '', // optional
     limit: 1 // optional
 });

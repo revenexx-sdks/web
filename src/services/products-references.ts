@@ -24,6 +24,7 @@ export class ProductsReferences {
      * @param {string} params.code - Exact match on `code`. The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
      * @param {string} params.labels - Exact match on `labels`. What the entity is called, per language tag — the heading over its record list. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.image - Exact match on `image`. A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
+     * @param {boolean} params.active - Exact match on `active`. False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {string} params.externalId - Exact match on `external_id`. The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
      * @param {string} params.externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
@@ -34,7 +35,7 @@ export class ProductsReferences {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsReferenceEntitiesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    productsReferenceEntitiesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, active?: boolean, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * A domain of records the catalog POINTS AT instead of duplicating — brands, manufacturers, care instructions. Declaring one is how a brand comes to be edited in one place rather than on nine thousand products. A reference entity has attributes of its own (`attributes` rows with `entity_type: "reference_entity"` and this entity's code as `entity_ref`), which is what makes its records more than a label.
      * 
@@ -49,6 +50,7 @@ export class ProductsReferences {
      * @param {string} code - Exact match on `code`. The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
      * @param {string} labels - Exact match on `labels`. What the entity is called, per language tag — the heading over its record list. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} image - Exact match on `image`. A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
+     * @param {boolean} active - Exact match on `active`. False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {string} externalId - Exact match on `external_id`. The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
      * @param {string} externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
@@ -60,15 +62,15 @@ export class ProductsReferences {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntitiesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
+    productsReferenceEntitiesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, active?: boolean, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsReferenceEntitiesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, active?: boolean, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, active?: boolean, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, labels?: string, image?: string, active?: boolean, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, metadata?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -78,13 +80,14 @@ export class ProductsReferences {
                 code: rest[3] as string,
                 labels: rest[4] as string,
                 image: rest[5] as string,
-                externalId: rest[6] as string,
-                externalRefs: rest[7] as string,
-                sourceSyncedAt: rest[8] as string,
-                sourceData: rest[9] as string,
-                metadata: rest[10] as string,
-                createdAt: rest[11] as string,
-                updatedAt: rest[12] as string            
+                active: rest[6] as boolean,
+                externalId: rest[7] as string,
+                externalRefs: rest[8] as string,
+                sourceSyncedAt: rest[9] as string,
+                sourceData: rest[10] as string,
+                metadata: rest[11] as string,
+                createdAt: rest[12] as string,
+                updatedAt: rest[13] as string            
             };
         }
         
@@ -95,6 +98,7 @@ export class ProductsReferences {
         const code = params.code;
         const labels = params.labels;
         const image = params.image;
+        const active = params.active;
         const externalId = params.externalId;
         const externalRefs = params.externalRefs;
         const sourceSyncedAt = params.sourceSyncedAt;
@@ -126,6 +130,9 @@ export class ProductsReferences {
         }
         if (typeof image !== 'undefined') {
             apiPayload['image'] = image;
+        }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
         }
         if (typeof externalId !== 'undefined') {
             apiPayload['external_id'] = externalId;
@@ -169,6 +176,7 @@ export class ProductsReferences {
      * `code` is the only column the database refuses the row without; everything else has a default or is nullable. A second row with the same `code` answers 409.
      *
      * @param {string} params.code - The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
+     * @param {boolean} params.active - False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {string} params.externalId - The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
      * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} params.image - A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
@@ -179,7 +187,7 @@ export class ProductsReferences {
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntities>}
      */
-    productsReferenceEntitiesCreate(params: { code: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntities>;
+    productsReferenceEntitiesCreate(params: { code: string, active?: boolean, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntities>;
     /**
      * Creates one reference entity and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -188,6 +196,7 @@ export class ProductsReferences {
      * `code` is the only column the database refuses the row without; everything else has a default or is nullable. A second row with the same `code` answers 409.
      *
      * @param {string} code - The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
+     * @param {boolean} active - False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {string} externalId - The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
      * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
      * @param {string} image - A delivery path or URL for the entity's own icon. Cosmetic — nothing in this app resolves it.
@@ -199,29 +208,31 @@ export class ProductsReferences {
      * @returns {Promise<Models.ReferenceEntities>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntitiesCreate(code: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntities>;
+    productsReferenceEntitiesCreate(code: string, active?: boolean, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntities>;
     productsReferenceEntitiesCreate(
-        paramsOrFirst: { code: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
-        ...rest: [(string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
+        paramsOrFirst: { code: string, active?: boolean, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(boolean)?, (string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.ReferenceEntities> {
-        let params: { code: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
+        let params: { code: string, active?: boolean, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
+            params = (paramsOrFirst || {}) as { code: string, active?: boolean, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
-                externalId: rest[0] as string,
-                externalRefs: rest[1] as object,
-                image: rest[2] as string,
-                labels: rest[3] as object,
-                metadata: rest[4] as object,
-                sourceData: rest[5] as object,
-                sourceSyncedAt: rest[6] as string            
+                active: rest[0] as boolean,
+                externalId: rest[1] as string,
+                externalRefs: rest[2] as object,
+                image: rest[3] as string,
+                labels: rest[4] as object,
+                metadata: rest[5] as object,
+                sourceData: rest[6] as object,
+                sourceSyncedAt: rest[7] as string            
             };
         }
         
         const code = params.code;
+        const active = params.active;
         const externalId = params.externalId;
         const externalRefs = params.externalRefs;
         const image = params.image;
@@ -236,6 +247,9 @@ export class ProductsReferences {
 
         const apiPath = '/v1/products/reference_entities';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -404,6 +418,7 @@ export class ProductsReferences {
      * A body that names nothing writable is refused with 400 rather than answered as a no-op, an id nobody carries answers 404, and a value that collides on `code` answers 409.
      *
      * @param {string} params.id - The `reference_entities` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entities`. An id no reference entitie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
+     * @param {boolean} params.active - False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {string} params.code - The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
      * @param {string} params.externalId - The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
      * @param {object} params.externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
@@ -415,7 +430,7 @@ export class ProductsReferences {
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntities>}
      */
-    productsReferenceEntitiesUpdate(params: { id: string, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntities>;
+    productsReferenceEntitiesUpdate(params: { id: string, active?: boolean, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntities>;
     /**
      * Updates one reference entity by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -424,6 +439,7 @@ export class ProductsReferences {
      * A body that names nothing writable is refused with 400 rather than answered as a no-op, an id nobody carries answers 404, and a value that collides on `code` answers 409.
      *
      * @param {string} id - The `reference_entities` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entities`. An id no reference entitie of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
+     * @param {boolean} active - False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {string} code - The entity's stable identifier — a domain of records the catalog POINTS AT instead of duplicating, so a brand is edited once and not on nine thousand products. Unique per tenant.
      * @param {string} externalId - The key this domain has in the system that owns it — the register a brand or manufacturer list is maintained in. Unique per tenant where set.
      * @param {object} externalRefs - Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer.
@@ -436,30 +452,32 @@ export class ProductsReferences {
      * @returns {Promise<Models.ReferenceEntities>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntitiesUpdate(id: string, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntities>;
+    productsReferenceEntitiesUpdate(id: string, active?: boolean, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntities>;
     productsReferenceEntitiesUpdate(
-        paramsOrFirst: { id: string, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
-        ...rest: [(string)?, (string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
+        paramsOrFirst: { id: string, active?: boolean, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(boolean)?, (string)?, (string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.ReferenceEntities> {
-        let params: { id: string, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
+        let params: { id: string, active?: boolean, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, code?: string, externalId?: string, externalRefs?: object, image?: string, labels?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                code: rest[0] as string,
-                externalId: rest[1] as string,
-                externalRefs: rest[2] as object,
-                image: rest[3] as string,
-                labels: rest[4] as object,
-                metadata: rest[5] as object,
-                sourceData: rest[6] as object,
-                sourceSyncedAt: rest[7] as string            
+                active: rest[0] as boolean,
+                code: rest[1] as string,
+                externalId: rest[2] as string,
+                externalRefs: rest[3] as object,
+                image: rest[4] as string,
+                labels: rest[5] as object,
+                metadata: rest[6] as object,
+                sourceData: rest[7] as object,
+                sourceSyncedAt: rest[8] as string            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const code = params.code;
         const externalId = params.externalId;
         const externalRefs = params.externalRefs;
@@ -475,6 +493,9 @@ export class ProductsReferences {
 
         const apiPath = '/v1/products/reference_entities/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -528,6 +549,7 @@ export class ProductsReferences {
      * @param {string} params.code - Exact match on `code`. The record's stable identifier — the value a product stores when it points at this record, the same way a select stores an option code. Unique within the entity.
      * @param {string} params.labels - Exact match on `labels`. What the record is called, per language tag — the text a picker shows while the code is what gets written. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.attributeValues - Exact match on `attribute_values`. Every attribute value the record carries, in ONE jsonb document — the core of an attribute-driven PIM. A record's properties are not columns here: they are rows in `attributes`, selected per family by `family_attributes`, and their values live under their attribute CODE inside this object. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {boolean} params.active - Exact match on `active`. False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {string} params.externalId - Exact match on `external_id`. The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
      * @param {string} params.externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} params.sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
@@ -537,7 +559,7 @@ export class ProductsReferences {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    productsReferenceEntityRecordsList(params?: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    productsReferenceEntityRecordsList(params?: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, active?: boolean, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * One record of a reference entity — one brand, one manufacturer. A product that points at it stores this record's CODE, exactly the way a select stores an option code, and the record's own properties live in its scoped `attribute_values` document. `GET /products/attribute-schema` offers these records as the `options` of any attribute that points at their entity, so a picker needs no second call.
      * 
@@ -553,6 +575,7 @@ export class ProductsReferences {
      * @param {string} code - Exact match on `code`. The record's stable identifier — the value a product stores when it points at this record, the same way a select stores an option code. Unique within the entity.
      * @param {string} labels - Exact match on `labels`. What the record is called, per language tag — the text a picker shows while the code is what gets written. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} attributeValues - Exact match on `attribute_values`. Every attribute value the record carries, in ONE jsonb document — the core of an attribute-driven PIM. A record's properties are not columns here: they are rows in `attributes`, selected per family by `family_attributes`, and their values live under their attribute CODE inside this object. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
+     * @param {boolean} active - Exact match on `active`. False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {string} externalId - Exact match on `external_id`. The key this record has in the system that owns it — a manufacturer number in the ERP, a supplier row keyed by GLN, a brand id in the PIM. Unique per tenant where set, so a brand list re-imports without founding a second Acme. Distinct from `code`, which is the value a product stores when it points here.
      * @param {string} externalRefs - Exact match on `external_refs`. Every OTHER system that knows this row, keyed by system name — a second PIM, a supplier's feed, a GTIN register. `external_id` is the system that OWNS the row; this is the rest, so the next identifier standard costs a key in here rather than a column and a migration. It filters the way every jsonb column of this app filters: the WHOLE document is compared, so there is no asking for one key — read the row by `external_id` and take this off the answer. The whole jsonb document is compared, serialized as JSON — this is equality, not a path or containment query, and `null` cannot be matched this way. A value that does not parse as JSON is refused with 400 `invalid_value`, naming this filter, before the request reaches the data plane.
      * @param {string} sourceSyncedAt - Exact match on `source_synced_at`. When this row was last CONFIRMED against its source — not when it last changed. A delta run asks for everything it has not seen since its last pass, and over 25 000 products that is the difference between an index scan and reading the whole catalog, which is the reason the column is indexed. An edit made here leaves it alone, so a value that has stopped moving says the feed has gone quiet, not that nobody works the record. Null for a row no source owns.
@@ -563,15 +586,15 @@ export class ProductsReferences {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntityRecordsList(limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
+    productsReferenceEntityRecordsList(limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, active?: boolean, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     productsReferenceEntityRecordsList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, active?: boolean, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, active?: boolean, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, referenceEntityId?: string, code?: string, labels?: string, attributeValues?: string, active?: boolean, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -582,12 +605,13 @@ export class ProductsReferences {
                 code: rest[4] as string,
                 labels: rest[5] as string,
                 attributeValues: rest[6] as string,
-                externalId: rest[7] as string,
-                externalRefs: rest[8] as string,
-                sourceSyncedAt: rest[9] as string,
-                sourceData: rest[10] as string,
-                createdAt: rest[11] as string,
-                updatedAt: rest[12] as string            
+                active: rest[7] as boolean,
+                externalId: rest[8] as string,
+                externalRefs: rest[9] as string,
+                sourceSyncedAt: rest[10] as string,
+                sourceData: rest[11] as string,
+                createdAt: rest[12] as string,
+                updatedAt: rest[13] as string            
             };
         }
         
@@ -599,6 +623,7 @@ export class ProductsReferences {
         const code = params.code;
         const labels = params.labels;
         const attributeValues = params.attributeValues;
+        const active = params.active;
         const externalId = params.externalId;
         const externalRefs = params.externalRefs;
         const sourceSyncedAt = params.sourceSyncedAt;
@@ -632,6 +657,9 @@ export class ProductsReferences {
         }
         if (typeof attributeValues !== 'undefined') {
             apiPayload['attribute_values'] = attributeValues;
+        }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
         }
         if (typeof externalId !== 'undefined') {
             apiPayload['external_id'] = externalId;
@@ -673,18 +701,21 @@ export class ProductsReferences {
      *
      * @param {string} params.code - The record's stable identifier — the value a product stores when it points at this record, the same way a select stores an option code. Unique within the entity.
      * @param {string} params.referenceEntityId - Which reference entity this record belongs to.
+     * @param {boolean} params.active - False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {object} params.attributeValues - Every attribute value the record carries, in ONE jsonb document — the core of an attribute-driven PIM. A record's properties are not columns here: they are rows in `attributes`, selected per family by `family_attributes`, and their values live under their attribute CODE inside this object.
 
 Four buckets, and an attribute's own flags decide which one it writes to:
 
   `common`                    the attribute is neither localizable nor scopable — one value, full stop.
                               `{"common": {"net_weight": 2.4, "colour": "black"}}`
-  `locale_specific`           `localizable`: one value per language tag.
-                              `{"locale_specific": {"de_DE": {"name": "Akku-Bohrschrauber"}}}`
+  `locale_specific`           `localizable`: one value per locale key.
+                              `{"locale_specific": {"de": {"name": "Akku-Bohrschrauber"}}}`
   `channel_specific`          `scopable`: one value per channel.
                               `{"channel_specific": {"b2b": {"minimum_order_quantity": 6}}}`
-  `channel_locale_specific`   both: one value per channel AND language tag.
-                              `{"channel_locale_specific": {"b2b": {"de_DE": {"description": "…"}}}}`
+  `channel_locale_specific`   both: one value per channel AND locale key.
+                              `{"channel_locale_specific": {"b2b": {"de": {"description": "…"}}}}`
+
+A locale key is the WRITE KEY of this tenant's locale policy (`GET /v1/markets/locale-policy`, `locales[].write`): the bare language (`de`) when the tenant keys translations by language, the full locale (`de-DE`) when it keys them by region. Another spelling of the same locale (`de_DE`, `de-de`, `deu`) is accepted and stored under that key; a language no market of the tenant configures is refused with 422 `unknown_locale`, a bare language two regional keys share with 422 `ambiguous_locale`, and anything that is not a language tag with 422 `invalid_locale`. The database refuses any key that is not `xx` or `xx-YY` whichever way it is written.
 
 A reader takes the most specific bucket that carries the code and falls back through locale, then channel, then `common`. `common` is always last and always consulted, because early imports wrote everything there whatever an attribute's flags said — a reader that skipped it reports an imported catalog as empty. `GET /products/attribute-schema` answers, per field, the exact path a value belongs at (`storage.path`) and that full fallback order (`from`), so no client has to re-derive any of this.
 
@@ -701,7 +732,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntityRecords>}
      */
-    productsReferenceEntityRecordsCreate(params: { code: string, referenceEntityId: string, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntityRecords>;
+    productsReferenceEntityRecordsCreate(params: { code: string, referenceEntityId: string, active?: boolean, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntityRecords>;
     /**
      * Creates one reference entity record and answers 201 with the stored row, including the id and the timestamps the database filled in — a client never sends an id, it reads one back and uses it in the path of every later call.
      * 
@@ -711,18 +742,21 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      *
      * @param {string} code - The record's stable identifier — the value a product stores when it points at this record, the same way a select stores an option code. Unique within the entity.
      * @param {string} referenceEntityId - Which reference entity this record belongs to.
+     * @param {boolean} active - False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {object} attributeValues - Every attribute value the record carries, in ONE jsonb document — the core of an attribute-driven PIM. A record's properties are not columns here: they are rows in `attributes`, selected per family by `family_attributes`, and their values live under their attribute CODE inside this object.
 
 Four buckets, and an attribute's own flags decide which one it writes to:
 
   `common`                    the attribute is neither localizable nor scopable — one value, full stop.
                               `{"common": {"net_weight": 2.4, "colour": "black"}}`
-  `locale_specific`           `localizable`: one value per language tag.
-                              `{"locale_specific": {"de_DE": {"name": "Akku-Bohrschrauber"}}}`
+  `locale_specific`           `localizable`: one value per locale key.
+                              `{"locale_specific": {"de": {"name": "Akku-Bohrschrauber"}}}`
   `channel_specific`          `scopable`: one value per channel.
                               `{"channel_specific": {"b2b": {"minimum_order_quantity": 6}}}`
-  `channel_locale_specific`   both: one value per channel AND language tag.
-                              `{"channel_locale_specific": {"b2b": {"de_DE": {"description": "…"}}}}`
+  `channel_locale_specific`   both: one value per channel AND locale key.
+                              `{"channel_locale_specific": {"b2b": {"de": {"description": "…"}}}}`
+
+A locale key is the WRITE KEY of this tenant's locale policy (`GET /v1/markets/locale-policy`, `locales[].write`): the bare language (`de`) when the tenant keys translations by language, the full locale (`de-DE`) when it keys them by region. Another spelling of the same locale (`de_DE`, `de-de`, `deu`) is accepted and stored under that key; a language no market of the tenant configures is refused with 422 `unknown_locale`, a bare language two regional keys share with 422 `ambiguous_locale`, and anything that is not a language tag with 422 `invalid_locale`. The database refuses any key that is not `xx` or `xx-YY` whichever way it is written.
 
 A reader takes the most specific bucket that carries the code and falls back through locale, then channel, then `common`. `common` is always last and always consulted, because early imports wrote everything there whatever an attribute's flags said — a reader that skipped it reports an imported catalog as empty. `GET /products/attribute-schema` answers, per field, the exact path a value belongs at (`storage.path`) and that full fallback order (`from`), so no client has to re-derive any of this.
 
@@ -740,30 +774,32 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      * @returns {Promise<Models.ReferenceEntityRecords>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntityRecordsCreate(code: string, referenceEntityId: string, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntityRecords>;
+    productsReferenceEntityRecordsCreate(code: string, referenceEntityId: string, active?: boolean, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntityRecords>;
     productsReferenceEntityRecordsCreate(
-        paramsOrFirst: { code: string, referenceEntityId: string, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string } | string,
-        ...rest: [(string)?, (object)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
+        paramsOrFirst: { code: string, referenceEntityId: string, active?: boolean, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (boolean)?, (object)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.ReferenceEntityRecords> {
-        let params: { code: string, referenceEntityId: string, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string };
+        let params: { code: string, referenceEntityId: string, active?: boolean, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, referenceEntityId: string, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string };
+            params = (paramsOrFirst || {}) as { code: string, referenceEntityId: string, active?: boolean, attributeValues?: object, externalId?: string, externalRefs?: object, labels?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 referenceEntityId: rest[0] as string,
-                attributeValues: rest[1] as object,
-                externalId: rest[2] as string,
-                externalRefs: rest[3] as object,
-                labels: rest[4] as object,
-                sourceData: rest[5] as object,
-                sourceSyncedAt: rest[6] as string            
+                active: rest[1] as boolean,
+                attributeValues: rest[2] as object,
+                externalId: rest[3] as string,
+                externalRefs: rest[4] as object,
+                labels: rest[5] as object,
+                sourceData: rest[6] as object,
+                sourceSyncedAt: rest[7] as string            
             };
         }
         
         const code = params.code;
         const referenceEntityId = params.referenceEntityId;
+        const active = params.active;
         const attributeValues = params.attributeValues;
         const externalId = params.externalId;
         const externalRefs = params.externalRefs;
@@ -780,6 +816,9 @@ Which attributes a record of this entity has comes from `attributes` rows with `
 
         const apiPath = '/v1/products/reference_entity_records';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof attributeValues !== 'undefined') {
             apiPayload['attribute_values'] = attributeValues;
         }
@@ -948,18 +987,21 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      * A body that names nothing writable is refused with 400 rather than answered as a no-op, an id nobody carries answers 404, and a value that collides on `reference_entity_id` and `code` answers 409.
      *
      * @param {string} params.id - The `reference_entity_records` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entity_records`. An id no reference entity record of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
+     * @param {boolean} params.active - False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {object} params.attributeValues - Every attribute value the record carries, in ONE jsonb document — the core of an attribute-driven PIM. A record's properties are not columns here: they are rows in `attributes`, selected per family by `family_attributes`, and their values live under their attribute CODE inside this object.
 
 Four buckets, and an attribute's own flags decide which one it writes to:
 
   `common`                    the attribute is neither localizable nor scopable — one value, full stop.
                               `{"common": {"net_weight": 2.4, "colour": "black"}}`
-  `locale_specific`           `localizable`: one value per language tag.
-                              `{"locale_specific": {"de_DE": {"name": "Akku-Bohrschrauber"}}}`
+  `locale_specific`           `localizable`: one value per locale key.
+                              `{"locale_specific": {"de": {"name": "Akku-Bohrschrauber"}}}`
   `channel_specific`          `scopable`: one value per channel.
                               `{"channel_specific": {"b2b": {"minimum_order_quantity": 6}}}`
-  `channel_locale_specific`   both: one value per channel AND language tag.
-                              `{"channel_locale_specific": {"b2b": {"de_DE": {"description": "…"}}}}`
+  `channel_locale_specific`   both: one value per channel AND locale key.
+                              `{"channel_locale_specific": {"b2b": {"de": {"description": "…"}}}}`
+
+A locale key is the WRITE KEY of this tenant's locale policy (`GET /v1/markets/locale-policy`, `locales[].write`): the bare language (`de`) when the tenant keys translations by language, the full locale (`de-DE`) when it keys them by region. Another spelling of the same locale (`de_DE`, `de-de`, `deu`) is accepted and stored under that key; a language no market of the tenant configures is refused with 422 `unknown_locale`, a bare language two regional keys share with 422 `ambiguous_locale`, and anything that is not a language tag with 422 `invalid_locale`. The database refuses any key that is not `xx` or `xx-YY` whichever way it is written.
 
 A reader takes the most specific bucket that carries the code and falls back through locale, then channel, then `common`. `common` is always last and always consulted, because early imports wrote everything there whatever an attribute's flags said — a reader that skipped it reports an imported catalog as empty. `GET /products/attribute-schema` answers, per field, the exact path a value belongs at (`storage.path`) and that full fallback order (`from`), so no client has to re-derive any of this.
 
@@ -978,7 +1020,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      * @throws {RevenexxException}
      * @returns {Promise<Models.ReferenceEntityRecords>}
      */
-    productsReferenceEntityRecordsUpdate(params: { id: string, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntityRecords>;
+    productsReferenceEntityRecordsUpdate(params: { id: string, active?: boolean, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.ReferenceEntityRecords>;
     /**
      * Updates one reference entity record by id. A partial patch: the body names only the columns to change and every column it leaves out keeps its current value, so there is no read-modify-write and no way to blank a field by forgetting it.
      * 
@@ -987,18 +1029,21 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      * A body that names nothing writable is refused with 400 rather than answered as a no-op, an id nobody carries answers 404, and a value that collides on `reference_entity_id` and `code` answers 409.
      *
      * @param {string} id - The `reference_entity_records` row to address, by id. It names a row THIS TENANT holds, so no example is published — a uuid this app invented would document a call that answers 404, and a real one would be another tenant's data. Read one from `GET /v1/products/reference_entity_records`. An id no reference entity record of this tenant carries answers 404; a malformed one answers 400 before the route is reached.
+     * @param {boolean} active - False when the merchant retired this entry. Records that already carry it keep it and every read still answers it, so a stored reference keeps resolving. It is no longer assigned anew: a write that newly names it answers 409 `entry_inactive`, and choice lists leave it out — filter a list with `?active=true` to build a picker. Default true.
      * @param {object} attributeValues - Every attribute value the record carries, in ONE jsonb document — the core of an attribute-driven PIM. A record's properties are not columns here: they are rows in `attributes`, selected per family by `family_attributes`, and their values live under their attribute CODE inside this object.
 
 Four buckets, and an attribute's own flags decide which one it writes to:
 
   `common`                    the attribute is neither localizable nor scopable — one value, full stop.
                               `{"common": {"net_weight": 2.4, "colour": "black"}}`
-  `locale_specific`           `localizable`: one value per language tag.
-                              `{"locale_specific": {"de_DE": {"name": "Akku-Bohrschrauber"}}}`
+  `locale_specific`           `localizable`: one value per locale key.
+                              `{"locale_specific": {"de": {"name": "Akku-Bohrschrauber"}}}`
   `channel_specific`          `scopable`: one value per channel.
                               `{"channel_specific": {"b2b": {"minimum_order_quantity": 6}}}`
-  `channel_locale_specific`   both: one value per channel AND language tag.
-                              `{"channel_locale_specific": {"b2b": {"de_DE": {"description": "…"}}}}`
+  `channel_locale_specific`   both: one value per channel AND locale key.
+                              `{"channel_locale_specific": {"b2b": {"de": {"description": "…"}}}}`
+
+A locale key is the WRITE KEY of this tenant's locale policy (`GET /v1/markets/locale-policy`, `locales[].write`): the bare language (`de`) when the tenant keys translations by language, the full locale (`de-DE`) when it keys them by region. Another spelling of the same locale (`de_DE`, `de-de`, `deu`) is accepted and stored under that key; a language no market of the tenant configures is refused with 422 `unknown_locale`, a bare language two regional keys share with 422 `ambiguous_locale`, and anything that is not a language tag with 422 `invalid_locale`. The database refuses any key that is not `xx` or `xx-YY` whichever way it is written.
 
 A reader takes the most specific bucket that carries the code and falls back through locale, then channel, then `common`. `common` is always last and always consulted, because early imports wrote everything there whatever an attribute's flags said — a reader that skipped it reports an imported catalog as empty. `GET /products/attribute-schema` answers, per field, the exact path a value belongs at (`storage.path`) and that full fallback order (`from`), so no client has to re-derive any of this.
 
@@ -1018,30 +1063,32 @@ Which attributes a record of this entity has comes from `attributes` rows with `
      * @returns {Promise<Models.ReferenceEntityRecords>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    productsReferenceEntityRecordsUpdate(id: string, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntityRecords>;
+    productsReferenceEntityRecordsUpdate(id: string, active?: boolean, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string): Promise<Models.ReferenceEntityRecords>;
     productsReferenceEntityRecordsUpdate(
-        paramsOrFirst: { id: string, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string } | string,
-        ...rest: [(object)?, (string)?, (string)?, (object)?, (object)?, (string)?, (object)?, (string)?]    
+        paramsOrFirst: { id: string, active?: boolean, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(boolean)?, (object)?, (string)?, (string)?, (object)?, (object)?, (string)?, (object)?, (string)?]    
     ): Promise<Models.ReferenceEntityRecords> {
-        let params: { id: string, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string };
+        let params: { id: string, active?: boolean, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, attributeValues?: object, code?: string, externalId?: string, externalRefs?: object, labels?: object, referenceEntityId?: string, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                attributeValues: rest[0] as object,
-                code: rest[1] as string,
-                externalId: rest[2] as string,
-                externalRefs: rest[3] as object,
-                labels: rest[4] as object,
-                referenceEntityId: rest[5] as string,
-                sourceData: rest[6] as object,
-                sourceSyncedAt: rest[7] as string            
+                active: rest[0] as boolean,
+                attributeValues: rest[1] as object,
+                code: rest[2] as string,
+                externalId: rest[3] as string,
+                externalRefs: rest[4] as object,
+                labels: rest[5] as object,
+                referenceEntityId: rest[6] as string,
+                sourceData: rest[7] as object,
+                sourceSyncedAt: rest[8] as string            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const attributeValues = params.attributeValues;
         const code = params.code;
         const externalId = params.externalId;
@@ -1057,6 +1104,9 @@ Which attributes a record of this entity has comes from `attributes` rows with `
 
         const apiPath = '/v1/products/reference_entity_records/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof attributeValues !== 'undefined') {
             apiPayload['attribute_values'] = attributeValues;
         }

@@ -10,7 +10,8 @@ const client = new Client()
 const carts = new Carts(client);
 
 const result = await carts.cartsAbandon({
-    id: ''
+    id: '',
+    sessionKey: 'a1b2c3d4e5f6' // optional
 });
 
 console.log(result);

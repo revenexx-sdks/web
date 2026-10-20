@@ -23,10 +23,15 @@ const result = await punchout.punchoutSessionsUpdate({
     entryPayload: {}, // optional
     expiresAt: '2026-01-01T12:00:00Z', // optional
     externalUserId: '', // optional
+    orderId: '', // optional
+    orderNumber: '', // optional
+    orderStatus: '', // optional
+    orderedAt: '2026-01-01T12:00:00Z', // optional
     organizationId: '', // optional
     origin: '', // optional
     protocol: '', // optional
     psid: '', // optional
+    purchaseMode: '', // optional
     returnMethod: '', // optional
     returnUrl: '', // optional
     secureSessionId: '', // optional

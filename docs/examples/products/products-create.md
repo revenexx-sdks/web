@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Products, ProductsKind } from "@revenexx/sdk";
+import { Client, Products, ProductsKind, ProductsStatus } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -14,7 +14,7 @@ const result = await products.productsCreate({
     attributeValues: {
         "channel_locale_specific": {
             "b2b": {
-                "de_DE": {
+                "de": {
                     "description": "Staffelpreise auf Anfrage."
                 }
             }
@@ -30,15 +30,29 @@ const result = await products.productsCreate({
             "net_weight": 2.4
         },
         "locale_specific": {
-            "de_DE": {
+            "de": {
                 "description": "B\u00fcrstenloser Motor, 2 Akkus im Set.",
                 "name": "Akku-Bohrschrauber 18V"
             },
-            "en_GB": {
+            "en": {
                 "name": "18V cordless drill"
             }
         }
     }, // optional
+    baseValues: {
+        "country_of_origin": "DE",
+        "customs_tariff_number": "82055980",
+        "gtin": "4012345000009",
+        "min_order_quantity": 10,
+        "order_interval": 5,
+        "unit": "piece"
+    }, // optional
+    categoryId: '', // optional
+    channelRelease: {
+        "marketplace": "in_review",
+        "webshop-de": "released"
+    }, // optional
+    channels: ["webshop-de","punchout"], // optional
     completeness: {
         "computed_at": "2026-01-01T12:00:00Z",
         "filled": 9,
@@ -50,7 +64,10 @@ const result = await products.productsCreate({
         "ratio": 0.75,
         "required": 12
     }, // optional
+    copyFrom: '', // optional
     deletedAt: '2026-01-01T12:00:00Z', // optional
+    deletedBy: 'merchant@example.com', // optional
+    deletedById: '283746592837465012', // optional
     enabled: true, // optional
     externalId: 'ART-4711', // optional
     externalRefs: {
@@ -60,7 +77,11 @@ const result = await products.productsCreate({
     familyId: '', // optional
     familyVariantId: '', // optional
     kind: ProductsKind.Simple, // optional
+    manufacturerId: '', // optional
+    name: 'Akku-Bohrschrauber 18V', // optional
     parentId: '', // optional
+    purgeAt: '2026-01-01T12:00:00Z', // optional
+    purgeBlockedReason: ''S1230020C1TI25' still has stock at 2 location(s)', // optional
     quantifiedAssociations: {
         "PRODUCT_SET": {
             "product_models": [],
@@ -80,7 +101,9 @@ const result = await products.productsCreate({
         "system": "pim"
     }, // optional
     sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
-    taxClass: 'standard' // optional
+    status: ProductsStatus.Draft, // optional
+    taxClass: 'standard', // optional
+    trashBatch: '' // optional
 });
 
 console.log(result);

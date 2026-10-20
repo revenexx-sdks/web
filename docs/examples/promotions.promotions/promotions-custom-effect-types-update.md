@@ -11,12 +11,13 @@ const promotionsPromotions = new PromotionsPromotions(client);
 
 const result = await promotionsPromotions.promotionsCustomEffectTypesUpdate({
     id: '',
-    name: '',
+    active: true, // optional
     carriesAmount: true, // optional
-    description: {}, // optional
-    metadata: {}, // optional
-    payloadShape: {}, // optional
-    title: {} // optional
+    description: null, // optional
+    metadata: null, // optional
+    name: '', // optional
+    payloadShape: null, // optional
+    title: null // optional
 });
 
 console.log(result);

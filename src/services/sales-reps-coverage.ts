@@ -20,6 +20,7 @@ export class SalesRepsCoverage {
      * @param {string} params.title - Filter to rows whose `title` is exactly this value. What this role is called, as a person reads it — the text a list or a badge shows. At least one character. It carries one language; the per-language forms are in `labels`.
      * @param {string} params.description - Filter to rows whose `description` is exactly this value. What this role means, in the merchant's own words — the sentence an operator reads under the choice when they are deciding which one a rep has. Optional, one language, with the per-language forms in `descriptions`.
      * @param {boolean} params.isDefault - The role an import falls back to, which should be at most one — and is none at all until the tenant decides, because no seeded role carries the flag.
+     * @param {boolean} params.active - `false` lists the roles this merchant retired, `true` the ones still offered for new coverage.
      * @param {Tone} params.tone - Filter to rows whose `tone` is exactly this value. The semantic badge colour a screen renders this role in. The client owns what each tone looks like; this only says what the role MEANS — that the desk which visits the customer reads differently from the one that answers the phone. Defaults to neutral.
      * @param {number} params.position - Filter to rows whose `position` is exactly this value. Where this role sits in the order a select offers the roles, ascending, ties broken by the code. It is presentation and nothing branches on it: a rep is not more senior for sorting first.
      * @param {boolean} params.isSystem - `true` is the roles this app seeded, `false` the ones this tenant added. It separates the two for a screen that wants to say so, and licenses nothing either way.
@@ -31,7 +32,7 @@ export class SalesRepsCoverage {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    salesRepsAssignmentRolesList(params?: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    salesRepsAssignmentRolesList(params?: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * An assignment role is one of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table and not a fixed list because what those desks are called is the merchant's to state. This is the operator's view of the set — the rows, filterable and paged, in whatever order you ask for. A CLIENT that only wants to render a role does not want this route: GET /sales-reps/vocabularies/assignment-roles answers the same set keyed by code, ordered by `position`, with the titles per language already merged, and it is the shape every other vocabulary on this platform is read in. A tenant who has never been seeded reads an EMPTY list here, because the seed runs on install and on POST /sales-reps/assignment-roles/defaults; the vocabulary route seeds on an empty read and this one does not.
      *
@@ -40,6 +41,7 @@ export class SalesRepsCoverage {
      * @param {string} title - Filter to rows whose `title` is exactly this value. What this role is called, as a person reads it — the text a list or a badge shows. At least one character. It carries one language; the per-language forms are in `labels`.
      * @param {string} description - Filter to rows whose `description` is exactly this value. What this role means, in the merchant's own words — the sentence an operator reads under the choice when they are deciding which one a rep has. Optional, one language, with the per-language forms in `descriptions`.
      * @param {boolean} isDefault - The role an import falls back to, which should be at most one — and is none at all until the tenant decides, because no seeded role carries the flag.
+     * @param {boolean} active - `false` lists the roles this merchant retired, `true` the ones still offered for new coverage.
      * @param {Tone} tone - Filter to rows whose `tone` is exactly this value. The semantic badge colour a screen renders this role in. The client owns what each tone looks like; this only says what the role MEANS — that the desk which visits the customer reads differently from the one that answers the phone. Defaults to neutral.
      * @param {number} position - Filter to rows whose `position` is exactly this value. Where this role sits in the order a select offers the roles, ascending, ties broken by the code. It is presentation and nothing branches on it: a rep is not more senior for sorting first.
      * @param {boolean} isSystem - `true` is the roles this app seeded, `false` the ones this tenant added. It separates the two for a screen that wants to say so, and licenses nothing either way.
@@ -52,15 +54,15 @@ export class SalesRepsCoverage {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    salesRepsAssignmentRolesList(id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    salesRepsAssignmentRolesList(id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     salesRepsAssignmentRolesList(
-        paramsOrFirst?: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (boolean)?, (Tone)?, (number)?, (boolean)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (boolean)?, (boolean)?, (Tone)?, (number)?, (boolean)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -68,14 +70,15 @@ export class SalesRepsCoverage {
                 title: rest[1] as string,
                 description: rest[2] as string,
                 isDefault: rest[3] as boolean,
-                tone: rest[4] as Tone,
-                position: rest[5] as number,
-                isSystem: rest[6] as boolean,
-                createdAt: rest[7] as string,
-                updatedAt: rest[8] as string,
-                limit: rest[9] as number,
-                offset: rest[10] as number,
-                order: rest[11] as string            
+                active: rest[4] as boolean,
+                tone: rest[5] as Tone,
+                position: rest[6] as number,
+                isSystem: rest[7] as boolean,
+                createdAt: rest[8] as string,
+                updatedAt: rest[9] as string,
+                limit: rest[10] as number,
+                offset: rest[11] as number,
+                order: rest[12] as string            
             };
         }
         
@@ -84,6 +87,7 @@ export class SalesRepsCoverage {
         const title = params.title;
         const description = params.description;
         const isDefault = params.isDefault;
+        const active = params.active;
         const tone = params.tone;
         const position = params.position;
         const isSystem = params.isSystem;
@@ -110,6 +114,9 @@ export class SalesRepsCoverage {
         }
         if (typeof isDefault !== 'undefined') {
             apiPayload['is_default'] = isDefault;
+        }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
         }
         if (typeof tone !== 'undefined') {
             apiPayload['tone'] = tone;
@@ -153,9 +160,10 @@ export class SalesRepsCoverage {
      *
      * @param {string} params.code - The role as STORED, and what a coverage row's `role` carries. Lowercase letters, digits, '-' and '_', starting with a letter — the shape every vocabulary code on this platform has, so a client may use it as a key. It should be treated as permanent even though the edit route accepts it: nothing in the database points at it, so renaming it leaves every coverage row that named the old value carrying a code the vocabulary no longer resolves.
      * @param {string} params.title - What this role is called, as a person reads it — the text a list or a badge shows. At least one character. It carries one language; the per-language forms are in `labels`.
+     * @param {boolean} params.active - False when the merchant retired this role (RAD-255). It stays valid on every coverage row that already carries it, an edit that sends it back unchanged is accepted and its title still resolves — but GET /sales-reps/vocabularies/assignment-roles answers it under `inactive` rather than `values`, so no picker offers it, and new coverage or a correction naming it is refused with 409 `role_inactive`. True by default. The default role cannot be inactive (409 `default_must_stay_active`, and `inactive_cannot_be_default` for promoting one); `is_system` is no obstacle, because a merchant who never uses a shipped role is exactly who switches it off. Defaults to true.
      * @param {string} params.description - What this role means, in the merchant's own words — the sentence an operator reads under the choice when they are deciding which one a rep has. Optional, one language, with the per-language forms in `descriptions`.
      * @param {object} params.descriptions - The description per language tag, on the same rule as `labels`. Answered and NOT filterable.
-     * @param {boolean} params.isDefault - Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say. Defaults to false, and no role this app seeds carries it.
+     * @param {boolean} params.isDefault - Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say. An inactive role cannot carry it. Defaults to false, and no role this app seeds carries it.
      * @param {boolean} params.isSystem - True for a role this app seeded, false for one the tenant added. It means "we put it there" and licenses nothing — a seeded role may be renamed, re-toned, reordered or removed exactly like any other, and nothing here treats the two differently. Send false or leave it out: it means this app seeded the row, and a tenant claiming it changes nothing but the truth of the flag.
      * @param {object} params.labels - The title per language tag, as the tenant stored it. `title` is the same text in their working language, so a client reading one tag can ignore this. It is a jsonb column: answered, and NOT a query parameter — see the note on `metadata`.
      * @param {number} params.position - Where this role sits in the order a select offers the roles, ascending, ties broken by the code. It is presentation and nothing branches on it: a rep is not more senior for sorting first. Defaults to 0.
@@ -163,15 +171,16 @@ export class SalesRepsCoverage {
      * @throws {RevenexxException}
      * @returns {Promise<Models.AssignmentRole>}
      */
-    salesRepsAssignmentRolesCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.AssignmentRole>;
+    salesRepsAssignmentRolesCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.AssignmentRole>;
     /**
      * An assignment role is one of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table and not a fixed list because what those desks are called is the merchant's to state. Reach for this when a merchant's sales organisation distinguishes something the three seeded roles do not — a technical adviser, a branch counter, a desk that only handles framework terms. `code` and `title` are owed and the code should be treated as permanent: a coverage row stores it, nothing in the database points at it, so renaming it later leaves every row carrying the old one. Adding a role changes nothing on its own — a coverage row has to name it before it means anything, and the mapping from a source system's own values onto these codes is made where the import runs.
      *
      * @param {string} code - The role as STORED, and what a coverage row's `role` carries. Lowercase letters, digits, '-' and '_', starting with a letter — the shape every vocabulary code on this platform has, so a client may use it as a key. It should be treated as permanent even though the edit route accepts it: nothing in the database points at it, so renaming it leaves every coverage row that named the old value carrying a code the vocabulary no longer resolves.
      * @param {string} title - What this role is called, as a person reads it — the text a list or a badge shows. At least one character. It carries one language; the per-language forms are in `labels`.
+     * @param {boolean} active - False when the merchant retired this role (RAD-255). It stays valid on every coverage row that already carries it, an edit that sends it back unchanged is accepted and its title still resolves — but GET /sales-reps/vocabularies/assignment-roles answers it under `inactive` rather than `values`, so no picker offers it, and new coverage or a correction naming it is refused with 409 `role_inactive`. True by default. The default role cannot be inactive (409 `default_must_stay_active`, and `inactive_cannot_be_default` for promoting one); `is_system` is no obstacle, because a merchant who never uses a shipped role is exactly who switches it off. Defaults to true.
      * @param {string} description - What this role means, in the merchant's own words — the sentence an operator reads under the choice when they are deciding which one a rep has. Optional, one language, with the per-language forms in `descriptions`.
      * @param {object} descriptions - The description per language tag, on the same rule as `labels`. Answered and NOT filterable.
-     * @param {boolean} isDefault - Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say. Defaults to false, and no role this app seeds carries it.
+     * @param {boolean} isDefault - Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say. An inactive role cannot carry it. Defaults to false, and no role this app seeds carries it.
      * @param {boolean} isSystem - True for a role this app seeded, false for one the tenant added. It means "we put it there" and licenses nothing — a seeded role may be renamed, re-toned, reordered or removed exactly like any other, and nothing here treats the two differently. Send false or leave it out: it means this app seeded the row, and a tenant claiming it changes nothing but the truth of the flag.
      * @param {object} labels - The title per language tag, as the tenant stored it. `title` is the same text in their working language, so a client reading one tag can ignore this. It is a jsonb column: answered, and NOT a query parameter — see the note on `metadata`.
      * @param {number} position - Where this role sits in the order a select offers the roles, ascending, ties broken by the code. It is presentation and nothing branches on it: a rep is not more senior for sorting first. Defaults to 0.
@@ -180,31 +189,33 @@ export class SalesRepsCoverage {
      * @returns {Promise<Models.AssignmentRole>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    salesRepsAssignmentRolesCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.AssignmentRole>;
+    salesRepsAssignmentRolesCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.AssignmentRole>;
     salesRepsAssignmentRolesCreate(
-        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, tone?: Tone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (boolean)?, (object)?, (number)?, (Tone)?]    
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, tone?: Tone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (boolean)?, (object)?, (number)?, (Tone)?]    
     ): Promise<Models.AssignmentRole> {
-        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, tone?: Tone };
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, tone?: Tone };
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, tone?: Tone };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 title: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                isSystem: rest[4] as boolean,
-                labels: rest[5] as object,
-                position: rest[6] as number,
-                tone: rest[7] as Tone            
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                isSystem: rest[5] as boolean,
+                labels: rest[6] as object,
+                position: rest[7] as number,
+                tone: rest[8] as Tone            
             };
         }
         
         const code = params.code;
         const title = params.title;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -222,6 +233,9 @@ export class SalesRepsCoverage {
 
         const apiPath = '/v1/sales-reps/assignment-roles';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -319,7 +333,7 @@ export class SalesRepsCoverage {
     }
 
     /**
-     * An assignment role is one of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table and not a fixed list because what those desks are called is the merchant's to state. ⚠ What is NOT checked here is the thing that matters: a coverage row stores the CODE and not this id, so nothing refuses the delete while rows still carry it, and those rows keep a role code the vocabulary no longer resolves. The set is `closed`, so a client reads such a value as stale data rather than as a missing label — but it reads no title and no tone for it either, and a screen that was showing "Inside sales" starts showing a bare code. Move the rows onto another role first (PUT /sales-reps/assignments/{id}), or leave the role in place and give it a `title` that says it is retired. Deleting all of them is undone by the next read of GET /sales-reps/vocabularies/assignment-roles, which seeds the shipped set back into an empty table.
+     * An assignment role is one of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table and not a fixed list because what those desks are called is the merchant's to state. ⚠ What is NOT checked here is the thing that matters: a coverage row stores the CODE and not this id, so nothing refuses the delete while rows still carry it, and those rows keep a role code the vocabulary no longer resolves. The set is `closed`, so a client reads such a value as stale data rather than as a missing label — but it reads no title and no tone for it either, and a screen that was showing "Inside sales" starts showing a bare code. Move the rows onto another role first (PUT /sales-reps/assignments/{id}), or keep the role and switch it off with `active: false` (PUT /sales-reps/assignment-roles/{id}), which stops it being offered and leaves every row that carries it resolving. Deleting all of them is undone by the next read of GET /sales-reps/vocabularies/assignment-roles, which seeds the shipped set back into an empty table.
      *
      * @param {string} params.id - The row id of the role to remove, as the list answered it.
      * @throws {RevenexxException}
@@ -327,7 +341,7 @@ export class SalesRepsCoverage {
      */
     salesRepsAssignmentRolesDelete(params: { id: string }): Promise<{}>;
     /**
-     * An assignment role is one of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table and not a fixed list because what those desks are called is the merchant's to state. ⚠ What is NOT checked here is the thing that matters: a coverage row stores the CODE and not this id, so nothing refuses the delete while rows still carry it, and those rows keep a role code the vocabulary no longer resolves. The set is `closed`, so a client reads such a value as stale data rather than as a missing label — but it reads no title and no tone for it either, and a screen that was showing "Inside sales" starts showing a bare code. Move the rows onto another role first (PUT /sales-reps/assignments/{id}), or leave the role in place and give it a `title` that says it is retired. Deleting all of them is undone by the next read of GET /sales-reps/vocabularies/assignment-roles, which seeds the shipped set back into an empty table.
+     * An assignment role is one of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table and not a fixed list because what those desks are called is the merchant's to state. ⚠ What is NOT checked here is the thing that matters: a coverage row stores the CODE and not this id, so nothing refuses the delete while rows still carry it, and those rows keep a role code the vocabulary no longer resolves. The set is `closed`, so a client reads such a value as stale data rather than as a missing label — but it reads no title and no tone for it either, and a screen that was showing "Inside sales" starts showing a bare code. Move the rows onto another role first (PUT /sales-reps/assignments/{id}), or keep the role and switch it off with `active: false` (PUT /sales-reps/assignment-roles/{id}), which stops it being offered and leaves every row that carries it resolving. Deleting all of them is undone by the next read of GET /sales-reps/vocabularies/assignment-roles, which seeds the shipped set back into an empty table.
      *
      * @param {string} id - The row id of the role to remove, as the list answered it.
      * @throws {RevenexxException}
@@ -421,13 +435,14 @@ export class SalesRepsCoverage {
     }
 
     /**
-     * An assignment role is one of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table and not a fixed list because what those desks are called is the merchant's to state. A partial update: omitted fields keep their value, and a body carrying no field at all is refused rather than answered as a no-op. The safe edits are the readable ones — `title`, `labels`, `description`, `descriptions`, `tone`, `position` — and they reach every screen at once, which is the point of the set living here. `code` is the one to leave alone: a coverage row stores it and nothing points at it, so moving it leaves every row that named the old value carrying a code the vocabulary no longer resolves. A role this app seeded may be edited exactly like one the tenant added; `is_system` records who put it there and licenses nothing.
+     * An assignment role is one of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table and not a fixed list because what those desks are called is the merchant's to state. A partial update: omitted fields keep their value, and a body carrying no field at all is refused rather than answered as a no-op. The safe edits are the readable ones — `title`, `labels`, `description`, `descriptions`, `tone`, `position` — and they reach every screen at once, which is the point of the set living here. `code` is the one to leave alone: a coverage row stores it and nothing points at it, so moving it leaves every row that named the old value carrying a code the vocabulary no longer resolves. A role this app seeded may be edited exactly like one the tenant added; `is_system` records who put it there and licenses nothing. `active: false` retires a role without deleting it: coverage that carries it keeps it and its title still resolves, but no picker offers it and no new coverage is given it. That is the safe alternative to the delete. The one refusal is the default role, which has to stay active.
      *
      * @param {string} params.id - The row id of the role to change, as the list answered it.
+     * @param {boolean} params.active - False when the merchant retired this role (RAD-255). It stays valid on every coverage row that already carries it, an edit that sends it back unchanged is accepted and its title still resolves — but GET /sales-reps/vocabularies/assignment-roles answers it under `inactive` rather than `values`, so no picker offers it, and new coverage or a correction naming it is refused with 409 `role_inactive`. True by default. The default role cannot be inactive (409 `default_must_stay_active`, and `inactive_cannot_be_default` for promoting one); `is_system` is no obstacle, because a merchant who never uses a shipped role is exactly who switches it off. Defaults to true.
      * @param {string} params.code - The role as STORED, and what a coverage row's `role` carries. Lowercase letters, digits, '-' and '_', starting with a letter — the shape every vocabulary code on this platform has, so a client may use it as a key. It should be treated as permanent even though the edit route accepts it: nothing in the database points at it, so renaming it leaves every coverage row that named the old value carrying a code the vocabulary no longer resolves.
      * @param {string} params.description - What this role means, in the merchant's own words — the sentence an operator reads under the choice when they are deciding which one a rep has. Optional, one language, with the per-language forms in `descriptions`.
      * @param {object} params.descriptions - The description per language tag, on the same rule as `labels`. Answered and NOT filterable.
-     * @param {boolean} params.isDefault - Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say. Defaults to false, and no role this app seeds carries it.
+     * @param {boolean} params.isDefault - Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say. An inactive role cannot carry it. Defaults to false, and no role this app seeds carries it.
      * @param {boolean} params.isSystem - True for a role this app seeded, false for one the tenant added. It means "we put it there" and licenses nothing — a seeded role may be renamed, re-toned, reordered or removed exactly like any other, and nothing here treats the two differently. Send false or leave it out: it means this app seeded the row, and a tenant claiming it changes nothing but the truth of the flag.
      * @param {object} params.labels - The title per language tag, as the tenant stored it. `title` is the same text in their working language, so a client reading one tag can ignore this. It is a jsonb column: answered, and NOT a query parameter — see the note on `metadata`.
      * @param {number} params.position - Where this role sits in the order a select offers the roles, ascending, ties broken by the code. It is presentation and nothing branches on it: a rep is not more senior for sorting first. Defaults to 0.
@@ -436,15 +451,16 @@ export class SalesRepsCoverage {
      * @throws {RevenexxException}
      * @returns {Promise<Models.AssignmentRole>}
      */
-    salesRepsAssignmentRolesUpdate(params: { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.AssignmentRole>;
+    salesRepsAssignmentRolesUpdate(params: { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.AssignmentRole>;
     /**
-     * An assignment role is one of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table and not a fixed list because what those desks are called is the merchant's to state. A partial update: omitted fields keep their value, and a body carrying no field at all is refused rather than answered as a no-op. The safe edits are the readable ones — `title`, `labels`, `description`, `descriptions`, `tone`, `position` — and they reach every screen at once, which is the point of the set living here. `code` is the one to leave alone: a coverage row stores it and nothing points at it, so moving it leaves every row that named the old value carrying a code the vocabulary no longer resolves. A role this app seeded may be edited exactly like one the tenant added; `is_system` records who put it there and licenses nothing.
+     * An assignment role is one of the roles THIS TENANT keeps for what a rep does for a customer they carry — field sales, inside sales, a key-account desk, or whatever a merchant's own sales organisation distinguishes. A coverage row stores the `code`; this row carries the words a person reads for it and the tone a screen colours it in. The set is a table and not a fixed list because what those desks are called is the merchant's to state. A partial update: omitted fields keep their value, and a body carrying no field at all is refused rather than answered as a no-op. The safe edits are the readable ones — `title`, `labels`, `description`, `descriptions`, `tone`, `position` — and they reach every screen at once, which is the point of the set living here. `code` is the one to leave alone: a coverage row stores it and nothing points at it, so moving it leaves every row that named the old value carrying a code the vocabulary no longer resolves. A role this app seeded may be edited exactly like one the tenant added; `is_system` records who put it there and licenses nothing. `active: false` retires a role without deleting it: coverage that carries it keeps it and its title still resolves, but no picker offers it and no new coverage is given it. That is the safe alternative to the delete. The one refusal is the default role, which has to stay active.
      *
      * @param {string} id - The row id of the role to change, as the list answered it.
+     * @param {boolean} active - False when the merchant retired this role (RAD-255). It stays valid on every coverage row that already carries it, an edit that sends it back unchanged is accepted and its title still resolves — but GET /sales-reps/vocabularies/assignment-roles answers it under `inactive` rather than `values`, so no picker offers it, and new coverage or a correction naming it is refused with 409 `role_inactive`. True by default. The default role cannot be inactive (409 `default_must_stay_active`, and `inactive_cannot_be_default` for promoting one); `is_system` is no obstacle, because a merchant who never uses a shipped role is exactly who switches it off. Defaults to true.
      * @param {string} code - The role as STORED, and what a coverage row's `role` carries. Lowercase letters, digits, '-' and '_', starting with a letter — the shape every vocabulary code on this platform has, so a client may use it as a key. It should be treated as permanent even though the edit route accepts it: nothing in the database points at it, so renaming it leaves every coverage row that named the old value carrying a code the vocabulary no longer resolves.
      * @param {string} description - What this role means, in the merchant's own words — the sentence an operator reads under the choice when they are deciding which one a rep has. Optional, one language, with the per-language forms in `descriptions`.
      * @param {object} descriptions - The description per language tag, on the same rule as `labels`. Answered and NOT filterable.
-     * @param {boolean} isDefault - Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say. Defaults to false, and no role this app seeds carries it.
+     * @param {boolean} isDefault - Whether this is the role an import falls back to when a source value maps to none of the others. Nothing in this app reads it; it is served so an importer can find the fallback here instead of keeping a convention of its own. FALSE on every role this app seeds, and that is deliberate: a source system delivers no role at all, so a seeded default would not label the odd unmapped row — it would label every imported assignment as whichever role somebody guessed. Which role an unmapped value means is the tenant's to say. An inactive role cannot carry it. Defaults to false, and no role this app seeds carries it.
      * @param {boolean} isSystem - True for a role this app seeded, false for one the tenant added. It means "we put it there" and licenses nothing — a seeded role may be renamed, re-toned, reordered or removed exactly like any other, and nothing here treats the two differently. Send false or leave it out: it means this app seeded the row, and a tenant claiming it changes nothing but the truth of the flag.
      * @param {object} labels - The title per language tag, as the tenant stored it. `title` is the same text in their working language, so a client reading one tag can ignore this. It is a jsonb column: answered, and NOT a query parameter — see the note on `metadata`.
      * @param {number} position - Where this role sits in the order a select offers the roles, ascending, ties broken by the code. It is presentation and nothing branches on it: a rep is not more senior for sorting first. Defaults to 0.
@@ -454,31 +470,33 @@ export class SalesRepsCoverage {
      * @returns {Promise<Models.AssignmentRole>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    salesRepsAssignmentRolesUpdate(id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.AssignmentRole>;
+    salesRepsAssignmentRolesUpdate(id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.AssignmentRole>;
     salesRepsAssignmentRolesUpdate(
-        paramsOrFirst: { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
+        paramsOrFirst: { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
+        ...rest: [(boolean)?, (string)?, (string)?, (object)?, (boolean)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
     ): Promise<Models.AssignmentRole> {
-        let params: { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+        let params: { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                code: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                isSystem: rest[4] as boolean,
-                labels: rest[5] as object,
-                position: rest[6] as number,
-                title: rest[7] as string,
-                tone: rest[8] as Tone            
+                active: rest[0] as boolean,
+                code: rest[1] as string,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                isSystem: rest[5] as boolean,
+                labels: rest[6] as object,
+                position: rest[7] as number,
+                title: rest[8] as string,
+                tone: rest[9] as Tone            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const code = params.code;
         const description = params.description;
         const descriptions = params.descriptions;
@@ -495,6 +513,9 @@ export class SalesRepsCoverage {
 
         const apiPath = '/v1/sales-reps/assignment-roles/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -645,9 +666,9 @@ export class SalesRepsCoverage {
     }
 
     /**
-     * An assignment is one rep carrying one customer. The pair is the row and the pair is unique per tenant: a rep carries many organizations, an organization may have several reps, and the same pair cannot be recorded twice. Two columns say what the pair alone cannot: `role` is what the rep DOES for this customer, as one of the roles this tenant keeps, and `is_primary` marks THE responsible rep — at most one per customer. Both fields are owed. Recording the same pair twice is refused with a 409 that carries the id of the row already there — not answered as a no-op — so a caller that retried after a timeout learns which of the two things happened. The unique index `(tenant_id, rep_code, organization_id)` is the guard and the pre-flight read only makes the refusal readable. `rep_code` has to name a rep this tenant keeps, checked on every write because there is no foreign key to do it: the reference is by code precisely so an import can write coverage before it has read an id out of this app. There is deliberately no update route — changing either half of the pair is a different pair.
+     * An assignment is one rep carrying one customer. The pair is the row and the pair is unique per tenant: a rep carries many organizations, an organization may have several reps, and the same pair cannot be recorded twice. Two columns say what the pair alone cannot: `role` is what the rep DOES for this customer, as one of the roles this tenant keeps, and `is_primary` marks THE responsible rep — at most one per customer. Both fields are owed. Recording the same pair twice is refused with a 409 that carries the id of the row already there — not answered as a no-op — so a caller that retried after a timeout learns which of the two things happened. The unique index `(tenant_id, rep_code, organization_id)` is the guard and the pre-flight read only makes the refusal readable. `rep_code` has to name a rep this tenant keeps, checked on every write because there is no foreign key to do it: the reference is by code precisely so an import can write coverage before it has read an id out of this app. `organization_id` has to name an organization the customers app keeps — asked of that app, and not refused when it cannot be asked. There is deliberately no update route — changing either half of the pair is a different pair.
      *
-     * @param {string} params.organizationId - WHICH customer, as the customers app knows the organization. Nothing here checks that the organization exists — it lives in another app, and a call on every write would fail a whole import for one organization somebody archived.
+     * @param {string} params.organizationId - WHICH customer, as the customers app knows the organization. A create asks that app whether the organization exists and refuses one it does not have (400 `unknown_organization`); when the customers app cannot be asked, the write goes ahead unchecked, because one outage of another app must not fail a whole import.
      * @param {string} params.repCode - WHICH rep this row is about, by their `code` rather than by their row id. The code is what an ERP already holds, so an import can write this row before it has ever read an id out of this app. There is no foreign key behind it: the check is a membership test against the rep table on every write, and a code that names no rep is refused with 400 `unknown_rep`. It is also why a rep's code cannot be renamed and why a rep carrying rows here cannot be deleted.
      * @param {string} params.role - WHAT this rep does for this customer, as one of the roles this tenant keeps (GET /sales-reps/assignment-roles, or GET /sales-reps/vocabularies/assignment-roles for the same set with the words a person reads for it). Deliberately not free text and deliberately not an enum of this app's: a code the tenant does not keep is refused with 400 naming the ones they do, and the set itself is a table they extend, because what a merchant's own sales desks are called is theirs to state. NULL is the ordinary case rather than a gap — a source system delivers one responsible salesperson per debtor and no role whatever, so an imported assignment honestly carries none. It answers a different question from `is_primary`: this says what the rep DOES, that says which of several reps is the responsible one. Optional: omit it and the row carries none, which is what an import that knows no role writes.
      * @throws {RevenexxException}
@@ -655,9 +676,9 @@ export class SalesRepsCoverage {
      */
     salesRepsAssignmentsCreate(params: { organizationId: string, repCode: string, role?: string }): Promise<Models.Assignment>;
     /**
-     * An assignment is one rep carrying one customer. The pair is the row and the pair is unique per tenant: a rep carries many organizations, an organization may have several reps, and the same pair cannot be recorded twice. Two columns say what the pair alone cannot: `role` is what the rep DOES for this customer, as one of the roles this tenant keeps, and `is_primary` marks THE responsible rep — at most one per customer. Both fields are owed. Recording the same pair twice is refused with a 409 that carries the id of the row already there — not answered as a no-op — so a caller that retried after a timeout learns which of the two things happened. The unique index `(tenant_id, rep_code, organization_id)` is the guard and the pre-flight read only makes the refusal readable. `rep_code` has to name a rep this tenant keeps, checked on every write because there is no foreign key to do it: the reference is by code precisely so an import can write coverage before it has read an id out of this app. There is deliberately no update route — changing either half of the pair is a different pair.
+     * An assignment is one rep carrying one customer. The pair is the row and the pair is unique per tenant: a rep carries many organizations, an organization may have several reps, and the same pair cannot be recorded twice. Two columns say what the pair alone cannot: `role` is what the rep DOES for this customer, as one of the roles this tenant keeps, and `is_primary` marks THE responsible rep — at most one per customer. Both fields are owed. Recording the same pair twice is refused with a 409 that carries the id of the row already there — not answered as a no-op — so a caller that retried after a timeout learns which of the two things happened. The unique index `(tenant_id, rep_code, organization_id)` is the guard and the pre-flight read only makes the refusal readable. `rep_code` has to name a rep this tenant keeps, checked on every write because there is no foreign key to do it: the reference is by code precisely so an import can write coverage before it has read an id out of this app. `organization_id` has to name an organization the customers app keeps — asked of that app, and not refused when it cannot be asked. There is deliberately no update route — changing either half of the pair is a different pair.
      *
-     * @param {string} organizationId - WHICH customer, as the customers app knows the organization. Nothing here checks that the organization exists — it lives in another app, and a call on every write would fail a whole import for one organization somebody archived.
+     * @param {string} organizationId - WHICH customer, as the customers app knows the organization. A create asks that app whether the organization exists and refuses one it does not have (400 `unknown_organization`); when the customers app cannot be asked, the write goes ahead unchecked, because one outage of another app must not fail a whole import.
      * @param {string} repCode - WHICH rep this row is about, by their `code` rather than by their row id. The code is what an ERP already holds, so an import can write this row before it has ever read an id out of this app. There is no foreign key behind it: the check is a membership test against the rep table on every write, and a code that names no rep is refused with 400 `unknown_rep`. It is also why a rep's code cannot be renamed and why a rep carrying rows here cannot be deleted.
      * @param {string} role - WHAT this rep does for this customer, as one of the roles this tenant keeps (GET /sales-reps/assignment-roles, or GET /sales-reps/vocabularies/assignment-roles for the same set with the words a person reads for it). Deliberately not free text and deliberately not an enum of this app's: a code the tenant does not keep is refused with 400 naming the ones they do, and the set itself is a table they extend, because what a merchant's own sales desks are called is theirs to state. NULL is the ordinary case rather than a gap — a source system delivers one responsible salesperson per debtor and no role whatever, so an imported assignment honestly carries none. It answers a different question from `is_primary`: this says what the rep DOES, that says which of several reps is the responsible one. Optional: omit it and the row carries none, which is what an import that knows no role writes.
      * @throws {RevenexxException}
@@ -974,7 +995,7 @@ export class SalesRepsCoverage {
     }
 
     /**
-     * One vocabulary in full: every permitted value, each carrying the title and description a person reads for it and the badge tone a UI colours it with, so a client renders a role without a hard-coded table of its own. `source` says who OWNS the set, and here it is always 'table' — the values are the TENANT's own rows, read per request and ordered by the position they gave them, so a merchant extends the set without waiting for a release of this app, and reading the set is what seeds the shipped one into a tenant that has never had it. `closed` is true all the same: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label — which is exactly the state a coverage row is left in when the role it names is deleted. Names: assignment-roles.
+     * One vocabulary in full: every permitted value, each carrying the title and description a person reads for it and the badge tone a UI colours it with, so a client renders a role without a hard-coded table of its own. `source` says who OWNS the set, and here it is always 'table' — the values are the TENANT's own rows, read per request and ordered by the position they gave them, so a merchant extends the set without waiting for a release of this app, and reading the set is what seeds the shipped one into a tenant that has never had it. `closed` is true all the same: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label — which is exactly the state a coverage row is left in when the role it names is deleted. A role the merchant switched off is answered under `inactive` and not under `values`, because `values` is what a picker offers; `inactive` is there so a screen can still render the title and tone of coverage that already carries one. Names: assignment-roles.
      *
      * @param {SalesRepsVocabulariesGetName} params.name - The vocabulary name — the part after the dot in the qualified id. One of: assignment-roles. Anything else is a 404, so the enum is the complete set and not a suggestion.
      * @throws {RevenexxException}
@@ -982,7 +1003,7 @@ export class SalesRepsCoverage {
      */
     salesRepsVocabulariesGet(params: { name: SalesRepsVocabulariesGetName }): Promise<Models.SalesRepVocabulary>;
     /**
-     * One vocabulary in full: every permitted value, each carrying the title and description a person reads for it and the badge tone a UI colours it with, so a client renders a role without a hard-coded table of its own. `source` says who OWNS the set, and here it is always 'table' — the values are the TENANT's own rows, read per request and ordered by the position they gave them, so a merchant extends the set without waiting for a release of this app, and reading the set is what seeds the shipped one into a tenant that has never had it. `closed` is true all the same: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label — which is exactly the state a coverage row is left in when the role it names is deleted. Names: assignment-roles.
+     * One vocabulary in full: every permitted value, each carrying the title and description a person reads for it and the badge tone a UI colours it with, so a client renders a role without a hard-coded table of its own. `source` says who OWNS the set, and here it is always 'table' — the values are the TENANT's own rows, read per request and ordered by the position they gave them, so a merchant extends the set without waiting for a release of this app, and reading the set is what seeds the shipped one into a tenant that has never had it. `closed` is true all the same: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label — which is exactly the state a coverage row is left in when the role it names is deleted. A role the merchant switched off is answered under `inactive` and not under `values`, because `values` is what a picker offers; `inactive` is there so a screen can still render the title and tone of coverage that already carries one. Names: assignment-roles.
      *
      * @param {SalesRepsVocabulariesGetName} name - The vocabulary name — the part after the dot in the qualified id. One of: assignment-roles. Anything else is a 404, so the enum is the complete set and not a suggestion.
      * @throws {RevenexxException}

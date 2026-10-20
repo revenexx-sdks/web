@@ -17,39 +17,43 @@ export class Punchout {
      * @param {number} params.limit - Page size (default 50, max 200).
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @param {string} params.fallbackContactId - The accounts that sign an unnamed buyer in as this contact. Asked by customers before a contact is deleted for good: an account whose fallback is gone turns every buyer the ERP does not name away. Applied and echoed in `filter`; any account, enabled or not.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    punchoutAccountsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    punchoutAccountsList(params?: { limit?: number, offset?: number, order?: string, fallbackContactId?: string }): Promise<{}>;
     /**
      *
      * @param {number} limit - Page size (default 50, max 200).
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @param {string} fallbackContactId - The accounts that sign an unnamed buyer in as this contact. Asked by customers before a contact is deleted for good: an account whose fallback is gone turns every buyer the ERP does not name away. Applied and echoed in `filter`; any account, enabled or not.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    punchoutAccountsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    punchoutAccountsList(limit?: number, offset?: number, order?: string, fallbackContactId?: string): Promise<{}>;
     punchoutAccountsList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
-        ...rest: [(number)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, fallbackContactId?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string };
+        let params: { limit?: number, offset?: number, order?: string, fallbackContactId?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, fallbackContactId?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
                 offset: rest[0] as number,
-                order: rest[1] as string            
+                order: rest[1] as string,
+                fallbackContactId: rest[2] as string            
             };
         }
         
         const limit = params.limit;
         const offset = params.offset;
         const order = params.order;
+        const fallbackContactId = params.fallbackContactId;
 
 
         const apiPath = '/v1/punchout/accounts';
@@ -62,6 +66,9 @@ export class Punchout {
         }
         if (typeof order !== 'undefined') {
             apiPayload['order'] = order;
+        }
+        if (typeof fallbackContactId !== 'undefined') {
+            apiPayload['fallback_contact_id'] = fallbackContactId;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -82,63 +89,73 @@ export class Punchout {
      * @param {string} params.code - 
      * @param {string} params.name - 
      * @param {string} params.protocol - 
-     * @param {string} params.authStrategy - 
-     * @param {object} params.behaviour - 
+     * @param {string} params.authStrategy - Null is ignored: a new account takes the default, a corrected one keeps its value.
      * @param {string} params.credentialDomain - 
      * @param {string} params.credentialIdentity - 
      * @param {string} params.credentialSecret - 
-     * @param {boolean} params.enabled - 
+     * @param {boolean} params.echoEntryParameters - OCI only: send the entry call's own query parameters back with the hand-back, for an SRM that expects them. Credential parameters are never sent back. Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {boolean} params.enabled - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {string} params.externalId - The key this punchout account has in the system that OWNS it. An account is a partner identity, and the procurement platform on the other side knows the relationship by an id of its own — a supplier id, a vendor number, an IDS customer name. Unique per tenant where it is set, so a repeated import updates the account it wrote last time instead of adding a second one. `code` is what this shop calls the partner; this is what the partner calls itself. Null for an account an operator typed in, which is the ordinary case.
+     * @param {object} params.externalRefs - Every OTHER system that knows this partner, keyed by system name — the ERP's vendor number beside the procurement platform's supplier id, because one customer commonly reaches this shop through both. `external_id` is the leading system; this is the rest, and the next one costs no column. Not something to search on: this contract publishes no column filter at all, and the store compares such a field as a whole document — look the account up by `external_id` and read this off the answer.
      * @param {string} params.fallbackContactId - 
      * @param {string} params.idsCustomerName - 
      * @param {string} params.loginToken - 
+     * @param {object} params.metadata - Free-form jsonb this tenant owns, and the extension point this entity has never had — anything about the partner relationship that this app does not model, up to the day it earns a column. Nothing here is read when a visit is served: the account's own columns are what the app acts on, `source_data` is what the source said, and this is what you say.
      * @param {string} params.organizationId - 
-     * @param {string} params.protocolVersion - 
-     * @param {boolean} params.secureOci - 
-     * @param {number} params.sessionTtlMinutes - 
+     * @param {string} params.protocolVersion - The version of its protocol the account speaks — one of GET /punchout/vocabularies/protocol-versions for that protocol: OCI 4.0 or 5.0 (it decides which fields a hand-back carries), an IDS version this shop answers `SV` with. A cXML account states none; each cXML document carries its own. Any other value is refused. Omitted means the protocol's default.
+     * @param {string} params.purchaseMode - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {boolean} params.secureOci - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {number} params.sessionTtlOverrideMinutes - How long a visit of this account stays open, overriding the tenant's `session_ttl_minutes` setting. Null — the ordinary case — means the tenant's lifetime.
      * @param {string} params.sharedSecret - 
-     * @param {string} params.startPageUrl - 
-     * @param {string} params.unknownUserPolicy - 
-     * @param {boolean} params.urlThreading - 
+     * @param {object} params.sourceData - What the source said about this account, kept as it said it. Carries the ETag a write-back has to hand back in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit made here. Not a place for anything the partner authenticates with: what an ERP sends to get in is written to the account's own write-only fields, which no route answers.
+     * @param {string} params.sourceSyncedAt - When this account was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. Editing the account here does not touch it: it says when the SOURCE was last seen, not when the row changed. Null for an account no source owns.
+     * @param {string} params.startPageUrl - Where a buyer of THIS account lands after entry, overriding the tenant's `storefront_url` setting. Leave it empty: the entry URL is derived from the storefront address (`entry_url`), and an override is for a buyer who should land on a page of their own. Its host is the host the entry URL is derived from.
+     * @param {string} params.unknownUserPolicy - Null is ignored: a new account takes the default, a corrected one keeps its value.
      * @throws {RevenexxException}
      * @returns {Promise<Models.PunchoutAccount>}
      */
-    punchoutAccountsCreate(params: { channelCode: string, code: string, name: string, protocol: string, authStrategy?: string, behaviour?: object, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, enabled?: boolean, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, organizationId?: string, protocolVersion?: string, secureOci?: boolean, sessionTtlMinutes?: number, sharedSecret?: string, startPageUrl?: string, unknownUserPolicy?: string, urlThreading?: boolean }): Promise<Models.PunchoutAccount>;
+    punchoutAccountsCreate(params: { channelCode: string, code: string, name: string, protocol: string, authStrategy?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, echoEntryParameters?: boolean, enabled?: boolean, externalId?: string, externalRefs?: object, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, metadata?: object, organizationId?: string, protocolVersion?: string, purchaseMode?: string, secureOci?: boolean, sessionTtlOverrideMinutes?: number, sharedSecret?: string, sourceData?: object, sourceSyncedAt?: string, startPageUrl?: string, unknownUserPolicy?: string }): Promise<Models.PunchoutAccount>;
     /**
      *
      * @param {string} channelCode - 
      * @param {string} code - 
      * @param {string} name - 
      * @param {string} protocol - 
-     * @param {string} authStrategy - 
-     * @param {object} behaviour - 
+     * @param {string} authStrategy - Null is ignored: a new account takes the default, a corrected one keeps its value.
      * @param {string} credentialDomain - 
      * @param {string} credentialIdentity - 
      * @param {string} credentialSecret - 
-     * @param {boolean} enabled - 
+     * @param {boolean} echoEntryParameters - OCI only: send the entry call's own query parameters back with the hand-back, for an SRM that expects them. Credential parameters are never sent back. Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {boolean} enabled - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {string} externalId - The key this punchout account has in the system that OWNS it. An account is a partner identity, and the procurement platform on the other side knows the relationship by an id of its own — a supplier id, a vendor number, an IDS customer name. Unique per tenant where it is set, so a repeated import updates the account it wrote last time instead of adding a second one. `code` is what this shop calls the partner; this is what the partner calls itself. Null for an account an operator typed in, which is the ordinary case.
+     * @param {object} externalRefs - Every OTHER system that knows this partner, keyed by system name — the ERP's vendor number beside the procurement platform's supplier id, because one customer commonly reaches this shop through both. `external_id` is the leading system; this is the rest, and the next one costs no column. Not something to search on: this contract publishes no column filter at all, and the store compares such a field as a whole document — look the account up by `external_id` and read this off the answer.
      * @param {string} fallbackContactId - 
      * @param {string} idsCustomerName - 
      * @param {string} loginToken - 
+     * @param {object} metadata - Free-form jsonb this tenant owns, and the extension point this entity has never had — anything about the partner relationship that this app does not model, up to the day it earns a column. Nothing here is read when a visit is served: the account's own columns are what the app acts on, `source_data` is what the source said, and this is what you say.
      * @param {string} organizationId - 
-     * @param {string} protocolVersion - 
-     * @param {boolean} secureOci - 
-     * @param {number} sessionTtlMinutes - 
+     * @param {string} protocolVersion - The version of its protocol the account speaks — one of GET /punchout/vocabularies/protocol-versions for that protocol: OCI 4.0 or 5.0 (it decides which fields a hand-back carries), an IDS version this shop answers `SV` with. A cXML account states none; each cXML document carries its own. Any other value is refused. Omitted means the protocol's default.
+     * @param {string} purchaseMode - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {boolean} secureOci - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {number} sessionTtlOverrideMinutes - How long a visit of this account stays open, overriding the tenant's `session_ttl_minutes` setting. Null — the ordinary case — means the tenant's lifetime.
      * @param {string} sharedSecret - 
-     * @param {string} startPageUrl - 
-     * @param {string} unknownUserPolicy - 
-     * @param {boolean} urlThreading - 
+     * @param {object} sourceData - What the source said about this account, kept as it said it. Carries the ETag a write-back has to hand back in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit made here. Not a place for anything the partner authenticates with: what an ERP sends to get in is written to the account's own write-only fields, which no route answers.
+     * @param {string} sourceSyncedAt - When this account was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. Editing the account here does not touch it: it says when the SOURCE was last seen, not when the row changed. Null for an account no source owns.
+     * @param {string} startPageUrl - Where a buyer of THIS account lands after entry, overriding the tenant's `storefront_url` setting. Leave it empty: the entry URL is derived from the storefront address (`entry_url`), and an override is for a buyer who should land on a page of their own. Its host is the host the entry URL is derived from.
+     * @param {string} unknownUserPolicy - Null is ignored: a new account takes the default, a corrected one keeps its value.
      * @throws {RevenexxException}
      * @returns {Promise<Models.PunchoutAccount>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    punchoutAccountsCreate(channelCode: string, code: string, name: string, protocol: string, authStrategy?: string, behaviour?: object, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, enabled?: boolean, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, organizationId?: string, protocolVersion?: string, secureOci?: boolean, sessionTtlMinutes?: number, sharedSecret?: string, startPageUrl?: string, unknownUserPolicy?: string, urlThreading?: boolean): Promise<Models.PunchoutAccount>;
+    punchoutAccountsCreate(channelCode: string, code: string, name: string, protocol: string, authStrategy?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, echoEntryParameters?: boolean, enabled?: boolean, externalId?: string, externalRefs?: object, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, metadata?: object, organizationId?: string, protocolVersion?: string, purchaseMode?: string, secureOci?: boolean, sessionTtlOverrideMinutes?: number, sharedSecret?: string, sourceData?: object, sourceSyncedAt?: string, startPageUrl?: string, unknownUserPolicy?: string): Promise<Models.PunchoutAccount>;
     punchoutAccountsCreate(
-        paramsOrFirst: { channelCode: string, code: string, name: string, protocol: string, authStrategy?: string, behaviour?: object, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, enabled?: boolean, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, organizationId?: string, protocolVersion?: string, secureOci?: boolean, sessionTtlMinutes?: number, sharedSecret?: string, startPageUrl?: string, unknownUserPolicy?: string, urlThreading?: boolean } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (number)?, (string)?, (string)?, (string)?, (boolean)?]    
+        paramsOrFirst: { channelCode: string, code: string, name: string, protocol: string, authStrategy?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, echoEntryParameters?: boolean, enabled?: boolean, externalId?: string, externalRefs?: object, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, metadata?: object, organizationId?: string, protocolVersion?: string, purchaseMode?: string, secureOci?: boolean, sessionTtlOverrideMinutes?: number, sharedSecret?: string, sourceData?: object, sourceSyncedAt?: string, startPageUrl?: string, unknownUserPolicy?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (string)?, (object)?, (string)?, (string)?, (string)?, (object)?, (string)?, (string)?, (string)?, (boolean)?, (number)?, (string)?, (object)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.PunchoutAccount> {
-        let params: { channelCode: string, code: string, name: string, protocol: string, authStrategy?: string, behaviour?: object, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, enabled?: boolean, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, organizationId?: string, protocolVersion?: string, secureOci?: boolean, sessionTtlMinutes?: number, sharedSecret?: string, startPageUrl?: string, unknownUserPolicy?: string, urlThreading?: boolean };
+        let params: { channelCode: string, code: string, name: string, protocol: string, authStrategy?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, echoEntryParameters?: boolean, enabled?: boolean, externalId?: string, externalRefs?: object, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, metadata?: object, organizationId?: string, protocolVersion?: string, purchaseMode?: string, secureOci?: boolean, sessionTtlOverrideMinutes?: number, sharedSecret?: string, sourceData?: object, sourceSyncedAt?: string, startPageUrl?: string, unknownUserPolicy?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { channelCode: string, code: string, name: string, protocol: string, authStrategy?: string, behaviour?: object, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, enabled?: boolean, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, organizationId?: string, protocolVersion?: string, secureOci?: boolean, sessionTtlMinutes?: number, sharedSecret?: string, startPageUrl?: string, unknownUserPolicy?: string, urlThreading?: boolean };
+            params = (paramsOrFirst || {}) as { channelCode: string, code: string, name: string, protocol: string, authStrategy?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, echoEntryParameters?: boolean, enabled?: boolean, externalId?: string, externalRefs?: object, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, metadata?: object, organizationId?: string, protocolVersion?: string, purchaseMode?: string, secureOci?: boolean, sessionTtlOverrideMinutes?: number, sharedSecret?: string, sourceData?: object, sourceSyncedAt?: string, startPageUrl?: string, unknownUserPolicy?: string };
         } else {
             params = {
                 channelCode: paramsOrFirst as string,
@@ -146,22 +163,27 @@ export class Punchout {
                 name: rest[1] as string,
                 protocol: rest[2] as string,
                 authStrategy: rest[3] as string,
-                behaviour: rest[4] as object,
-                credentialDomain: rest[5] as string,
-                credentialIdentity: rest[6] as string,
-                credentialSecret: rest[7] as string,
+                credentialDomain: rest[4] as string,
+                credentialIdentity: rest[5] as string,
+                credentialSecret: rest[6] as string,
+                echoEntryParameters: rest[7] as boolean,
                 enabled: rest[8] as boolean,
-                fallbackContactId: rest[9] as string,
-                idsCustomerName: rest[10] as string,
-                loginToken: rest[11] as string,
-                organizationId: rest[12] as string,
-                protocolVersion: rest[13] as string,
-                secureOci: rest[14] as boolean,
-                sessionTtlMinutes: rest[15] as number,
-                sharedSecret: rest[16] as string,
-                startPageUrl: rest[17] as string,
-                unknownUserPolicy: rest[18] as string,
-                urlThreading: rest[19] as boolean            
+                externalId: rest[9] as string,
+                externalRefs: rest[10] as object,
+                fallbackContactId: rest[11] as string,
+                idsCustomerName: rest[12] as string,
+                loginToken: rest[13] as string,
+                metadata: rest[14] as object,
+                organizationId: rest[15] as string,
+                protocolVersion: rest[16] as string,
+                purchaseMode: rest[17] as string,
+                secureOci: rest[18] as boolean,
+                sessionTtlOverrideMinutes: rest[19] as number,
+                sharedSecret: rest[20] as string,
+                sourceData: rest[21] as object,
+                sourceSyncedAt: rest[22] as string,
+                startPageUrl: rest[23] as string,
+                unknownUserPolicy: rest[24] as string            
             };
         }
         
@@ -170,22 +192,27 @@ export class Punchout {
         const name = params.name;
         const protocol = params.protocol;
         const authStrategy = params.authStrategy;
-        const behaviour = params.behaviour;
         const credentialDomain = params.credentialDomain;
         const credentialIdentity = params.credentialIdentity;
         const credentialSecret = params.credentialSecret;
+        const echoEntryParameters = params.echoEntryParameters;
         const enabled = params.enabled;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const fallbackContactId = params.fallbackContactId;
         const idsCustomerName = params.idsCustomerName;
         const loginToken = params.loginToken;
+        const metadata = params.metadata;
         const organizationId = params.organizationId;
         const protocolVersion = params.protocolVersion;
+        const purchaseMode = params.purchaseMode;
         const secureOci = params.secureOci;
-        const sessionTtlMinutes = params.sessionTtlMinutes;
+        const sessionTtlOverrideMinutes = params.sessionTtlOverrideMinutes;
         const sharedSecret = params.sharedSecret;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
         const startPageUrl = params.startPageUrl;
         const unknownUserPolicy = params.unknownUserPolicy;
-        const urlThreading = params.urlThreading;
 
         if (typeof channelCode === 'undefined') {
             throw new RevenexxException('Missing required parameter: "channelCode"');
@@ -205,9 +232,6 @@ export class Punchout {
         if (typeof authStrategy !== 'undefined') {
             apiPayload['auth_strategy'] = authStrategy;
         }
-        if (typeof behaviour !== 'undefined') {
-            apiPayload['behaviour'] = behaviour;
-        }
         if (typeof channelCode !== 'undefined') {
             apiPayload['channel_code'] = channelCode;
         }
@@ -223,8 +247,17 @@ export class Punchout {
         if (typeof credentialSecret !== 'undefined') {
             apiPayload['credential_secret'] = credentialSecret;
         }
+        if (typeof echoEntryParameters !== 'undefined') {
+            apiPayload['echo_entry_parameters'] = echoEntryParameters;
+        }
         if (typeof enabled !== 'undefined') {
             apiPayload['enabled'] = enabled;
+        }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
         }
         if (typeof fallbackContactId !== 'undefined') {
             apiPayload['fallback_contact_id'] = fallbackContactId;
@@ -234,6 +267,9 @@ export class Punchout {
         }
         if (typeof loginToken !== 'undefined') {
             apiPayload['login_token'] = loginToken;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
         }
         if (typeof name !== 'undefined') {
             apiPayload['name'] = name;
@@ -247,23 +283,29 @@ export class Punchout {
         if (typeof protocolVersion !== 'undefined') {
             apiPayload['protocol_version'] = protocolVersion;
         }
+        if (typeof purchaseMode !== 'undefined') {
+            apiPayload['purchase_mode'] = purchaseMode;
+        }
         if (typeof secureOci !== 'undefined') {
             apiPayload['secure_oci'] = secureOci;
         }
-        if (typeof sessionTtlMinutes !== 'undefined') {
-            apiPayload['session_ttl_minutes'] = sessionTtlMinutes;
+        if (typeof sessionTtlOverrideMinutes !== 'undefined') {
+            apiPayload['session_ttl_override_minutes'] = sessionTtlOverrideMinutes;
         }
         if (typeof sharedSecret !== 'undefined') {
             apiPayload['shared_secret'] = sharedSecret;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         if (typeof startPageUrl !== 'undefined') {
             apiPayload['start_page_url'] = startPageUrl;
         }
         if (typeof unknownUserPolicy !== 'undefined') {
             apiPayload['unknown_user_policy'] = unknownUserPolicy;
-        }
-        if (typeof urlThreading !== 'undefined') {
-            apiPayload['url_threading'] = urlThreading;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -380,117 +422,137 @@ export class Punchout {
     /**
      *
      * @param {string} params.id - 
-     * @param {string} params.authStrategy - 
-     * @param {object} params.behaviour - 
+     * @param {string} params.authStrategy - Null is ignored: a new account takes the default, a corrected one keeps its value.
      * @param {string} params.channelCode - 
      * @param {string} params.code - 
      * @param {string} params.credentialDomain - 
      * @param {string} params.credentialIdentity - 
      * @param {string} params.credentialSecret - 
-     * @param {boolean} params.enabled - 
+     * @param {boolean} params.echoEntryParameters - OCI only: send the entry call's own query parameters back with the hand-back, for an SRM that expects them. Credential parameters are never sent back. Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {boolean} params.enabled - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {string} params.externalId - The key this punchout account has in the system that OWNS it. An account is a partner identity, and the procurement platform on the other side knows the relationship by an id of its own — a supplier id, a vendor number, an IDS customer name. Unique per tenant where it is set, so a repeated import updates the account it wrote last time instead of adding a second one. `code` is what this shop calls the partner; this is what the partner calls itself. Null for an account an operator typed in, which is the ordinary case.
+     * @param {object} params.externalRefs - Every OTHER system that knows this partner, keyed by system name — the ERP's vendor number beside the procurement platform's supplier id, because one customer commonly reaches this shop through both. `external_id` is the leading system; this is the rest, and the next one costs no column. Not something to search on: this contract publishes no column filter at all, and the store compares such a field as a whole document — look the account up by `external_id` and read this off the answer.
      * @param {string} params.fallbackContactId - 
      * @param {string} params.idsCustomerName - 
      * @param {string} params.loginToken - 
+     * @param {object} params.metadata - Free-form jsonb this tenant owns, and the extension point this entity has never had — anything about the partner relationship that this app does not model, up to the day it earns a column. Nothing here is read when a visit is served: the account's own columns are what the app acts on, `source_data` is what the source said, and this is what you say.
      * @param {string} params.name - 
      * @param {string} params.organizationId - 
      * @param {string} params.protocol - 
-     * @param {string} params.protocolVersion - 
-     * @param {boolean} params.secureOci - 
-     * @param {number} params.sessionTtlMinutes - 
+     * @param {string} params.protocolVersion - The version of its protocol the account speaks — one of GET /punchout/vocabularies/protocol-versions for that protocol: OCI 4.0 or 5.0 (it decides which fields a hand-back carries), an IDS version this shop answers `SV` with. A cXML account states none; each cXML document carries its own. Any other value is refused. Omitted means the protocol's default.
+     * @param {string} params.purchaseMode - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {boolean} params.secureOci - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {number} params.sessionTtlOverrideMinutes - How long a visit of this account stays open, overriding the tenant's `session_ttl_minutes` setting. Null — the ordinary case — means the tenant's lifetime.
      * @param {string} params.sharedSecret - 
-     * @param {string} params.startPageUrl - 
-     * @param {string} params.unknownUserPolicy - 
-     * @param {boolean} params.urlThreading - 
+     * @param {object} params.sourceData - What the source said about this account, kept as it said it. Carries the ETag a write-back has to hand back in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit made here. Not a place for anything the partner authenticates with: what an ERP sends to get in is written to the account's own write-only fields, which no route answers.
+     * @param {string} params.sourceSyncedAt - When this account was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. Editing the account here does not touch it: it says when the SOURCE was last seen, not when the row changed. Null for an account no source owns.
+     * @param {string} params.startPageUrl - Where a buyer of THIS account lands after entry, overriding the tenant's `storefront_url` setting. Leave it empty: the entry URL is derived from the storefront address (`entry_url`), and an override is for a buyer who should land on a page of their own. Its host is the host the entry URL is derived from.
+     * @param {string} params.unknownUserPolicy - Null is ignored: a new account takes the default, a corrected one keeps its value.
      * @throws {RevenexxException}
      * @returns {Promise<Models.PunchoutAccount>}
      */
-    punchoutAccountsUpdate(params: { id: string, authStrategy?: string, behaviour?: object, channelCode?: string, code?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, enabled?: boolean, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, name?: string, organizationId?: string, protocol?: string, protocolVersion?: string, secureOci?: boolean, sessionTtlMinutes?: number, sharedSecret?: string, startPageUrl?: string, unknownUserPolicy?: string, urlThreading?: boolean }): Promise<Models.PunchoutAccount>;
+    punchoutAccountsUpdate(params: { id: string, authStrategy?: string, channelCode?: string, code?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, echoEntryParameters?: boolean, enabled?: boolean, externalId?: string, externalRefs?: object, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, metadata?: object, name?: string, organizationId?: string, protocol?: string, protocolVersion?: string, purchaseMode?: string, secureOci?: boolean, sessionTtlOverrideMinutes?: number, sharedSecret?: string, sourceData?: object, sourceSyncedAt?: string, startPageUrl?: string, unknownUserPolicy?: string }): Promise<Models.PunchoutAccount>;
     /**
      *
      * @param {string} id - 
-     * @param {string} authStrategy - 
-     * @param {object} behaviour - 
+     * @param {string} authStrategy - Null is ignored: a new account takes the default, a corrected one keeps its value.
      * @param {string} channelCode - 
      * @param {string} code - 
      * @param {string} credentialDomain - 
      * @param {string} credentialIdentity - 
      * @param {string} credentialSecret - 
-     * @param {boolean} enabled - 
+     * @param {boolean} echoEntryParameters - OCI only: send the entry call's own query parameters back with the hand-back, for an SRM that expects them. Credential parameters are never sent back. Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {boolean} enabled - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {string} externalId - The key this punchout account has in the system that OWNS it. An account is a partner identity, and the procurement platform on the other side knows the relationship by an id of its own — a supplier id, a vendor number, an IDS customer name. Unique per tenant where it is set, so a repeated import updates the account it wrote last time instead of adding a second one. `code` is what this shop calls the partner; this is what the partner calls itself. Null for an account an operator typed in, which is the ordinary case.
+     * @param {object} externalRefs - Every OTHER system that knows this partner, keyed by system name — the ERP's vendor number beside the procurement platform's supplier id, because one customer commonly reaches this shop through both. `external_id` is the leading system; this is the rest, and the next one costs no column. Not something to search on: this contract publishes no column filter at all, and the store compares such a field as a whole document — look the account up by `external_id` and read this off the answer.
      * @param {string} fallbackContactId - 
      * @param {string} idsCustomerName - 
      * @param {string} loginToken - 
+     * @param {object} metadata - Free-form jsonb this tenant owns, and the extension point this entity has never had — anything about the partner relationship that this app does not model, up to the day it earns a column. Nothing here is read when a visit is served: the account's own columns are what the app acts on, `source_data` is what the source said, and this is what you say.
      * @param {string} name - 
      * @param {string} organizationId - 
      * @param {string} protocol - 
-     * @param {string} protocolVersion - 
-     * @param {boolean} secureOci - 
-     * @param {number} sessionTtlMinutes - 
+     * @param {string} protocolVersion - The version of its protocol the account speaks — one of GET /punchout/vocabularies/protocol-versions for that protocol: OCI 4.0 or 5.0 (it decides which fields a hand-back carries), an IDS version this shop answers `SV` with. A cXML account states none; each cXML document carries its own. Any other value is refused. Omitted means the protocol's default.
+     * @param {string} purchaseMode - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {boolean} secureOci - Null is ignored: a new account takes the default, a corrected one keeps its value.
+     * @param {number} sessionTtlOverrideMinutes - How long a visit of this account stays open, overriding the tenant's `session_ttl_minutes` setting. Null — the ordinary case — means the tenant's lifetime.
      * @param {string} sharedSecret - 
-     * @param {string} startPageUrl - 
-     * @param {string} unknownUserPolicy - 
-     * @param {boolean} urlThreading - 
+     * @param {object} sourceData - What the source said about this account, kept as it said it. Carries the ETag a write-back has to hand back in `If-Match`, and the source fields this app does not model — without it those are lost on the first edit made here. Not a place for anything the partner authenticates with: what an ERP sends to get in is written to the account's own write-only fields, which no route answers.
+     * @param {string} sourceSyncedAt - When this account was last confirmed against its source. A delta run asks for changes since it, and an operator reads it to see that a feed has gone quiet. Editing the account here does not touch it: it says when the SOURCE was last seen, not when the row changed. Null for an account no source owns.
+     * @param {string} startPageUrl - Where a buyer of THIS account lands after entry, overriding the tenant's `storefront_url` setting. Leave it empty: the entry URL is derived from the storefront address (`entry_url`), and an override is for a buyer who should land on a page of their own. Its host is the host the entry URL is derived from.
+     * @param {string} unknownUserPolicy - Null is ignored: a new account takes the default, a corrected one keeps its value.
      * @throws {RevenexxException}
      * @returns {Promise<Models.PunchoutAccount>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    punchoutAccountsUpdate(id: string, authStrategy?: string, behaviour?: object, channelCode?: string, code?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, enabled?: boolean, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, name?: string, organizationId?: string, protocol?: string, protocolVersion?: string, secureOci?: boolean, sessionTtlMinutes?: number, sharedSecret?: string, startPageUrl?: string, unknownUserPolicy?: string, urlThreading?: boolean): Promise<Models.PunchoutAccount>;
+    punchoutAccountsUpdate(id: string, authStrategy?: string, channelCode?: string, code?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, echoEntryParameters?: boolean, enabled?: boolean, externalId?: string, externalRefs?: object, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, metadata?: object, name?: string, organizationId?: string, protocol?: string, protocolVersion?: string, purchaseMode?: string, secureOci?: boolean, sessionTtlOverrideMinutes?: number, sharedSecret?: string, sourceData?: object, sourceSyncedAt?: string, startPageUrl?: string, unknownUserPolicy?: string): Promise<Models.PunchoutAccount>;
     punchoutAccountsUpdate(
-        paramsOrFirst: { id: string, authStrategy?: string, behaviour?: object, channelCode?: string, code?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, enabled?: boolean, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, name?: string, organizationId?: string, protocol?: string, protocolVersion?: string, secureOci?: boolean, sessionTtlMinutes?: number, sharedSecret?: string, startPageUrl?: string, unknownUserPolicy?: string, urlThreading?: boolean } | string,
-        ...rest: [(string)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (number)?, (string)?, (string)?, (string)?, (boolean)?]    
+        paramsOrFirst: { id: string, authStrategy?: string, channelCode?: string, code?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, echoEntryParameters?: boolean, enabled?: boolean, externalId?: string, externalRefs?: object, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, metadata?: object, name?: string, organizationId?: string, protocol?: string, protocolVersion?: string, purchaseMode?: string, secureOci?: boolean, sessionTtlOverrideMinutes?: number, sharedSecret?: string, sourceData?: object, sourceSyncedAt?: string, startPageUrl?: string, unknownUserPolicy?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (string)?, (object)?, (string)?, (string)?, (string)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (number)?, (string)?, (object)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.PunchoutAccount> {
-        let params: { id: string, authStrategy?: string, behaviour?: object, channelCode?: string, code?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, enabled?: boolean, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, name?: string, organizationId?: string, protocol?: string, protocolVersion?: string, secureOci?: boolean, sessionTtlMinutes?: number, sharedSecret?: string, startPageUrl?: string, unknownUserPolicy?: string, urlThreading?: boolean };
+        let params: { id: string, authStrategy?: string, channelCode?: string, code?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, echoEntryParameters?: boolean, enabled?: boolean, externalId?: string, externalRefs?: object, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, metadata?: object, name?: string, organizationId?: string, protocol?: string, protocolVersion?: string, purchaseMode?: string, secureOci?: boolean, sessionTtlOverrideMinutes?: number, sharedSecret?: string, sourceData?: object, sourceSyncedAt?: string, startPageUrl?: string, unknownUserPolicy?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, authStrategy?: string, behaviour?: object, channelCode?: string, code?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, enabled?: boolean, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, name?: string, organizationId?: string, protocol?: string, protocolVersion?: string, secureOci?: boolean, sessionTtlMinutes?: number, sharedSecret?: string, startPageUrl?: string, unknownUserPolicy?: string, urlThreading?: boolean };
+            params = (paramsOrFirst || {}) as { id: string, authStrategy?: string, channelCode?: string, code?: string, credentialDomain?: string, credentialIdentity?: string, credentialSecret?: string, echoEntryParameters?: boolean, enabled?: boolean, externalId?: string, externalRefs?: object, fallbackContactId?: string, idsCustomerName?: string, loginToken?: string, metadata?: object, name?: string, organizationId?: string, protocol?: string, protocolVersion?: string, purchaseMode?: string, secureOci?: boolean, sessionTtlOverrideMinutes?: number, sharedSecret?: string, sourceData?: object, sourceSyncedAt?: string, startPageUrl?: string, unknownUserPolicy?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 authStrategy: rest[0] as string,
-                behaviour: rest[1] as object,
-                channelCode: rest[2] as string,
-                code: rest[3] as string,
-                credentialDomain: rest[4] as string,
-                credentialIdentity: rest[5] as string,
-                credentialSecret: rest[6] as string,
+                channelCode: rest[1] as string,
+                code: rest[2] as string,
+                credentialDomain: rest[3] as string,
+                credentialIdentity: rest[4] as string,
+                credentialSecret: rest[5] as string,
+                echoEntryParameters: rest[6] as boolean,
                 enabled: rest[7] as boolean,
-                fallbackContactId: rest[8] as string,
-                idsCustomerName: rest[9] as string,
-                loginToken: rest[10] as string,
-                name: rest[11] as string,
-                organizationId: rest[12] as string,
-                protocol: rest[13] as string,
-                protocolVersion: rest[14] as string,
-                secureOci: rest[15] as boolean,
-                sessionTtlMinutes: rest[16] as number,
-                sharedSecret: rest[17] as string,
-                startPageUrl: rest[18] as string,
-                unknownUserPolicy: rest[19] as string,
-                urlThreading: rest[20] as boolean            
+                externalId: rest[8] as string,
+                externalRefs: rest[9] as object,
+                fallbackContactId: rest[10] as string,
+                idsCustomerName: rest[11] as string,
+                loginToken: rest[12] as string,
+                metadata: rest[13] as object,
+                name: rest[14] as string,
+                organizationId: rest[15] as string,
+                protocol: rest[16] as string,
+                protocolVersion: rest[17] as string,
+                purchaseMode: rest[18] as string,
+                secureOci: rest[19] as boolean,
+                sessionTtlOverrideMinutes: rest[20] as number,
+                sharedSecret: rest[21] as string,
+                sourceData: rest[22] as object,
+                sourceSyncedAt: rest[23] as string,
+                startPageUrl: rest[24] as string,
+                unknownUserPolicy: rest[25] as string            
             };
         }
         
         const id = params.id;
         const authStrategy = params.authStrategy;
-        const behaviour = params.behaviour;
         const channelCode = params.channelCode;
         const code = params.code;
         const credentialDomain = params.credentialDomain;
         const credentialIdentity = params.credentialIdentity;
         const credentialSecret = params.credentialSecret;
+        const echoEntryParameters = params.echoEntryParameters;
         const enabled = params.enabled;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const fallbackContactId = params.fallbackContactId;
         const idsCustomerName = params.idsCustomerName;
         const loginToken = params.loginToken;
+        const metadata = params.metadata;
         const name = params.name;
         const organizationId = params.organizationId;
         const protocol = params.protocol;
         const protocolVersion = params.protocolVersion;
+        const purchaseMode = params.purchaseMode;
         const secureOci = params.secureOci;
-        const sessionTtlMinutes = params.sessionTtlMinutes;
+        const sessionTtlOverrideMinutes = params.sessionTtlOverrideMinutes;
         const sharedSecret = params.sharedSecret;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
         const startPageUrl = params.startPageUrl;
         const unknownUserPolicy = params.unknownUserPolicy;
-        const urlThreading = params.urlThreading;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
@@ -500,9 +562,6 @@ export class Punchout {
         const apiPayload: Payload = {};
         if (typeof authStrategy !== 'undefined') {
             apiPayload['auth_strategy'] = authStrategy;
-        }
-        if (typeof behaviour !== 'undefined') {
-            apiPayload['behaviour'] = behaviour;
         }
         if (typeof channelCode !== 'undefined') {
             apiPayload['channel_code'] = channelCode;
@@ -519,8 +578,17 @@ export class Punchout {
         if (typeof credentialSecret !== 'undefined') {
             apiPayload['credential_secret'] = credentialSecret;
         }
+        if (typeof echoEntryParameters !== 'undefined') {
+            apiPayload['echo_entry_parameters'] = echoEntryParameters;
+        }
         if (typeof enabled !== 'undefined') {
             apiPayload['enabled'] = enabled;
+        }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
         }
         if (typeof fallbackContactId !== 'undefined') {
             apiPayload['fallback_contact_id'] = fallbackContactId;
@@ -530,6 +598,9 @@ export class Punchout {
         }
         if (typeof loginToken !== 'undefined') {
             apiPayload['login_token'] = loginToken;
+        }
+        if (typeof metadata !== 'undefined') {
+            apiPayload['metadata'] = metadata;
         }
         if (typeof name !== 'undefined') {
             apiPayload['name'] = name;
@@ -543,23 +614,29 @@ export class Punchout {
         if (typeof protocolVersion !== 'undefined') {
             apiPayload['protocol_version'] = protocolVersion;
         }
+        if (typeof purchaseMode !== 'undefined') {
+            apiPayload['purchase_mode'] = purchaseMode;
+        }
         if (typeof secureOci !== 'undefined') {
             apiPayload['secure_oci'] = secureOci;
         }
-        if (typeof sessionTtlMinutes !== 'undefined') {
-            apiPayload['session_ttl_minutes'] = sessionTtlMinutes;
+        if (typeof sessionTtlOverrideMinutes !== 'undefined') {
+            apiPayload['session_ttl_override_minutes'] = sessionTtlOverrideMinutes;
         }
         if (typeof sharedSecret !== 'undefined') {
             apiPayload['shared_secret'] = sharedSecret;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         if (typeof startPageUrl !== 'undefined') {
             apiPayload['start_page_url'] = startPageUrl;
         }
         if (typeof unknownUserPolicy !== 'undefined') {
             apiPayload['unknown_user_policy'] = unknownUserPolicy;
-        }
-        if (typeof urlThreading !== 'undefined') {
-            apiPayload['url_threading'] = urlThreading;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1812,8 +1889,13 @@ export class Punchout {
      * @param {object} params.entryIntent - 
      * @param {object} params.entryPayload - 
      * @param {string} params.externalUserId - 
+     * @param {string} params.orderId - 
+     * @param {string} params.orderNumber - 
+     * @param {string} params.orderStatus - 
+     * @param {string} params.orderedAt - 
      * @param {string} params.organizationId - 
      * @param {string} params.origin - 
+     * @param {string} params.purchaseMode - 
      * @param {string} params.returnMethod - 
      * @param {string} params.returnUrl - 
      * @param {string} params.secureSessionId - 
@@ -1824,7 +1906,7 @@ export class Punchout {
      * @throws {RevenexxException}
      * @returns {Promise<Models.PunchoutSession>}
      */
-    punchoutSessionsCreate(params: { accountId: string, channelCode: string, expiresAt: string, protocol: string, psid: string, cartId?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, externalUserId?: string, organizationId?: string, origin?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string }): Promise<Models.PunchoutSession>;
+    punchoutSessionsCreate(params: { accountId: string, channelCode: string, expiresAt: string, protocol: string, psid: string, cartId?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, externalUserId?: string, orderId?: string, orderNumber?: string, orderStatus?: string, orderedAt?: string, organizationId?: string, origin?: string, purchaseMode?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string }): Promise<Models.PunchoutSession>;
     /**
      *
      * @param {string} accountId - 
@@ -1841,8 +1923,13 @@ export class Punchout {
      * @param {object} entryIntent - 
      * @param {object} entryPayload - 
      * @param {string} externalUserId - 
+     * @param {string} orderId - 
+     * @param {string} orderNumber - 
+     * @param {string} orderStatus - 
+     * @param {string} orderedAt - 
      * @param {string} organizationId - 
      * @param {string} origin - 
+     * @param {string} purchaseMode - 
      * @param {string} returnMethod - 
      * @param {string} returnUrl - 
      * @param {string} secureSessionId - 
@@ -1854,15 +1941,15 @@ export class Punchout {
      * @returns {Promise<Models.PunchoutSession>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    punchoutSessionsCreate(accountId: string, channelCode: string, expiresAt: string, protocol: string, psid: string, cartId?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, externalUserId?: string, organizationId?: string, origin?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string): Promise<Models.PunchoutSession>;
+    punchoutSessionsCreate(accountId: string, channelCode: string, expiresAt: string, protocol: string, psid: string, cartId?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, externalUserId?: string, orderId?: string, orderNumber?: string, orderStatus?: string, orderedAt?: string, organizationId?: string, origin?: string, purchaseMode?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string): Promise<Models.PunchoutSession>;
     punchoutSessionsCreate(
-        paramsOrFirst: { accountId: string, channelCode: string, expiresAt: string, protocol: string, psid: string, cartId?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, externalUserId?: string, organizationId?: string, origin?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst: { accountId: string, channelCode: string, expiresAt: string, protocol: string, psid: string, cartId?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, externalUserId?: string, orderId?: string, orderNumber?: string, orderStatus?: string, orderedAt?: string, organizationId?: string, origin?: string, purchaseMode?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.PunchoutSession> {
-        let params: { accountId: string, channelCode: string, expiresAt: string, protocol: string, psid: string, cartId?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, externalUserId?: string, organizationId?: string, origin?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string };
+        let params: { accountId: string, channelCode: string, expiresAt: string, protocol: string, psid: string, cartId?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, externalUserId?: string, orderId?: string, orderNumber?: string, orderStatus?: string, orderedAt?: string, organizationId?: string, origin?: string, purchaseMode?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { accountId: string, channelCode: string, expiresAt: string, protocol: string, psid: string, cartId?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, externalUserId?: string, organizationId?: string, origin?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string };
+            params = (paramsOrFirst || {}) as { accountId: string, channelCode: string, expiresAt: string, protocol: string, psid: string, cartId?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, externalUserId?: string, orderId?: string, orderNumber?: string, orderStatus?: string, orderedAt?: string, organizationId?: string, origin?: string, purchaseMode?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string };
         } else {
             params = {
                 accountId: paramsOrFirst as string,
@@ -1879,15 +1966,20 @@ export class Punchout {
                 entryIntent: rest[10] as object,
                 entryPayload: rest[11] as object,
                 externalUserId: rest[12] as string,
-                organizationId: rest[13] as string,
-                origin: rest[14] as string,
-                returnMethod: rest[15] as string,
-                returnUrl: rest[16] as string,
-                secureSessionId: rest[17] as string,
-                secureSessionUsedAt: rest[18] as string,
-                secureTransmissionId: rest[19] as string,
-                status: rest[20] as string,
-                transferredAt: rest[21] as string            
+                orderId: rest[13] as string,
+                orderNumber: rest[14] as string,
+                orderStatus: rest[15] as string,
+                orderedAt: rest[16] as string,
+                organizationId: rest[17] as string,
+                origin: rest[18] as string,
+                purchaseMode: rest[19] as string,
+                returnMethod: rest[20] as string,
+                returnUrl: rest[21] as string,
+                secureSessionId: rest[22] as string,
+                secureSessionUsedAt: rest[23] as string,
+                secureTransmissionId: rest[24] as string,
+                status: rest[25] as string,
+                transferredAt: rest[26] as string            
             };
         }
         
@@ -1905,8 +1997,13 @@ export class Punchout {
         const entryIntent = params.entryIntent;
         const entryPayload = params.entryPayload;
         const externalUserId = params.externalUserId;
+        const orderId = params.orderId;
+        const orderNumber = params.orderNumber;
+        const orderStatus = params.orderStatus;
+        const orderedAt = params.orderedAt;
         const organizationId = params.organizationId;
         const origin = params.origin;
+        const purchaseMode = params.purchaseMode;
         const returnMethod = params.returnMethod;
         const returnUrl = params.returnUrl;
         const secureSessionId = params.secureSessionId;
@@ -1969,6 +2066,18 @@ export class Punchout {
         if (typeof externalUserId !== 'undefined') {
             apiPayload['external_user_id'] = externalUserId;
         }
+        if (typeof orderId !== 'undefined') {
+            apiPayload['order_id'] = orderId;
+        }
+        if (typeof orderNumber !== 'undefined') {
+            apiPayload['order_number'] = orderNumber;
+        }
+        if (typeof orderStatus !== 'undefined') {
+            apiPayload['order_status'] = orderStatus;
+        }
+        if (typeof orderedAt !== 'undefined') {
+            apiPayload['ordered_at'] = orderedAt;
+        }
         if (typeof organizationId !== 'undefined') {
             apiPayload['organization_id'] = organizationId;
         }
@@ -1980,6 +2089,9 @@ export class Punchout {
         }
         if (typeof psid !== 'undefined') {
             apiPayload['psid'] = psid;
+        }
+        if (typeof purchaseMode !== 'undefined') {
+            apiPayload['purchase_mode'] = purchaseMode;
         }
         if (typeof returnMethod !== 'undefined') {
             apiPayload['return_method'] = returnMethod;
@@ -2129,10 +2241,15 @@ export class Punchout {
      * @param {object} params.entryPayload - 
      * @param {string} params.expiresAt - 
      * @param {string} params.externalUserId - 
+     * @param {string} params.orderId - 
+     * @param {string} params.orderNumber - 
+     * @param {string} params.orderStatus - 
+     * @param {string} params.orderedAt - 
      * @param {string} params.organizationId - 
      * @param {string} params.origin - 
      * @param {string} params.protocol - 
      * @param {string} params.psid - 
+     * @param {string} params.purchaseMode - 
      * @param {string} params.returnMethod - 
      * @param {string} params.returnUrl - 
      * @param {string} params.secureSessionId - 
@@ -2143,7 +2260,7 @@ export class Punchout {
      * @throws {RevenexxException}
      * @returns {Promise<Models.PunchoutSession>}
      */
-    punchoutSessionsUpdate(params: { id: string, accountId?: string, cartId?: string, channelCode?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, expiresAt?: string, externalUserId?: string, organizationId?: string, origin?: string, protocol?: string, psid?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string }): Promise<Models.PunchoutSession>;
+    punchoutSessionsUpdate(params: { id: string, accountId?: string, cartId?: string, channelCode?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, expiresAt?: string, externalUserId?: string, orderId?: string, orderNumber?: string, orderStatus?: string, orderedAt?: string, organizationId?: string, origin?: string, protocol?: string, psid?: string, purchaseMode?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string }): Promise<Models.PunchoutSession>;
     /**
      *
      * @param {string} id - 
@@ -2159,10 +2276,15 @@ export class Punchout {
      * @param {object} entryPayload - 
      * @param {string} expiresAt - 
      * @param {string} externalUserId - 
+     * @param {string} orderId - 
+     * @param {string} orderNumber - 
+     * @param {string} orderStatus - 
+     * @param {string} orderedAt - 
      * @param {string} organizationId - 
      * @param {string} origin - 
      * @param {string} protocol - 
      * @param {string} psid - 
+     * @param {string} purchaseMode - 
      * @param {string} returnMethod - 
      * @param {string} returnUrl - 
      * @param {string} secureSessionId - 
@@ -2174,15 +2296,15 @@ export class Punchout {
      * @returns {Promise<Models.PunchoutSession>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    punchoutSessionsUpdate(id: string, accountId?: string, cartId?: string, channelCode?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, expiresAt?: string, externalUserId?: string, organizationId?: string, origin?: string, protocol?: string, psid?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string): Promise<Models.PunchoutSession>;
+    punchoutSessionsUpdate(id: string, accountId?: string, cartId?: string, channelCode?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, expiresAt?: string, externalUserId?: string, orderId?: string, orderNumber?: string, orderStatus?: string, orderedAt?: string, organizationId?: string, origin?: string, protocol?: string, psid?: string, purchaseMode?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string): Promise<Models.PunchoutSession>;
     punchoutSessionsUpdate(
-        paramsOrFirst: { id: string, accountId?: string, cartId?: string, channelCode?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, expiresAt?: string, externalUserId?: string, organizationId?: string, origin?: string, protocol?: string, psid?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst: { id: string, accountId?: string, cartId?: string, channelCode?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, expiresAt?: string, externalUserId?: string, orderId?: string, orderNumber?: string, orderStatus?: string, orderedAt?: string, organizationId?: string, origin?: string, protocol?: string, psid?: string, purchaseMode?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.PunchoutSession> {
-        let params: { id: string, accountId?: string, cartId?: string, channelCode?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, expiresAt?: string, externalUserId?: string, organizationId?: string, origin?: string, protocol?: string, psid?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string };
+        let params: { id: string, accountId?: string, cartId?: string, channelCode?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, expiresAt?: string, externalUserId?: string, orderId?: string, orderNumber?: string, orderStatus?: string, orderedAt?: string, organizationId?: string, origin?: string, protocol?: string, psid?: string, purchaseMode?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, accountId?: string, cartId?: string, channelCode?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, expiresAt?: string, externalUserId?: string, organizationId?: string, origin?: string, protocol?: string, psid?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string };
+            params = (paramsOrFirst || {}) as { id: string, accountId?: string, cartId?: string, channelCode?: string, claimedAt?: string, closedReason?: string, contactId?: string, correlationKey?: string, entryAction?: string, entryIntent?: object, entryPayload?: object, expiresAt?: string, externalUserId?: string, orderId?: string, orderNumber?: string, orderStatus?: string, orderedAt?: string, organizationId?: string, origin?: string, protocol?: string, psid?: string, purchaseMode?: string, returnMethod?: string, returnUrl?: string, secureSessionId?: string, secureSessionUsedAt?: string, secureTransmissionId?: string, status?: string, transferredAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -2198,17 +2320,22 @@ export class Punchout {
                 entryPayload: rest[9] as object,
                 expiresAt: rest[10] as string,
                 externalUserId: rest[11] as string,
-                organizationId: rest[12] as string,
-                origin: rest[13] as string,
-                protocol: rest[14] as string,
-                psid: rest[15] as string,
-                returnMethod: rest[16] as string,
-                returnUrl: rest[17] as string,
-                secureSessionId: rest[18] as string,
-                secureSessionUsedAt: rest[19] as string,
-                secureTransmissionId: rest[20] as string,
-                status: rest[21] as string,
-                transferredAt: rest[22] as string            
+                orderId: rest[12] as string,
+                orderNumber: rest[13] as string,
+                orderStatus: rest[14] as string,
+                orderedAt: rest[15] as string,
+                organizationId: rest[16] as string,
+                origin: rest[17] as string,
+                protocol: rest[18] as string,
+                psid: rest[19] as string,
+                purchaseMode: rest[20] as string,
+                returnMethod: rest[21] as string,
+                returnUrl: rest[22] as string,
+                secureSessionId: rest[23] as string,
+                secureSessionUsedAt: rest[24] as string,
+                secureTransmissionId: rest[25] as string,
+                status: rest[26] as string,
+                transferredAt: rest[27] as string            
             };
         }
         
@@ -2225,10 +2352,15 @@ export class Punchout {
         const entryPayload = params.entryPayload;
         const expiresAt = params.expiresAt;
         const externalUserId = params.externalUserId;
+        const orderId = params.orderId;
+        const orderNumber = params.orderNumber;
+        const orderStatus = params.orderStatus;
+        const orderedAt = params.orderedAt;
         const organizationId = params.organizationId;
         const origin = params.origin;
         const protocol = params.protocol;
         const psid = params.psid;
+        const purchaseMode = params.purchaseMode;
         const returnMethod = params.returnMethod;
         const returnUrl = params.returnUrl;
         const secureSessionId = params.secureSessionId;
@@ -2279,6 +2411,18 @@ export class Punchout {
         if (typeof externalUserId !== 'undefined') {
             apiPayload['external_user_id'] = externalUserId;
         }
+        if (typeof orderId !== 'undefined') {
+            apiPayload['order_id'] = orderId;
+        }
+        if (typeof orderNumber !== 'undefined') {
+            apiPayload['order_number'] = orderNumber;
+        }
+        if (typeof orderStatus !== 'undefined') {
+            apiPayload['order_status'] = orderStatus;
+        }
+        if (typeof orderedAt !== 'undefined') {
+            apiPayload['ordered_at'] = orderedAt;
+        }
         if (typeof organizationId !== 'undefined') {
             apiPayload['organization_id'] = organizationId;
         }
@@ -2290,6 +2434,9 @@ export class Punchout {
         }
         if (typeof psid !== 'undefined') {
             apiPayload['psid'] = psid;
+        }
+        if (typeof purchaseMode !== 'undefined') {
+            apiPayload['purchase_mode'] = purchaseMode;
         }
         if (typeof returnMethod !== 'undefined') {
             apiPayload['return_method'] = returnMethod;
@@ -2327,7 +2474,7 @@ export class Punchout {
     }
 
     /**
-     * The start of a punchout visit in the shop. Resolves the buyer the external system named to an ordinary contact — the named one, else the account's fallback contact, else whatever the account's policy for an unknown name says — asks the app that owns buyer authentication to sign that contact in, and answers the secret together with the channel, the action and the cart the visit names. The secret is single-use and short-lived: redeem it server-side, and keep it out of a redirect URL, a browser history and a Referer. Answered exactly ONCE — the handle travelled through the external system in the clear. A second claim, an expired or revoked visit, one already handed back and a handle nobody minted all get the same answer, deliberately.
+     * The start of a punchout visit in the shop. Resolves the buyer the external system named to an ordinary contact — the named one, else the account's fallback contact, else whatever the account's policy for an unknown name says — gives the visit a cart of its own if it brought none (a new, empty one, owned by the visit's handle rather than by the contact, because one contact may carry several ERP users' visits at once), asks the app that owns buyer authentication to sign that contact in, and answers the secret together with the channel, the action and that cart. The secret is single-use and short-lived: redeem it server-side, and keep it out of a redirect URL, a browser history and a Referer. Answered exactly ONCE — the handle travelled through the external system in the clear. A second claim, an expired or revoked visit, one already handed back and a handle nobody minted all get the same answer, deliberately.
      *
      * @param {string} params.psid - 
      * @param {object} params.data - Request body
@@ -2336,7 +2483,7 @@ export class Punchout {
      */
     punchoutSessionsClaim(params: { psid: string, data: object }): Promise<Models.PunchoutClaim>;
     /**
-     * The start of a punchout visit in the shop. Resolves the buyer the external system named to an ordinary contact — the named one, else the account's fallback contact, else whatever the account's policy for an unknown name says — asks the app that owns buyer authentication to sign that contact in, and answers the secret together with the channel, the action and the cart the visit names. The secret is single-use and short-lived: redeem it server-side, and keep it out of a redirect URL, a browser history and a Referer. Answered exactly ONCE — the handle travelled through the external system in the clear. A second claim, an expired or revoked visit, one already handed back and a handle nobody minted all get the same answer, deliberately.
+     * The start of a punchout visit in the shop. Resolves the buyer the external system named to an ordinary contact — the named one, else the account's fallback contact, else whatever the account's policy for an unknown name says — gives the visit a cart of its own if it brought none (a new, empty one, owned by the visit's handle rather than by the contact, because one contact may carry several ERP users' visits at once), asks the app that owns buyer authentication to sign that contact in, and answers the secret together with the channel, the action and that cart. The secret is single-use and short-lived: redeem it server-side, and keep it out of a redirect URL, a browser history and a Referer. Answered exactly ONCE — the handle travelled through the external system in the clear. A second claim, an expired or revoked visit, one already handed back and a handle nobody minted all get the same answer, deliberately.
      *
      * @param {string} psid - 
      * @param {object} data - Request body
@@ -2390,7 +2537,70 @@ export class Punchout {
     }
 
     /**
-     * The end of a punchout visit. Answers where the cart goes, by which method and encoding, and the mapped fields to submit — one shape for all three protocols, whether that means dozens of named fields (OCI) or one field holding a whole document (cXML, IDS). The payload is ANSWERED, never posted from here: a request from this app carries none of the buyer's ERP session, and the protocols that expect a browser form post would reject it even if it did. Records a transfer with its normalised lines and the exact payload, mints a correlation key into that payload so an order arriving weeks later can be matched to it, and closes the visit as transferred. Creates NO order and reserves NO stock — the procurement system has decided nothing. A retried call answers the same payload and records no second transfer; a visit that expired or was revoked is refused, with the same answer a handle that never existed gets.
+     * The other way an IDS visit ends, for an account whose purchase mode is order: the buyer checked out in the shop, and the order is an ORDINARY order placed through the ordinary checkout. Call it after the checkout. This app believes the orders app, not the caller: it reads the order the visit's cart became, records its id, number and status on the visit and closes it as ordered. An order awaiting the buyer organisation's approval counts — the cart is converted either way — and a later decline changes nothing here. A visit that ran out while the buyer checked out is still closed as ordered when the order was created before it ran out. A retried call answers the visit as it was closed.
+     *
+     * @param {string} params.psid - 
+     * @param {object} params.data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PunchoutOrdered>}
+     */
+    punchoutSessionsOrdered(params: { psid: string, data: object }): Promise<Models.PunchoutOrdered>;
+    /**
+     * The other way an IDS visit ends, for an account whose purchase mode is order: the buyer checked out in the shop, and the order is an ORDINARY order placed through the ordinary checkout. Call it after the checkout. This app believes the orders app, not the caller: it reads the order the visit's cart became, records its id, number and status on the visit and closes it as ordered. An order awaiting the buyer organisation's approval counts — the cart is converted either way — and a later decline changes nothing here. A visit that ran out while the buyer checked out is still closed as ordered when the order was created before it ran out. A retried call answers the visit as it was closed.
+     *
+     * @param {string} psid - 
+     * @param {object} data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PunchoutOrdered>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    punchoutSessionsOrdered(psid: string, data: object): Promise<Models.PunchoutOrdered>;
+    punchoutSessionsOrdered(
+        paramsOrFirst: { psid: string, data: object } | string,
+        ...rest: [(object)?]    
+    ): Promise<Models.PunchoutOrdered> {
+        let params: { psid: string, data: object };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { psid: string, data: object };
+        } else {
+            params = {
+                psid: paramsOrFirst as string,
+                data: rest[0] as object            
+            };
+        }
+        
+        const psid = params.psid;
+        const data = params.data;
+
+        if (typeof psid === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "psid"');
+        }
+        if (typeof data === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "data"');
+        }
+
+        const apiPath = '/v1/punchout/sessions/{psid}/ordered'.replace('{psid}', psid);
+        const apiPayload: Payload = {};
+        if (typeof data !== 'undefined') {
+            Object.assign(apiPayload, data);
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * The end of a punchout visit. Answers where the cart goes, by which method and encoding, and the mapped fields to submit — one shape for all three protocols, whether that means dozens of named fields (OCI) or one field holding a whole document (cXML, IDS). The payload is ANSWERED, never posted from here: a request from this app carries none of the buyer's ERP session, and the protocols that expect a browser form post would reject it even if it did. Records a transfer with its normalised lines and the exact payload, mints a correlation key into that payload so an order arriving weeks later can be matched to it, and closes the visit as transferred. Creates NO order and reserves NO stock — the procurement system has decided nothing. On an IDS account whose purchase mode is order_and_transfer the cart was already ordered through the ordinary checkout: the hand-back requires that order, reads it from the orders app, names it in the document (RueckgabeKZ, OrderConfNo) and on the transfer, and closes the visit as transferred. A retried call answers the same payload and records no second transfer; a visit that expired or was revoked is refused, with the same answer a handle that never existed gets.
      *
      * @param {string} params.psid - 
      * @param {object} params.data - Request body
@@ -2399,7 +2609,7 @@ export class Punchout {
      */
     punchoutSessionsReturn(params: { psid: string, data: object }): Promise<Models.PunchoutReturnPayload>;
     /**
-     * The end of a punchout visit. Answers where the cart goes, by which method and encoding, and the mapped fields to submit — one shape for all three protocols, whether that means dozens of named fields (OCI) or one field holding a whole document (cXML, IDS). The payload is ANSWERED, never posted from here: a request from this app carries none of the buyer's ERP session, and the protocols that expect a browser form post would reject it even if it did. Records a transfer with its normalised lines and the exact payload, mints a correlation key into that payload so an order arriving weeks later can be matched to it, and closes the visit as transferred. Creates NO order and reserves NO stock — the procurement system has decided nothing. A retried call answers the same payload and records no second transfer; a visit that expired or was revoked is refused, with the same answer a handle that never existed gets.
+     * The end of a punchout visit. Answers where the cart goes, by which method and encoding, and the mapped fields to submit — one shape for all three protocols, whether that means dozens of named fields (OCI) or one field holding a whole document (cXML, IDS). The payload is ANSWERED, never posted from here: a request from this app carries none of the buyer's ERP session, and the protocols that expect a browser form post would reject it even if it did. Records a transfer with its normalised lines and the exact payload, mints a correlation key into that payload so an order arriving weeks later can be matched to it, and closes the visit as transferred. Creates NO order and reserves NO stock — the procurement system has decided nothing. On an IDS account whose purchase mode is order_and_transfer the cart was already ordered through the ordinary checkout: the hand-back requires that order, reads it from the orders app, names it in the document (RueckgabeKZ, OrderConfNo) and on the transfer, and closes the visit as transferred. A retried call answers the same payload and records no second transfer; a visit that expired or was revoked is refused, with the same answer a handle that never existed gets.
      *
      * @param {string} psid - 
      * @param {object} data - Request body
@@ -2446,6 +2656,29 @@ export class Punchout {
 
         return this.client.call(
             'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * The steps are the ones cockpit.json declares under setup.steps: the shipped field mappings and the first punchout account. Each is done when its table holds a row, so none is marked by hand.
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PunchoutSetupState>}
+     */
+    punchoutSetupGet(): Promise<Models.PunchoutSetupState> {
+
+        const apiPath = '/v1/punchout/setup';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
             uri,
             apiHeaders,
             apiPayload
@@ -2789,11 +3022,16 @@ export class Punchout {
      * @param {string} params.cartId - 
      * @param {string} params.contactId - 
      * @param {string} params.currency - 
+     * @param {string} params.externalId - The id the receiving system has for this hand-back — a cXML `PayloadID`, the reference an ERP answers the posted cart with. It is the idempotency key of the protocol rather than of this app: unique per tenant where it is set, so a hand-back a buyer's browser replays cannot leave a second transfer on record. Distinct from `correlation_key`, which this app mints and stamps on the visit before the mapping runs — that one is ours and is always there, this one is theirs and is filled by whoever records the receipt.
+     * @param {object} params.externalRefs - Every other system that knows this hand-back, keyed by system name — the procurement platform's own id beside the order number the ERP later gives it. `external_id` is the leading system; this is the rest. Not something to search on: this contract publishes no column filter at all, and the store compares such a field as a whole document.
      * @param {number} params.itemCount - 
      * @param {string} params.matchedAt - 
      * @param {string} params.matchedOrderId - 
      * @param {string} params.organizationId - 
      * @param {object} params.payload - 
+     * @param {object[]} params.problems - Every field the payload is missing, and why: a mapping that failed, or a value the protocol's type could not take. Empty when nothing is missing. `transfer.degraded` announces the same, once.
+     * @param {object} params.sourceData - What the receiving system said back, kept as it said it — the acknowledgement, its ETag, and the fields of it this app does not model. A transfer is evidence and is added to but never rewritten, so this is where a later answer about it goes rather than over `payload`, which is what was handed over and must stay as it was handed over.
+     * @param {string} params.sourceSyncedAt - When this transfer was last confirmed against the system that received it — what an acknowledgement run stamps, and what tells an operator that the receipts have stopped arriving. Null while nobody has confirmed it, which is every transfer this app writes on its own: a hand-back answers a payload for a browser to submit, and whether it arrived is somebody else's answer.
      * @param {string} params.targetUrl - 
      * @param {number} params.totalGross - 
      * @param {number} params.totalNet - 
@@ -2801,7 +3039,7 @@ export class Punchout {
      * @throws {RevenexxException}
      * @returns {Promise<Models.PunchoutTransfer>}
      */
-    punchoutTransfersCreate(params: { accountId: string, correlationKey: string, protocol: string, sessionId: string, cartId?: string, contactId?: string, currency?: string, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string }): Promise<Models.PunchoutTransfer>;
+    punchoutTransfersCreate(params: { accountId: string, correlationKey: string, protocol: string, sessionId: string, cartId?: string, contactId?: string, currency?: string, externalId?: string, externalRefs?: object, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, problems?: object[], sourceData?: object, sourceSyncedAt?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string }): Promise<Models.PunchoutTransfer>;
     /**
      *
      * @param {string} accountId - 
@@ -2811,11 +3049,16 @@ export class Punchout {
      * @param {string} cartId - 
      * @param {string} contactId - 
      * @param {string} currency - 
+     * @param {string} externalId - The id the receiving system has for this hand-back — a cXML `PayloadID`, the reference an ERP answers the posted cart with. It is the idempotency key of the protocol rather than of this app: unique per tenant where it is set, so a hand-back a buyer's browser replays cannot leave a second transfer on record. Distinct from `correlation_key`, which this app mints and stamps on the visit before the mapping runs — that one is ours and is always there, this one is theirs and is filled by whoever records the receipt.
+     * @param {object} externalRefs - Every other system that knows this hand-back, keyed by system name — the procurement platform's own id beside the order number the ERP later gives it. `external_id` is the leading system; this is the rest. Not something to search on: this contract publishes no column filter at all, and the store compares such a field as a whole document.
      * @param {number} itemCount - 
      * @param {string} matchedAt - 
      * @param {string} matchedOrderId - 
      * @param {string} organizationId - 
      * @param {object} payload - 
+     * @param {object[]} problems - Every field the payload is missing, and why: a mapping that failed, or a value the protocol's type could not take. Empty when nothing is missing. `transfer.degraded` announces the same, once.
+     * @param {object} sourceData - What the receiving system said back, kept as it said it — the acknowledgement, its ETag, and the fields of it this app does not model. A transfer is evidence and is added to but never rewritten, so this is where a later answer about it goes rather than over `payload`, which is what was handed over and must stay as it was handed over.
+     * @param {string} sourceSyncedAt - When this transfer was last confirmed against the system that received it — what an acknowledgement run stamps, and what tells an operator that the receipts have stopped arriving. Null while nobody has confirmed it, which is every transfer this app writes on its own: a hand-back answers a payload for a browser to submit, and whether it arrived is somebody else's answer.
      * @param {string} targetUrl - 
      * @param {number} totalGross - 
      * @param {number} totalNet - 
@@ -2824,15 +3067,15 @@ export class Punchout {
      * @returns {Promise<Models.PunchoutTransfer>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    punchoutTransfersCreate(accountId: string, correlationKey: string, protocol: string, sessionId: string, cartId?: string, contactId?: string, currency?: string, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string): Promise<Models.PunchoutTransfer>;
+    punchoutTransfersCreate(accountId: string, correlationKey: string, protocol: string, sessionId: string, cartId?: string, contactId?: string, currency?: string, externalId?: string, externalRefs?: object, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, problems?: object[], sourceData?: object, sourceSyncedAt?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string): Promise<Models.PunchoutTransfer>;
     punchoutTransfersCreate(
-        paramsOrFirst: { accountId: string, correlationKey: string, protocol: string, sessionId: string, cartId?: string, contactId?: string, currency?: string, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (object)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst: { accountId: string, correlationKey: string, protocol: string, sessionId: string, cartId?: string, contactId?: string, currency?: string, externalId?: string, externalRefs?: object, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, problems?: object[], sourceData?: object, sourceSyncedAt?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (number)?, (string)?, (string)?, (string)?, (object)?, (object[])?, (object)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<Models.PunchoutTransfer> {
-        let params: { accountId: string, correlationKey: string, protocol: string, sessionId: string, cartId?: string, contactId?: string, currency?: string, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string };
+        let params: { accountId: string, correlationKey: string, protocol: string, sessionId: string, cartId?: string, contactId?: string, currency?: string, externalId?: string, externalRefs?: object, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, problems?: object[], sourceData?: object, sourceSyncedAt?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { accountId: string, correlationKey: string, protocol: string, sessionId: string, cartId?: string, contactId?: string, currency?: string, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string };
+            params = (paramsOrFirst || {}) as { accountId: string, correlationKey: string, protocol: string, sessionId: string, cartId?: string, contactId?: string, currency?: string, externalId?: string, externalRefs?: object, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, problems?: object[], sourceData?: object, sourceSyncedAt?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string };
         } else {
             params = {
                 accountId: paramsOrFirst as string,
@@ -2842,15 +3085,20 @@ export class Punchout {
                 cartId: rest[3] as string,
                 contactId: rest[4] as string,
                 currency: rest[5] as string,
-                itemCount: rest[6] as number,
-                matchedAt: rest[7] as string,
-                matchedOrderId: rest[8] as string,
-                organizationId: rest[9] as string,
-                payload: rest[10] as object,
-                targetUrl: rest[11] as string,
-                totalGross: rest[12] as number,
-                totalNet: rest[13] as number,
-                transferredAt: rest[14] as string            
+                externalId: rest[6] as string,
+                externalRefs: rest[7] as object,
+                itemCount: rest[8] as number,
+                matchedAt: rest[9] as string,
+                matchedOrderId: rest[10] as string,
+                organizationId: rest[11] as string,
+                payload: rest[12] as object,
+                problems: rest[13] as object[],
+                sourceData: rest[14] as object,
+                sourceSyncedAt: rest[15] as string,
+                targetUrl: rest[16] as string,
+                totalGross: rest[17] as number,
+                totalNet: rest[18] as number,
+                transferredAt: rest[19] as string            
             };
         }
         
@@ -2861,11 +3109,16 @@ export class Punchout {
         const cartId = params.cartId;
         const contactId = params.contactId;
         const currency = params.currency;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const itemCount = params.itemCount;
         const matchedAt = params.matchedAt;
         const matchedOrderId = params.matchedOrderId;
         const organizationId = params.organizationId;
         const payload = params.payload;
+        const problems = params.problems;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
         const targetUrl = params.targetUrl;
         const totalGross = params.totalGross;
         const totalNet = params.totalNet;
@@ -2901,6 +3154,12 @@ export class Punchout {
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof itemCount !== 'undefined') {
             apiPayload['item_count'] = itemCount;
         }
@@ -2916,11 +3175,20 @@ export class Punchout {
         if (typeof payload !== 'undefined') {
             apiPayload['payload'] = payload;
         }
+        if (typeof problems !== 'undefined') {
+            apiPayload['problems'] = problems;
+        }
         if (typeof protocol !== 'undefined') {
             apiPayload['protocol'] = protocol;
         }
         if (typeof sessionId !== 'undefined') {
             apiPayload['session_id'] = sessionId;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         if (typeof targetUrl !== 'undefined') {
             apiPayload['target_url'] = targetUrl;
@@ -3005,13 +3273,18 @@ export class Punchout {
      * @param {string} params.contactId - 
      * @param {string} params.correlationKey - 
      * @param {string} params.currency - 
+     * @param {string} params.externalId - The id the receiving system has for this hand-back — a cXML `PayloadID`, the reference an ERP answers the posted cart with. It is the idempotency key of the protocol rather than of this app: unique per tenant where it is set, so a hand-back a buyer's browser replays cannot leave a second transfer on record. Distinct from `correlation_key`, which this app mints and stamps on the visit before the mapping runs — that one is ours and is always there, this one is theirs and is filled by whoever records the receipt.
+     * @param {object} params.externalRefs - Every other system that knows this hand-back, keyed by system name — the procurement platform's own id beside the order number the ERP later gives it. `external_id` is the leading system; this is the rest. Not something to search on: this contract publishes no column filter at all, and the store compares such a field as a whole document.
      * @param {number} params.itemCount - 
      * @param {string} params.matchedAt - 
      * @param {string} params.matchedOrderId - 
      * @param {string} params.organizationId - 
      * @param {object} params.payload - 
+     * @param {object[]} params.problems - Every field the payload is missing, and why: a mapping that failed, or a value the protocol's type could not take. Empty when nothing is missing. `transfer.degraded` announces the same, once.
      * @param {string} params.protocol - 
      * @param {string} params.sessionId - 
+     * @param {object} params.sourceData - What the receiving system said back, kept as it said it — the acknowledgement, its ETag, and the fields of it this app does not model. A transfer is evidence and is added to but never rewritten, so this is where a later answer about it goes rather than over `payload`, which is what was handed over and must stay as it was handed over.
+     * @param {string} params.sourceSyncedAt - When this transfer was last confirmed against the system that received it — what an acknowledgement run stamps, and what tells an operator that the receipts have stopped arriving. Null while nobody has confirmed it, which is every transfer this app writes on its own: a hand-back answers a payload for a browser to submit, and whether it arrived is somebody else's answer.
      * @param {string} params.targetUrl - 
      * @param {number} params.totalGross - 
      * @param {number} params.totalNet - 
@@ -3019,7 +3292,7 @@ export class Punchout {
      * @throws {RevenexxException}
      * @returns {Promise<Models.PunchoutTransfer>}
      */
-    punchoutTransfersUpdate(params: { id: string, accountId?: string, cartId?: string, contactId?: string, correlationKey?: string, currency?: string, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, protocol?: string, sessionId?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string }): Promise<Models.PunchoutTransfer>;
+    punchoutTransfersUpdate(params: { id: string, accountId?: string, cartId?: string, contactId?: string, correlationKey?: string, currency?: string, externalId?: string, externalRefs?: object, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, problems?: object[], protocol?: string, sessionId?: string, sourceData?: object, sourceSyncedAt?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string }): Promise<Models.PunchoutTransfer>;
     /**
      *
      * @param {string} id - 
@@ -3028,13 +3301,18 @@ export class Punchout {
      * @param {string} contactId - 
      * @param {string} correlationKey - 
      * @param {string} currency - 
+     * @param {string} externalId - The id the receiving system has for this hand-back — a cXML `PayloadID`, the reference an ERP answers the posted cart with. It is the idempotency key of the protocol rather than of this app: unique per tenant where it is set, so a hand-back a buyer's browser replays cannot leave a second transfer on record. Distinct from `correlation_key`, which this app mints and stamps on the visit before the mapping runs — that one is ours and is always there, this one is theirs and is filled by whoever records the receipt.
+     * @param {object} externalRefs - Every other system that knows this hand-back, keyed by system name — the procurement platform's own id beside the order number the ERP later gives it. `external_id` is the leading system; this is the rest. Not something to search on: this contract publishes no column filter at all, and the store compares such a field as a whole document.
      * @param {number} itemCount - 
      * @param {string} matchedAt - 
      * @param {string} matchedOrderId - 
      * @param {string} organizationId - 
      * @param {object} payload - 
+     * @param {object[]} problems - Every field the payload is missing, and why: a mapping that failed, or a value the protocol's type could not take. Empty when nothing is missing. `transfer.degraded` announces the same, once.
      * @param {string} protocol - 
      * @param {string} sessionId - 
+     * @param {object} sourceData - What the receiving system said back, kept as it said it — the acknowledgement, its ETag, and the fields of it this app does not model. A transfer is evidence and is added to but never rewritten, so this is where a later answer about it goes rather than over `payload`, which is what was handed over and must stay as it was handed over.
+     * @param {string} sourceSyncedAt - When this transfer was last confirmed against the system that received it — what an acknowledgement run stamps, and what tells an operator that the receipts have stopped arriving. Null while nobody has confirmed it, which is every transfer this app writes on its own: a hand-back answers a payload for a browser to submit, and whether it arrived is somebody else's answer.
      * @param {string} targetUrl - 
      * @param {number} totalGross - 
      * @param {number} totalNet - 
@@ -3043,15 +3321,15 @@ export class Punchout {
      * @returns {Promise<Models.PunchoutTransfer>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    punchoutTransfersUpdate(id: string, accountId?: string, cartId?: string, contactId?: string, correlationKey?: string, currency?: string, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, protocol?: string, sessionId?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string): Promise<Models.PunchoutTransfer>;
+    punchoutTransfersUpdate(id: string, accountId?: string, cartId?: string, contactId?: string, correlationKey?: string, currency?: string, externalId?: string, externalRefs?: object, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, problems?: object[], protocol?: string, sessionId?: string, sourceData?: object, sourceSyncedAt?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string): Promise<Models.PunchoutTransfer>;
     punchoutTransfersUpdate(
-        paramsOrFirst: { id: string, accountId?: string, cartId?: string, contactId?: string, correlationKey?: string, currency?: string, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, protocol?: string, sessionId?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (object)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst: { id: string, accountId?: string, cartId?: string, contactId?: string, correlationKey?: string, currency?: string, externalId?: string, externalRefs?: object, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, problems?: object[], protocol?: string, sessionId?: string, sourceData?: object, sourceSyncedAt?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (number)?, (string)?, (string)?, (string)?, (object)?, (object[])?, (string)?, (string)?, (object)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<Models.PunchoutTransfer> {
-        let params: { id: string, accountId?: string, cartId?: string, contactId?: string, correlationKey?: string, currency?: string, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, protocol?: string, sessionId?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string };
+        let params: { id: string, accountId?: string, cartId?: string, contactId?: string, correlationKey?: string, currency?: string, externalId?: string, externalRefs?: object, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, problems?: object[], protocol?: string, sessionId?: string, sourceData?: object, sourceSyncedAt?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, accountId?: string, cartId?: string, contactId?: string, correlationKey?: string, currency?: string, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, protocol?: string, sessionId?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string };
+            params = (paramsOrFirst || {}) as { id: string, accountId?: string, cartId?: string, contactId?: string, correlationKey?: string, currency?: string, externalId?: string, externalRefs?: object, itemCount?: number, matchedAt?: string, matchedOrderId?: string, organizationId?: string, payload?: object, problems?: object[], protocol?: string, sessionId?: string, sourceData?: object, sourceSyncedAt?: string, targetUrl?: string, totalGross?: number, totalNet?: number, transferredAt?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -3060,17 +3338,22 @@ export class Punchout {
                 contactId: rest[2] as string,
                 correlationKey: rest[3] as string,
                 currency: rest[4] as string,
-                itemCount: rest[5] as number,
-                matchedAt: rest[6] as string,
-                matchedOrderId: rest[7] as string,
-                organizationId: rest[8] as string,
-                payload: rest[9] as object,
-                protocol: rest[10] as string,
-                sessionId: rest[11] as string,
-                targetUrl: rest[12] as string,
-                totalGross: rest[13] as number,
-                totalNet: rest[14] as number,
-                transferredAt: rest[15] as string            
+                externalId: rest[5] as string,
+                externalRefs: rest[6] as object,
+                itemCount: rest[7] as number,
+                matchedAt: rest[8] as string,
+                matchedOrderId: rest[9] as string,
+                organizationId: rest[10] as string,
+                payload: rest[11] as object,
+                problems: rest[12] as object[],
+                protocol: rest[13] as string,
+                sessionId: rest[14] as string,
+                sourceData: rest[15] as object,
+                sourceSyncedAt: rest[16] as string,
+                targetUrl: rest[17] as string,
+                totalGross: rest[18] as number,
+                totalNet: rest[19] as number,
+                transferredAt: rest[20] as string            
             };
         }
         
@@ -3080,13 +3363,18 @@ export class Punchout {
         const contactId = params.contactId;
         const correlationKey = params.correlationKey;
         const currency = params.currency;
+        const externalId = params.externalId;
+        const externalRefs = params.externalRefs;
         const itemCount = params.itemCount;
         const matchedAt = params.matchedAt;
         const matchedOrderId = params.matchedOrderId;
         const organizationId = params.organizationId;
         const payload = params.payload;
+        const problems = params.problems;
         const protocol = params.protocol;
         const sessionId = params.sessionId;
+        const sourceData = params.sourceData;
+        const sourceSyncedAt = params.sourceSyncedAt;
         const targetUrl = params.targetUrl;
         const totalGross = params.totalGross;
         const totalNet = params.totalNet;
@@ -3113,6 +3401,12 @@ export class Punchout {
         if (typeof currency !== 'undefined') {
             apiPayload['currency'] = currency;
         }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof externalRefs !== 'undefined') {
+            apiPayload['external_refs'] = externalRefs;
+        }
         if (typeof itemCount !== 'undefined') {
             apiPayload['item_count'] = itemCount;
         }
@@ -3128,11 +3422,20 @@ export class Punchout {
         if (typeof payload !== 'undefined') {
             apiPayload['payload'] = payload;
         }
+        if (typeof problems !== 'undefined') {
+            apiPayload['problems'] = problems;
+        }
         if (typeof protocol !== 'undefined') {
             apiPayload['protocol'] = protocol;
         }
         if (typeof sessionId !== 'undefined') {
             apiPayload['session_id'] = sessionId;
+        }
+        if (typeof sourceData !== 'undefined') {
+            apiPayload['source_data'] = sourceData;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
         }
         if (typeof targetUrl !== 'undefined') {
             apiPayload['target_url'] = targetUrl;
@@ -3161,7 +3464,7 @@ export class Punchout {
     }
 
     /**
-     * Discovery for the vocabulary routes: the enums this app enforces, each with its name, its title and its description — and deliberately WITHOUT its values, so a UI can cache this one small answer and fetch only the value sets it renders. Names: entry-probe-outcome, mapping-mutators, mapping-sources. Fetch one with GET /punchout/vocabularies/{name}.
+     * Discovery for the vocabulary routes: the enums this app enforces, each with its name, its title and its description — and deliberately WITHOUT its values, so a UI can cache this one small answer and fetch only the value sets it renders. Names: auth-strategies, entry-actions, entry-probe-outcome, mapping-documents, mapping-emit, mapping-mutators, mapping-scopes, mapping-sources, mapping-target-kinds, origins, protocol-versions, protocols, purchase-modes, refusal-reasons, return-methods, session-statuses, unknown-user-policies. Fetch one with GET /punchout/vocabularies/{name}.
      *
      * @throws {RevenexxException}
      * @returns {Promise<Models.PunchoutVocabularyIndex>}
@@ -3184,7 +3487,7 @@ export class Punchout {
     }
 
     /**
-     * One vocabulary in full: every permitted value with its title, its description and the badge tone a UI colours it with. The values are read out of the column's CHECK constraint, so the served set IS the set the database accepts and the set the mapping engine understands — a mapping editor offering anything else would produce silently empty fields. `mapping-sources` carries the 24 sources of ADR-0003 (three of them namespaced `cxml.*`, offered only for a cXML account) and `mapping-mutators` the 17 chainable mutators; each value's description names the config keys it reads and which of them are required. Answers 404 for an unknown name.
+     * One vocabulary in full: every permitted value with its title, its description and the badge tone a UI colours it with. The values are read out of the column's CHECK constraint, so the served set IS the set the database accepts and the set the mapping engine understands — a mapping editor offering anything else would produce silently empty fields. `mapping-sources` carries the 25 sources of ADR-0003 (three of them namespaced `cxml.*`, offered only for a cXML account) and `mapping-mutators` the 20 chainable mutators; each value's description names the config keys it reads and which of them are required. Answers 404 for an unknown name.
      *
      * @param {PunchoutVocabulariesGetName} params.name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
@@ -3192,7 +3495,7 @@ export class Punchout {
      */
     punchoutVocabulariesGet(params: { name: PunchoutVocabulariesGetName }): Promise<Models.PunchoutVocabulary>;
     /**
-     * One vocabulary in full: every permitted value with its title, its description and the badge tone a UI colours it with. The values are read out of the column's CHECK constraint, so the served set IS the set the database accepts and the set the mapping engine understands — a mapping editor offering anything else would produce silently empty fields. `mapping-sources` carries the 24 sources of ADR-0003 (three of them namespaced `cxml.*`, offered only for a cXML account) and `mapping-mutators` the 17 chainable mutators; each value's description names the config keys it reads and which of them are required. Answers 404 for an unknown name.
+     * One vocabulary in full: every permitted value with its title, its description and the badge tone a UI colours it with. The values are read out of the column's CHECK constraint, so the served set IS the set the database accepts and the set the mapping engine understands — a mapping editor offering anything else would produce silently empty fields. `mapping-sources` carries the 25 sources of ADR-0003 (three of them namespaced `cxml.*`, offered only for a cXML account) and `mapping-mutators` the 20 chainable mutators; each value's description names the config keys it reads and which of them are required. Answers 404 for an unknown name.
      *
      * @param {PunchoutVocabulariesGetName} name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}

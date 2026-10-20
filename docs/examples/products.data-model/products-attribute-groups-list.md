@@ -17,6 +17,7 @@ const result = await productsDataModel.productsAttributeGroupsList({
     code: 'technical_attributes', // optional
     position: 1, // optional
     labels: '{}', // optional
+    active: true, // optional
     externalId: 'GRP-TECHNICAL', // optional
     externalRefs: '{}', // optional
     sourceSyncedAt: '2026-01-01T12:00:00Z', // optional

@@ -13,6 +13,7 @@ const result = await customersSegments.customersSegmentMembersList({
     id: '', // optional
     segmentId: '', // optional
     organizationId: '', // optional
+    contactId: '', // optional
     source: Source.Manual, // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     limit: 1, // optional

@@ -17,6 +17,7 @@ const result = await markets.marketsLocalesList({
     country: 'DE', // optional
     isDefault: true, // optional
     position: 0, // optional
+    status: 'active', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z', // optional
     limit: 50, // optional

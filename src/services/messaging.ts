@@ -4,7 +4,7 @@ import type { Models } from '../models';
 
 import { ResourceType } from '../enums/resource-type';
 import { Scope } from '../enums/scope';
-import { Reason } from '../enums/reason';
+import { SuppressionIndexReason } from '../enums/suppression-index-reason';
 import { MessageClass } from '../enums/message-class';
 import { WhatsappCategory } from '../enums/whatsapp-category';
 
@@ -2767,13 +2767,13 @@ claiming a month nobody has lived through.
      *
      * @param {string} params.channel - 
      * @param {Scope} params.scope - 
-     * @param {Reason} params.reason - 
+     * @param {SuppressionIndexReason} params.reason - 
      * @param {string} params.address - 
      * @param {number} params.limit - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    suppressionIndex(params?: { channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number }): Promise<{}>;
+    suppressionIndex(params?: { channel?: string, scope?: Scope, reason?: SuppressionIndexReason, address?: string, limit?: number }): Promise<{}>;
     /**
      * Filterable by `channel`, `scope`, `reason` and `address`. The address
      * filter is looked up by FINGERPRINT rather than against the address
@@ -2783,27 +2783,27 @@ claiming a month nobody has lived through.
      *
      * @param {string} channel - 
      * @param {Scope} scope - 
-     * @param {Reason} reason - 
+     * @param {SuppressionIndexReason} reason - 
      * @param {string} address - 
      * @param {number} limit - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    suppressionIndex(channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number): Promise<{}>;
+    suppressionIndex(channel?: string, scope?: Scope, reason?: SuppressionIndexReason, address?: string, limit?: number): Promise<{}>;
     suppressionIndex(
-        paramsOrFirst?: { channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number } | string,
-        ...rest: [(Scope)?, (Reason)?, (string)?, (number)?]    
+        paramsOrFirst?: { channel?: string, scope?: Scope, reason?: SuppressionIndexReason, address?: string, limit?: number } | string,
+        ...rest: [(Scope)?, (SuppressionIndexReason)?, (string)?, (number)?]    
     ): Promise<{}> {
-        let params: { channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number };
+        let params: { channel?: string, scope?: Scope, reason?: SuppressionIndexReason, address?: string, limit?: number };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { channel?: string, scope?: Scope, reason?: Reason, address?: string, limit?: number };
+            params = (paramsOrFirst || {}) as { channel?: string, scope?: Scope, reason?: SuppressionIndexReason, address?: string, limit?: number };
         } else {
             params = {
                 channel: paramsOrFirst as string,
                 scope: rest[0] as Scope,
-                reason: rest[1] as Reason,
+                reason: rest[1] as SuppressionIndexReason,
                 address: rest[2] as string,
                 limit: rest[3] as number            
             };
@@ -2859,14 +2859,14 @@ claiming a month nobody has lived through.
      *
      * @param {string} params.address - 
      * @param {string} params.channel - 
-     * @param {Reason} params.reason - 
+     * @param {SuppressionIndexReason} params.reason - 
      * @param {string} params.expiresAt - 
      * @param {string} params.note - 
      * @param {Scope} params.scope - 
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    suppressionStore(params: { address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope }): Promise<{}>;
+    suppressionStore(params: { address: string, channel: string, reason: SuppressionIndexReason, expiresAt?: string, note?: string, scope?: Scope }): Promise<{}>;
     /**
      * 201 for a row this call created, 200 for an address that was already on
      * the list — so a client can tell whether it changed anything.
@@ -2880,7 +2880,7 @@ claiming a month nobody has lived through.
      *
      * @param {string} address - 
      * @param {string} channel - 
-     * @param {Reason} reason - 
+     * @param {SuppressionIndexReason} reason - 
      * @param {string} expiresAt - 
      * @param {string} note - 
      * @param {Scope} scope - 
@@ -2888,20 +2888,20 @@ claiming a month nobody has lived through.
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    suppressionStore(address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope): Promise<{}>;
+    suppressionStore(address: string, channel: string, reason: SuppressionIndexReason, expiresAt?: string, note?: string, scope?: Scope): Promise<{}>;
     suppressionStore(
-        paramsOrFirst: { address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope } | string,
-        ...rest: [(string)?, (Reason)?, (string)?, (string)?, (Scope)?]    
+        paramsOrFirst: { address: string, channel: string, reason: SuppressionIndexReason, expiresAt?: string, note?: string, scope?: Scope } | string,
+        ...rest: [(string)?, (SuppressionIndexReason)?, (string)?, (string)?, (Scope)?]    
     ): Promise<{}> {
-        let params: { address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope };
+        let params: { address: string, channel: string, reason: SuppressionIndexReason, expiresAt?: string, note?: string, scope?: Scope };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { address: string, channel: string, reason: Reason, expiresAt?: string, note?: string, scope?: Scope };
+            params = (paramsOrFirst || {}) as { address: string, channel: string, reason: SuppressionIndexReason, expiresAt?: string, note?: string, scope?: Scope };
         } else {
             params = {
                 address: paramsOrFirst as string,
                 channel: rest[0] as string,
-                reason: rest[1] as Reason,
+                reason: rest[1] as SuppressionIndexReason,
                 expiresAt: rest[2] as string,
                 note: rest[3] as string,
                 scope: rest[4] as Scope            

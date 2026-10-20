@@ -28,6 +28,7 @@ const result = await productsDataModel.productsAttributesList({
     config: '{}', // optional
     labels: '{}', // optional
     position: 1, // optional
+    active: true, // optional
     externalId: 'EF000123', // optional
     externalRefs: '{}', // optional
     sourceSyncedAt: '2026-01-01T12:00:00Z', // optional

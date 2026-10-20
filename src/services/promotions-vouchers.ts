@@ -152,7 +152,7 @@ export class PromotionsVouchers {
      * @param {string} params.name - What the batch is called — the unit a mailing is accounted for by afterwards.
      * @param {string} params.promotionId - The promotion this row belongs to. Deleting the promotion deletes it.
      * @param {string} params.alphabet - The characters generated codes may use. The default omits the ones people confuse reading a code off paper.
-     * @param {object} params.metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
+     * @param {any} params.metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
      * @param {string} params.pattern - The shape generated codes take. `#` draws a character from the alphabet; every other character is kept.
      * @param {string} params.requestRef - A reference the caller chose, so a retried generation makes no second batch. A timed-out call is retried by whoever sent it, and a retry that doubled a mailing is discovered when the codes are in the post.
      * @param {number} params.requested - How many codes have been asked for.
@@ -160,13 +160,13 @@ export class PromotionsVouchers {
      * @throws {RevenexxException}
      * @returns {Promise<Models.VoucherBatch>}
      */
-    promotionsBatchesCreate(params: { name: string, promotionId: string, alphabet?: string, metadata?: object, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus }): Promise<Models.VoucherBatch>;
+    promotionsBatchesCreate(params: { name: string, promotionId: string, alphabet?: string, metadata?: any, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus }): Promise<Models.VoucherBatch>;
     /**
      *
      * @param {string} name - What the batch is called — the unit a mailing is accounted for by afterwards.
      * @param {string} promotionId - The promotion this row belongs to. Deleting the promotion deletes it.
      * @param {string} alphabet - The characters generated codes may use. The default omits the ones people confuse reading a code off paper.
-     * @param {object} metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
+     * @param {any} metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
      * @param {string} pattern - The shape generated codes take. `#` draws a character from the alphabet; every other character is kept.
      * @param {string} requestRef - A reference the caller chose, so a retried generation makes no second batch. A timed-out call is retried by whoever sent it, and a retry that doubled a mailing is discovered when the codes are in the post.
      * @param {number} requested - How many codes have been asked for.
@@ -175,21 +175,21 @@ export class PromotionsVouchers {
      * @returns {Promise<Models.VoucherBatch>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    promotionsBatchesCreate(name: string, promotionId: string, alphabet?: string, metadata?: object, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus): Promise<Models.VoucherBatch>;
+    promotionsBatchesCreate(name: string, promotionId: string, alphabet?: string, metadata?: any, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus): Promise<Models.VoucherBatch>;
     promotionsBatchesCreate(
-        paramsOrFirst: { name: string, promotionId: string, alphabet?: string, metadata?: object, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus } | string,
-        ...rest: [(string)?, (string)?, (object)?, (string)?, (string)?, (number)?, (PromotionsBatchesCreateStatus)?]    
+        paramsOrFirst: { name: string, promotionId: string, alphabet?: string, metadata?: any, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus } | string,
+        ...rest: [(string)?, (string)?, (any)?, (string)?, (string)?, (number)?, (PromotionsBatchesCreateStatus)?]    
     ): Promise<Models.VoucherBatch> {
-        let params: { name: string, promotionId: string, alphabet?: string, metadata?: object, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus };
+        let params: { name: string, promotionId: string, alphabet?: string, metadata?: any, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { name: string, promotionId: string, alphabet?: string, metadata?: object, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus };
+            params = (paramsOrFirst || {}) as { name: string, promotionId: string, alphabet?: string, metadata?: any, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus };
         } else {
             params = {
                 name: paramsOrFirst as string,
                 promotionId: rest[0] as string,
                 alphabet: rest[1] as string,
-                metadata: rest[2] as object,
+                metadata: rest[2] as any,
                 pattern: rest[3] as string,
                 requestRef: rest[4] as string,
                 requested: rest[5] as number,
@@ -354,26 +354,26 @@ export class PromotionsVouchers {
     /**
      *
      * @param {string} params.id - The row id, as it came back from the list.
-     * @param {string} params.name - What the batch is called — the unit a mailing is accounted for by afterwards.
-     * @param {string} params.promotionId - The promotion this row belongs to. Deleting the promotion deletes it.
      * @param {string} params.alphabet - The characters generated codes may use. The default omits the ones people confuse reading a code off paper.
-     * @param {object} params.metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
+     * @param {any} params.metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
+     * @param {string} params.name - What the batch is called — the unit a mailing is accounted for by afterwards.
      * @param {string} params.pattern - The shape generated codes take. `#` draws a character from the alphabet; every other character is kept.
+     * @param {string} params.promotionId - The promotion this row belongs to. Deleting the promotion deletes it.
      * @param {string} params.requestRef - A reference the caller chose, so a retried generation makes no second batch. A timed-out call is retried by whoever sent it, and a retry that doubled a mailing is discovered when the codes are in the post.
      * @param {number} params.requested - How many codes have been asked for.
      * @param {PromotionsBatchesCreateStatus} params.status - A leaked batch is `disabled`, which refuses every code in it at once — a leak is discovered as a batch and has to be stopped as one.
      * @throws {RevenexxException}
      * @returns {Promise<Models.VoucherBatch>}
      */
-    promotionsBatchesUpdate(params: { id: string, name: string, promotionId: string, alphabet?: string, metadata?: object, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus }): Promise<Models.VoucherBatch>;
+    promotionsBatchesUpdate(params: { id: string, alphabet?: string, metadata?: any, name?: string, pattern?: string, promotionId?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus }): Promise<Models.VoucherBatch>;
     /**
      *
      * @param {string} id - The row id, as it came back from the list.
-     * @param {string} name - What the batch is called — the unit a mailing is accounted for by afterwards.
-     * @param {string} promotionId - The promotion this row belongs to. Deleting the promotion deletes it.
      * @param {string} alphabet - The characters generated codes may use. The default omits the ones people confuse reading a code off paper.
-     * @param {object} metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
+     * @param {any} metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
+     * @param {string} name - What the batch is called — the unit a mailing is accounted for by afterwards.
      * @param {string} pattern - The shape generated codes take. `#` draws a character from the alphabet; every other character is kept.
+     * @param {string} promotionId - The promotion this row belongs to. Deleting the promotion deletes it.
      * @param {string} requestRef - A reference the caller chose, so a retried generation makes no second batch. A timed-out call is retried by whoever sent it, and a retry that doubled a mailing is discovered when the codes are in the post.
      * @param {number} requested - How many codes have been asked for.
      * @param {PromotionsBatchesCreateStatus} status - A leaked batch is `disabled`, which refuses every code in it at once — a leak is discovered as a batch and has to be stopped as one.
@@ -381,23 +381,23 @@ export class PromotionsVouchers {
      * @returns {Promise<Models.VoucherBatch>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    promotionsBatchesUpdate(id: string, name: string, promotionId: string, alphabet?: string, metadata?: object, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus): Promise<Models.VoucherBatch>;
+    promotionsBatchesUpdate(id: string, alphabet?: string, metadata?: any, name?: string, pattern?: string, promotionId?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus): Promise<Models.VoucherBatch>;
     promotionsBatchesUpdate(
-        paramsOrFirst: { id: string, name: string, promotionId: string, alphabet?: string, metadata?: object, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus } | string,
-        ...rest: [(string)?, (string)?, (string)?, (object)?, (string)?, (string)?, (number)?, (PromotionsBatchesCreateStatus)?]    
+        paramsOrFirst: { id: string, alphabet?: string, metadata?: any, name?: string, pattern?: string, promotionId?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus } | string,
+        ...rest: [(string)?, (any)?, (string)?, (string)?, (string)?, (string)?, (number)?, (PromotionsBatchesCreateStatus)?]    
     ): Promise<Models.VoucherBatch> {
-        let params: { id: string, name: string, promotionId: string, alphabet?: string, metadata?: object, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus };
+        let params: { id: string, alphabet?: string, metadata?: any, name?: string, pattern?: string, promotionId?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, name: string, promotionId: string, alphabet?: string, metadata?: object, pattern?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus };
+            params = (paramsOrFirst || {}) as { id: string, alphabet?: string, metadata?: any, name?: string, pattern?: string, promotionId?: string, requestRef?: string, requested?: number, status?: PromotionsBatchesCreateStatus };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                name: rest[0] as string,
-                promotionId: rest[1] as string,
-                alphabet: rest[2] as string,
-                metadata: rest[3] as object,
-                pattern: rest[4] as string,
+                alphabet: rest[0] as string,
+                metadata: rest[1] as any,
+                name: rest[2] as string,
+                pattern: rest[3] as string,
+                promotionId: rest[4] as string,
                 requestRef: rest[5] as string,
                 requested: rest[6] as number,
                 status: rest[7] as PromotionsBatchesCreateStatus            
@@ -405,23 +405,17 @@ export class PromotionsVouchers {
         }
         
         const id = params.id;
-        const name = params.name;
-        const promotionId = params.promotionId;
         const alphabet = params.alphabet;
         const metadata = params.metadata;
+        const name = params.name;
         const pattern = params.pattern;
+        const promotionId = params.promotionId;
         const requestRef = params.requestRef;
         const requested = params.requested;
         const status = params.status;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
-        }
-        if (typeof name === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "name"');
-        }
-        if (typeof promotionId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "promotionId"');
         }
 
         const apiPath = '/v1/promotions/batches/{id}'.replace('{id}', id);
@@ -458,6 +452,57 @@ export class PromotionsVouchers {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Switching a batch off reaches every code it generated, which is the point of generating them as a batch: the batch and each of its active codes become `disabled`. Redemptions already committed stay; new ones are refused. Answers the batch with `disabled_codes`.
+     *
+     * @param {string} params.id - The row id, as it came back from the list.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    promotionsBatchesDisable(params: { id: string }): Promise<{}>;
+    /**
+     * Switching a batch off reaches every code it generated, which is the point of generating them as a batch: the batch and each of its active codes become `disabled`. Redemptions already committed stay; new ones are refused. Answers the batch with `disabled_codes`.
+     *
+     * @param {string} id - The row id, as it came back from the list.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    promotionsBatchesDisable(id: string): Promise<{}>;
+    promotionsBatchesDisable(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/promotions/batches/{id}/disable'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload
@@ -509,6 +554,57 @@ export class PromotionsVouchers {
 
         return this.client.call(
             'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * The same codes as the GET, as a file the Cockpit downloads as it is: `filename`, `content_type` (`text/csv`) and `content`, one code per line with its status, its limit, its uses and its end date.
+     *
+     * @param {string} params.id - The row id, as it came back from the list.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    promotionsBatchesExportFile(params: { id: string }): Promise<{}>;
+    /**
+     * The same codes as the GET, as a file the Cockpit downloads as it is: `filename`, `content_type` (`text/csv`) and `content`, one code per line with its status, its limit, its uses and its end date.
+     *
+     * @param {string} id - The row id, as it came back from the list.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    promotionsBatchesExportFile(id: string): Promise<{}>;
+    promotionsBatchesExportFile(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/promotions/batches/{id}/export'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload
@@ -1009,55 +1105,52 @@ export class PromotionsVouchers {
     /**
      *
      * @param {string} params.id - The row id, as it came back from the list.
-     * @param {string} params.voucherId - The code being held.
      * @param {string} params.contactId - Who it is held for.
      * @param {string} params.expiresAt - When the hold stops counting. Empty is held until it is used or deleted.
      * @param {string} params.organizationId - Which company it is held for.
+     * @param {string} params.voucherId - The code being held.
      * @throws {RevenexxException}
      * @returns {Promise<Models.VoucherReservation>}
      */
-    promotionsVoucherReservationsUpdate(params: { id: string, voucherId: string, contactId?: string, expiresAt?: string, organizationId?: string }): Promise<Models.VoucherReservation>;
+    promotionsVoucherReservationsUpdate(params: { id: string, contactId?: string, expiresAt?: string, organizationId?: string, voucherId?: string }): Promise<Models.VoucherReservation>;
     /**
      *
      * @param {string} id - The row id, as it came back from the list.
-     * @param {string} voucherId - The code being held.
      * @param {string} contactId - Who it is held for.
      * @param {string} expiresAt - When the hold stops counting. Empty is held until it is used or deleted.
      * @param {string} organizationId - Which company it is held for.
+     * @param {string} voucherId - The code being held.
      * @throws {RevenexxException}
      * @returns {Promise<Models.VoucherReservation>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    promotionsVoucherReservationsUpdate(id: string, voucherId: string, contactId?: string, expiresAt?: string, organizationId?: string): Promise<Models.VoucherReservation>;
+    promotionsVoucherReservationsUpdate(id: string, contactId?: string, expiresAt?: string, organizationId?: string, voucherId?: string): Promise<Models.VoucherReservation>;
     promotionsVoucherReservationsUpdate(
-        paramsOrFirst: { id: string, voucherId: string, contactId?: string, expiresAt?: string, organizationId?: string } | string,
+        paramsOrFirst: { id: string, contactId?: string, expiresAt?: string, organizationId?: string, voucherId?: string } | string,
         ...rest: [(string)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.VoucherReservation> {
-        let params: { id: string, voucherId: string, contactId?: string, expiresAt?: string, organizationId?: string };
+        let params: { id: string, contactId?: string, expiresAt?: string, organizationId?: string, voucherId?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, voucherId: string, contactId?: string, expiresAt?: string, organizationId?: string };
+            params = (paramsOrFirst || {}) as { id: string, contactId?: string, expiresAt?: string, organizationId?: string, voucherId?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                voucherId: rest[0] as string,
-                contactId: rest[1] as string,
-                expiresAt: rest[2] as string,
-                organizationId: rest[3] as string            
+                contactId: rest[0] as string,
+                expiresAt: rest[1] as string,
+                organizationId: rest[2] as string,
+                voucherId: rest[3] as string            
             };
         }
         
         const id = params.id;
-        const voucherId = params.voucherId;
         const contactId = params.contactId;
         const expiresAt = params.expiresAt;
         const organizationId = params.organizationId;
+        const voucherId = params.voucherId;
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
-        }
-        if (typeof voucherId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "voucherId"');
         }
 
         const apiPath = '/v1/promotions/voucher-reservations/{id}'.replace('{id}', id);
@@ -1246,7 +1339,7 @@ export class PromotionsVouchers {
      * @param {string} params.contactId - The person the code was issued to. Anybody else is refused — a personal apology code is worthless if it can be forwarded.
      * @param {string} params.currency - The currency a residual value is stated in.
      * @param {string} params.endsAt - When it expires. A merchant runs one promotion for a quarter and hands out codes that expire in a fortnight.
-     * @param {object} params.metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
+     * @param {any} params.metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
      * @param {string} params.organizationId - The company it was issued to. Any of its contacts may redeem it.
      * @param {number} params.reservationLimit - How many reservations may be held at once. A reservation that never ran out would promise a limited code to everybody who asked.
      * @param {boolean} params.reservationRequired - When true the code works only for a buyer who has reserved it — which is what makes a code printed in a public place usable at all.
@@ -1257,7 +1350,7 @@ export class PromotionsVouchers {
      * @throws {RevenexxException}
      * @returns {Promise<Models.Voucher>}
      */
-    promotionsVouchersCreate(params: { code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: object, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number }): Promise<Models.Voucher>;
+    promotionsVouchersCreate(params: { code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: any, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number }): Promise<Models.Voucher>;
     /**
      *
      * @param {string} code - The code as it is printed and as a buyer types it.
@@ -1266,7 +1359,7 @@ export class PromotionsVouchers {
      * @param {string} contactId - The person the code was issued to. Anybody else is refused — a personal apology code is worthless if it can be forwarded.
      * @param {string} currency - The currency a residual value is stated in.
      * @param {string} endsAt - When it expires. A merchant runs one promotion for a quarter and hands out codes that expire in a fortnight.
-     * @param {object} metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
+     * @param {any} metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
      * @param {string} organizationId - The company it was issued to. Any of its contacts may redeem it.
      * @param {number} reservationLimit - How many reservations may be held at once. A reservation that never ran out would promise a limited code to everybody who asked.
      * @param {boolean} reservationRequired - When true the code works only for a buyer who has reserved it — which is what makes a code printed in a public place usable at all.
@@ -1278,15 +1371,15 @@ export class PromotionsVouchers {
      * @returns {Promise<Models.Voucher>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    promotionsVouchersCreate(code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: object, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number): Promise<Models.Voucher>;
+    promotionsVouchersCreate(code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: any, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number): Promise<Models.Voucher>;
     promotionsVouchersCreate(
-        paramsOrFirst: { code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: object, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (number)?, (boolean)?, (number)?, (string)?, (PromotionsBatchesCreateStatus)?, (number)?]    
+        paramsOrFirst: { code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: any, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (any)?, (string)?, (number)?, (boolean)?, (number)?, (string)?, (PromotionsBatchesCreateStatus)?, (number)?]    
     ): Promise<Models.Voucher> {
-        let params: { code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: object, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number };
+        let params: { code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: any, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: object, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number };
+            params = (paramsOrFirst || {}) as { code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: any, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number };
         } else {
             params = {
                 code: paramsOrFirst as string,
@@ -1295,7 +1388,7 @@ export class PromotionsVouchers {
                 contactId: rest[2] as string,
                 currency: rest[3] as string,
                 endsAt: rest[4] as string,
-                metadata: rest[5] as object,
+                metadata: rest[5] as any,
                 organizationId: rest[6] as string,
                 reservationLimit: rest[7] as number,
                 reservationRequired: rest[8] as boolean,
@@ -1487,14 +1580,14 @@ export class PromotionsVouchers {
     /**
      *
      * @param {string} params.id - The row id, as it came back from the list.
-     * @param {string} params.code - The code as it is printed and as a buyer types it.
-     * @param {string} params.promotionId - The promotion this row belongs to. Deleting the promotion deletes it.
      * @param {string} params.batchId - The batch this code was made in, when it was made in one.
+     * @param {string} params.code - The code as it is printed and as a buyer types it.
      * @param {string} params.contactId - The person the code was issued to. Anybody else is refused — a personal apology code is worthless if it can be forwarded.
      * @param {string} params.currency - The currency a residual value is stated in.
      * @param {string} params.endsAt - When it expires. A merchant runs one promotion for a quarter and hands out codes that expire in a fortnight.
-     * @param {object} params.metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
+     * @param {any} params.metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
      * @param {string} params.organizationId - The company it was issued to. Any of its contacts may redeem it.
+     * @param {string} params.promotionId - The promotion this row belongs to. Deleting the promotion deletes it.
      * @param {number} params.reservationLimit - How many reservations may be held at once. A reservation that never ran out would promise a limited code to everybody who asked.
      * @param {boolean} params.reservationRequired - When true the code works only for a buyer who has reserved it — which is what makes a code printed in a public place usable at all.
      * @param {number} params.residualValue - An amount the code is worth, spent down rather than used up — how a goodwill amount survives a smaller first purchase.
@@ -1504,18 +1597,18 @@ export class PromotionsVouchers {
      * @throws {RevenexxException}
      * @returns {Promise<Models.Voucher>}
      */
-    promotionsVouchersUpdate(params: { id: string, code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: object, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number }): Promise<Models.Voucher>;
+    promotionsVouchersUpdate(params: { id: string, batchId?: string, code?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: any, organizationId?: string, promotionId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number }): Promise<Models.Voucher>;
     /**
      *
      * @param {string} id - The row id, as it came back from the list.
-     * @param {string} code - The code as it is printed and as a buyer types it.
-     * @param {string} promotionId - The promotion this row belongs to. Deleting the promotion deletes it.
      * @param {string} batchId - The batch this code was made in, when it was made in one.
+     * @param {string} code - The code as it is printed and as a buyer types it.
      * @param {string} contactId - The person the code was issued to. Anybody else is refused — a personal apology code is worthless if it can be forwarded.
      * @param {string} currency - The currency a residual value is stated in.
      * @param {string} endsAt - When it expires. A merchant runs one promotion for a quarter and hands out codes that expire in a fortnight.
-     * @param {object} metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
+     * @param {any} metadata - Free-form JSON a caller may keep on the row. Nothing here reads it.
      * @param {string} organizationId - The company it was issued to. Any of its contacts may redeem it.
+     * @param {string} promotionId - The promotion this row belongs to. Deleting the promotion deletes it.
      * @param {number} reservationLimit - How many reservations may be held at once. A reservation that never ran out would promise a limited code to everybody who asked.
      * @param {boolean} reservationRequired - When true the code works only for a buyer who has reserved it — which is what makes a code printed in a public place usable at all.
      * @param {number} residualValue - An amount the code is worth, spent down rather than used up — how a goodwill amount survives a smaller first purchase.
@@ -1526,26 +1619,26 @@ export class PromotionsVouchers {
      * @returns {Promise<Models.Voucher>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    promotionsVouchersUpdate(id: string, code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: object, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number): Promise<Models.Voucher>;
+    promotionsVouchersUpdate(id: string, batchId?: string, code?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: any, organizationId?: string, promotionId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number): Promise<Models.Voucher>;
     promotionsVouchersUpdate(
-        paramsOrFirst: { id: string, code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: object, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (number)?, (boolean)?, (number)?, (string)?, (PromotionsBatchesCreateStatus)?, (number)?]    
+        paramsOrFirst: { id: string, batchId?: string, code?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: any, organizationId?: string, promotionId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (any)?, (string)?, (string)?, (number)?, (boolean)?, (number)?, (string)?, (PromotionsBatchesCreateStatus)?, (number)?]    
     ): Promise<Models.Voucher> {
-        let params: { id: string, code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: object, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number };
+        let params: { id: string, batchId?: string, code?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: any, organizationId?: string, promotionId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code: string, promotionId: string, batchId?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: object, organizationId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number };
+            params = (paramsOrFirst || {}) as { id: string, batchId?: string, code?: string, contactId?: string, currency?: string, endsAt?: string, metadata?: any, organizationId?: string, promotionId?: string, reservationLimit?: number, reservationRequired?: boolean, residualValue?: number, startsAt?: string, status?: PromotionsBatchesCreateStatus, usageLimit?: number };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                code: rest[0] as string,
-                promotionId: rest[1] as string,
-                batchId: rest[2] as string,
-                contactId: rest[3] as string,
-                currency: rest[4] as string,
-                endsAt: rest[5] as string,
-                metadata: rest[6] as object,
-                organizationId: rest[7] as string,
+                batchId: rest[0] as string,
+                code: rest[1] as string,
+                contactId: rest[2] as string,
+                currency: rest[3] as string,
+                endsAt: rest[4] as string,
+                metadata: rest[5] as any,
+                organizationId: rest[6] as string,
+                promotionId: rest[7] as string,
                 reservationLimit: rest[8] as number,
                 reservationRequired: rest[9] as boolean,
                 residualValue: rest[10] as number,
@@ -1556,14 +1649,14 @@ export class PromotionsVouchers {
         }
         
         const id = params.id;
-        const code = params.code;
-        const promotionId = params.promotionId;
         const batchId = params.batchId;
+        const code = params.code;
         const contactId = params.contactId;
         const currency = params.currency;
         const endsAt = params.endsAt;
         const metadata = params.metadata;
         const organizationId = params.organizationId;
+        const promotionId = params.promotionId;
         const reservationLimit = params.reservationLimit;
         const reservationRequired = params.reservationRequired;
         const residualValue = params.residualValue;
@@ -1573,12 +1666,6 @@ export class PromotionsVouchers {
 
         if (typeof id === 'undefined') {
             throw new RevenexxException('Missing required parameter: "id"');
-        }
-        if (typeof code === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "code"');
-        }
-        if (typeof promotionId === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "promotionId"');
         }
 
         const apiPath = '/v1/promotions/vouchers/{id}'.replace('{id}', id);

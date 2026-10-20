@@ -14,7 +14,7 @@ const result = await productsDataModel.productsAttributeSchema({
     familyCode: '', // optional
     entityType: EntityType.Product, // optional
     entityRef: 'brand', // optional
-    locale: 'de_DE', // optional
+    locale: 'de', // optional
     channel: 'b2b', // optional
     kind: ProductsListKind.Simple // optional
 });

@@ -11,6 +11,7 @@ const productsDataModel = new ProductsDataModel(client);
 
 const result = await productsDataModel.productsFamiliesCreate({
     code: 'power_tools',
+    active: true, // optional
     externalId: 'EC001234', // optional
     externalRefs: {
         "entitys": "4711",

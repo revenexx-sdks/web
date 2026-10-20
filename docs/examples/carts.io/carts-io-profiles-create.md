@@ -12,6 +12,7 @@ const cartsIo = new CartsIo(client);
 const result = await cartsIo.cartsIoProfilesCreate({
     direction: CartIoDirection.Import,
     name: 'cart-export-csv',
+    active: true, // optional
     applyMode: CartIoApplyMode.Insert, // optional
     entity: CartIoEntity.Carts, // optional
     format: CartIoFormat.Json, // optional

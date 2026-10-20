@@ -12,6 +12,7 @@ const customersValueLists = new CustomersValueLists(client);
 const result = await customersValueLists.customersContactPointKindsCreate({
     code: '',
     title: 'Invoice',
+    active: true, // optional
     description: 'Where the invoice is sent.', // optional
     descriptions: {
         "de": "Wohin die Rechnung geschickt wird.",

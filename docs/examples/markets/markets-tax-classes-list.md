@@ -17,6 +17,7 @@ const result = await markets.marketsTaxClassesList({
     labels: '{"de-DE":"Regelsatz","en-GB":"Standard rate"}', // optional
     rate: 20, // optional
     isDefault: true, // optional
+    active: true, // optional
     position: 0, // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z', // optional

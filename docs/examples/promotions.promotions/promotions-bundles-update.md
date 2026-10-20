@@ -11,11 +11,11 @@ const promotionsPromotions = new PromotionsPromotions(client);
 
 const result = await promotionsPromotions.promotionsBundlesUpdate({
     id: '',
-    name: '',
-    promotionId: '',
     allocation: Allocation.BestForBuyer, // optional
     maxPerCart: 1, // optional
-    selectors: {}, // optional
+    name: '', // optional
+    promotionId: '', // optional
+    selectors: null, // optional
     unitsRequired: 1 // optional
 });
 

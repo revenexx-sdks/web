@@ -18,6 +18,8 @@ const result = await orders.ordersNumberRangesList({
     counter: 123, // optional
     step: 1, // optional
     positionStep: 10, // optional
+    title: 'Order numbers', // optional
+    active: true, // optional
     channelId: '', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
     updatedAt: '2026-01-01T12:00:00Z', // optional

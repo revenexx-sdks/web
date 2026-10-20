@@ -9,7 +9,9 @@ const client = new Client()
 
 const customersValueLists = new CustomersValueLists(client);
 
-const result = await customersValueLists.customersContactEventKindsList();
+const result = await customersValueLists.customersContactEventKindsList({
+    active: true // optional
+});
 
 console.log(result);
 ```

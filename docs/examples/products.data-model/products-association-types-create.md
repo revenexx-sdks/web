@@ -11,6 +11,7 @@ const productsDataModel = new ProductsDataModel(client);
 
 const result = await productsDataModel.productsAssociationTypesCreate({
     code: 'cross_sell',
+    active: true, // optional
     isQuantified: true, // optional
     isTwoWay: true, // optional
     labels: {

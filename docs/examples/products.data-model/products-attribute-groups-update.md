@@ -11,6 +11,7 @@ const productsDataModel = new ProductsDataModel(client);
 
 const result = await productsDataModel.productsAttributeGroupsUpdate({
     id: '',
+    active: true, // optional
     code: 'technical_attributes', // optional
     externalId: 'GRP-TECHNICAL', // optional
     externalRefs: {

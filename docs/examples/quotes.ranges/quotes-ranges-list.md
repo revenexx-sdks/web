@@ -12,7 +12,8 @@ const quotesRanges = new QuotesRanges(client);
 const result = await quotesRanges.quotesRangesList({
     limit: 50, // optional
     offset: 0, // optional
-    order: 'created_at.desc' // optional
+    order: 'created_at.desc', // optional
+    active: true // optional
 });
 
 console.log(result);

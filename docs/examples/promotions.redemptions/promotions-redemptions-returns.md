@@ -14,6 +14,7 @@ const result = await promotionsRedemptions.promotionsRedemptionsReturns({
     all: true, // optional
     lines: [], // optional
     remainingAmounts: {}, // optional
+    remainingLines: [], // optional
     returnRef: '' // optional
 });
 

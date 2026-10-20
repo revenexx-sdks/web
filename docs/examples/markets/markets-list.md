@@ -15,6 +15,8 @@ const result = await markets.marketsList({
     name: 'Northwind', // optional
     labels: '{"de-DE":"Nordwind","en-GB":"Northwind"}', // optional
     currency: 'EUR', // optional
+    shipFromCountry: 'DE', // optional
+    shipFromCountryReview: false, // optional
     status: MarketsListStatus.Active, // optional
     isDefault: false, // optional
     position: 0, // optional

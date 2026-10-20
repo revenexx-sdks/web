@@ -1,3 +1,6 @@
+## v0.4.0
+- Regenerated from the latest API specification
+
 ## v0.3.0
 -  Parameter types and positions changed across many services and some enums were removed (Collection, ContactUpdateRequestRegistrationStatus), following the current API spec; err.message now carries an app's refusal reason.
 

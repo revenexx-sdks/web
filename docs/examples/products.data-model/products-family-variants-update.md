@@ -11,6 +11,7 @@ const productsDataModel = new ProductsDataModel(client);
 
 const result = await productsDataModel.productsFamilyVariantsUpdate({
     id: '',
+    active: true, // optional
     axes: [
         "colour",
         "size"

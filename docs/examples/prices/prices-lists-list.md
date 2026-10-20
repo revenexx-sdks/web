@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Prices, PriceListStatus, PriceListTaxBasis } from "@revenexx/sdk";
+import { Client, Prices, PriceListStatus, PriceListTaxBasis, PriceListTrashed } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -31,6 +31,7 @@ const result = await prices.pricesListsList({
     updatedAt: '2026-01-01T12:00:00Z', // optional
     externalId: 'VKPL-2026', // optional
     sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
+    trashed: PriceListTrashed.Only, // optional
     limit: 1, // optional
     offset: 1, // optional
     order: 'created_at.desc' // optional

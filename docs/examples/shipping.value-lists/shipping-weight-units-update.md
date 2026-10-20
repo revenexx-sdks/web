@@ -11,6 +11,7 @@ const shippingValueLists = new ShippingValueLists(client);
 
 const result = await shippingValueLists.shippingWeightUnitsUpdate({
     id: '',
+    active: true, // optional
     description: 'When to pick this weight unit.', // optional
     descriptions: {
         "de": "Wann diese Option zu w\u00e4hlen ist.",

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Markets } from "@revenexx/sdk";
+import { Client, Markets, MarketsLocalesCreateStatus } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -15,7 +15,8 @@ const result = await markets.marketsLocalesCreate({
     country: 'DE', // optional
     isDefault: true, // optional
     language: 'de', // optional
-    position: 0 // optional
+    position: 0, // optional
+    status: MarketsLocalesCreateStatus.Active // optional
 });
 
 console.log(result);

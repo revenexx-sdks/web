@@ -11,6 +11,7 @@ const customersSegments = new CustomersSegments(client);
 
 const result = await customersSegments.customersSegmentsUpdate({
     id: '',
+    active: true, // optional
     code: 'key_accounts', // optional
     labels: {
         "de": "Gro\u00dfkunden",

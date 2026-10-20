@@ -2,16 +2,97 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+import { Country } from '../enums/country';
+import { DeliveryPointType } from '../enums/delivery-point-type';
+import { ValidationStatus } from '../enums/validation-status';
 import { CustomersOrganizationsListStatus } from '../enums/customers-organizations-list-status';
 import { CreditLimitMode } from '../enums/credit-limit-mode';
 import { ShippingAdvice } from '../enums/shipping-advice';
+import { Trashed } from '../enums/trashed';
 import { OrganizationStatus } from '../enums/organization-status';
+import { CustomersOrganizationsBlockReason } from '../enums/customers-organizations-block-reason';
+import { CustomersOrganizationsBlockKind } from '../enums/customers-organizations-block-kind';
+import { CustomersOrganizationsChangeCreditReason } from '../enums/customers-organizations-change-credit-reason';
 
 export class CustomersOrganizations {
     client: Client;
 
     constructor(client: Client) {
         this.client = client;
+    }
+
+    /**
+     * The address type every revenexx app stores a postal address as, and the countries that carry rules for it. `schema` is the JSON Schema (2020-12) itself, with a versioned `$id` (https://schemas.revenexx.com/apps/customers/address/1.1.0.json) an app pins its copy by; only `country_code` is required by the type, and what else an address needs depends on its country. `countries` lists every ISO 3166-1 code with rules, by code and name — read one with GET /customers/address-format/{country}. The same for every tenant: this is a contract, not data.
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.AddressFormatIndex>}
+     */
+    customersAddressFormatList(): Promise<Models.AddressFormatIndex> {
+
+        const apiPath = '/v1/customers/address-format';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * What an address in one country looks like and needs: the fields in the order they are printed, the ones it requires, the postal-code pattern with an example, the word a form shows for each field that varies by country (de/en), the regions as ISO 3166-2 codes, and the contact fields (phone, email) every country takes but never prints. Derived from Google's libaddressinput data. A region the data names only in words carries `code: null`; an address there gives the region by name in `administrative_area_name`.
+     *
+     * @param {Country} params.country - ISO 3166-1 alpha-2 code, upper case.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.AddressCountryRules>}
+     */
+    customersAddressFormatGet(params: { country: Country }): Promise<Models.AddressCountryRules>;
+    /**
+     * What an address in one country looks like and needs: the fields in the order they are printed, the ones it requires, the postal-code pattern with an example, the word a form shows for each field that varies by country (de/en), the regions as ISO 3166-2 codes, and the contact fields (phone, email) every country takes but never prints. Derived from Google's libaddressinput data. A region the data names only in words carries `code: null`; an address there gives the region by name in `administrative_area_name`.
+     *
+     * @param {Country} country - ISO 3166-1 alpha-2 code, upper case.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.AddressCountryRules>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersAddressFormatGet(country: Country): Promise<Models.AddressCountryRules>;
+    customersAddressFormatGet(
+        paramsOrFirst: { country: Country } | Country    
+    ): Promise<Models.AddressCountryRules> {
+        let params: { country: Country };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('country' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { country: Country };
+        } else {
+            params = {
+                country: paramsOrFirst as Country            
+            };
+        }
+        
+        const country = params.country;
+
+        if (typeof country === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "country"');
+        }
+
+        const apiPath = '/v1/customers/address-format/{country}'.replace('{country}', country);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
     }
 
     /**
@@ -26,11 +107,26 @@ export class CustomersOrganizations {
      * @param {string} params.name2 - Filter to rows whose `name2` is exactly this value. The second recipient line: a department beneath a person, an attention line, a c/o. What `street2` is for the street, this is for the recipient — and it is a line of its own rather than more text in `name`, because a label prints two lines and an ERP delivers two fields. Null when there is none.
      * @param {string} params.street - Filter to rows whose `street` is exactly this value. Street and house number, on one line, as the local post expects it. OPTIONAL, because a deliverable address does not always have one: a German PO box is addressed by its number, its postcode and its town, and an ERP that holds thousands of them would otherwise have every one of them refused. The postcode and the town stay required — a PO box has both.
      * @param {string} params.street2 - Filter to rows whose `street2` is exactly this value. The second address line: building, floor, gate, c/o. Null when there is none.
-     * @param {string} params.zip - Filter to rows whose `zip` is exactly this value. Postal code, as text — leading zeros are real in most countries.
-     * @param {string} params.city - Filter to rows whose `city` is exactly this value. City or town.
-     * @param {string} params.region - Filter to rows whose `region` is exactly this value. State, province or Bundesland. Required by some destinations (US, CA), unused by most European ones.
+     * @param {string} params.zip - Filter to rows whose `zip` is exactly this value. Postal code, as text — leading zeros are real in most countries. Stored as the country prints it (trimmed, one inner space, upper case). Null where the country has none (Hong Kong, the UAE); whether one is needed is the country's rule (GET /customers/address-format/{country}). The address type calls it `postal_code`.
+     * @param {string} params.city - Filter to rows whose `city` is exactly this value. City or town. Null only where the country's rules do not ask for one. The address type calls it `locality`.
+     * @param {string} params.region - Filter to rows whose `region` is exactly this value. State, province or Bundesland, as written. Required by some destinations (US, CA, BR, IT, ES, JP, CN, IN), unused by most European ones. The address type calls it `administrative_area_name`; its ISO 3166-2 code is `administrative_area_code`.
      * @param {string} params.country - Filter by ISO 3166-1 alpha-2 country code.
      * @param {string} params.phone - Filter to rows whose `phone` is exactly this value. Phone number for the carrier to reach at this address — often a different one from the contact's own.
+     * @param {string} params.email - Filter to rows whose `email` is exactly this value. A mail address for the delivery to this address — tracking, a carrier's notice. Optional, checked as an email, stored trimmed with its domain in lower case; never printed on the label. Where a DOCUMENT is sent is a contact point, not this.
+     * @param {string} params.addressLine3 - Filter to rows whose `address_line3` is exactly this value. The third address line, where a country prints one. Null when there is none.
+     * @param {string} params.dependentLocality - Filter to rows whose `dependent_locality` is exactly this value. The district within the town that a country prints: a bairro in Brazil, a colonia in Mexico, a dong in Korea.
+     * @param {string} params.administrativeAreaCode - Filter to rows whose `administrative_area_code` is exactly this value. The region as an ISO 3166-2 code (`US-CA`, `BR-SP`) — what shipping and tax read. Checked against the country's list where it has one. An address stored before the code existed answers the code its `region` names, when the country lists it.
+     * @param {string} params.sortingCode - Filter to rows whose `sorting_code` is exactly this value. A sorting code the post adds after the town — France's CEDEX.
+     * @param {string} params.streetName - Filter to rows whose `street_name` is exactly this value. The street on its own, beside `street`, for a system that keeps the house number apart. Not printed: the label prints `street`.
+     * @param {string} params.houseNumber - Filter to rows whose `house_number` is exactly this value. The house number on its own, beside `street_name`.
+     * @param {string} params.houseNumberAddition - Filter to rows whose `house_number_addition` is exactly this value. What follows the house number: a letter, a stairway, an apartment.
+     * @param {DeliveryPointType} params.deliveryPointType - Filter to rows whose `delivery_point_type` is exactly this value. What kind of place receives the delivery: a street address, a Packstation, a post office, a PO box, a military post. Null when nobody said.
+     * @param {string} params.deliveryPointId - Filter to rows whose `delivery_point_id` is exactly this value. The number of that delivery point: the Packstation, the PO box.
+     * @param {string} params.languageCode - Filter to rows whose `language_code` is exactly this value. The language the address is written in (BCP 47), where a country prints more than one.
+     * @param {string} params.script - Filter to rows whose `script` is exactly this value. The script the address is written in (ISO 15924), where it is not Latin.
+     * @param {ValidationStatus} params.validationStatus - Filter to rows whose `validation_status` is exactly this value. Whether a verifier has checked the address against the post's own data: 'unchecked' until one has, then 'valid', 'corrected' or 'suspect'. An edit of the address that carries no new verification sets it back to 'unchecked'. A buyer cannot set it.
+     * @param {string} params.validatedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the address was last verified. Null until it is. An edit of the address that carries no new one clears it.
+     * @param {string} params.validationSource - Filter to rows whose `validation_source` is exactly this value. Who verified it — the provider a verifier used.
      * @param {boolean} params.isDefault - Filter to the default addresses. With `type` and an owner, this is the one address a checkout should preselect.
      * @param {string} params.externalId - Filter to rows whose `external_id` is exactly this value. Id of this address in the system it came from — an ERP address number. Nullable and unique per tenant where it is set. It is also the id a line-based order export has to hand back, because the receiving system names a delivery or invoice address by it rather than by its street.
      * @param {string} params.sourceSyncedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
@@ -42,7 +138,7 @@ export class CustomersOrganizations {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    customersAddressesList(params?: { id?: string, organizationId?: string, contactId?: string, type?: string, company?: string, name?: string, name2?: string, street?: string, street2?: string, zip?: string, city?: string, region?: string, country?: string, phone?: string, isDefault?: boolean, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    customersAddressesList(params?: { id?: string, organizationId?: string, contactId?: string, type?: string, company?: string, name?: string, name2?: string, street?: string, street2?: string, zip?: string, city?: string, region?: string, country?: string, phone?: string, email?: string, addressLine3?: string, dependentLocality?: string, administrativeAreaCode?: string, sortingCode?: string, streetName?: string, houseNumber?: string, houseNumberAddition?: string, deliveryPointType?: DeliveryPointType, deliveryPointId?: string, languageCode?: string, script?: string, validationStatus?: ValidationStatus, validatedAt?: string, validationSource?: string, isDefault?: boolean, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * A postal address used for billing or for shipping, owned by exactly one of the two parties: an organization (the company address everyone in it may use) or a contact (a private one only that person uses). Both owner columns are nullable and exactly one is set — sending both, or neither, is refused. Every address this tenant holds, filterable by owner (`organization_id`, `contact_id`), by `type` and by any other column. It is how the addresses tab of a company or a person is filled; the page is `limit`/`offset`/`order`.
      *
@@ -55,11 +151,26 @@ export class CustomersOrganizations {
      * @param {string} name2 - Filter to rows whose `name2` is exactly this value. The second recipient line: a department beneath a person, an attention line, a c/o. What `street2` is for the street, this is for the recipient — and it is a line of its own rather than more text in `name`, because a label prints two lines and an ERP delivers two fields. Null when there is none.
      * @param {string} street - Filter to rows whose `street` is exactly this value. Street and house number, on one line, as the local post expects it. OPTIONAL, because a deliverable address does not always have one: a German PO box is addressed by its number, its postcode and its town, and an ERP that holds thousands of them would otherwise have every one of them refused. The postcode and the town stay required — a PO box has both.
      * @param {string} street2 - Filter to rows whose `street2` is exactly this value. The second address line: building, floor, gate, c/o. Null when there is none.
-     * @param {string} zip - Filter to rows whose `zip` is exactly this value. Postal code, as text — leading zeros are real in most countries.
-     * @param {string} city - Filter to rows whose `city` is exactly this value. City or town.
-     * @param {string} region - Filter to rows whose `region` is exactly this value. State, province or Bundesland. Required by some destinations (US, CA), unused by most European ones.
+     * @param {string} zip - Filter to rows whose `zip` is exactly this value. Postal code, as text — leading zeros are real in most countries. Stored as the country prints it (trimmed, one inner space, upper case). Null where the country has none (Hong Kong, the UAE); whether one is needed is the country's rule (GET /customers/address-format/{country}). The address type calls it `postal_code`.
+     * @param {string} city - Filter to rows whose `city` is exactly this value. City or town. Null only where the country's rules do not ask for one. The address type calls it `locality`.
+     * @param {string} region - Filter to rows whose `region` is exactly this value. State, province or Bundesland, as written. Required by some destinations (US, CA, BR, IT, ES, JP, CN, IN), unused by most European ones. The address type calls it `administrative_area_name`; its ISO 3166-2 code is `administrative_area_code`.
      * @param {string} country - Filter by ISO 3166-1 alpha-2 country code.
      * @param {string} phone - Filter to rows whose `phone` is exactly this value. Phone number for the carrier to reach at this address — often a different one from the contact's own.
+     * @param {string} email - Filter to rows whose `email` is exactly this value. A mail address for the delivery to this address — tracking, a carrier's notice. Optional, checked as an email, stored trimmed with its domain in lower case; never printed on the label. Where a DOCUMENT is sent is a contact point, not this.
+     * @param {string} addressLine3 - Filter to rows whose `address_line3` is exactly this value. The third address line, where a country prints one. Null when there is none.
+     * @param {string} dependentLocality - Filter to rows whose `dependent_locality` is exactly this value. The district within the town that a country prints: a bairro in Brazil, a colonia in Mexico, a dong in Korea.
+     * @param {string} administrativeAreaCode - Filter to rows whose `administrative_area_code` is exactly this value. The region as an ISO 3166-2 code (`US-CA`, `BR-SP`) — what shipping and tax read. Checked against the country's list where it has one. An address stored before the code existed answers the code its `region` names, when the country lists it.
+     * @param {string} sortingCode - Filter to rows whose `sorting_code` is exactly this value. A sorting code the post adds after the town — France's CEDEX.
+     * @param {string} streetName - Filter to rows whose `street_name` is exactly this value. The street on its own, beside `street`, for a system that keeps the house number apart. Not printed: the label prints `street`.
+     * @param {string} houseNumber - Filter to rows whose `house_number` is exactly this value. The house number on its own, beside `street_name`.
+     * @param {string} houseNumberAddition - Filter to rows whose `house_number_addition` is exactly this value. What follows the house number: a letter, a stairway, an apartment.
+     * @param {DeliveryPointType} deliveryPointType - Filter to rows whose `delivery_point_type` is exactly this value. What kind of place receives the delivery: a street address, a Packstation, a post office, a PO box, a military post. Null when nobody said.
+     * @param {string} deliveryPointId - Filter to rows whose `delivery_point_id` is exactly this value. The number of that delivery point: the Packstation, the PO box.
+     * @param {string} languageCode - Filter to rows whose `language_code` is exactly this value. The language the address is written in (BCP 47), where a country prints more than one.
+     * @param {string} script - Filter to rows whose `script` is exactly this value. The script the address is written in (ISO 15924), where it is not Latin.
+     * @param {ValidationStatus} validationStatus - Filter to rows whose `validation_status` is exactly this value. Whether a verifier has checked the address against the post's own data: 'unchecked' until one has, then 'valid', 'corrected' or 'suspect'. An edit of the address that carries no new verification sets it back to 'unchecked'. A buyer cannot set it.
+     * @param {string} validatedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the address was last verified. Null until it is. An edit of the address that carries no new one clears it.
+     * @param {string} validationSource - Filter to rows whose `validation_source` is exactly this value. Who verified it — the provider a verifier used.
      * @param {boolean} isDefault - Filter to the default addresses. With `type` and an owner, this is the one address a checkout should preselect.
      * @param {string} externalId - Filter to rows whose `external_id` is exactly this value. Id of this address in the system it came from — an ERP address number. Nullable and unique per tenant where it is set. It is also the id a line-based order export has to hand back, because the receiving system names a delivery or invoice address by it rather than by its street.
      * @param {string} sourceSyncedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
@@ -72,15 +183,15 @@ export class CustomersOrganizations {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAddressesList(id?: string, organizationId?: string, contactId?: string, type?: string, company?: string, name?: string, name2?: string, street?: string, street2?: string, zip?: string, city?: string, region?: string, country?: string, phone?: string, isDefault?: boolean, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    customersAddressesList(id?: string, organizationId?: string, contactId?: string, type?: string, company?: string, name?: string, name2?: string, street?: string, street2?: string, zip?: string, city?: string, region?: string, country?: string, phone?: string, email?: string, addressLine3?: string, dependentLocality?: string, administrativeAreaCode?: string, sortingCode?: string, streetName?: string, houseNumber?: string, houseNumberAddition?: string, deliveryPointType?: DeliveryPointType, deliveryPointId?: string, languageCode?: string, script?: string, validationStatus?: ValidationStatus, validatedAt?: string, validationSource?: string, isDefault?: boolean, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     customersAddressesList(
-        paramsOrFirst?: { id?: string, organizationId?: string, contactId?: string, type?: string, company?: string, name?: string, name2?: string, street?: string, street2?: string, zip?: string, city?: string, region?: string, country?: string, phone?: string, isDefault?: boolean, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, organizationId?: string, contactId?: string, type?: string, company?: string, name?: string, name2?: string, street?: string, street2?: string, zip?: string, city?: string, region?: string, country?: string, phone?: string, email?: string, addressLine3?: string, dependentLocality?: string, administrativeAreaCode?: string, sortingCode?: string, streetName?: string, houseNumber?: string, houseNumberAddition?: string, deliveryPointType?: DeliveryPointType, deliveryPointId?: string, languageCode?: string, script?: string, validationStatus?: ValidationStatus, validatedAt?: string, validationSource?: string, isDefault?: boolean, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (DeliveryPointType)?, (string)?, (string)?, (string)?, (ValidationStatus)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { id?: string, organizationId?: string, contactId?: string, type?: string, company?: string, name?: string, name2?: string, street?: string, street2?: string, zip?: string, city?: string, region?: string, country?: string, phone?: string, isDefault?: boolean, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, organizationId?: string, contactId?: string, type?: string, company?: string, name?: string, name2?: string, street?: string, street2?: string, zip?: string, city?: string, region?: string, country?: string, phone?: string, email?: string, addressLine3?: string, dependentLocality?: string, administrativeAreaCode?: string, sortingCode?: string, streetName?: string, houseNumber?: string, houseNumberAddition?: string, deliveryPointType?: DeliveryPointType, deliveryPointId?: string, languageCode?: string, script?: string, validationStatus?: ValidationStatus, validatedAt?: string, validationSource?: string, isDefault?: boolean, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, organizationId?: string, contactId?: string, type?: string, company?: string, name?: string, name2?: string, street?: string, street2?: string, zip?: string, city?: string, region?: string, country?: string, phone?: string, isDefault?: boolean, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, organizationId?: string, contactId?: string, type?: string, company?: string, name?: string, name2?: string, street?: string, street2?: string, zip?: string, city?: string, region?: string, country?: string, phone?: string, email?: string, addressLine3?: string, dependentLocality?: string, administrativeAreaCode?: string, sortingCode?: string, streetName?: string, houseNumber?: string, houseNumberAddition?: string, deliveryPointType?: DeliveryPointType, deliveryPointId?: string, languageCode?: string, script?: string, validationStatus?: ValidationStatus, validatedAt?: string, validationSource?: string, isDefault?: boolean, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -97,14 +208,29 @@ export class CustomersOrganizations {
                 region: rest[10] as string,
                 country: rest[11] as string,
                 phone: rest[12] as string,
-                isDefault: rest[13] as boolean,
-                externalId: rest[14] as string,
-                sourceSyncedAt: rest[15] as string,
-                createdAt: rest[16] as string,
-                updatedAt: rest[17] as string,
-                limit: rest[18] as number,
-                offset: rest[19] as number,
-                order: rest[20] as string            
+                email: rest[13] as string,
+                addressLine3: rest[14] as string,
+                dependentLocality: rest[15] as string,
+                administrativeAreaCode: rest[16] as string,
+                sortingCode: rest[17] as string,
+                streetName: rest[18] as string,
+                houseNumber: rest[19] as string,
+                houseNumberAddition: rest[20] as string,
+                deliveryPointType: rest[21] as DeliveryPointType,
+                deliveryPointId: rest[22] as string,
+                languageCode: rest[23] as string,
+                script: rest[24] as string,
+                validationStatus: rest[25] as ValidationStatus,
+                validatedAt: rest[26] as string,
+                validationSource: rest[27] as string,
+                isDefault: rest[28] as boolean,
+                externalId: rest[29] as string,
+                sourceSyncedAt: rest[30] as string,
+                createdAt: rest[31] as string,
+                updatedAt: rest[32] as string,
+                limit: rest[33] as number,
+                offset: rest[34] as number,
+                order: rest[35] as string            
             };
         }
         
@@ -122,6 +248,21 @@ export class CustomersOrganizations {
         const region = params.region;
         const country = params.country;
         const phone = params.phone;
+        const email = params.email;
+        const addressLine3 = params.addressLine3;
+        const dependentLocality = params.dependentLocality;
+        const administrativeAreaCode = params.administrativeAreaCode;
+        const sortingCode = params.sortingCode;
+        const streetName = params.streetName;
+        const houseNumber = params.houseNumber;
+        const houseNumberAddition = params.houseNumberAddition;
+        const deliveryPointType = params.deliveryPointType;
+        const deliveryPointId = params.deliveryPointId;
+        const languageCode = params.languageCode;
+        const script = params.script;
+        const validationStatus = params.validationStatus;
+        const validatedAt = params.validatedAt;
+        const validationSource = params.validationSource;
         const isDefault = params.isDefault;
         const externalId = params.externalId;
         const sourceSyncedAt = params.sourceSyncedAt;
@@ -176,6 +317,51 @@ export class CustomersOrganizations {
         if (typeof phone !== 'undefined') {
             apiPayload['phone'] = phone;
         }
+        if (typeof email !== 'undefined') {
+            apiPayload['email'] = email;
+        }
+        if (typeof addressLine3 !== 'undefined') {
+            apiPayload['address_line3'] = addressLine3;
+        }
+        if (typeof dependentLocality !== 'undefined') {
+            apiPayload['dependent_locality'] = dependentLocality;
+        }
+        if (typeof administrativeAreaCode !== 'undefined') {
+            apiPayload['administrative_area_code'] = administrativeAreaCode;
+        }
+        if (typeof sortingCode !== 'undefined') {
+            apiPayload['sorting_code'] = sortingCode;
+        }
+        if (typeof streetName !== 'undefined') {
+            apiPayload['street_name'] = streetName;
+        }
+        if (typeof houseNumber !== 'undefined') {
+            apiPayload['house_number'] = houseNumber;
+        }
+        if (typeof houseNumberAddition !== 'undefined') {
+            apiPayload['house_number_addition'] = houseNumberAddition;
+        }
+        if (typeof deliveryPointType !== 'undefined') {
+            apiPayload['delivery_point_type'] = deliveryPointType;
+        }
+        if (typeof deliveryPointId !== 'undefined') {
+            apiPayload['delivery_point_id'] = deliveryPointId;
+        }
+        if (typeof languageCode !== 'undefined') {
+            apiPayload['language_code'] = languageCode;
+        }
+        if (typeof script !== 'undefined') {
+            apiPayload['script'] = script;
+        }
+        if (typeof validationStatus !== 'undefined') {
+            apiPayload['validation_status'] = validationStatus;
+        }
+        if (typeof validatedAt !== 'undefined') {
+            apiPayload['validated_at'] = validatedAt;
+        }
+        if (typeof validationSource !== 'undefined') {
+            apiPayload['validation_source'] = validationSource;
+        }
         if (typeof isDefault !== 'undefined') {
             apiPayload['is_default'] = isDefault;
         }
@@ -214,110 +400,219 @@ export class CustomersOrganizations {
     }
 
     /**
-     * A postal address used for billing or for shipping, owned by exactly one of the two parties: an organization (the company address everyone in it may use) or a contact (a private one only that person uses). Both owner columns are nullable and exactly one is set — sending both, or neither, is refused. `type` names one of this tenant's own address types — billing and shipping are seeded, and a merchant may add a works entrance or a central accounts office without a release of this app. `is_default` picks the one a checkout should preselect for that owner and that type. A create cannot omit `zip`, `city` and `country`; everything else is optional or defaulted by the database. Two rows of this tenant may not share `external_id` (while external_id IS NOT NULL).
+     * A postal address used for billing or for shipping, owned by exactly one of the two parties: an organization (the company address everyone in it may use) or a contact (a private one only that person uses). Both owner columns are nullable and exactly one is set — sending both, or neither, is refused. `type` names one of this tenant's own address types — billing and shipping are seeded, and a merchant may add a works entrance or a central accounts office without a release of this app. `is_default` picks the one a checkout should preselect for that owner and that type. `country` is the only field a create cannot omit; everything else is optional or defaulted by the database. Two rows of this tenant may not share `external_id` (while external_id IS NOT NULL).
      *
-     * @param {string} params.city - City or town.
-     * @param {string} params.country - ISO 3166-1 alpha-2 country code, exactly two letters. Uppercase by convention; it is what shipping and tax both key off.
-     * @param {string} params.zip - Postal code, as text — leading zeros are real in most countries.
+     * @param {string} params.addressLine1 - The address type's name for `street`. A body that carries any of the type's names is read in them alone: `street` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.addressLine2 - The address type's name for `street2`. A body that carries any of the type's names is read in them alone: `street2` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.addressLine3 - The third address line, where a country prints one. Null when there is none.
+     * @param {string} params.administrativeAreaCode - The region as an ISO 3166-2 code (`US-CA`, `BR-SP`) — what shipping and tax read. Checked against the country's list where it has one. An address stored before the code existed answers the code its `region` names, when the country lists it.
+     * @param {string} params.administrativeAreaName - The address type's name for `region`. A body that carries any of the type's names is read in them alone: `region` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.careOf - The address type's name for `name2`. A body that carries any of the type's names is read in them alone: `name2` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.city - City or town. Null only where the country's rules do not ask for one. The address type calls it `locality`.
      * @param {string} params.company - Company line on the label. Often the owning organization's name, but not always — a delivery to a construction site carries the site.
      * @param {string} params.contactId - Owning person — a personal address only that contact uses. Exactly one of organization_id / contact_id is set.
+     * @param {string} params.country - ISO 3166-1 alpha-2 country code, exactly two letters. Uppercase by convention; it is what shipping and tax both key off. The address type calls it `country_code`.
+     * @param {string} params.countryCode - The address type's name for `country`. A body that carries any of the type's names is read in them alone: `country` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
      * @param {string} params.createdAt - When the address was created. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
+     * @param {string} params.deliveryPointId - The number of that delivery point: the Packstation, the PO box.
+     * @param {DeliveryPointType} params.deliveryPointType - What kind of place receives the delivery: a street address, a Packstation, a post office, a PO box, a military post. Null when nobody said.
+     * @param {string} params.dependentLocality - The district within the town that a country prints: a bairro in Brazil, a colonia in Mexico, a dong in Korea.
+     * @param {string} params.email - A mail address for the delivery to this address — tracking, a carrier's notice. Optional, checked as an email, stored trimmed with its domain in lower case; never printed on the label. Where a DOCUMENT is sent is a contact point, not this.
      * @param {string} params.externalId - Id of this address in the system it came from — an ERP address number. Nullable and unique per tenant where it is set. It is also the id a line-based order export has to hand back, because the receiving system names a delivery or invoice address by it rather than by its street. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
+     * @param {string} params.houseNumber - The house number on its own, beside `street_name`.
+     * @param {string} params.houseNumberAddition - What follows the house number: a letter, a stairway, an apartment.
      * @param {boolean} params.isDefault - The default address of its owner AND type: one default billing and one default shipping address per owner. Setting it moves the flag off the previous holder. Default false.
+     * @param {string} params.languageCode - The language the address is written in (BCP 47), where a country prints more than one.
+     * @param {object} params.latin - The same address in Latin script, for an address written in another one: the same keys as the address type, none of them required. Null for an address in Latin script.
+     * @param {string} params.locality - The address type's name for `city`. A body that carries any of the type's names is read in them alone: `city` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
      * @param {string} params.name - Recipient line on the label — the person or department the parcel is addressed to.
      * @param {string} params.name2 - The second recipient line: a department beneath a person, an attention line, a c/o. What `street2` is for the street, this is for the recipient — and it is a line of its own rather than more text in `name`, because a label prints two lines and an ERP delivers two fields. Null when there is none.
      * @param {string} params.organizationId - Owning company — a company address, shared by everyone in it. Exactly one of organization_id / contact_id is set.
+     * @param {string} params.organizationName - The address type's name for `company`. A body that carries any of the type's names is read in them alone: `company` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
      * @param {string} params.phone - Phone number for the carrier to reach at this address — often a different one from the contact's own.
-     * @param {string} params.region - State, province or Bundesland. Required by some destinations (US, CA), unused by most European ones.
+     * @param {string} params.postalCode - The address type's name for `zip`. A body that carries any of the type's names is read in them alone: `zip` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.recipientName - The address type's name for `name`. A body that carries any of the type's names is read in them alone: `name` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.region - State, province or Bundesland, as written. Required by some destinations (US, CA, BR, IT, ES, JP, CN, IN), unused by most European ones. The address type calls it `administrative_area_name`; its ISO 3166-2 code is `administrative_area_code`.
+     * @param {string} params.script - The script the address is written in (ISO 15924), where it is not Latin.
+     * @param {string} params.sortingCode - A sorting code the post adds after the town — France's CEDEX.
      * @param {string} params.street - Street and house number, on one line, as the local post expects it. OPTIONAL, because a deliverable address does not always have one: a German PO box is addressed by its number, its postcode and its town, and an ERP that holds thousands of them would otherwise have every one of them refused. The postcode and the town stay required — a PO box has both.
      * @param {string} params.street2 - The second address line: building, floor, gate, c/o. Null when there is none.
+     * @param {string} params.streetName - The street on its own, beside `street`, for a system that keeps the house number apart. Not printed: the label prints `street`.
      * @param {string} params.type - What the address is FOR — one of the tenant's own address types (GET /customers/address-types), seeded with billing and shipping. A merchant may add their own (a works entrance, a central accounts office) without a release of this app. A create without it gets the type flagged as default; a type the tenant does not keep is a 400.
+     * @param {string} params.validatedAt - When the address was last verified. Null until it is. An edit of the address that carries no new one clears it.
+     * @param {string} params.validationSource - Who verified it — the provider a verifier used.
+     * @param {ValidationStatus} params.validationStatus - Whether a verifier has checked the address against the post's own data: 'unchecked' until one has, then 'valid', 'corrected' or 'suspect'. An edit of the address that carries no new verification sets it back to 'unchecked'. A buyer cannot set it.
+     * @param {string} params.zip - Postal code, as text — leading zeros are real in most countries. Stored as the country prints it (trimmed, one inner space, upper case). Null where the country has none (Hong Kong, the UAE); whether one is needed is the country's rule (GET /customers/address-format/{country}). The address type calls it `postal_code`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Address>}
      */
-    customersAddressesCreate(params: { city: string, country: string, zip: string, company?: string, contactId?: string, createdAt?: string, externalId?: string, isDefault?: boolean, name?: string, name2?: string, organizationId?: string, phone?: string, region?: string, street?: string, street2?: string, type?: string }): Promise<Models.Address>;
+    customersAddressesCreate(params?: { addressLine1?: string, addressLine2?: string, addressLine3?: string, administrativeAreaCode?: string, administrativeAreaName?: string, careOf?: string, city?: string, company?: string, contactId?: string, country?: string, countryCode?: string, createdAt?: string, deliveryPointId?: string, deliveryPointType?: DeliveryPointType, dependentLocality?: string, email?: string, externalId?: string, houseNumber?: string, houseNumberAddition?: string, isDefault?: boolean, languageCode?: string, latin?: object, locality?: string, name?: string, name2?: string, organizationId?: string, organizationName?: string, phone?: string, postalCode?: string, recipientName?: string, region?: string, script?: string, sortingCode?: string, street?: string, street2?: string, streetName?: string, type?: string, validatedAt?: string, validationSource?: string, validationStatus?: ValidationStatus, zip?: string }): Promise<Models.Address>;
     /**
-     * A postal address used for billing or for shipping, owned by exactly one of the two parties: an organization (the company address everyone in it may use) or a contact (a private one only that person uses). Both owner columns are nullable and exactly one is set — sending both, or neither, is refused. `type` names one of this tenant's own address types — billing and shipping are seeded, and a merchant may add a works entrance or a central accounts office without a release of this app. `is_default` picks the one a checkout should preselect for that owner and that type. A create cannot omit `zip`, `city` and `country`; everything else is optional or defaulted by the database. Two rows of this tenant may not share `external_id` (while external_id IS NOT NULL).
+     * A postal address used for billing or for shipping, owned by exactly one of the two parties: an organization (the company address everyone in it may use) or a contact (a private one only that person uses). Both owner columns are nullable and exactly one is set — sending both, or neither, is refused. `type` names one of this tenant's own address types — billing and shipping are seeded, and a merchant may add a works entrance or a central accounts office without a release of this app. `is_default` picks the one a checkout should preselect for that owner and that type. `country` is the only field a create cannot omit; everything else is optional or defaulted by the database. Two rows of this tenant may not share `external_id` (while external_id IS NOT NULL).
      *
-     * @param {string} city - City or town.
-     * @param {string} country - ISO 3166-1 alpha-2 country code, exactly two letters. Uppercase by convention; it is what shipping and tax both key off.
-     * @param {string} zip - Postal code, as text — leading zeros are real in most countries.
+     * @param {string} addressLine1 - The address type's name for `street`. A body that carries any of the type's names is read in them alone: `street` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} addressLine2 - The address type's name for `street2`. A body that carries any of the type's names is read in them alone: `street2` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} addressLine3 - The third address line, where a country prints one. Null when there is none.
+     * @param {string} administrativeAreaCode - The region as an ISO 3166-2 code (`US-CA`, `BR-SP`) — what shipping and tax read. Checked against the country's list where it has one. An address stored before the code existed answers the code its `region` names, when the country lists it.
+     * @param {string} administrativeAreaName - The address type's name for `region`. A body that carries any of the type's names is read in them alone: `region` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} careOf - The address type's name for `name2`. A body that carries any of the type's names is read in them alone: `name2` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} city - City or town. Null only where the country's rules do not ask for one. The address type calls it `locality`.
      * @param {string} company - Company line on the label. Often the owning organization's name, but not always — a delivery to a construction site carries the site.
      * @param {string} contactId - Owning person — a personal address only that contact uses. Exactly one of organization_id / contact_id is set.
+     * @param {string} country - ISO 3166-1 alpha-2 country code, exactly two letters. Uppercase by convention; it is what shipping and tax both key off. The address type calls it `country_code`.
+     * @param {string} countryCode - The address type's name for `country`. A body that carries any of the type's names is read in them alone: `country` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
      * @param {string} createdAt - When the address was created. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
+     * @param {string} deliveryPointId - The number of that delivery point: the Packstation, the PO box.
+     * @param {DeliveryPointType} deliveryPointType - What kind of place receives the delivery: a street address, a Packstation, a post office, a PO box, a military post. Null when nobody said.
+     * @param {string} dependentLocality - The district within the town that a country prints: a bairro in Brazil, a colonia in Mexico, a dong in Korea.
+     * @param {string} email - A mail address for the delivery to this address — tracking, a carrier's notice. Optional, checked as an email, stored trimmed with its domain in lower case; never printed on the label. Where a DOCUMENT is sent is a contact point, not this.
      * @param {string} externalId - Id of this address in the system it came from — an ERP address number. Nullable and unique per tenant where it is set. It is also the id a line-based order export has to hand back, because the receiving system names a delivery or invoice address by it rather than by its street. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
+     * @param {string} houseNumber - The house number on its own, beside `street_name`.
+     * @param {string} houseNumberAddition - What follows the house number: a letter, a stairway, an apartment.
      * @param {boolean} isDefault - The default address of its owner AND type: one default billing and one default shipping address per owner. Setting it moves the flag off the previous holder. Default false.
+     * @param {string} languageCode - The language the address is written in (BCP 47), where a country prints more than one.
+     * @param {object} latin - The same address in Latin script, for an address written in another one: the same keys as the address type, none of them required. Null for an address in Latin script.
+     * @param {string} locality - The address type's name for `city`. A body that carries any of the type's names is read in them alone: `city` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
      * @param {string} name - Recipient line on the label — the person or department the parcel is addressed to.
      * @param {string} name2 - The second recipient line: a department beneath a person, an attention line, a c/o. What `street2` is for the street, this is for the recipient — and it is a line of its own rather than more text in `name`, because a label prints two lines and an ERP delivers two fields. Null when there is none.
      * @param {string} organizationId - Owning company — a company address, shared by everyone in it. Exactly one of organization_id / contact_id is set.
+     * @param {string} organizationName - The address type's name for `company`. A body that carries any of the type's names is read in them alone: `company` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
      * @param {string} phone - Phone number for the carrier to reach at this address — often a different one from the contact's own.
-     * @param {string} region - State, province or Bundesland. Required by some destinations (US, CA), unused by most European ones.
+     * @param {string} postalCode - The address type's name for `zip`. A body that carries any of the type's names is read in them alone: `zip` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} recipientName - The address type's name for `name`. A body that carries any of the type's names is read in them alone: `name` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} region - State, province or Bundesland, as written. Required by some destinations (US, CA, BR, IT, ES, JP, CN, IN), unused by most European ones. The address type calls it `administrative_area_name`; its ISO 3166-2 code is `administrative_area_code`.
+     * @param {string} script - The script the address is written in (ISO 15924), where it is not Latin.
+     * @param {string} sortingCode - A sorting code the post adds after the town — France's CEDEX.
      * @param {string} street - Street and house number, on one line, as the local post expects it. OPTIONAL, because a deliverable address does not always have one: a German PO box is addressed by its number, its postcode and its town, and an ERP that holds thousands of them would otherwise have every one of them refused. The postcode and the town stay required — a PO box has both.
      * @param {string} street2 - The second address line: building, floor, gate, c/o. Null when there is none.
+     * @param {string} streetName - The street on its own, beside `street`, for a system that keeps the house number apart. Not printed: the label prints `street`.
      * @param {string} type - What the address is FOR — one of the tenant's own address types (GET /customers/address-types), seeded with billing and shipping. A merchant may add their own (a works entrance, a central accounts office) without a release of this app. A create without it gets the type flagged as default; a type the tenant does not keep is a 400.
+     * @param {string} validatedAt - When the address was last verified. Null until it is. An edit of the address that carries no new one clears it.
+     * @param {string} validationSource - Who verified it — the provider a verifier used.
+     * @param {ValidationStatus} validationStatus - Whether a verifier has checked the address against the post's own data: 'unchecked' until one has, then 'valid', 'corrected' or 'suspect'. An edit of the address that carries no new verification sets it back to 'unchecked'. A buyer cannot set it.
+     * @param {string} zip - Postal code, as text — leading zeros are real in most countries. Stored as the country prints it (trimmed, one inner space, upper case). Null where the country has none (Hong Kong, the UAE); whether one is needed is the country's rule (GET /customers/address-format/{country}). The address type calls it `postal_code`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Address>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAddressesCreate(city: string, country: string, zip: string, company?: string, contactId?: string, createdAt?: string, externalId?: string, isDefault?: boolean, name?: string, name2?: string, organizationId?: string, phone?: string, region?: string, street?: string, street2?: string, type?: string): Promise<Models.Address>;
+    customersAddressesCreate(addressLine1?: string, addressLine2?: string, addressLine3?: string, administrativeAreaCode?: string, administrativeAreaName?: string, careOf?: string, city?: string, company?: string, contactId?: string, country?: string, countryCode?: string, createdAt?: string, deliveryPointId?: string, deliveryPointType?: DeliveryPointType, dependentLocality?: string, email?: string, externalId?: string, houseNumber?: string, houseNumberAddition?: string, isDefault?: boolean, languageCode?: string, latin?: object, locality?: string, name?: string, name2?: string, organizationId?: string, organizationName?: string, phone?: string, postalCode?: string, recipientName?: string, region?: string, script?: string, sortingCode?: string, street?: string, street2?: string, streetName?: string, type?: string, validatedAt?: string, validationSource?: string, validationStatus?: ValidationStatus, zip?: string): Promise<Models.Address>;
     customersAddressesCreate(
-        paramsOrFirst: { city: string, country: string, zip: string, company?: string, contactId?: string, createdAt?: string, externalId?: string, isDefault?: boolean, name?: string, name2?: string, organizationId?: string, phone?: string, region?: string, street?: string, street2?: string, type?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { addressLine1?: string, addressLine2?: string, addressLine3?: string, administrativeAreaCode?: string, administrativeAreaName?: string, careOf?: string, city?: string, company?: string, contactId?: string, country?: string, countryCode?: string, createdAt?: string, deliveryPointId?: string, deliveryPointType?: DeliveryPointType, dependentLocality?: string, email?: string, externalId?: string, houseNumber?: string, houseNumberAddition?: string, isDefault?: boolean, languageCode?: string, latin?: object, locality?: string, name?: string, name2?: string, organizationId?: string, organizationName?: string, phone?: string, postalCode?: string, recipientName?: string, region?: string, script?: string, sortingCode?: string, street?: string, street2?: string, streetName?: string, type?: string, validatedAt?: string, validationSource?: string, validationStatus?: ValidationStatus, zip?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (DeliveryPointType)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (ValidationStatus)?, (string)?]    
     ): Promise<Models.Address> {
-        let params: { city: string, country: string, zip: string, company?: string, contactId?: string, createdAt?: string, externalId?: string, isDefault?: boolean, name?: string, name2?: string, organizationId?: string, phone?: string, region?: string, street?: string, street2?: string, type?: string };
+        let params: { addressLine1?: string, addressLine2?: string, addressLine3?: string, administrativeAreaCode?: string, administrativeAreaName?: string, careOf?: string, city?: string, company?: string, contactId?: string, country?: string, countryCode?: string, createdAt?: string, deliveryPointId?: string, deliveryPointType?: DeliveryPointType, dependentLocality?: string, email?: string, externalId?: string, houseNumber?: string, houseNumberAddition?: string, isDefault?: boolean, languageCode?: string, latin?: object, locality?: string, name?: string, name2?: string, organizationId?: string, organizationName?: string, phone?: string, postalCode?: string, recipientName?: string, region?: string, script?: string, sortingCode?: string, street?: string, street2?: string, streetName?: string, type?: string, validatedAt?: string, validationSource?: string, validationStatus?: ValidationStatus, zip?: string };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { city: string, country: string, zip: string, company?: string, contactId?: string, createdAt?: string, externalId?: string, isDefault?: boolean, name?: string, name2?: string, organizationId?: string, phone?: string, region?: string, street?: string, street2?: string, type?: string };
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { addressLine1?: string, addressLine2?: string, addressLine3?: string, administrativeAreaCode?: string, administrativeAreaName?: string, careOf?: string, city?: string, company?: string, contactId?: string, country?: string, countryCode?: string, createdAt?: string, deliveryPointId?: string, deliveryPointType?: DeliveryPointType, dependentLocality?: string, email?: string, externalId?: string, houseNumber?: string, houseNumberAddition?: string, isDefault?: boolean, languageCode?: string, latin?: object, locality?: string, name?: string, name2?: string, organizationId?: string, organizationName?: string, phone?: string, postalCode?: string, recipientName?: string, region?: string, script?: string, sortingCode?: string, street?: string, street2?: string, streetName?: string, type?: string, validatedAt?: string, validationSource?: string, validationStatus?: ValidationStatus, zip?: string };
         } else {
             params = {
-                city: paramsOrFirst as string,
-                country: rest[0] as string,
-                zip: rest[1] as string,
-                company: rest[2] as string,
-                contactId: rest[3] as string,
-                createdAt: rest[4] as string,
-                externalId: rest[5] as string,
-                isDefault: rest[6] as boolean,
-                name: rest[7] as string,
-                name2: rest[8] as string,
-                organizationId: rest[9] as string,
-                phone: rest[10] as string,
-                region: rest[11] as string,
-                street: rest[12] as string,
-                street2: rest[13] as string,
-                type: rest[14] as string            
+                addressLine1: paramsOrFirst as string,
+                addressLine2: rest[0] as string,
+                addressLine3: rest[1] as string,
+                administrativeAreaCode: rest[2] as string,
+                administrativeAreaName: rest[3] as string,
+                careOf: rest[4] as string,
+                city: rest[5] as string,
+                company: rest[6] as string,
+                contactId: rest[7] as string,
+                country: rest[8] as string,
+                countryCode: rest[9] as string,
+                createdAt: rest[10] as string,
+                deliveryPointId: rest[11] as string,
+                deliveryPointType: rest[12] as DeliveryPointType,
+                dependentLocality: rest[13] as string,
+                email: rest[14] as string,
+                externalId: rest[15] as string,
+                houseNumber: rest[16] as string,
+                houseNumberAddition: rest[17] as string,
+                isDefault: rest[18] as boolean,
+                languageCode: rest[19] as string,
+                latin: rest[20] as object,
+                locality: rest[21] as string,
+                name: rest[22] as string,
+                name2: rest[23] as string,
+                organizationId: rest[24] as string,
+                organizationName: rest[25] as string,
+                phone: rest[26] as string,
+                postalCode: rest[27] as string,
+                recipientName: rest[28] as string,
+                region: rest[29] as string,
+                script: rest[30] as string,
+                sortingCode: rest[31] as string,
+                street: rest[32] as string,
+                street2: rest[33] as string,
+                streetName: rest[34] as string,
+                type: rest[35] as string,
+                validatedAt: rest[36] as string,
+                validationSource: rest[37] as string,
+                validationStatus: rest[38] as ValidationStatus,
+                zip: rest[39] as string            
             };
         }
         
+        const addressLine1 = params.addressLine1;
+        const addressLine2 = params.addressLine2;
+        const addressLine3 = params.addressLine3;
+        const administrativeAreaCode = params.administrativeAreaCode;
+        const administrativeAreaName = params.administrativeAreaName;
+        const careOf = params.careOf;
         const city = params.city;
-        const country = params.country;
-        const zip = params.zip;
         const company = params.company;
         const contactId = params.contactId;
+        const country = params.country;
+        const countryCode = params.countryCode;
         const createdAt = params.createdAt;
+        const deliveryPointId = params.deliveryPointId;
+        const deliveryPointType = params.deliveryPointType;
+        const dependentLocality = params.dependentLocality;
+        const email = params.email;
         const externalId = params.externalId;
+        const houseNumber = params.houseNumber;
+        const houseNumberAddition = params.houseNumberAddition;
         const isDefault = params.isDefault;
+        const languageCode = params.languageCode;
+        const latin = params.latin;
+        const locality = params.locality;
         const name = params.name;
         const name2 = params.name2;
         const organizationId = params.organizationId;
+        const organizationName = params.organizationName;
         const phone = params.phone;
+        const postalCode = params.postalCode;
+        const recipientName = params.recipientName;
         const region = params.region;
+        const script = params.script;
+        const sortingCode = params.sortingCode;
         const street = params.street;
         const street2 = params.street2;
+        const streetName = params.streetName;
         const type = params.type;
+        const validatedAt = params.validatedAt;
+        const validationSource = params.validationSource;
+        const validationStatus = params.validationStatus;
+        const zip = params.zip;
 
-        if (typeof city === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "city"');
-        }
-        if (typeof country === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "country"');
-        }
-        if (typeof zip === 'undefined') {
-            throw new RevenexxException('Missing required parameter: "zip"');
-        }
 
         const apiPath = '/v1/customers/addresses';
         const apiPayload: Payload = {};
+        if (typeof addressLine1 !== 'undefined') {
+            apiPayload['address_line1'] = addressLine1;
+        }
+        if (typeof addressLine2 !== 'undefined') {
+            apiPayload['address_line2'] = addressLine2;
+        }
+        if (typeof addressLine3 !== 'undefined') {
+            apiPayload['address_line3'] = addressLine3;
+        }
+        if (typeof administrativeAreaCode !== 'undefined') {
+            apiPayload['administrative_area_code'] = administrativeAreaCode;
+        }
+        if (typeof administrativeAreaName !== 'undefined') {
+            apiPayload['administrative_area_name'] = administrativeAreaName;
+        }
+        if (typeof careOf !== 'undefined') {
+            apiPayload['care_of'] = careOf;
+        }
         if (typeof city !== 'undefined') {
             apiPayload['city'] = city;
         }
@@ -330,14 +625,44 @@ export class CustomersOrganizations {
         if (typeof country !== 'undefined') {
             apiPayload['country'] = country;
         }
+        if (typeof countryCode !== 'undefined') {
+            apiPayload['country_code'] = countryCode;
+        }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
+        }
+        if (typeof deliveryPointId !== 'undefined') {
+            apiPayload['delivery_point_id'] = deliveryPointId;
+        }
+        if (typeof deliveryPointType !== 'undefined') {
+            apiPayload['delivery_point_type'] = deliveryPointType;
+        }
+        if (typeof dependentLocality !== 'undefined') {
+            apiPayload['dependent_locality'] = dependentLocality;
+        }
+        if (typeof email !== 'undefined') {
+            apiPayload['email'] = email;
         }
         if (typeof externalId !== 'undefined') {
             apiPayload['external_id'] = externalId;
         }
+        if (typeof houseNumber !== 'undefined') {
+            apiPayload['house_number'] = houseNumber;
+        }
+        if (typeof houseNumberAddition !== 'undefined') {
+            apiPayload['house_number_addition'] = houseNumberAddition;
+        }
         if (typeof isDefault !== 'undefined') {
             apiPayload['is_default'] = isDefault;
+        }
+        if (typeof languageCode !== 'undefined') {
+            apiPayload['language_code'] = languageCode;
+        }
+        if (typeof latin !== 'undefined') {
+            apiPayload['latin'] = latin;
+        }
+        if (typeof locality !== 'undefined') {
+            apiPayload['locality'] = locality;
         }
         if (typeof name !== 'undefined') {
             apiPayload['name'] = name;
@@ -348,11 +673,26 @@ export class CustomersOrganizations {
         if (typeof organizationId !== 'undefined') {
             apiPayload['organization_id'] = organizationId;
         }
+        if (typeof organizationName !== 'undefined') {
+            apiPayload['organization_name'] = organizationName;
+        }
         if (typeof phone !== 'undefined') {
             apiPayload['phone'] = phone;
         }
+        if (typeof postalCode !== 'undefined') {
+            apiPayload['postal_code'] = postalCode;
+        }
+        if (typeof recipientName !== 'undefined') {
+            apiPayload['recipient_name'] = recipientName;
+        }
         if (typeof region !== 'undefined') {
             apiPayload['region'] = region;
+        }
+        if (typeof script !== 'undefined') {
+            apiPayload['script'] = script;
+        }
+        if (typeof sortingCode !== 'undefined') {
+            apiPayload['sorting_code'] = sortingCode;
         }
         if (typeof street !== 'undefined') {
             apiPayload['street'] = street;
@@ -360,8 +700,20 @@ export class CustomersOrganizations {
         if (typeof street2 !== 'undefined') {
             apiPayload['street2'] = street2;
         }
+        if (typeof streetName !== 'undefined') {
+            apiPayload['street_name'] = streetName;
+        }
         if (typeof type !== 'undefined') {
             apiPayload['type'] = type;
+        }
+        if (typeof validatedAt !== 'undefined') {
+            apiPayload['validated_at'] = validatedAt;
+        }
+        if (typeof validationSource !== 'undefined') {
+            apiPayload['validation_source'] = validationSource;
+        }
+        if (typeof validationStatus !== 'undefined') {
+            apiPayload['validation_status'] = validationStatus;
         }
         if (typeof zip !== 'undefined') {
             apiPayload['zip'] = zip;
@@ -486,93 +838,193 @@ export class CustomersOrganizations {
      * A postal address used for billing or for shipping, owned by exactly one of the two parties: an organization (the company address everyone in it may use) or a contact (a private one only that person uses). Both owner columns are nullable and exactly one is set — sending both, or neither, is refused. A partial update — send only what changes. An empty body is refused rather than answered as a no-op, so a client that built the wrong patch finds out. Two rows of this tenant may not share `external_id` (while external_id IS NOT NULL).
      *
      * @param {string} params.id - The address to update.
-     * @param {string} params.city - City or town.
+     * @param {string} params.addressLine1 - The address type's name for `street`. A body that carries any of the type's names is read in them alone: `street` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.addressLine2 - The address type's name for `street2`. A body that carries any of the type's names is read in them alone: `street2` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.addressLine3 - The third address line, where a country prints one. Null when there is none.
+     * @param {string} params.administrativeAreaCode - The region as an ISO 3166-2 code (`US-CA`, `BR-SP`) — what shipping and tax read. Checked against the country's list where it has one. An address stored before the code existed answers the code its `region` names, when the country lists it.
+     * @param {string} params.administrativeAreaName - The address type's name for `region`. A body that carries any of the type's names is read in them alone: `region` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.careOf - The address type's name for `name2`. A body that carries any of the type's names is read in them alone: `name2` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.city - City or town. Null only where the country's rules do not ask for one. The address type calls it `locality`.
      * @param {string} params.company - Company line on the label. Often the owning organization's name, but not always — a delivery to a construction site carries the site.
      * @param {string} params.contactId - Owning person — a personal address only that contact uses. Exactly one of organization_id / contact_id is set.
-     * @param {string} params.country - ISO 3166-1 alpha-2 country code, exactly two letters. Uppercase by convention; it is what shipping and tax both key off.
+     * @param {string} params.country - ISO 3166-1 alpha-2 country code, exactly two letters. Uppercase by convention; it is what shipping and tax both key off. The address type calls it `country_code`.
+     * @param {string} params.countryCode - The address type's name for `country`. A body that carries any of the type's names is read in them alone: `country` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.deliveryPointId - The number of that delivery point: the Packstation, the PO box.
+     * @param {DeliveryPointType} params.deliveryPointType - What kind of place receives the delivery: a street address, a Packstation, a post office, a PO box, a military post. Null when nobody said.
+     * @param {string} params.dependentLocality - The district within the town that a country prints: a bairro in Brazil, a colonia in Mexico, a dong in Korea.
+     * @param {string} params.email - A mail address for the delivery to this address — tracking, a carrier's notice. Optional, checked as an email, stored trimmed with its domain in lower case; never printed on the label. Where a DOCUMENT is sent is a contact point, not this.
      * @param {string} params.externalId - Id of this address in the system it came from — an ERP address number. Nullable and unique per tenant where it is set. It is also the id a line-based order export has to hand back, because the receiving system names a delivery or invoice address by it rather than by its street. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
+     * @param {string} params.houseNumber - The house number on its own, beside `street_name`.
+     * @param {string} params.houseNumberAddition - What follows the house number: a letter, a stairway, an apartment.
      * @param {boolean} params.isDefault - The default address of its owner AND type: one default billing and one default shipping address per owner. Setting it moves the flag off the previous holder. Default false.
+     * @param {string} params.languageCode - The language the address is written in (BCP 47), where a country prints more than one.
+     * @param {object} params.latin - The same address in Latin script, for an address written in another one: the same keys as the address type, none of them required. Null for an address in Latin script.
+     * @param {string} params.locality - The address type's name for `city`. A body that carries any of the type's names is read in them alone: `city` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
      * @param {string} params.name - Recipient line on the label — the person or department the parcel is addressed to.
      * @param {string} params.name2 - The second recipient line: a department beneath a person, an attention line, a c/o. What `street2` is for the street, this is for the recipient — and it is a line of its own rather than more text in `name`, because a label prints two lines and an ERP delivers two fields. Null when there is none.
      * @param {string} params.organizationId - Owning company — a company address, shared by everyone in it. Exactly one of organization_id / contact_id is set.
+     * @param {string} params.organizationName - The address type's name for `company`. A body that carries any of the type's names is read in them alone: `company` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
      * @param {string} params.phone - Phone number for the carrier to reach at this address — often a different one from the contact's own.
-     * @param {string} params.region - State, province or Bundesland. Required by some destinations (US, CA), unused by most European ones.
+     * @param {string} params.postalCode - The address type's name for `zip`. A body that carries any of the type's names is read in them alone: `zip` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.recipientName - The address type's name for `name`. A body that carries any of the type's names is read in them alone: `name` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} params.region - State, province or Bundesland, as written. Required by some destinations (US, CA, BR, IT, ES, JP, CN, IN), unused by most European ones. The address type calls it `administrative_area_name`; its ISO 3166-2 code is `administrative_area_code`.
+     * @param {string} params.script - The script the address is written in (ISO 15924), where it is not Latin.
+     * @param {string} params.sortingCode - A sorting code the post adds after the town — France's CEDEX.
      * @param {string} params.street - Street and house number, on one line, as the local post expects it. OPTIONAL, because a deliverable address does not always have one: a German PO box is addressed by its number, its postcode and its town, and an ERP that holds thousands of them would otherwise have every one of them refused. The postcode and the town stay required — a PO box has both.
      * @param {string} params.street2 - The second address line: building, floor, gate, c/o. Null when there is none.
+     * @param {string} params.streetName - The street on its own, beside `street`, for a system that keeps the house number apart. Not printed: the label prints `street`.
      * @param {string} params.type - What the address is FOR — one of the tenant's own address types (GET /customers/address-types), seeded with billing and shipping. A merchant may add their own (a works entrance, a central accounts office) without a release of this app. A create without it gets the type flagged as default; a type the tenant does not keep is a 400.
-     * @param {string} params.zip - Postal code, as text — leading zeros are real in most countries.
+     * @param {string} params.validatedAt - When the address was last verified. Null until it is. An edit of the address that carries no new one clears it.
+     * @param {string} params.validationSource - Who verified it — the provider a verifier used.
+     * @param {ValidationStatus} params.validationStatus - Whether a verifier has checked the address against the post's own data: 'unchecked' until one has, then 'valid', 'corrected' or 'suspect'. An edit of the address that carries no new verification sets it back to 'unchecked'. A buyer cannot set it.
+     * @param {string} params.zip - Postal code, as text — leading zeros are real in most countries. Stored as the country prints it (trimmed, one inner space, upper case). Null where the country has none (Hong Kong, the UAE); whether one is needed is the country's rule (GET /customers/address-format/{country}). The address type calls it `postal_code`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Address>}
      */
-    customersAddressesUpdate(params: { id: string, city?: string, company?: string, contactId?: string, country?: string, externalId?: string, isDefault?: boolean, name?: string, name2?: string, organizationId?: string, phone?: string, region?: string, street?: string, street2?: string, type?: string, zip?: string }): Promise<Models.Address>;
+    customersAddressesUpdate(params: { id: string, addressLine1?: string, addressLine2?: string, addressLine3?: string, administrativeAreaCode?: string, administrativeAreaName?: string, careOf?: string, city?: string, company?: string, contactId?: string, country?: string, countryCode?: string, deliveryPointId?: string, deliveryPointType?: DeliveryPointType, dependentLocality?: string, email?: string, externalId?: string, houseNumber?: string, houseNumberAddition?: string, isDefault?: boolean, languageCode?: string, latin?: object, locality?: string, name?: string, name2?: string, organizationId?: string, organizationName?: string, phone?: string, postalCode?: string, recipientName?: string, region?: string, script?: string, sortingCode?: string, street?: string, street2?: string, streetName?: string, type?: string, validatedAt?: string, validationSource?: string, validationStatus?: ValidationStatus, zip?: string }): Promise<Models.Address>;
     /**
      * A postal address used for billing or for shipping, owned by exactly one of the two parties: an organization (the company address everyone in it may use) or a contact (a private one only that person uses). Both owner columns are nullable and exactly one is set — sending both, or neither, is refused. A partial update — send only what changes. An empty body is refused rather than answered as a no-op, so a client that built the wrong patch finds out. Two rows of this tenant may not share `external_id` (while external_id IS NOT NULL).
      *
      * @param {string} id - The address to update.
-     * @param {string} city - City or town.
+     * @param {string} addressLine1 - The address type's name for `street`. A body that carries any of the type's names is read in them alone: `street` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} addressLine2 - The address type's name for `street2`. A body that carries any of the type's names is read in them alone: `street2` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} addressLine3 - The third address line, where a country prints one. Null when there is none.
+     * @param {string} administrativeAreaCode - The region as an ISO 3166-2 code (`US-CA`, `BR-SP`) — what shipping and tax read. Checked against the country's list where it has one. An address stored before the code existed answers the code its `region` names, when the country lists it.
+     * @param {string} administrativeAreaName - The address type's name for `region`. A body that carries any of the type's names is read in them alone: `region` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} careOf - The address type's name for `name2`. A body that carries any of the type's names is read in them alone: `name2` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} city - City or town. Null only where the country's rules do not ask for one. The address type calls it `locality`.
      * @param {string} company - Company line on the label. Often the owning organization's name, but not always — a delivery to a construction site carries the site.
      * @param {string} contactId - Owning person — a personal address only that contact uses. Exactly one of organization_id / contact_id is set.
-     * @param {string} country - ISO 3166-1 alpha-2 country code, exactly two letters. Uppercase by convention; it is what shipping and tax both key off.
+     * @param {string} country - ISO 3166-1 alpha-2 country code, exactly two letters. Uppercase by convention; it is what shipping and tax both key off. The address type calls it `country_code`.
+     * @param {string} countryCode - The address type's name for `country`. A body that carries any of the type's names is read in them alone: `country` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} deliveryPointId - The number of that delivery point: the Packstation, the PO box.
+     * @param {DeliveryPointType} deliveryPointType - What kind of place receives the delivery: a street address, a Packstation, a post office, a PO box, a military post. Null when nobody said.
+     * @param {string} dependentLocality - The district within the town that a country prints: a bairro in Brazil, a colonia in Mexico, a dong in Korea.
+     * @param {string} email - A mail address for the delivery to this address — tracking, a carrier's notice. Optional, checked as an email, stored trimmed with its domain in lower case; never printed on the label. Where a DOCUMENT is sent is a contact point, not this.
      * @param {string} externalId - Id of this address in the system it came from — an ERP address number. Nullable and unique per tenant where it is set. It is also the id a line-based order export has to hand back, because the receiving system names a delivery or invoice address by it rather than by its street. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
+     * @param {string} houseNumber - The house number on its own, beside `street_name`.
+     * @param {string} houseNumberAddition - What follows the house number: a letter, a stairway, an apartment.
      * @param {boolean} isDefault - The default address of its owner AND type: one default billing and one default shipping address per owner. Setting it moves the flag off the previous holder. Default false.
+     * @param {string} languageCode - The language the address is written in (BCP 47), where a country prints more than one.
+     * @param {object} latin - The same address in Latin script, for an address written in another one: the same keys as the address type, none of them required. Null for an address in Latin script.
+     * @param {string} locality - The address type's name for `city`. A body that carries any of the type's names is read in them alone: `city` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
      * @param {string} name - Recipient line on the label — the person or department the parcel is addressed to.
      * @param {string} name2 - The second recipient line: a department beneath a person, an attention line, a c/o. What `street2` is for the street, this is for the recipient — and it is a line of its own rather than more text in `name`, because a label prints two lines and an ERP delivers two fields. Null when there is none.
      * @param {string} organizationId - Owning company — a company address, shared by everyone in it. Exactly one of organization_id / contact_id is set.
+     * @param {string} organizationName - The address type's name for `company`. A body that carries any of the type's names is read in them alone: `company` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
      * @param {string} phone - Phone number for the carrier to reach at this address — often a different one from the contact's own.
-     * @param {string} region - State, province or Bundesland. Required by some destinations (US, CA), unused by most European ones.
+     * @param {string} postalCode - The address type's name for `zip`. A body that carries any of the type's names is read in them alone: `zip` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} recipientName - The address type's name for `name`. A body that carries any of the type's names is read in them alone: `name` beside it is ignored, as are the storefront's camelCase spellings, so a record read and sent back saves unchanged.
+     * @param {string} region - State, province or Bundesland, as written. Required by some destinations (US, CA, BR, IT, ES, JP, CN, IN), unused by most European ones. The address type calls it `administrative_area_name`; its ISO 3166-2 code is `administrative_area_code`.
+     * @param {string} script - The script the address is written in (ISO 15924), where it is not Latin.
+     * @param {string} sortingCode - A sorting code the post adds after the town — France's CEDEX.
      * @param {string} street - Street and house number, on one line, as the local post expects it. OPTIONAL, because a deliverable address does not always have one: a German PO box is addressed by its number, its postcode and its town, and an ERP that holds thousands of them would otherwise have every one of them refused. The postcode and the town stay required — a PO box has both.
      * @param {string} street2 - The second address line: building, floor, gate, c/o. Null when there is none.
+     * @param {string} streetName - The street on its own, beside `street`, for a system that keeps the house number apart. Not printed: the label prints `street`.
      * @param {string} type - What the address is FOR — one of the tenant's own address types (GET /customers/address-types), seeded with billing and shipping. A merchant may add their own (a works entrance, a central accounts office) without a release of this app. A create without it gets the type flagged as default; a type the tenant does not keep is a 400.
-     * @param {string} zip - Postal code, as text — leading zeros are real in most countries.
+     * @param {string} validatedAt - When the address was last verified. Null until it is. An edit of the address that carries no new one clears it.
+     * @param {string} validationSource - Who verified it — the provider a verifier used.
+     * @param {ValidationStatus} validationStatus - Whether a verifier has checked the address against the post's own data: 'unchecked' until one has, then 'valid', 'corrected' or 'suspect'. An edit of the address that carries no new verification sets it back to 'unchecked'. A buyer cannot set it.
+     * @param {string} zip - Postal code, as text — leading zeros are real in most countries. Stored as the country prints it (trimmed, one inner space, upper case). Null where the country has none (Hong Kong, the UAE); whether one is needed is the country's rule (GET /customers/address-format/{country}). The address type calls it `postal_code`.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Address>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAddressesUpdate(id: string, city?: string, company?: string, contactId?: string, country?: string, externalId?: string, isDefault?: boolean, name?: string, name2?: string, organizationId?: string, phone?: string, region?: string, street?: string, street2?: string, type?: string, zip?: string): Promise<Models.Address>;
+    customersAddressesUpdate(id: string, addressLine1?: string, addressLine2?: string, addressLine3?: string, administrativeAreaCode?: string, administrativeAreaName?: string, careOf?: string, city?: string, company?: string, contactId?: string, country?: string, countryCode?: string, deliveryPointId?: string, deliveryPointType?: DeliveryPointType, dependentLocality?: string, email?: string, externalId?: string, houseNumber?: string, houseNumberAddition?: string, isDefault?: boolean, languageCode?: string, latin?: object, locality?: string, name?: string, name2?: string, organizationId?: string, organizationName?: string, phone?: string, postalCode?: string, recipientName?: string, region?: string, script?: string, sortingCode?: string, street?: string, street2?: string, streetName?: string, type?: string, validatedAt?: string, validationSource?: string, validationStatus?: ValidationStatus, zip?: string): Promise<Models.Address>;
     customersAddressesUpdate(
-        paramsOrFirst: { id: string, city?: string, company?: string, contactId?: string, country?: string, externalId?: string, isDefault?: boolean, name?: string, name2?: string, organizationId?: string, phone?: string, region?: string, street?: string, street2?: string, type?: string, zip?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst: { id: string, addressLine1?: string, addressLine2?: string, addressLine3?: string, administrativeAreaCode?: string, administrativeAreaName?: string, careOf?: string, city?: string, company?: string, contactId?: string, country?: string, countryCode?: string, deliveryPointId?: string, deliveryPointType?: DeliveryPointType, dependentLocality?: string, email?: string, externalId?: string, houseNumber?: string, houseNumberAddition?: string, isDefault?: boolean, languageCode?: string, latin?: object, locality?: string, name?: string, name2?: string, organizationId?: string, organizationName?: string, phone?: string, postalCode?: string, recipientName?: string, region?: string, script?: string, sortingCode?: string, street?: string, street2?: string, streetName?: string, type?: string, validatedAt?: string, validationSource?: string, validationStatus?: ValidationStatus, zip?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (DeliveryPointType)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (object)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (ValidationStatus)?, (string)?]    
     ): Promise<Models.Address> {
-        let params: { id: string, city?: string, company?: string, contactId?: string, country?: string, externalId?: string, isDefault?: boolean, name?: string, name2?: string, organizationId?: string, phone?: string, region?: string, street?: string, street2?: string, type?: string, zip?: string };
+        let params: { id: string, addressLine1?: string, addressLine2?: string, addressLine3?: string, administrativeAreaCode?: string, administrativeAreaName?: string, careOf?: string, city?: string, company?: string, contactId?: string, country?: string, countryCode?: string, deliveryPointId?: string, deliveryPointType?: DeliveryPointType, dependentLocality?: string, email?: string, externalId?: string, houseNumber?: string, houseNumberAddition?: string, isDefault?: boolean, languageCode?: string, latin?: object, locality?: string, name?: string, name2?: string, organizationId?: string, organizationName?: string, phone?: string, postalCode?: string, recipientName?: string, region?: string, script?: string, sortingCode?: string, street?: string, street2?: string, streetName?: string, type?: string, validatedAt?: string, validationSource?: string, validationStatus?: ValidationStatus, zip?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, city?: string, company?: string, contactId?: string, country?: string, externalId?: string, isDefault?: boolean, name?: string, name2?: string, organizationId?: string, phone?: string, region?: string, street?: string, street2?: string, type?: string, zip?: string };
+            params = (paramsOrFirst || {}) as { id: string, addressLine1?: string, addressLine2?: string, addressLine3?: string, administrativeAreaCode?: string, administrativeAreaName?: string, careOf?: string, city?: string, company?: string, contactId?: string, country?: string, countryCode?: string, deliveryPointId?: string, deliveryPointType?: DeliveryPointType, dependentLocality?: string, email?: string, externalId?: string, houseNumber?: string, houseNumberAddition?: string, isDefault?: boolean, languageCode?: string, latin?: object, locality?: string, name?: string, name2?: string, organizationId?: string, organizationName?: string, phone?: string, postalCode?: string, recipientName?: string, region?: string, script?: string, sortingCode?: string, street?: string, street2?: string, streetName?: string, type?: string, validatedAt?: string, validationSource?: string, validationStatus?: ValidationStatus, zip?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                city: rest[0] as string,
-                company: rest[1] as string,
-                contactId: rest[2] as string,
-                country: rest[3] as string,
-                externalId: rest[4] as string,
-                isDefault: rest[5] as boolean,
-                name: rest[6] as string,
-                name2: rest[7] as string,
-                organizationId: rest[8] as string,
-                phone: rest[9] as string,
-                region: rest[10] as string,
-                street: rest[11] as string,
-                street2: rest[12] as string,
-                type: rest[13] as string,
-                zip: rest[14] as string            
+                addressLine1: rest[0] as string,
+                addressLine2: rest[1] as string,
+                addressLine3: rest[2] as string,
+                administrativeAreaCode: rest[3] as string,
+                administrativeAreaName: rest[4] as string,
+                careOf: rest[5] as string,
+                city: rest[6] as string,
+                company: rest[7] as string,
+                contactId: rest[8] as string,
+                country: rest[9] as string,
+                countryCode: rest[10] as string,
+                deliveryPointId: rest[11] as string,
+                deliveryPointType: rest[12] as DeliveryPointType,
+                dependentLocality: rest[13] as string,
+                email: rest[14] as string,
+                externalId: rest[15] as string,
+                houseNumber: rest[16] as string,
+                houseNumberAddition: rest[17] as string,
+                isDefault: rest[18] as boolean,
+                languageCode: rest[19] as string,
+                latin: rest[20] as object,
+                locality: rest[21] as string,
+                name: rest[22] as string,
+                name2: rest[23] as string,
+                organizationId: rest[24] as string,
+                organizationName: rest[25] as string,
+                phone: rest[26] as string,
+                postalCode: rest[27] as string,
+                recipientName: rest[28] as string,
+                region: rest[29] as string,
+                script: rest[30] as string,
+                sortingCode: rest[31] as string,
+                street: rest[32] as string,
+                street2: rest[33] as string,
+                streetName: rest[34] as string,
+                type: rest[35] as string,
+                validatedAt: rest[36] as string,
+                validationSource: rest[37] as string,
+                validationStatus: rest[38] as ValidationStatus,
+                zip: rest[39] as string            
             };
         }
         
         const id = params.id;
+        const addressLine1 = params.addressLine1;
+        const addressLine2 = params.addressLine2;
+        const addressLine3 = params.addressLine3;
+        const administrativeAreaCode = params.administrativeAreaCode;
+        const administrativeAreaName = params.administrativeAreaName;
+        const careOf = params.careOf;
         const city = params.city;
         const company = params.company;
         const contactId = params.contactId;
         const country = params.country;
+        const countryCode = params.countryCode;
+        const deliveryPointId = params.deliveryPointId;
+        const deliveryPointType = params.deliveryPointType;
+        const dependentLocality = params.dependentLocality;
+        const email = params.email;
         const externalId = params.externalId;
+        const houseNumber = params.houseNumber;
+        const houseNumberAddition = params.houseNumberAddition;
         const isDefault = params.isDefault;
+        const languageCode = params.languageCode;
+        const latin = params.latin;
+        const locality = params.locality;
         const name = params.name;
         const name2 = params.name2;
         const organizationId = params.organizationId;
+        const organizationName = params.organizationName;
         const phone = params.phone;
+        const postalCode = params.postalCode;
+        const recipientName = params.recipientName;
         const region = params.region;
+        const script = params.script;
+        const sortingCode = params.sortingCode;
         const street = params.street;
         const street2 = params.street2;
+        const streetName = params.streetName;
         const type = params.type;
+        const validatedAt = params.validatedAt;
+        const validationSource = params.validationSource;
+        const validationStatus = params.validationStatus;
         const zip = params.zip;
 
         if (typeof id === 'undefined') {
@@ -581,6 +1033,24 @@ export class CustomersOrganizations {
 
         const apiPath = '/v1/customers/addresses/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof addressLine1 !== 'undefined') {
+            apiPayload['address_line1'] = addressLine1;
+        }
+        if (typeof addressLine2 !== 'undefined') {
+            apiPayload['address_line2'] = addressLine2;
+        }
+        if (typeof addressLine3 !== 'undefined') {
+            apiPayload['address_line3'] = addressLine3;
+        }
+        if (typeof administrativeAreaCode !== 'undefined') {
+            apiPayload['administrative_area_code'] = administrativeAreaCode;
+        }
+        if (typeof administrativeAreaName !== 'undefined') {
+            apiPayload['administrative_area_name'] = administrativeAreaName;
+        }
+        if (typeof careOf !== 'undefined') {
+            apiPayload['care_of'] = careOf;
+        }
         if (typeof city !== 'undefined') {
             apiPayload['city'] = city;
         }
@@ -593,11 +1063,41 @@ export class CustomersOrganizations {
         if (typeof country !== 'undefined') {
             apiPayload['country'] = country;
         }
+        if (typeof countryCode !== 'undefined') {
+            apiPayload['country_code'] = countryCode;
+        }
+        if (typeof deliveryPointId !== 'undefined') {
+            apiPayload['delivery_point_id'] = deliveryPointId;
+        }
+        if (typeof deliveryPointType !== 'undefined') {
+            apiPayload['delivery_point_type'] = deliveryPointType;
+        }
+        if (typeof dependentLocality !== 'undefined') {
+            apiPayload['dependent_locality'] = dependentLocality;
+        }
+        if (typeof email !== 'undefined') {
+            apiPayload['email'] = email;
+        }
         if (typeof externalId !== 'undefined') {
             apiPayload['external_id'] = externalId;
         }
+        if (typeof houseNumber !== 'undefined') {
+            apiPayload['house_number'] = houseNumber;
+        }
+        if (typeof houseNumberAddition !== 'undefined') {
+            apiPayload['house_number_addition'] = houseNumberAddition;
+        }
         if (typeof isDefault !== 'undefined') {
             apiPayload['is_default'] = isDefault;
+        }
+        if (typeof languageCode !== 'undefined') {
+            apiPayload['language_code'] = languageCode;
+        }
+        if (typeof latin !== 'undefined') {
+            apiPayload['latin'] = latin;
+        }
+        if (typeof locality !== 'undefined') {
+            apiPayload['locality'] = locality;
         }
         if (typeof name !== 'undefined') {
             apiPayload['name'] = name;
@@ -608,11 +1108,26 @@ export class CustomersOrganizations {
         if (typeof organizationId !== 'undefined') {
             apiPayload['organization_id'] = organizationId;
         }
+        if (typeof organizationName !== 'undefined') {
+            apiPayload['organization_name'] = organizationName;
+        }
         if (typeof phone !== 'undefined') {
             apiPayload['phone'] = phone;
         }
+        if (typeof postalCode !== 'undefined') {
+            apiPayload['postal_code'] = postalCode;
+        }
+        if (typeof recipientName !== 'undefined') {
+            apiPayload['recipient_name'] = recipientName;
+        }
         if (typeof region !== 'undefined') {
             apiPayload['region'] = region;
+        }
+        if (typeof script !== 'undefined') {
+            apiPayload['script'] = script;
+        }
+        if (typeof sortingCode !== 'undefined') {
+            apiPayload['sorting_code'] = sortingCode;
         }
         if (typeof street !== 'undefined') {
             apiPayload['street'] = street;
@@ -620,8 +1135,20 @@ export class CustomersOrganizations {
         if (typeof street2 !== 'undefined') {
             apiPayload['street2'] = street2;
         }
+        if (typeof streetName !== 'undefined') {
+            apiPayload['street_name'] = streetName;
+        }
         if (typeof type !== 'undefined') {
             apiPayload['type'] = type;
+        }
+        if (typeof validatedAt !== 'undefined') {
+            apiPayload['validated_at'] = validatedAt;
+        }
+        if (typeof validationSource !== 'undefined') {
+            apiPayload['validation_source'] = validationSource;
+        }
+        if (typeof validationStatus !== 'undefined') {
+            apiPayload['validation_status'] = validationStatus;
         }
         if (typeof zip !== 'undefined') {
             apiPayload['zip'] = zip;
@@ -641,13 +1168,13 @@ export class CustomersOrganizations {
     }
 
     /**
-     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — `addresses` carries a `phone` column and has never had an `email` one — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. Every contact point this tenant holds, filtered by `organization_id` for one company, by `kind` for one kind of document, by `is_primary` for the ones actually in use. `?organization_id=…&kind=invoice&is_primary=true` is the single read behind "where does this company's invoice go" — and it answers at most one row, because this app keeps the flag single. The page is `limit`/`offset`/`order`.
+     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — the `email` of an address is the delivery's, not a document's — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. Every contact point this tenant holds, filtered by `organization_id` for one company, by `kind` for one kind of document, by `is_primary` for the ones actually in use. `?organization_id=…&kind=invoice&is_primary=true` is the single read behind "where does this company's invoice go" — and it answers at most one row, because this app keeps the flag single. The page is `limit`/`offset`/`order`.
      *
      * @param {string} params.id - Filter to rows whose `id` is exactly this value. Primary key of the contact point.
      * @param {string} params.organizationId - Filter to one company's document recipients.
      * @param {string} params.addressId - Filter to the points carried on one postal address — the ERP case of a mail address on a delivery address.
      * @param {string} params.kind - Filter by which document goes there. One of the tenant's own document recipient types (GET /customers/contact-point-kinds).
-     * @param {string} params.email - Filter to rows whose `email` is exactly this value. The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that `addresses` has never had a column for this: a mail address per document had nowhere to live before these rows.
+     * @param {string} params.email - Filter to rows whose `email` is exactly this value. The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that the `email` of an address is the delivery's, not a document's: a mail address per document had nowhere to live before these rows.
      * @param {string} params.phone - Filter to rows whose `phone` is exactly this value. The number this document is sent to or announced on — a fax for an order confirmation, a mobile for a delivery notice. Free text, as somebody typed it; E.164 is what an integration should send.
      * @param {boolean} params.isPrimary - Filter to the points actually in use. With `organization_id` and `kind` this answers at most one row, because exactly one point of a kind carries the flag.
      * @param {number} params.position - Filter to rows whose `position` is exactly this value. Where this point sits among the others of its kind, ascending. It orders the ones that are NOT flagged — a fallback list for a caller that wants every invoice recipient rather than the one.
@@ -663,13 +1190,13 @@ export class CustomersOrganizations {
      */
     customersContactPointsList(params?: { id?: string, organizationId?: string, addressId?: string, kind?: string, email?: string, phone?: string, isPrimary?: boolean, position?: number, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
-     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — `addresses` carries a `phone` column and has never had an `email` one — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. Every contact point this tenant holds, filtered by `organization_id` for one company, by `kind` for one kind of document, by `is_primary` for the ones actually in use. `?organization_id=…&kind=invoice&is_primary=true` is the single read behind "where does this company's invoice go" — and it answers at most one row, because this app keeps the flag single. The page is `limit`/`offset`/`order`.
+     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — the `email` of an address is the delivery's, not a document's — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. Every contact point this tenant holds, filtered by `organization_id` for one company, by `kind` for one kind of document, by `is_primary` for the ones actually in use. `?organization_id=…&kind=invoice&is_primary=true` is the single read behind "where does this company's invoice go" — and it answers at most one row, because this app keeps the flag single. The page is `limit`/`offset`/`order`.
      *
      * @param {string} id - Filter to rows whose `id` is exactly this value. Primary key of the contact point.
      * @param {string} organizationId - Filter to one company's document recipients.
      * @param {string} addressId - Filter to the points carried on one postal address — the ERP case of a mail address on a delivery address.
      * @param {string} kind - Filter by which document goes there. One of the tenant's own document recipient types (GET /customers/contact-point-kinds).
-     * @param {string} email - Filter to rows whose `email` is exactly this value. The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that `addresses` has never had a column for this: a mail address per document had nowhere to live before these rows.
+     * @param {string} email - Filter to rows whose `email` is exactly this value. The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that the `email` of an address is the delivery's, not a document's: a mail address per document had nowhere to live before these rows.
      * @param {string} phone - Filter to rows whose `phone` is exactly this value. The number this document is sent to or announced on — a fax for an order confirmation, a mobile for a delivery notice. Free text, as somebody typed it; E.164 is what an integration should send.
      * @param {boolean} isPrimary - Filter to the points actually in use. With `organization_id` and `kind` this answers at most one row, because exactly one point of a kind carries the flag.
      * @param {number} position - Filter to rows whose `position` is exactly this value. Where this point sits among the others of its kind, ascending. It orders the ones that are NOT flagged — a fallback list for a caller that wants every invoice recipient rather than the one.
@@ -791,13 +1318,13 @@ export class CustomersOrganizations {
     }
 
     /**
-     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — `addresses` carries a `phone` column and has never had an `email` one — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. `kind` is required and names one of this tenant's own document recipient types — nothing is defaulted, because a point filed as the wrong document is worse than a point refused. A point needs an `email` or a `phone`, since one with neither delivers nothing. The FIRST point of a kind becomes the one to use on its own; a later one takes over only when it is sent as `is_primary`, which demotes the incumbent in the same call. A create cannot omit `organization_id` and `kind`; everything else is optional or defaulted by the database. Two rows of this tenant may not share the combination of `organization_id` + `kind` (while is_primary) or `external_id` (while external_id IS NOT NULL).
+     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — the `email` of an address is the delivery's, not a document's — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. `kind` is required and names one of this tenant's own document recipient types — nothing is defaulted, because a point filed as the wrong document is worse than a point refused. A point needs an `email` or a `phone`, since one with neither delivers nothing. The FIRST point of a kind becomes the one to use on its own; a later one takes over only when it is sent as `is_primary`, which demotes the incumbent in the same call. A create cannot omit `organization_id` and `kind`; everything else is optional or defaulted by the database. Two rows of this tenant may not share the combination of `organization_id` + `kind` (while is_primary) or `external_id` (while external_id IS NOT NULL).
      *
      * @param {string} params.kind - WHICH document goes here — one of the tenant's own document recipient types (GET /customers/contact-point-kinds), seeded with invoice, order_confirmation, shipping_notice and dunning. Required and never defaulted: a point filed as the wrong document is worse than no point at all, because nothing downstream can tell that nobody chose. A merchant whose ERP mails a credit note separately adds their own type without a release of this app. Required on create, and nothing is defaulted: a kind the tenant does not keep is a 400 naming the ones on offer.
      * @param {string} params.organizationId - The company whose document this is. Required — a contact point with no company is an address for nobody, and deleting the company takes its points with it. Fixed once created — the flag that says which point of a kind to use is scoped by the company, so moving a point would move an invariant with it.
      * @param {string} params.addressId - The postal address this point belongs to, for the one case an ERP has it: a mail address carried ON a delivery address, so the notice about a shipment goes to whoever receives it there. Null is the ordinary case and means the point is the company's rather than one address's. It has to be an address of the same company (or of one of its people), and deleting the address takes the point with it.
      * @param {string} params.createdAt - When the point was created. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
-     * @param {string} params.email - The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that `addresses` has never had a column for this: a mail address per document had nowhere to live before these rows.
+     * @param {string} params.email - The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that the `email` of an address is the delivery's, not a document's: a mail address per document had nowhere to live before these rows.
      * @param {string} params.externalId - The key this point has in the system that owns it — an ERP's own id for a document sending address. Unique per tenant where set, so a repeated import updates this row instead of adding a second one. Null for a point somebody typed in here. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
      * @param {boolean} params.isPrimary - The point THIS kind of document actually goes to. Exactly one point per company and kind carries it: the first point of a kind is flagged as it is created, flagging another demotes the incumbent, and it is never simply switched off — so the question has one answer while the kind has any point at all, and none only when it has none. The first point of a kind gets it on its own. Sending true on a later one demotes the incumbent in the same call; sending false on the one that holds it is refused — flag the point that should take over instead.
      * @param {string} params.phone - The number this document is sent to or announced on — a fax for an order confirmation, a mobile for a delivery notice. Free text, as somebody typed it; E.164 is what an integration should send.
@@ -807,13 +1334,13 @@ export class CustomersOrganizations {
      */
     customersContactPointsCreate(params: { kind: string, organizationId: string, addressId?: string, createdAt?: string, email?: string, externalId?: string, isPrimary?: boolean, phone?: string, position?: number }): Promise<Models.ContactPoint>;
     /**
-     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — `addresses` carries a `phone` column and has never had an `email` one — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. `kind` is required and names one of this tenant's own document recipient types — nothing is defaulted, because a point filed as the wrong document is worse than a point refused. A point needs an `email` or a `phone`, since one with neither delivers nothing. The FIRST point of a kind becomes the one to use on its own; a later one takes over only when it is sent as `is_primary`, which demotes the incumbent in the same call. A create cannot omit `organization_id` and `kind`; everything else is optional or defaulted by the database. Two rows of this tenant may not share the combination of `organization_id` + `kind` (while is_primary) or `external_id` (while external_id IS NOT NULL).
+     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — the `email` of an address is the delivery's, not a document's — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. `kind` is required and names one of this tenant's own document recipient types — nothing is defaulted, because a point filed as the wrong document is worse than a point refused. A point needs an `email` or a `phone`, since one with neither delivers nothing. The FIRST point of a kind becomes the one to use on its own; a later one takes over only when it is sent as `is_primary`, which demotes the incumbent in the same call. A create cannot omit `organization_id` and `kind`; everything else is optional or defaulted by the database. Two rows of this tenant may not share the combination of `organization_id` + `kind` (while is_primary) or `external_id` (while external_id IS NOT NULL).
      *
      * @param {string} kind - WHICH document goes here — one of the tenant's own document recipient types (GET /customers/contact-point-kinds), seeded with invoice, order_confirmation, shipping_notice and dunning. Required and never defaulted: a point filed as the wrong document is worse than no point at all, because nothing downstream can tell that nobody chose. A merchant whose ERP mails a credit note separately adds their own type without a release of this app. Required on create, and nothing is defaulted: a kind the tenant does not keep is a 400 naming the ones on offer.
      * @param {string} organizationId - The company whose document this is. Required — a contact point with no company is an address for nobody, and deleting the company takes its points with it. Fixed once created — the flag that says which point of a kind to use is scoped by the company, so moving a point would move an invariant with it.
      * @param {string} addressId - The postal address this point belongs to, for the one case an ERP has it: a mail address carried ON a delivery address, so the notice about a shipment goes to whoever receives it there. Null is the ordinary case and means the point is the company's rather than one address's. It has to be an address of the same company (or of one of its people), and deleting the address takes the point with it.
      * @param {string} createdAt - When the point was created. Accepted on create only from a call naming no acting contact — an operator, an import, an ERP carrying a record over with its original date. A buyer sending it, or any update changing it, is a 400 `server_owned_field`.
-     * @param {string} email - The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that `addresses` has never had a column for this: a mail address per document had nowhere to live before these rows.
+     * @param {string} email - The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that the `email` of an address is the delivery's, not a document's: a mail address per document had nowhere to live before these rows.
      * @param {string} externalId - The key this point has in the system that owns it — an ERP's own id for a document sending address. Unique per tenant where set, so a repeated import updates this row instead of adding a second one. Null for a point somebody typed in here. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
      * @param {boolean} isPrimary - The point THIS kind of document actually goes to. Exactly one point per company and kind carries it: the first point of a kind is flagged as it is created, flagging another demotes the incumbent, and it is never simply switched off — so the question has one answer while the kind has any point at all, and none only when it has none. The first point of a kind gets it on its own. Sending true on a later one demotes the incumbent in the same call; sending false on the one that holds it is refused — flag the point that should take over instead.
      * @param {string} phone - The number this document is sent to or announced on — a fax for an order confirmation, a mobile for a delivery notice. Free text, as somebody typed it; E.164 is what an integration should send.
@@ -906,7 +1433,7 @@ export class CustomersOrganizations {
     }
 
     /**
-     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — `addresses` carries a `phone` column and has never had an `email` one — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. Removes the point. If it was the flagged one, the next point of that kind takes over — so the kind keeps an answer for as long as it has any point at all, and the company is left with none only once the last one goes. Nothing else in this app points at it, so nothing else goes with it.
+     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — the `email` of an address is the delivery's, not a document's — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. Removes the point. If it was the flagged one, the next point of that kind takes over — so the kind keeps an answer for as long as it has any point at all, and the company is left with none only once the last one goes. Nothing else in this app points at it, so nothing else goes with it.
      *
      * @param {string} params.id - The contact point to delete.
      * @throws {RevenexxException}
@@ -914,7 +1441,7 @@ export class CustomersOrganizations {
      */
     customersContactPointsDelete(params: { id: string }): Promise<{}>;
     /**
-     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — `addresses` carries a `phone` column and has never had an `email` one — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. Removes the point. If it was the flagged one, the next point of that kind takes over — so the kind keeps an answer for as long as it has any point at all, and the company is left with none only once the last one goes. Nothing else in this app points at it, so nothing else goes with it.
+     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — the `email` of an address is the delivery's, not a document's — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. Removes the point. If it was the flagged one, the next point of that kind takes over — so the kind keeps an answer for as long as it has any point at all, and the company is left with none only once the last one goes. Nothing else in this app points at it, so nothing else goes with it.
      *
      * @param {string} id - The contact point to delete.
      * @throws {RevenexxException}
@@ -957,7 +1484,7 @@ export class CustomersOrganizations {
     }
 
     /**
-     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — `addresses` carries a `phone` column and has never had an `email` one — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. One contact point by id.
+     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — the `email` of an address is the delivery's, not a document's — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. One contact point by id.
      *
      * @param {string} params.id - The contact point to read.
      * @throws {RevenexxException}
@@ -965,7 +1492,7 @@ export class CustomersOrganizations {
      */
     customersContactPointsGet(params: { id: string }): Promise<Models.ContactPoint>;
     /**
-     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — `addresses` carries a `phone` column and has never had an `email` one — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. One contact point by id.
+     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — the `email` of an address is the delivery's, not a document's — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. One contact point by id.
      *
      * @param {string} id - The contact point to read.
      * @throws {RevenexxException}
@@ -1008,11 +1535,11 @@ export class CustomersOrganizations {
     }
 
     /**
-     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — `addresses` carries a `phone` column and has never had an `email` one — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. A partial update — send only what changes. The owning company is fixed (the flag is scoped by it, so moving a point between companies would move an invariant with it) and an empty body is refused. A flag MOVES rather than switching off: send `is_primary` on the point that should take over, because a kind with points and no flag is a question with no answer. Two rows of this tenant may not share the combination of `organization_id` + `kind` (while is_primary) or `external_id` (while external_id IS NOT NULL).
+     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — the `email` of an address is the delivery's, not a document's — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. A partial update — send only what changes. The owning company is fixed (the flag is scoped by it, so moving a point between companies would move an invariant with it) and an empty body is refused. A flag MOVES rather than switching off: send `is_primary` on the point that should take over, because a kind with points and no flag is a question with no answer. Two rows of this tenant may not share the combination of `organization_id` + `kind` (while is_primary) or `external_id` (while external_id IS NOT NULL).
      *
      * @param {string} params.id - The contact point to update.
      * @param {string} params.addressId - The postal address this point belongs to, for the one case an ERP has it: a mail address carried ON a delivery address, so the notice about a shipment goes to whoever receives it there. Null is the ordinary case and means the point is the company's rather than one address's. It has to be an address of the same company (or of one of its people), and deleting the address takes the point with it.
-     * @param {string} params.email - The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that `addresses` has never had a column for this: a mail address per document had nowhere to live before these rows.
+     * @param {string} params.email - The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that the `email` of an address is the delivery's, not a document's: a mail address per document had nowhere to live before these rows.
      * @param {string} params.externalId - The key this point has in the system that owns it — an ERP's own id for a document sending address. Unique per tenant where set, so a repeated import updates this row instead of adding a second one. Null for a point somebody typed in here. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
      * @param {boolean} params.isPrimary - The point THIS kind of document actually goes to. Exactly one point per company and kind carries it: the first point of a kind is flagged as it is created, flagging another demotes the incumbent, and it is never simply switched off — so the question has one answer while the kind has any point at all, and none only when it has none. The first point of a kind gets it on its own. Sending true on a later one demotes the incumbent in the same call; sending false on the one that holds it is refused — flag the point that should take over instead.
      * @param {string} params.kind - WHICH document goes here — one of the tenant's own document recipient types (GET /customers/contact-point-kinds), seeded with invoice, order_confirmation, shipping_notice and dunning. Required and never defaulted: a point filed as the wrong document is worse than no point at all, because nothing downstream can tell that nobody chose. A merchant whose ERP mails a credit note separately adds their own type without a release of this app. Required on create, and nothing is defaulted: a kind the tenant does not keep is a 400 naming the ones on offer.
@@ -1024,11 +1551,11 @@ export class CustomersOrganizations {
      */
     customersContactPointsUpdate(params: { id: string, addressId?: string, email?: string, externalId?: string, isPrimary?: boolean, kind?: string, organizationId?: string, phone?: string, position?: number }): Promise<Models.ContactPoint>;
     /**
-     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — `addresses` carries a `phone` column and has never had an `email` one — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. A partial update — send only what changes. The owning company is fixed (the flag is scoped by it, so moving a point between companies would move an invariant with it) and an empty body is refused. A flag MOVES rather than switching off: send `is_primary` on the point that should take over, because a kind with points and no flag is a question with no answer. Two rows of this tenant may not share the combination of `organization_id` + `kind` (while is_primary) or `external_id` (while external_id IS NOT NULL).
+     * A contact point is WHERE one kind of document goes for one company: the invoice to accounts payable, the order confirmation to the buyer who placed it, the shipping notice to goods-in, the dunning letter to whoever settles it. An ERP keeps these as four separate addresses per debtor and they had nowhere to land here — the `email` of an address is the delivery's, not a document's — so these rows create a home rather than moving one. Exactly one point per company and kind is flagged as the one to use. A partial update — send only what changes. The owning company is fixed (the flag is scoped by it, so moving a point between companies would move an invariant with it) and an empty body is refused. A flag MOVES rather than switching off: send `is_primary` on the point that should take over, because a kind with points and no flag is a question with no answer. Two rows of this tenant may not share the combination of `organization_id` + `kind` (while is_primary) or `external_id` (while external_id IS NOT NULL).
      *
      * @param {string} id - The contact point to update.
      * @param {string} addressId - The postal address this point belongs to, for the one case an ERP has it: a mail address carried ON a delivery address, so the notice about a shipment goes to whoever receives it there. Null is the ordinary case and means the point is the company's rather than one address's. It has to be an address of the same company (or of one of its people), and deleting the address takes the point with it.
-     * @param {string} email - The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that `addresses` has never had a column for this: a mail address per document had nowhere to live before these rows.
+     * @param {string} email - The mail address this document is sent to. Nullable, because a point may carry a phone number instead — but a point with neither is refused, since it delivers nothing. Note that the `email` of an address is the delivery's, not a document's: a mail address per document had nowhere to live before these rows.
      * @param {string} externalId - The key this point has in the system that owns it — an ERP's own id for a document sending address. Unique per tenant where set, so a repeated import updates this row instead of adding a second one. Null for a point somebody typed in here. Writable, so a record can be adopted or a wrong id corrected — but it is the key a repeated import matches on, so changing it on a row an import owns makes the next run create a second one rather than update this.
      * @param {boolean} isPrimary - The point THIS kind of document actually goes to. Exactly one point per company and kind carries it: the first point of a kind is flagged as it is created, flagging another demotes the incumbent, and it is never simply switched off — so the question has one answer while the kind has any point at all, and none only when it has none. The first point of a kind gets it on its own. Sending true on a later one demotes the incumbent in the same call; sending false on the one that holds it is refused — flag the point that should take over instead.
      * @param {string} kind - WHICH document goes here — one of the tenant's own document recipient types (GET /customers/contact-point-kinds), seeded with invoice, order_confirmation, shipping_notice and dunning. Required and never defaulted: a point filed as the wrong document is worse than no point at all, because nothing downstream can tell that nobody chose. A merchant whose ERP mails a credit note separately adds their own type without a release of this app. Required on create, and nothing is defaulted: a kind the tenant does not keep is a 400 naming the ones on offer.
@@ -1110,6 +1637,29 @@ export class CustomersOrganizations {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Every derived column again, from the rows as they stand: each company's city, revenue of 365 days, last order, main contact and account manager (from the sales-reps app, when it answers), each person's shop access, and how many people hold each role. Every write of this app keeps them already; this is for rows written around it — an import straight into a table — and for the first run after the release that added them. Only what is wrong is written, so it is free to repeat. The hourly metrics tick runs it too.
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DerivedRefreshResult>}
+     */
+    customersDerivedRefresh(): Promise<Models.DerivedRefreshResult> {
+
+        const apiPath = '/v1/customers/derived/refresh';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload
@@ -1472,28 +2022,50 @@ export class CustomersOrganizations {
      * @param {string} params.branche - Filter by exact industry. Free text a merchant typed, matched exactly and case-sensitively — 'Maschinenbau' does not find 'maschinenbau', and there is no substring search to fall back on.
      * @param {string} params.customerNumber - Look a company up by its ERP number — the lookup an ERP integration and a service desk both start from. Exact match; the real numbers come from the merchant, so the example here resolves nowhere.
      * @param {CustomersOrganizationsListStatus} params.status - Filter by status — access, not pipeline.
+     * @param {string} params.blockReason - Filter to rows whose `block_reason` is exactly this value. Why the order block was set, in the words the merchant chose it in and the tenant's default language — set by POST …/block, cleared when the block is lifted. Null while the company may order.
+     * @param {string} params.blockNote - Filter to rows whose `block_note` is exactly this value. What the merchant noted with the block: what happened, and when it may be lifted. Null when nothing was noted.
+     * @param {string} params.blockedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the order block was set. Null while the company may order.
+     * @param {string} params.blockedBy - Filter to rows whose `blocked_by` is exactly this value. Who set the order block, as the caller named them. Null while the company may order, or when nobody was named.
      * @param {string} params.lifecycleStage - Filter by pipeline stage. One of the tenant's own stages (GET /customers/lifecycle-stages); a fresh install starts with lead, prospect, customer, churned.
      * @param {string} params.paymentTerms - Filter to rows whose `payment_terms` is exactly this value. When this company has to pay — one of the tenant's own terms (GET /customers/payment-terms, seeded with prepayment, direct_debit, net_7/14/30/60/90). Null means nothing was agreed and the order flow falls back to the market's `default_payment_terms`. This is a commercial term, not a payment method: HOW they pay is the payments app's business.
      * @param {CreditLimitMode} params.creditLimitMode - Filter to rows whose `credit_limit_mode` is exactly this value. Whether this company buys on credit, and how far: 'unset' (nobody decided — whoever checks credit applies its own fallback), 'limited' (open receivables up to `credit_limit`) or 'unlimited' (no ceiling, by decision). The mode is the decision; the amount exists only for 'limited'.
      * @param {number} params.creditLimit - Filter to rows whose `credit_limit` is exactly this value. Ceiling on open receivables in the market's currency, and one of the inputs that decide whether an order is accepted at all. Set exactly when `credit_limit_mode` is 'limited', and then above 0; null otherwise — read the mode, never the null, to know whether there is a ceiling.
      * @param {number} params.balance - Filter to rows whose `balance` is exactly this value. What this company owes right now, in the market's currency, as its accounting system last reported it — the figure a credit limit is compared against, and the reason the limit could check nothing on its own. A COPY, never a live read: this app asks no accounting system anything, so the number is exactly as old as `source_synced_at` says and the tenant's `credit_check_max_age_hours` setting says how old is too old. Null means no source has ever reported one, which is NOT a balance of zero — reading it as nothing owed is the mistake this column exists to prevent. A negative figure is a credit balance.
      * @param {number} params.balanceDue - Filter to rows whose `balance_due` is exactly this value. How much of `balance` is already OVERDUE, in the same currency and from the same report. The difference between warning a customer and blocking one: a company at its limit with nothing overdue is buying normally, and one below its limit with an unpaid invoice from March is not. Null means no source has reported it; zero means nothing is overdue, and the two are not the same answer.
+     * @param {number} params.creditAvailable - Filter to rows whose `credit_available` is exactly this value. What the company may still buy on credit: `credit_limit` minus `balance`. Generated by the database, never written. Null where no limit is set.
+     * @param {number} params.creditUtilisation - Filter to rows whose `credit_utilisation` is exactly this value. How much of the credit limit the open balance uses, in whole percent. Generated by the database, never written. Null where no limit is set.
      * @param {string} params.priceList - Filter to rows whose `price_list` is exactly this value. Code of the price list this company buys on — plain text pointing into the prices app. ADR-0055 forbids the cross-app foreign key, so nothing here checks it: a code that names no list simply prices nothing. `standard` is the list the prices app seeds on install.
      * @param {ShippingAdvice} params.shippingAdvice - Filter by whether a part delivery is accepted. `complete` is the set of companies whose orders may not be split, which is what a warehouse wanting to know its constrained customers asks for.
      * @param {string} params.locationCode - Filter to the companies served out of one warehouse. Exact match on the code the inventories app owns; the real codes come from the merchant, so the example here resolves nowhere.
      * @param {boolean} params.deliveryBlock - Filter to companies whose shipments are stopped.
+     * @param {string} params.deliveryBlockReason - Filter to rows whose `delivery_block_reason` is exactly this value. Why the delivery block was set, in the tenant's default language. Null while shipments go out.
+     * @param {string} params.deliveryBlockedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the delivery block was set. Null while shipments go out.
+     * @param {string} params.deliveryBlockedBy - Filter to rows whose `delivery_blocked_by` is exactly this value. Who set the delivery block. Null while shipments go out, or when nobody was named.
+     * @param {string} params.primaryContactId - Filter to rows whose `primary_contact_id` is exactly this value. The main contact: the one person of the company marked `is_primary`. Derived and never written — POST …/set-primary-contact moves it. Null while the company has none.
+     * @param {string} params.parentOrganizationId - Filter to rows whose `parent_organization_id` is exactly this value. The head office of a group, when this company is one of its subsidiaries. A reference inside this app; deleting the head office sets it null.
+     * @param {string} params.city - Filter to rows whose `city` is exactly this value. The city the company is listed under: its default billing address's, else any default address's, else its first address's. Derived and never written. Null without an address.
+     * @param {string} params.accountManagerName - Filter to rows whose `account_manager_name` is exactly this value. The name of the company's responsible sales rep, as the sales-reps app has it. A copy, refreshed when POST …/set-account-manager names one and by POST /customers/derived/refresh; null while nobody is responsible or the copy was never made.
+     * @param {number} params.revenue365d - Filter to rows whose `revenue_365d` is exactly this value. Revenue of the last 365 days, copied from the metrics projection so the company list can show it. Never written; as fresh as the projection.
+     * @param {string} params.lastOrderAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the company last ordered, copied from the metrics projection. Never written; null when it never ordered.
      * @param {string} params.externalTeamId - Find the organization behind a platform team id. The reverse of the mirror, and the way an auth-side id becomes a customer record.
      * @param {string} params.externalId - Filter to rows whose `external_id` is exactly this value. The key this company has in the system that OWNS it — the ERP's own key for the customer, not the number a human quotes (that is `customer_number`). Often a GUID; it is stored verbatim, whatever shape the source uses. Unique per tenant where set, so an import upserts on it instead of matching on a name. Null for a company the shop itself created.
      * @param {string} params.sourceSyncedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
+     * @param {string} params.deletedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this company was moved to the trash, or null while it is live. A company in the trash is left out of every list unless `trashed` asks for it, cannot sign in or be signed in for, and is deleted for good by a second DELETE or by the daily purge.
+     * @param {string} params.deletedBy - Filter to rows whose `deleted_by` is exactly this value. Who moved it to the trash, as the platform named them — an email, or `system`. Null while it is live.
+     * @param {string} params.deletedById - Filter to rows whose `deleted_by_id` is exactly this value. The platform subject of whoever moved it to the trash. Kept beside the name so the person can be pseudonymised later without losing who acted. Null while it is live, and for the system.
+     * @param {string} params.trashBatch - Filter to rows whose `trash_batch` is exactly this value. The trash action this record went with. An organization and the contacts it took along share one; a restore brings back exactly the records that carry it.
+     * @param {string} params.purgeAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the daily purge deletes it for good unless it is restored first: `deleted_at` plus the tenant's trash retention (90 days unless the tenant says otherwise). Null while it is live.
+     * @param {string} params.purgeBlockedReason - Filter to rows whose `purge_blocked_reason` is exactly this value. Why the purge could not delete it for good — an open order, a quote, a price list another app still holds. Null when nothing stopped it. Cleared by a restore.
      * @param {string} params.createdAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this company record was created in this app. Not when the customer relationship began — an ERP import creates decade-old customers today.
      * @param {string} params.updatedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When any column of this row last changed.
+     * @param {Trashed} params.trashed - Whether the trash is part of the answer. `exclude` (the default) leaves records in the trash out, `only` answers the trash itself, `include` both. A call acting for a buyer is always `exclude`.
      * @param {number} params.limit - Page size (default 50, max 200).
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    customersOrganizationsList(params?: { id?: string, name?: string, vatId?: string, branche?: string, customerNumber?: string, status?: CustomersOrganizationsListStatus, lifecycleStage?: string, paymentTerms?: string, creditLimitMode?: CreditLimitMode, creditLimit?: number, balance?: number, balanceDue?: number, priceList?: string, shippingAdvice?: ShippingAdvice, locationCode?: string, deliveryBlock?: boolean, externalTeamId?: string, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    customersOrganizationsList(params?: { id?: string, name?: string, vatId?: string, branche?: string, customerNumber?: string, status?: CustomersOrganizationsListStatus, blockReason?: string, blockNote?: string, blockedAt?: string, blockedBy?: string, lifecycleStage?: string, paymentTerms?: string, creditLimitMode?: CreditLimitMode, creditLimit?: number, balance?: number, balanceDue?: number, creditAvailable?: number, creditUtilisation?: number, priceList?: string, shippingAdvice?: ShippingAdvice, locationCode?: string, deliveryBlock?: boolean, deliveryBlockReason?: string, deliveryBlockedAt?: string, deliveryBlockedBy?: string, primaryContactId?: string, parentOrganizationId?: string, city?: string, accountManagerName?: string, revenue365d?: number, lastOrderAt?: string, externalTeamId?: string, externalId?: string, sourceSyncedAt?: string, deletedAt?: string, deletedBy?: string, deletedById?: string, trashBatch?: string, purgeAt?: string, purgeBlockedReason?: string, createdAt?: string, updatedAt?: string, trashed?: Trashed, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * An organization is a buying COMPANY — the unit a contract, a credit limit, a price list and a payment term belong to, and the unit an order is placed on behalf of. It is not a household and not a person: the people are `contacts`, and a company with no contacts yet is a perfectly normal row. Every organization is mirrored into platform auth as a team, so a name written here is the name storefront authentication shows. The company list a sales or service desk works from, and the read a segment rule is written against. Every column of the table is a filter and the page is `limit`/`offset`/`order` — including the two that are constantly confused: `status` is ACCESS (active or blocked) and `lifecycle_stage` is the sales PIPELINE, so filtering the wrong one answers with the wrong companies rather than with an error.
      *
@@ -1503,21 +2075,43 @@ export class CustomersOrganizations {
      * @param {string} branche - Filter by exact industry. Free text a merchant typed, matched exactly and case-sensitively — 'Maschinenbau' does not find 'maschinenbau', and there is no substring search to fall back on.
      * @param {string} customerNumber - Look a company up by its ERP number — the lookup an ERP integration and a service desk both start from. Exact match; the real numbers come from the merchant, so the example here resolves nowhere.
      * @param {CustomersOrganizationsListStatus} status - Filter by status — access, not pipeline.
+     * @param {string} blockReason - Filter to rows whose `block_reason` is exactly this value. Why the order block was set, in the words the merchant chose it in and the tenant's default language — set by POST …/block, cleared when the block is lifted. Null while the company may order.
+     * @param {string} blockNote - Filter to rows whose `block_note` is exactly this value. What the merchant noted with the block: what happened, and when it may be lifted. Null when nothing was noted.
+     * @param {string} blockedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the order block was set. Null while the company may order.
+     * @param {string} blockedBy - Filter to rows whose `blocked_by` is exactly this value. Who set the order block, as the caller named them. Null while the company may order, or when nobody was named.
      * @param {string} lifecycleStage - Filter by pipeline stage. One of the tenant's own stages (GET /customers/lifecycle-stages); a fresh install starts with lead, prospect, customer, churned.
      * @param {string} paymentTerms - Filter to rows whose `payment_terms` is exactly this value. When this company has to pay — one of the tenant's own terms (GET /customers/payment-terms, seeded with prepayment, direct_debit, net_7/14/30/60/90). Null means nothing was agreed and the order flow falls back to the market's `default_payment_terms`. This is a commercial term, not a payment method: HOW they pay is the payments app's business.
      * @param {CreditLimitMode} creditLimitMode - Filter to rows whose `credit_limit_mode` is exactly this value. Whether this company buys on credit, and how far: 'unset' (nobody decided — whoever checks credit applies its own fallback), 'limited' (open receivables up to `credit_limit`) or 'unlimited' (no ceiling, by decision). The mode is the decision; the amount exists only for 'limited'.
      * @param {number} creditLimit - Filter to rows whose `credit_limit` is exactly this value. Ceiling on open receivables in the market's currency, and one of the inputs that decide whether an order is accepted at all. Set exactly when `credit_limit_mode` is 'limited', and then above 0; null otherwise — read the mode, never the null, to know whether there is a ceiling.
      * @param {number} balance - Filter to rows whose `balance` is exactly this value. What this company owes right now, in the market's currency, as its accounting system last reported it — the figure a credit limit is compared against, and the reason the limit could check nothing on its own. A COPY, never a live read: this app asks no accounting system anything, so the number is exactly as old as `source_synced_at` says and the tenant's `credit_check_max_age_hours` setting says how old is too old. Null means no source has ever reported one, which is NOT a balance of zero — reading it as nothing owed is the mistake this column exists to prevent. A negative figure is a credit balance.
      * @param {number} balanceDue - Filter to rows whose `balance_due` is exactly this value. How much of `balance` is already OVERDUE, in the same currency and from the same report. The difference between warning a customer and blocking one: a company at its limit with nothing overdue is buying normally, and one below its limit with an unpaid invoice from March is not. Null means no source has reported it; zero means nothing is overdue, and the two are not the same answer.
+     * @param {number} creditAvailable - Filter to rows whose `credit_available` is exactly this value. What the company may still buy on credit: `credit_limit` minus `balance`. Generated by the database, never written. Null where no limit is set.
+     * @param {number} creditUtilisation - Filter to rows whose `credit_utilisation` is exactly this value. How much of the credit limit the open balance uses, in whole percent. Generated by the database, never written. Null where no limit is set.
      * @param {string} priceList - Filter to rows whose `price_list` is exactly this value. Code of the price list this company buys on — plain text pointing into the prices app. ADR-0055 forbids the cross-app foreign key, so nothing here checks it: a code that names no list simply prices nothing. `standard` is the list the prices app seeds on install.
      * @param {ShippingAdvice} shippingAdvice - Filter by whether a part delivery is accepted. `complete` is the set of companies whose orders may not be split, which is what a warehouse wanting to know its constrained customers asks for.
      * @param {string} locationCode - Filter to the companies served out of one warehouse. Exact match on the code the inventories app owns; the real codes come from the merchant, so the example here resolves nowhere.
      * @param {boolean} deliveryBlock - Filter to companies whose shipments are stopped.
+     * @param {string} deliveryBlockReason - Filter to rows whose `delivery_block_reason` is exactly this value. Why the delivery block was set, in the tenant's default language. Null while shipments go out.
+     * @param {string} deliveryBlockedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the delivery block was set. Null while shipments go out.
+     * @param {string} deliveryBlockedBy - Filter to rows whose `delivery_blocked_by` is exactly this value. Who set the delivery block. Null while shipments go out, or when nobody was named.
+     * @param {string} primaryContactId - Filter to rows whose `primary_contact_id` is exactly this value. The main contact: the one person of the company marked `is_primary`. Derived and never written — POST …/set-primary-contact moves it. Null while the company has none.
+     * @param {string} parentOrganizationId - Filter to rows whose `parent_organization_id` is exactly this value. The head office of a group, when this company is one of its subsidiaries. A reference inside this app; deleting the head office sets it null.
+     * @param {string} city - Filter to rows whose `city` is exactly this value. The city the company is listed under: its default billing address's, else any default address's, else its first address's. Derived and never written. Null without an address.
+     * @param {string} accountManagerName - Filter to rows whose `account_manager_name` is exactly this value. The name of the company's responsible sales rep, as the sales-reps app has it. A copy, refreshed when POST …/set-account-manager names one and by POST /customers/derived/refresh; null while nobody is responsible or the copy was never made.
+     * @param {number} revenue365d - Filter to rows whose `revenue_365d` is exactly this value. Revenue of the last 365 days, copied from the metrics projection so the company list can show it. Never written; as fresh as the projection.
+     * @param {string} lastOrderAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the company last ordered, copied from the metrics projection. Never written; null when it never ordered.
      * @param {string} externalTeamId - Find the organization behind a platform team id. The reverse of the mirror, and the way an auth-side id becomes a customer record.
      * @param {string} externalId - Filter to rows whose `external_id` is exactly this value. The key this company has in the system that OWNS it — the ERP's own key for the customer, not the number a human quotes (that is `customer_number`). Often a GUID; it is stored verbatim, whatever shape the source uses. Unique per tenant where set, so an import upserts on it instead of matching on a name. Null for a company the shop itself created.
      * @param {string} sourceSyncedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this row was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — a row edited in the Cockpit does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a row no source owns.
+     * @param {string} deletedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this company was moved to the trash, or null while it is live. A company in the trash is left out of every list unless `trashed` asks for it, cannot sign in or be signed in for, and is deleted for good by a second DELETE or by the daily purge.
+     * @param {string} deletedBy - Filter to rows whose `deleted_by` is exactly this value. Who moved it to the trash, as the platform named them — an email, or `system`. Null while it is live.
+     * @param {string} deletedById - Filter to rows whose `deleted_by_id` is exactly this value. The platform subject of whoever moved it to the trash. Kept beside the name so the person can be pseudonymised later without losing who acted. Null while it is live, and for the system.
+     * @param {string} trashBatch - Filter to rows whose `trash_batch` is exactly this value. The trash action this record went with. An organization and the contacts it took along share one; a restore brings back exactly the records that carry it.
+     * @param {string} purgeAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When the daily purge deletes it for good unless it is restored first: `deleted_at` plus the tenant's trash retention (90 days unless the tenant says otherwise). Null while it is live.
+     * @param {string} purgeBlockedReason - Filter to rows whose `purge_blocked_reason` is exactly this value. Why the purge could not delete it for good — an open order, a quote, a price list another app still holds. Null when nothing stopped it. Cleared by a restore.
      * @param {string} createdAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When this company record was created in this app. Not when the customer relationship began — an ERP import creates decade-old customers today.
      * @param {string} updatedAt - Exact timestamp equality — this API has no range filter. To bound a period, sort with `order` and page. When any column of this row last changed.
+     * @param {Trashed} trashed - Whether the trash is part of the answer. `exclude` (the default) leaves records in the trash out, `only` answers the trash itself, `include` both. A call acting for a buyer is always `exclude`.
      * @param {number} limit - Page size (default 50, max 200).
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
@@ -1525,15 +2119,15 @@ export class CustomersOrganizations {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersOrganizationsList(id?: string, name?: string, vatId?: string, branche?: string, customerNumber?: string, status?: CustomersOrganizationsListStatus, lifecycleStage?: string, paymentTerms?: string, creditLimitMode?: CreditLimitMode, creditLimit?: number, balance?: number, balanceDue?: number, priceList?: string, shippingAdvice?: ShippingAdvice, locationCode?: string, deliveryBlock?: boolean, externalTeamId?: string, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    customersOrganizationsList(id?: string, name?: string, vatId?: string, branche?: string, customerNumber?: string, status?: CustomersOrganizationsListStatus, blockReason?: string, blockNote?: string, blockedAt?: string, blockedBy?: string, lifecycleStage?: string, paymentTerms?: string, creditLimitMode?: CreditLimitMode, creditLimit?: number, balance?: number, balanceDue?: number, creditAvailable?: number, creditUtilisation?: number, priceList?: string, shippingAdvice?: ShippingAdvice, locationCode?: string, deliveryBlock?: boolean, deliveryBlockReason?: string, deliveryBlockedAt?: string, deliveryBlockedBy?: string, primaryContactId?: string, parentOrganizationId?: string, city?: string, accountManagerName?: string, revenue365d?: number, lastOrderAt?: string, externalTeamId?: string, externalId?: string, sourceSyncedAt?: string, deletedAt?: string, deletedBy?: string, deletedById?: string, trashBatch?: string, purgeAt?: string, purgeBlockedReason?: string, createdAt?: string, updatedAt?: string, trashed?: Trashed, limit?: number, offset?: number, order?: string): Promise<{}>;
     customersOrganizationsList(
-        paramsOrFirst?: { id?: string, name?: string, vatId?: string, branche?: string, customerNumber?: string, status?: CustomersOrganizationsListStatus, lifecycleStage?: string, paymentTerms?: string, creditLimitMode?: CreditLimitMode, creditLimit?: number, balance?: number, balanceDue?: number, priceList?: string, shippingAdvice?: ShippingAdvice, locationCode?: string, deliveryBlock?: boolean, externalTeamId?: string, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (CustomersOrganizationsListStatus)?, (string)?, (string)?, (CreditLimitMode)?, (number)?, (number)?, (number)?, (string)?, (ShippingAdvice)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, name?: string, vatId?: string, branche?: string, customerNumber?: string, status?: CustomersOrganizationsListStatus, blockReason?: string, blockNote?: string, blockedAt?: string, blockedBy?: string, lifecycleStage?: string, paymentTerms?: string, creditLimitMode?: CreditLimitMode, creditLimit?: number, balance?: number, balanceDue?: number, creditAvailable?: number, creditUtilisation?: number, priceList?: string, shippingAdvice?: ShippingAdvice, locationCode?: string, deliveryBlock?: boolean, deliveryBlockReason?: string, deliveryBlockedAt?: string, deliveryBlockedBy?: string, primaryContactId?: string, parentOrganizationId?: string, city?: string, accountManagerName?: string, revenue365d?: number, lastOrderAt?: string, externalTeamId?: string, externalId?: string, sourceSyncedAt?: string, deletedAt?: string, deletedBy?: string, deletedById?: string, trashBatch?: string, purgeAt?: string, purgeBlockedReason?: string, createdAt?: string, updatedAt?: string, trashed?: Trashed, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (CustomersOrganizationsListStatus)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (CreditLimitMode)?, (number)?, (number)?, (number)?, (number)?, (number)?, (string)?, (ShippingAdvice)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (Trashed)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { id?: string, name?: string, vatId?: string, branche?: string, customerNumber?: string, status?: CustomersOrganizationsListStatus, lifecycleStage?: string, paymentTerms?: string, creditLimitMode?: CreditLimitMode, creditLimit?: number, balance?: number, balanceDue?: number, priceList?: string, shippingAdvice?: ShippingAdvice, locationCode?: string, deliveryBlock?: boolean, externalTeamId?: string, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, name?: string, vatId?: string, branche?: string, customerNumber?: string, status?: CustomersOrganizationsListStatus, blockReason?: string, blockNote?: string, blockedAt?: string, blockedBy?: string, lifecycleStage?: string, paymentTerms?: string, creditLimitMode?: CreditLimitMode, creditLimit?: number, balance?: number, balanceDue?: number, creditAvailable?: number, creditUtilisation?: number, priceList?: string, shippingAdvice?: ShippingAdvice, locationCode?: string, deliveryBlock?: boolean, deliveryBlockReason?: string, deliveryBlockedAt?: string, deliveryBlockedBy?: string, primaryContactId?: string, parentOrganizationId?: string, city?: string, accountManagerName?: string, revenue365d?: number, lastOrderAt?: string, externalTeamId?: string, externalId?: string, sourceSyncedAt?: string, deletedAt?: string, deletedBy?: string, deletedById?: string, trashBatch?: string, purgeAt?: string, purgeBlockedReason?: string, createdAt?: string, updatedAt?: string, trashed?: Trashed, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, name?: string, vatId?: string, branche?: string, customerNumber?: string, status?: CustomersOrganizationsListStatus, lifecycleStage?: string, paymentTerms?: string, creditLimitMode?: CreditLimitMode, creditLimit?: number, balance?: number, balanceDue?: number, priceList?: string, shippingAdvice?: ShippingAdvice, locationCode?: string, deliveryBlock?: boolean, externalTeamId?: string, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, name?: string, vatId?: string, branche?: string, customerNumber?: string, status?: CustomersOrganizationsListStatus, blockReason?: string, blockNote?: string, blockedAt?: string, blockedBy?: string, lifecycleStage?: string, paymentTerms?: string, creditLimitMode?: CreditLimitMode, creditLimit?: number, balance?: number, balanceDue?: number, creditAvailable?: number, creditUtilisation?: number, priceList?: string, shippingAdvice?: ShippingAdvice, locationCode?: string, deliveryBlock?: boolean, deliveryBlockReason?: string, deliveryBlockedAt?: string, deliveryBlockedBy?: string, primaryContactId?: string, parentOrganizationId?: string, city?: string, accountManagerName?: string, revenue365d?: number, lastOrderAt?: string, externalTeamId?: string, externalId?: string, sourceSyncedAt?: string, deletedAt?: string, deletedBy?: string, deletedById?: string, trashBatch?: string, purgeAt?: string, purgeBlockedReason?: string, createdAt?: string, updatedAt?: string, trashed?: Trashed, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -1542,24 +2136,46 @@ export class CustomersOrganizations {
                 branche: rest[2] as string,
                 customerNumber: rest[3] as string,
                 status: rest[4] as CustomersOrganizationsListStatus,
-                lifecycleStage: rest[5] as string,
-                paymentTerms: rest[6] as string,
-                creditLimitMode: rest[7] as CreditLimitMode,
-                creditLimit: rest[8] as number,
-                balance: rest[9] as number,
-                balanceDue: rest[10] as number,
-                priceList: rest[11] as string,
-                shippingAdvice: rest[12] as ShippingAdvice,
-                locationCode: rest[13] as string,
-                deliveryBlock: rest[14] as boolean,
-                externalTeamId: rest[15] as string,
-                externalId: rest[16] as string,
-                sourceSyncedAt: rest[17] as string,
-                createdAt: rest[18] as string,
-                updatedAt: rest[19] as string,
-                limit: rest[20] as number,
-                offset: rest[21] as number,
-                order: rest[22] as string            
+                blockReason: rest[5] as string,
+                blockNote: rest[6] as string,
+                blockedAt: rest[7] as string,
+                blockedBy: rest[8] as string,
+                lifecycleStage: rest[9] as string,
+                paymentTerms: rest[10] as string,
+                creditLimitMode: rest[11] as CreditLimitMode,
+                creditLimit: rest[12] as number,
+                balance: rest[13] as number,
+                balanceDue: rest[14] as number,
+                creditAvailable: rest[15] as number,
+                creditUtilisation: rest[16] as number,
+                priceList: rest[17] as string,
+                shippingAdvice: rest[18] as ShippingAdvice,
+                locationCode: rest[19] as string,
+                deliveryBlock: rest[20] as boolean,
+                deliveryBlockReason: rest[21] as string,
+                deliveryBlockedAt: rest[22] as string,
+                deliveryBlockedBy: rest[23] as string,
+                primaryContactId: rest[24] as string,
+                parentOrganizationId: rest[25] as string,
+                city: rest[26] as string,
+                accountManagerName: rest[27] as string,
+                revenue365d: rest[28] as number,
+                lastOrderAt: rest[29] as string,
+                externalTeamId: rest[30] as string,
+                externalId: rest[31] as string,
+                sourceSyncedAt: rest[32] as string,
+                deletedAt: rest[33] as string,
+                deletedBy: rest[34] as string,
+                deletedById: rest[35] as string,
+                trashBatch: rest[36] as string,
+                purgeAt: rest[37] as string,
+                purgeBlockedReason: rest[38] as string,
+                createdAt: rest[39] as string,
+                updatedAt: rest[40] as string,
+                trashed: rest[41] as Trashed,
+                limit: rest[42] as number,
+                offset: rest[43] as number,
+                order: rest[44] as string            
             };
         }
         
@@ -1569,21 +2185,43 @@ export class CustomersOrganizations {
         const branche = params.branche;
         const customerNumber = params.customerNumber;
         const status = params.status;
+        const blockReason = params.blockReason;
+        const blockNote = params.blockNote;
+        const blockedAt = params.blockedAt;
+        const blockedBy = params.blockedBy;
         const lifecycleStage = params.lifecycleStage;
         const paymentTerms = params.paymentTerms;
         const creditLimitMode = params.creditLimitMode;
         const creditLimit = params.creditLimit;
         const balance = params.balance;
         const balanceDue = params.balanceDue;
+        const creditAvailable = params.creditAvailable;
+        const creditUtilisation = params.creditUtilisation;
         const priceList = params.priceList;
         const shippingAdvice = params.shippingAdvice;
         const locationCode = params.locationCode;
         const deliveryBlock = params.deliveryBlock;
+        const deliveryBlockReason = params.deliveryBlockReason;
+        const deliveryBlockedAt = params.deliveryBlockedAt;
+        const deliveryBlockedBy = params.deliveryBlockedBy;
+        const primaryContactId = params.primaryContactId;
+        const parentOrganizationId = params.parentOrganizationId;
+        const city = params.city;
+        const accountManagerName = params.accountManagerName;
+        const revenue365d = params.revenue365d;
+        const lastOrderAt = params.lastOrderAt;
         const externalTeamId = params.externalTeamId;
         const externalId = params.externalId;
         const sourceSyncedAt = params.sourceSyncedAt;
+        const deletedAt = params.deletedAt;
+        const deletedBy = params.deletedBy;
+        const deletedById = params.deletedById;
+        const trashBatch = params.trashBatch;
+        const purgeAt = params.purgeAt;
+        const purgeBlockedReason = params.purgeBlockedReason;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
+        const trashed = params.trashed;
         const limit = params.limit;
         const offset = params.offset;
         const order = params.order;
@@ -1609,6 +2247,18 @@ export class CustomersOrganizations {
         if (typeof status !== 'undefined') {
             apiPayload['status'] = status;
         }
+        if (typeof blockReason !== 'undefined') {
+            apiPayload['block_reason'] = blockReason;
+        }
+        if (typeof blockNote !== 'undefined') {
+            apiPayload['block_note'] = blockNote;
+        }
+        if (typeof blockedAt !== 'undefined') {
+            apiPayload['blocked_at'] = blockedAt;
+        }
+        if (typeof blockedBy !== 'undefined') {
+            apiPayload['blocked_by'] = blockedBy;
+        }
         if (typeof lifecycleStage !== 'undefined') {
             apiPayload['lifecycle_stage'] = lifecycleStage;
         }
@@ -1627,6 +2277,12 @@ export class CustomersOrganizations {
         if (typeof balanceDue !== 'undefined') {
             apiPayload['balance_due'] = balanceDue;
         }
+        if (typeof creditAvailable !== 'undefined') {
+            apiPayload['credit_available'] = creditAvailable;
+        }
+        if (typeof creditUtilisation !== 'undefined') {
+            apiPayload['credit_utilisation'] = creditUtilisation;
+        }
         if (typeof priceList !== 'undefined') {
             apiPayload['price_list'] = priceList;
         }
@@ -1639,6 +2295,33 @@ export class CustomersOrganizations {
         if (typeof deliveryBlock !== 'undefined') {
             apiPayload['delivery_block'] = deliveryBlock;
         }
+        if (typeof deliveryBlockReason !== 'undefined') {
+            apiPayload['delivery_block_reason'] = deliveryBlockReason;
+        }
+        if (typeof deliveryBlockedAt !== 'undefined') {
+            apiPayload['delivery_blocked_at'] = deliveryBlockedAt;
+        }
+        if (typeof deliveryBlockedBy !== 'undefined') {
+            apiPayload['delivery_blocked_by'] = deliveryBlockedBy;
+        }
+        if (typeof primaryContactId !== 'undefined') {
+            apiPayload['primary_contact_id'] = primaryContactId;
+        }
+        if (typeof parentOrganizationId !== 'undefined') {
+            apiPayload['parent_organization_id'] = parentOrganizationId;
+        }
+        if (typeof city !== 'undefined') {
+            apiPayload['city'] = city;
+        }
+        if (typeof accountManagerName !== 'undefined') {
+            apiPayload['account_manager_name'] = accountManagerName;
+        }
+        if (typeof revenue365d !== 'undefined') {
+            apiPayload['revenue_365d'] = revenue365d;
+        }
+        if (typeof lastOrderAt !== 'undefined') {
+            apiPayload['last_order_at'] = lastOrderAt;
+        }
         if (typeof externalTeamId !== 'undefined') {
             apiPayload['external_team_id'] = externalTeamId;
         }
@@ -1648,11 +2331,32 @@ export class CustomersOrganizations {
         if (typeof sourceSyncedAt !== 'undefined') {
             apiPayload['source_synced_at'] = sourceSyncedAt;
         }
+        if (typeof deletedAt !== 'undefined') {
+            apiPayload['deleted_at'] = deletedAt;
+        }
+        if (typeof deletedBy !== 'undefined') {
+            apiPayload['deleted_by'] = deletedBy;
+        }
+        if (typeof deletedById !== 'undefined') {
+            apiPayload['deleted_by_id'] = deletedById;
+        }
+        if (typeof trashBatch !== 'undefined') {
+            apiPayload['trash_batch'] = trashBatch;
+        }
+        if (typeof purgeAt !== 'undefined') {
+            apiPayload['purge_at'] = purgeAt;
+        }
+        if (typeof purgeBlockedReason !== 'undefined') {
+            apiPayload['purge_blocked_reason'] = purgeBlockedReason;
+        }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
         }
         if (typeof updatedAt !== 'undefined') {
             apiPayload['updated_at'] = updatedAt;
+        }
+        if (typeof trashed !== 'undefined') {
+            apiPayload['trashed'] = trashed;
         }
         if (typeof limit !== 'undefined') {
             apiPayload['limit'] = limit;
@@ -1845,25 +2549,223 @@ export class CustomersOrganizations {
     }
 
     /**
-     * An organization is a buying COMPANY — the unit a contract, a credit limit, a price list and a payment term belong to, and the unit an order is placed on behalf of. It is not a household and not a person: the people are `contacts`, and a company with no contacts yet is a perfectly normal row. Every organization is mirrored into platform auth as a team, so a name written here is the name storefront authentication shows. Removes the company and its mirrored team. Its people are NOT deleted: they become standalone buyers who can still sign in and still order, which is the behaviour a merchant winding down a subsidiary wants. Deleting one takes every `contact_events`, `addresses`, `contact_points`, `organization_metrics` and `segment_members` row that points at it with it and clears `contacts.organization_id` rather than deleting those rows — the foreign keys decide, not this route.
+     * Found a business customer the way a merchant thinks of it: the company, its billing address, its main contact — invited to the shop unless told otherwise — and its responsible sales rep, in one call. The company and the person go through the same checks their plain creates run; a failure after the company exists takes everything this call founded back out. The sales rep is best effort: an unknown code or an unreachable sales-reps app founds the customer without one.
+     *
+     * @param {string} params.name - The company name.
+     * @param {string} params.accountManager - The responsible sales rep's code.
+     * @param {string} params.billingCity - Billing address: city.
+     * @param {string} params.billingCountry - Billing address: ISO 3166-1 alpha-2, DE when absent.
+     * @param {string} params.billingStreet - Billing address: street and number.
+     * @param {string} params.billingZip - Billing address: postal code.
+     * @param {string} params.branche - The industry.
+     * @param {string} params.contactEmail - Main contact: email, required when a main contact is given.
+     * @param {string} params.contactFirstName - Main contact: first name.
+     * @param {string} params.contactJobTitle - Main contact: job title.
+     * @param {string} params.contactLastName - Main contact: last name.
+     * @param {string} params.contactPhone - Main contact: phone.
+     * @param {string} params.contactRole - Main contact: role key; the tenant's default when absent.
+     * @param {string} params.customerNumber - The number the customer quotes.
+     * @param {string} params.lifecycleStage - A lifecycle stage code; the tenant's default when absent.
+     * @param {string} params.paymentTerms - A payment terms code; the tenant's default when absent.
+     * @param {boolean} params.sendInvite - Whether the main contact is invited to the shop now. True when absent.
+     * @param {string} params.vatId - The VAT ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     */
+    customersOrganizationsOnboard(params: { name: string, accountManager?: string, billingCity?: string, billingCountry?: string, billingStreet?: string, billingZip?: string, branche?: string, contactEmail?: string, contactFirstName?: string, contactJobTitle?: string, contactLastName?: string, contactPhone?: string, contactRole?: string, customerNumber?: string, lifecycleStage?: string, paymentTerms?: string, sendInvite?: boolean, vatId?: string }): Promise<Models.Organization>;
+    /**
+     * Found a business customer the way a merchant thinks of it: the company, its billing address, its main contact — invited to the shop unless told otherwise — and its responsible sales rep, in one call. The company and the person go through the same checks their plain creates run; a failure after the company exists takes everything this call founded back out. The sales rep is best effort: an unknown code or an unreachable sales-reps app founds the customer without one.
+     *
+     * @param {string} name - The company name.
+     * @param {string} accountManager - The responsible sales rep's code.
+     * @param {string} billingCity - Billing address: city.
+     * @param {string} billingCountry - Billing address: ISO 3166-1 alpha-2, DE when absent.
+     * @param {string} billingStreet - Billing address: street and number.
+     * @param {string} billingZip - Billing address: postal code.
+     * @param {string} branche - The industry.
+     * @param {string} contactEmail - Main contact: email, required when a main contact is given.
+     * @param {string} contactFirstName - Main contact: first name.
+     * @param {string} contactJobTitle - Main contact: job title.
+     * @param {string} contactLastName - Main contact: last name.
+     * @param {string} contactPhone - Main contact: phone.
+     * @param {string} contactRole - Main contact: role key; the tenant's default when absent.
+     * @param {string} customerNumber - The number the customer quotes.
+     * @param {string} lifecycleStage - A lifecycle stage code; the tenant's default when absent.
+     * @param {string} paymentTerms - A payment terms code; the tenant's default when absent.
+     * @param {boolean} sendInvite - Whether the main contact is invited to the shop now. True when absent.
+     * @param {string} vatId - The VAT ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersOrganizationsOnboard(name: string, accountManager?: string, billingCity?: string, billingCountry?: string, billingStreet?: string, billingZip?: string, branche?: string, contactEmail?: string, contactFirstName?: string, contactJobTitle?: string, contactLastName?: string, contactPhone?: string, contactRole?: string, customerNumber?: string, lifecycleStage?: string, paymentTerms?: string, sendInvite?: boolean, vatId?: string): Promise<Models.Organization>;
+    customersOrganizationsOnboard(
+        paramsOrFirst: { name: string, accountManager?: string, billingCity?: string, billingCountry?: string, billingStreet?: string, billingZip?: string, branche?: string, contactEmail?: string, contactFirstName?: string, contactJobTitle?: string, contactLastName?: string, contactPhone?: string, contactRole?: string, customerNumber?: string, lifecycleStage?: string, paymentTerms?: string, sendInvite?: boolean, vatId?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?]    
+    ): Promise<Models.Organization> {
+        let params: { name: string, accountManager?: string, billingCity?: string, billingCountry?: string, billingStreet?: string, billingZip?: string, branche?: string, contactEmail?: string, contactFirstName?: string, contactJobTitle?: string, contactLastName?: string, contactPhone?: string, contactRole?: string, customerNumber?: string, lifecycleStage?: string, paymentTerms?: string, sendInvite?: boolean, vatId?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { name: string, accountManager?: string, billingCity?: string, billingCountry?: string, billingStreet?: string, billingZip?: string, branche?: string, contactEmail?: string, contactFirstName?: string, contactJobTitle?: string, contactLastName?: string, contactPhone?: string, contactRole?: string, customerNumber?: string, lifecycleStage?: string, paymentTerms?: string, sendInvite?: boolean, vatId?: string };
+        } else {
+            params = {
+                name: paramsOrFirst as string,
+                accountManager: rest[0] as string,
+                billingCity: rest[1] as string,
+                billingCountry: rest[2] as string,
+                billingStreet: rest[3] as string,
+                billingZip: rest[4] as string,
+                branche: rest[5] as string,
+                contactEmail: rest[6] as string,
+                contactFirstName: rest[7] as string,
+                contactJobTitle: rest[8] as string,
+                contactLastName: rest[9] as string,
+                contactPhone: rest[10] as string,
+                contactRole: rest[11] as string,
+                customerNumber: rest[12] as string,
+                lifecycleStage: rest[13] as string,
+                paymentTerms: rest[14] as string,
+                sendInvite: rest[15] as boolean,
+                vatId: rest[16] as string            
+            };
+        }
+        
+        const name = params.name;
+        const accountManager = params.accountManager;
+        const billingCity = params.billingCity;
+        const billingCountry = params.billingCountry;
+        const billingStreet = params.billingStreet;
+        const billingZip = params.billingZip;
+        const branche = params.branche;
+        const contactEmail = params.contactEmail;
+        const contactFirstName = params.contactFirstName;
+        const contactJobTitle = params.contactJobTitle;
+        const contactLastName = params.contactLastName;
+        const contactPhone = params.contactPhone;
+        const contactRole = params.contactRole;
+        const customerNumber = params.customerNumber;
+        const lifecycleStage = params.lifecycleStage;
+        const paymentTerms = params.paymentTerms;
+        const sendInvite = params.sendInvite;
+        const vatId = params.vatId;
+
+        if (typeof name === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "name"');
+        }
+
+        const apiPath = '/v1/customers/organizations/onboard';
+        const apiPayload: Payload = {};
+        if (typeof accountManager !== 'undefined') {
+            apiPayload['account_manager'] = accountManager;
+        }
+        if (typeof billingCity !== 'undefined') {
+            apiPayload['billing_city'] = billingCity;
+        }
+        if (typeof billingCountry !== 'undefined') {
+            apiPayload['billing_country'] = billingCountry;
+        }
+        if (typeof billingStreet !== 'undefined') {
+            apiPayload['billing_street'] = billingStreet;
+        }
+        if (typeof billingZip !== 'undefined') {
+            apiPayload['billing_zip'] = billingZip;
+        }
+        if (typeof branche !== 'undefined') {
+            apiPayload['branche'] = branche;
+        }
+        if (typeof contactEmail !== 'undefined') {
+            apiPayload['contact_email'] = contactEmail;
+        }
+        if (typeof contactFirstName !== 'undefined') {
+            apiPayload['contact_first_name'] = contactFirstName;
+        }
+        if (typeof contactJobTitle !== 'undefined') {
+            apiPayload['contact_job_title'] = contactJobTitle;
+        }
+        if (typeof contactLastName !== 'undefined') {
+            apiPayload['contact_last_name'] = contactLastName;
+        }
+        if (typeof contactPhone !== 'undefined') {
+            apiPayload['contact_phone'] = contactPhone;
+        }
+        if (typeof contactRole !== 'undefined') {
+            apiPayload['contact_role'] = contactRole;
+        }
+        if (typeof customerNumber !== 'undefined') {
+            apiPayload['customer_number'] = customerNumber;
+        }
+        if (typeof lifecycleStage !== 'undefined') {
+            apiPayload['lifecycle_stage'] = lifecycleStage;
+        }
+        if (typeof name !== 'undefined') {
+            apiPayload['name'] = name;
+        }
+        if (typeof paymentTerms !== 'undefined') {
+            apiPayload['payment_terms'] = paymentTerms;
+        }
+        if (typeof sendInvite !== 'undefined') {
+            apiPayload['send_invite'] = sendInvite;
+        }
+        if (typeof vatId !== 'undefined') {
+            apiPayload['vat_id'] = vatId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Deletes every organization in the trash for good, oldest first and at most fifty per call, each checked on its own exactly like a second DELETE. A organization something still blocks stays in the trash and is listed with the reason; the rest go. POST again while `more` is true. An administrator's right, never a buyer's.
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.OrganizationTrashEmptyResult>}
+     */
+    customersOrganizationsTrashEmpty(): Promise<Models.OrganizationTrashEmptyResult> {
+
+        const apiPath = '/v1/customers/organizations/trash/empty';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * An organization is a buying COMPANY — the unit a contract, a credit limit, a price list and a payment term belong to, and the unit an order is placed on behalf of. It is not a household and not a person: the people are `contacts`, and a company with no contacts yet is a perfectly normal row. Every organization is mirrored into platform auth as a team, so a name written here is the name storefront authentication shows. The first DELETE moves the organization to the trash: it keeps everything that points at it, leaves every list, and can no longer sign in or be signed in for. An organization takes its live contacts along as one group: their logins are switched off and their sessions ended, nothing is deleted. A second DELETE on a organization already in the trash deletes it for good, with its platform team and the logins of the contacts that went with it — refused while another app still holds an open order, quote, purchase request or approval, an enabled punchout account, a punchout account naming the person as its fallback contact, a customer price list, an active cost centre or a personal voucher. An app that does not answer blocks too. The daily purge runs the same delete once the tenant's trash retention has run out.
      *
      * @param {string} params.id - The organization to delete.
      * @throws {RevenexxException}
-     * @returns {Promise<{}>}
+     * @returns {Promise<Models.OrganizationDeleteResult>}
      */
-    customersOrganizationsDelete(params: { id: string }): Promise<{}>;
+    customersOrganizationsDelete(params: { id: string }): Promise<Models.OrganizationDeleteResult>;
     /**
-     * An organization is a buying COMPANY — the unit a contract, a credit limit, a price list and a payment term belong to, and the unit an order is placed on behalf of. It is not a household and not a person: the people are `contacts`, and a company with no contacts yet is a perfectly normal row. Every organization is mirrored into platform auth as a team, so a name written here is the name storefront authentication shows. Removes the company and its mirrored team. Its people are NOT deleted: they become standalone buyers who can still sign in and still order, which is the behaviour a merchant winding down a subsidiary wants. Deleting one takes every `contact_events`, `addresses`, `contact_points`, `organization_metrics` and `segment_members` row that points at it with it and clears `contacts.organization_id` rather than deleting those rows — the foreign keys decide, not this route.
+     * An organization is a buying COMPANY — the unit a contract, a credit limit, a price list and a payment term belong to, and the unit an order is placed on behalf of. It is not a household and not a person: the people are `contacts`, and a company with no contacts yet is a perfectly normal row. Every organization is mirrored into platform auth as a team, so a name written here is the name storefront authentication shows. The first DELETE moves the organization to the trash: it keeps everything that points at it, leaves every list, and can no longer sign in or be signed in for. An organization takes its live contacts along as one group: their logins are switched off and their sessions ended, nothing is deleted. A second DELETE on a organization already in the trash deletes it for good, with its platform team and the logins of the contacts that went with it — refused while another app still holds an open order, quote, purchase request or approval, an enabled punchout account, a punchout account naming the person as its fallback contact, a customer price list, an active cost centre or a personal voucher. An app that does not answer blocks too. The daily purge runs the same delete once the tenant's trash retention has run out.
      *
      * @param {string} id - The organization to delete.
      * @throws {RevenexxException}
-     * @returns {Promise<{}>}
+     * @returns {Promise<Models.OrganizationDeleteResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersOrganizationsDelete(id: string): Promise<{}>;
+    customersOrganizationsDelete(id: string): Promise<Models.OrganizationDeleteResult>;
     customersOrganizationsDelete(
         paramsOrFirst: { id: string } | string    
-    ): Promise<{}> {
+    ): Promise<Models.OrganizationDeleteResult> {
         let params: { id: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
@@ -2105,6 +3007,528 @@ export class CustomersOrganizations {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * A block is a decision with a reason, not a field somebody edits. `kind: order` sets `status` to 'blocked' with the reason, the note, when and who — every contact behind the company stops buying and `organization.blocked` is published, exactly as when the status is edited. `kind: delivery` sets `delivery_block`: orders are still taken and nothing ships. Both land on the company's timeline as a system entry. Lifting a block is its own call, with a note.
+     *
+     * @param {string} params.id - The organization.
+     * @param {CustomersOrganizationsBlockReason} params.reason - Why the company is blocked. Stored as its words in the tenant's default language.
+     * @param {string} params.actor - Who set the block, as the record should name them.
+     * @param {CustomersOrganizationsBlockKind} params.kind - Which block. 'order' (the default) stops ordering, 'delivery' stops shipping.
+     * @param {string} params.note - What happened, in the merchant's own words. Stored on the timeline entry.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     */
+    customersOrganizationsBlock(params: { id: string, reason: CustomersOrganizationsBlockReason, actor?: string, kind?: CustomersOrganizationsBlockKind, note?: string }): Promise<Models.Organization>;
+    /**
+     * A block is a decision with a reason, not a field somebody edits. `kind: order` sets `status` to 'blocked' with the reason, the note, when and who — every contact behind the company stops buying and `organization.blocked` is published, exactly as when the status is edited. `kind: delivery` sets `delivery_block`: orders are still taken and nothing ships. Both land on the company's timeline as a system entry. Lifting a block is its own call, with a note.
+     *
+     * @param {string} id - The organization.
+     * @param {CustomersOrganizationsBlockReason} reason - Why the company is blocked. Stored as its words in the tenant's default language.
+     * @param {string} actor - Who set the block, as the record should name them.
+     * @param {CustomersOrganizationsBlockKind} kind - Which block. 'order' (the default) stops ordering, 'delivery' stops shipping.
+     * @param {string} note - What happened, in the merchant's own words. Stored on the timeline entry.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersOrganizationsBlock(id: string, reason: CustomersOrganizationsBlockReason, actor?: string, kind?: CustomersOrganizationsBlockKind, note?: string): Promise<Models.Organization>;
+    customersOrganizationsBlock(
+        paramsOrFirst: { id: string, reason: CustomersOrganizationsBlockReason, actor?: string, kind?: CustomersOrganizationsBlockKind, note?: string } | string,
+        ...rest: [(CustomersOrganizationsBlockReason)?, (string)?, (CustomersOrganizationsBlockKind)?, (string)?]    
+    ): Promise<Models.Organization> {
+        let params: { id: string, reason: CustomersOrganizationsBlockReason, actor?: string, kind?: CustomersOrganizationsBlockKind, note?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, reason: CustomersOrganizationsBlockReason, actor?: string, kind?: CustomersOrganizationsBlockKind, note?: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                reason: rest[0] as CustomersOrganizationsBlockReason,
+                actor: rest[1] as string,
+                kind: rest[2] as CustomersOrganizationsBlockKind,
+                note: rest[3] as string            
+            };
+        }
+        
+        const id = params.id;
+        const reason = params.reason;
+        const actor = params.actor;
+        const kind = params.kind;
+        const note = params.note;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof reason === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "reason"');
+        }
+
+        const apiPath = '/v1/customers/organizations/{id}/block'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof actor !== 'undefined') {
+            apiPayload['actor'] = actor;
+        }
+        if (typeof kind !== 'undefined') {
+            apiPayload['kind'] = kind;
+        }
+        if (typeof note !== 'undefined') {
+            apiPayload['note'] = note;
+        }
+        if (typeof reason !== 'undefined') {
+            apiPayload['reason'] = reason;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * The account manager, from the sales-reps app, and the main contact, from here — what the card on the company's page shows. The sales-reps half is null when that app cannot be asked, so the card still names the main contact.
+     *
+     * @param {string} params.id - The organization.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.OrganizationCare>}
+     */
+    customersOrganizationsCare(params: { id: string }): Promise<Models.OrganizationCare>;
+    /**
+     * The account manager, from the sales-reps app, and the main contact, from here — what the card on the company's page shows. The sales-reps half is null when that app cannot be asked, so the card still names the main contact.
+     *
+     * @param {string} id - The organization.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.OrganizationCare>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersOrganizationsCare(id: string): Promise<Models.OrganizationCare>;
+    customersOrganizationsCare(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.OrganizationCare> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/customers/organizations/{id}/care'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * The credit a company buys on is changed with a reason, so its timeline says what it was, what it is and why. The same rules as an edit apply: a limited mode needs an amount, any other mode clears it.
+     *
+     * @param {string} params.id - The organization.
+     * @param {CustomersOrganizationsChangeCreditReason} params.reason - Why the credit changes. Stored as its words in the tenant's default language.
+     * @param {number} params.creditLimit - The new limit, for the limited mode.
+     * @param {CreditLimitMode} params.creditLimitMode - The new credit mode.
+     * @param {string} params.note - What happened, in the merchant's own words. Stored on the timeline entry.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     */
+    customersOrganizationsChangeCredit(params: { id: string, reason: CustomersOrganizationsChangeCreditReason, creditLimit?: number, creditLimitMode?: CreditLimitMode, note?: string }): Promise<Models.Organization>;
+    /**
+     * The credit a company buys on is changed with a reason, so its timeline says what it was, what it is and why. The same rules as an edit apply: a limited mode needs an amount, any other mode clears it.
+     *
+     * @param {string} id - The organization.
+     * @param {CustomersOrganizationsChangeCreditReason} reason - Why the credit changes. Stored as its words in the tenant's default language.
+     * @param {number} creditLimit - The new limit, for the limited mode.
+     * @param {CreditLimitMode} creditLimitMode - The new credit mode.
+     * @param {string} note - What happened, in the merchant's own words. Stored on the timeline entry.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersOrganizationsChangeCredit(id: string, reason: CustomersOrganizationsChangeCreditReason, creditLimit?: number, creditLimitMode?: CreditLimitMode, note?: string): Promise<Models.Organization>;
+    customersOrganizationsChangeCredit(
+        paramsOrFirst: { id: string, reason: CustomersOrganizationsChangeCreditReason, creditLimit?: number, creditLimitMode?: CreditLimitMode, note?: string } | string,
+        ...rest: [(CustomersOrganizationsChangeCreditReason)?, (number)?, (CreditLimitMode)?, (string)?]    
+    ): Promise<Models.Organization> {
+        let params: { id: string, reason: CustomersOrganizationsChangeCreditReason, creditLimit?: number, creditLimitMode?: CreditLimitMode, note?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, reason: CustomersOrganizationsChangeCreditReason, creditLimit?: number, creditLimitMode?: CreditLimitMode, note?: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                reason: rest[0] as CustomersOrganizationsChangeCreditReason,
+                creditLimit: rest[1] as number,
+                creditLimitMode: rest[2] as CreditLimitMode,
+                note: rest[3] as string            
+            };
+        }
+        
+        const id = params.id;
+        const reason = params.reason;
+        const creditLimit = params.creditLimit;
+        const creditLimitMode = params.creditLimitMode;
+        const note = params.note;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof reason === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "reason"');
+        }
+
+        const apiPath = '/v1/customers/organizations/{id}/change-credit'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof creditLimit !== 'undefined') {
+            apiPayload['credit_limit'] = creditLimit;
+        }
+        if (typeof creditLimitMode !== 'undefined') {
+            apiPayload['credit_limit_mode'] = creditLimitMode;
+        }
+        if (typeof note !== 'undefined') {
+            apiPayload['note'] = note;
+        }
+        if (typeof reason !== 'undefined') {
+            apiPayload['reason'] = reason;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Brings an organization back from the trash together with the contacts that went with it — the ones that carry its `trash_batch`. A contact trashed on its own before stays in the trash. Their logins are switched back on unless the record itself says no (blocked, or an undecided registration). Needs the same right as the delete.
+     *
+     * @param {string} params.id - The organization to restore.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.OrganizationRestoreResult>}
+     */
+    customersOrganizationsRestore(params: { id: string }): Promise<Models.OrganizationRestoreResult>;
+    /**
+     * Brings an organization back from the trash together with the contacts that went with it — the ones that carry its `trash_batch`. A contact trashed on its own before stays in the trash. Their logins are switched back on unless the record itself says no (blocked, or an undecided registration). Needs the same right as the delete.
+     *
+     * @param {string} id - The organization to restore.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.OrganizationRestoreResult>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersOrganizationsRestore(id: string): Promise<Models.OrganizationRestoreResult>;
+    customersOrganizationsRestore(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.OrganizationRestoreResult> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/customers/organizations/{id}/restore'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Who is responsible for a customer lives in the sales-reps app, so this call asks it: the coverage of the rep and the company is recorded when there is none, and the rep is made the responsible one there. The rep's name is copied to `account_manager_name` for the company list, and the change lands on the company's timeline.
+     *
+     * @param {string} params.id - The organization.
+     * @param {string} params.repCode - The rep's code in the sales-reps app.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     */
+    customersOrganizationsSetAccountManager(params: { id: string, repCode: string }): Promise<Models.Organization>;
+    /**
+     * Who is responsible for a customer lives in the sales-reps app, so this call asks it: the coverage of the rep and the company is recorded when there is none, and the rep is made the responsible one there. The rep's name is copied to `account_manager_name` for the company list, and the change lands on the company's timeline.
+     *
+     * @param {string} id - The organization.
+     * @param {string} repCode - The rep's code in the sales-reps app.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersOrganizationsSetAccountManager(id: string, repCode: string): Promise<Models.Organization>;
+    customersOrganizationsSetAccountManager(
+        paramsOrFirst: { id: string, repCode: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.Organization> {
+        let params: { id: string, repCode: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, repCode: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                repCode: rest[0] as string            
+            };
+        }
+        
+        const id = params.id;
+        const repCode = params.repCode;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof repCode === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "repCode"');
+        }
+
+        const apiPath = '/v1/customers/organizations/{id}/set-account-manager'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof repCode !== 'undefined') {
+            apiPayload['rep_code'] = repCode;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Mark one person of the company as its main contact — the recipient of documents and invitations — and release whoever held it, in one call. `primary_contact_id` follows. Naming the main contact again changes nothing.
+     *
+     * @param {string} params.id - The organization.
+     * @param {string} params.contactId - The person of this company who becomes the main contact.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     */
+    customersOrganizationsSetPrimaryContact(params: { id: string, contactId: string }): Promise<Models.Organization>;
+    /**
+     * Mark one person of the company as its main contact — the recipient of documents and invitations — and release whoever held it, in one call. `primary_contact_id` follows. Naming the main contact again changes nothing.
+     *
+     * @param {string} id - The organization.
+     * @param {string} contactId - The person of this company who becomes the main contact.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersOrganizationsSetPrimaryContact(id: string, contactId: string): Promise<Models.Organization>;
+    customersOrganizationsSetPrimaryContact(
+        paramsOrFirst: { id: string, contactId: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.Organization> {
+        let params: { id: string, contactId: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, contactId: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                contactId: rest[0] as string            
+            };
+        }
+        
+        const id = params.id;
+        const contactId = params.contactId;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof contactId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "contactId"');
+        }
+
+        const apiPath = '/v1/customers/organizations/{id}/set-primary-contact'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof contactId !== 'undefined') {
+            apiPayload['contact_id'] = contactId;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Lift the delivery block of a company, with a note saying why. The reason, the note, when and who are cleared from the record and the lifting lands on the company's timeline.
+     *
+     * @param {string} params.id - The organization.
+     * @param {string} params.note - Why the block is lifted.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     */
+    customersOrganizationsUnblockDelivery(params: { id: string, note: string }): Promise<Models.Organization>;
+    /**
+     * Lift the delivery block of a company, with a note saying why. The reason, the note, when and who are cleared from the record and the lifting lands on the company's timeline.
+     *
+     * @param {string} id - The organization.
+     * @param {string} note - Why the block is lifted.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersOrganizationsUnblockDelivery(id: string, note: string): Promise<Models.Organization>;
+    customersOrganizationsUnblockDelivery(
+        paramsOrFirst: { id: string, note: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.Organization> {
+        let params: { id: string, note: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, note: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                note: rest[0] as string            
+            };
+        }
+        
+        const id = params.id;
+        const note = params.note;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof note === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "note"');
+        }
+
+        const apiPath = '/v1/customers/organizations/{id}/unblock-delivery'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof note !== 'undefined') {
+            apiPayload['note'] = note;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Lift the order block of a company, with a note saying why. The reason, the note, when and who are cleared from the record and the lifting lands on the company's timeline.
+     *
+     * @param {string} params.id - The organization.
+     * @param {string} params.note - Why the block is lifted.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     */
+    customersOrganizationsUnblockOrder(params: { id: string, note: string }): Promise<Models.Organization>;
+    /**
+     * Lift the order block of a company, with a note saying why. The reason, the note, when and who are cleared from the record and the lifting lands on the company's timeline.
+     *
+     * @param {string} id - The organization.
+     * @param {string} note - Why the block is lifted.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Organization>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersOrganizationsUnblockOrder(id: string, note: string): Promise<Models.Organization>;
+    customersOrganizationsUnblockOrder(
+        paramsOrFirst: { id: string, note: string } | string,
+        ...rest: [(string)?]    
+    ): Promise<Models.Organization> {
+        let params: { id: string, note: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, note: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                note: rest[0] as string            
+            };
+        }
+        
+        const id = params.id;
+        const note = params.note;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+        if (typeof note === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "note"');
+        }
+
+        const apiPath = '/v1/customers/organizations/{id}/unblock-order'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof note !== 'undefined') {
+            apiPayload['note'] = note;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload

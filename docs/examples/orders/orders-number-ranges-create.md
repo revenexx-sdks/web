@@ -11,8 +11,13 @@ const orders = new Orders(client);
 
 const result = await orders.ordersNumberRangesCreate({
     code: 'order',
+    active: true, // optional
     channelId: '', // optional
     counter: 123, // optional
+    labels: {
+        "de": "Bestellnummern",
+        "en": "Order numbers"
+    }, // optional
     metadata: {
         "owner": "erp-sync"
     }, // optional
@@ -20,7 +25,8 @@ const result = await orders.ordersNumberRangesCreate({
     positionStep: 10, // optional
     prefix: 'ORD-', // optional
     step: 1, // optional
-    suffix: '' // optional
+    suffix: '', // optional
+    title: 'Order numbers' // optional
 });
 
 console.log(result);

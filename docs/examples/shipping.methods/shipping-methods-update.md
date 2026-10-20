@@ -13,6 +13,10 @@ const result = await shippingMethods.shippingMethodsUpdate({
     id: '',
     carrier: 'acme-parcel', // optional
     carrierId: '8a4d1c7e-2b93-4f61-b0d2-6c5a9e3f1a44', // optional
+    checkoutNotes: {
+        "de": "Lieferung nur werktags.",
+        "en": "Delivered on working days only."
+    }, // optional
     code: 'express', // optional
     countries: ["DE","AT","CH"], // optional
     currency: 'EUR', // optional

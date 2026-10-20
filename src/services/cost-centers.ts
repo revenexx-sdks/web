@@ -2,6 +2,7 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+import { Discarded } from '../enums/discarded';
 import { BudgetType } from '../enums/budget-type';
 import { Conditions } from '../enums/conditions';
 import { CostCentersRestrictionsCreateType } from '../enums/cost-centers-restrictions-create-type';
@@ -132,39 +133,43 @@ export class CostCenters {
      * @param {number} params.limit - Page size (default 50, max 200).
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @param {Discarded} params.discarded - Discarded drafts are left out by default. 'include' lists them among the rest, 'only' lists nothing else. Any other value is refused with 400.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    costCentersBudgetsList(params?: { limit?: number, offset?: number, order?: string }): Promise<{}>;
+    costCentersBudgetsList(params?: { limit?: number, offset?: number, order?: string, discarded?: Discarded }): Promise<{}>;
     /**
      *
      * @param {number} limit - Page size (default 50, max 200).
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort as 'column.asc' | 'column.desc', e.g. 'created_at.desc'.
+     * @param {Discarded} discarded - Discarded drafts are left out by default. 'include' lists them among the rest, 'only' lists nothing else. Any other value is refused with 400.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    costCentersBudgetsList(limit?: number, offset?: number, order?: string): Promise<{}>;
+    costCentersBudgetsList(limit?: number, offset?: number, order?: string, discarded?: Discarded): Promise<{}>;
     costCentersBudgetsList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string } | number,
-        ...rest: [(number)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, discarded?: Discarded } | number,
+        ...rest: [(number)?, (string)?, (Discarded)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string };
+        let params: { limit?: number, offset?: number, order?: string, discarded?: Discarded };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, discarded?: Discarded };
         } else {
             params = {
                 limit: paramsOrFirst as number,
                 offset: rest[0] as number,
-                order: rest[1] as string            
+                order: rest[1] as string,
+                discarded: rest[2] as Discarded            
             };
         }
         
         const limit = params.limit;
         const offset = params.offset;
         const order = params.order;
+        const discarded = params.discarded;
 
 
         const apiPath = '/v1/cost-centers/budgets';
@@ -177,6 +182,9 @@ export class CostCenters {
         }
         if (typeof order !== 'undefined') {
             apiPayload['order'] = order;
+        }
+        if (typeof discarded !== 'undefined') {
+            apiPayload['discarded'] = discarded;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -605,6 +613,71 @@ export class CostCenters {
         }
         if (typeof target !== 'undefined') {
             apiPayload['target'] = target;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @param {string} params.actor - 
+     * @param {string} params.note - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.BudgetAdjustResult>}
+     */
+    costCentersBudgetsDiscard(params: { id: string, actor?: string, note?: string }): Promise<Models.BudgetAdjustResult>;
+    /**
+     *
+     * @param {string} id - 
+     * @param {string} actor - 
+     * @param {string} note - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.BudgetAdjustResult>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    costCentersBudgetsDiscard(id: string, actor?: string, note?: string): Promise<Models.BudgetAdjustResult>;
+    costCentersBudgetsDiscard(
+        paramsOrFirst: { id: string, actor?: string, note?: string } | string,
+        ...rest: [(string)?, (string)?]    
+    ): Promise<Models.BudgetAdjustResult> {
+        let params: { id: string, actor?: string, note?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, actor?: string, note?: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                actor: rest[0] as string,
+                note: rest[1] as string            
+            };
+        }
+        
+        const id = params.id;
+        const actor = params.actor;
+        const note = params.note;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/cost-centers/budgets/{id}/discard'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof actor !== 'undefined') {
+            apiPayload['actor'] = actor;
+        }
+        if (typeof note !== 'undefined') {
+            apiPayload['note'] = note;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1546,6 +1619,55 @@ export class CostCenters {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     *
+     * @param {string} params.id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.CostCenter>}
+     */
+    costCentersCostCentersArchive(params: { id: string }): Promise<Models.CostCenter>;
+    /**
+     *
+     * @param {string} id - 
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.CostCenter>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    costCentersCostCentersArchive(id: string): Promise<Models.CostCenter>;
+    costCentersCostCentersArchive(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.CostCenter> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/cost-centers/cost-centers/{id}/archive'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload

@@ -12,8 +12,9 @@ const promotionsPromotions = new PromotionsPromotions(client);
 const result = await promotionsPromotions.promotionsGroupsCreate({
     code: '',
     name: '',
-    labels: {}, // optional
-    metadata: {}, // optional
+    active: true, // optional
+    labels: null, // optional
+    metadata: null, // optional
     mode: PromotionsGroupsCreateMode.Stack, // optional
     parentId: '', // optional
     position: 1 // optional

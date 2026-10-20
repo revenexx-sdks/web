@@ -1,5 +1,5 @@
 ```javascript
-import { Client, ConsentManagerRegistry, Kind } from "@revenexx/sdk";
+import { Client, ConsentManagerRegistry, ConsentManagerCookiesListKind } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -18,7 +18,7 @@ const result = await consentManagerRegistry.consentManagerCookiesCreate({
         "en": "2 years"
     }, // optional
     host: 'first-party', // optional
-    kind: Kind.Cookie, // optional
+    kind: ConsentManagerCookiesListKind.Cookie, // optional
     position: 1 // optional
 });
 

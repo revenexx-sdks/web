@@ -13,15 +13,43 @@ export class CustomersValueLists {
     }
 
     /**
-     * What an address is used for. Billing and shipping are what a checkout needs; a works entrance or a central accounts office is the tenant's own. A fresh install is seeded with billing, shipping, and the set seeds on first read too, so the page is never empty and `addresses.type` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order and no column filters, so `page` describes the full set and `filter` is always empty.
+     * What an address is used for. Billing and shipping are what a checkout needs; a works entrance or a central accounts office is the tenant's own. A fresh install is seeded with billing, shipping, and the set seeds on first read too, so the page is never empty and `addresses.type` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
      *
+     * @param {boolean} params.active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    customersAddressTypesList(): Promise<{}> {
+    customersAddressTypesList(params?: { active?: boolean }): Promise<{}>;
+    /**
+     * What an address is used for. Billing and shipping are what a checkout needs; a works entrance or a central accounts office is the tenant's own. A fresh install is seeded with billing, shipping, and the set seeds on first read too, so the page is never empty and `addresses.type` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
+     *
+     * @param {boolean} active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersAddressTypesList(active?: boolean): Promise<{}>;
+    customersAddressTypesList(
+        paramsOrFirst?: { active?: boolean } | boolean    
+    ): Promise<{}> {
+        let params: { active?: boolean };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { active?: boolean };
+        } else {
+            params = {
+                active: paramsOrFirst as boolean            
+            };
+        }
+        
+        const active = params.active;
+
 
         const apiPath = '/v1/customers/address-types';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -40,6 +68,7 @@ export class CustomersValueLists {
      *
      * @param {string} params.code - What `addresses.type` will store. Lowercase, starting with a letter; immutable afterwards.
      * @param {string} params.title - The fallback name shown when no locale matches.
+     * @param {boolean} params.active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
      * @param {string} params.description - One line of help for whoever picks this value.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
      * @param {boolean} params.isDefault - Promote this value; the previous default is demoted in the same call.
@@ -49,12 +78,13 @@ export class CustomersValueLists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.AddressTypeRow>}
      */
-    customersAddressTypesCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.AddressTypeRow>;
+    customersAddressTypesCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.AddressTypeRow>;
     /**
      * Extends this tenant's address types set with a value of their own — the whole reason these four stopped being CHECK constraints. What an address is used for. Billing and shipping are what a checkout needs; a works entrance or a central accounts office is the tenant's own. The code is lowercase and becomes what `addresses.type` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
      *
      * @param {string} code - What `addresses.type` will store. Lowercase, starting with a letter; immutable afterwards.
      * @param {string} title - The fallback name shown when no locale matches.
+     * @param {boolean} active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
      * @param {string} description - One line of help for whoever picks this value.
      * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
      * @param {boolean} isDefault - Promote this value; the previous default is demoted in the same call.
@@ -65,30 +95,32 @@ export class CustomersValueLists {
      * @returns {Promise<Models.AddressTypeRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAddressTypesCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.AddressTypeRow>;
+    customersAddressTypesCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.AddressTypeRow>;
     customersAddressTypesCreate(
-        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
     ): Promise<Models.AddressTypeRow> {
-        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 title: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                labels: rest[4] as object,
-                position: rest[5] as number,
-                tone: rest[6] as Tone            
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                labels: rest[5] as object,
+                position: rest[6] as number,
+                tone: rest[7] as Tone            
             };
         }
         
         const code = params.code;
         const title = params.title;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -105,6 +137,9 @@ export class CustomersValueLists {
 
         const apiPath = '/v1/customers/address-types';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -249,9 +284,10 @@ export class CustomersValueLists {
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `shipping` to wording of their own changes what people READ and nothing about what `addresses.type` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
      * @param {string} params.id - The address type to edit.
+     * @param {boolean} params.active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
      * @param {string} params.description - One line of help for whoever picks this value.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
-     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted.
+     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
      * @param {object} params.labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
      * @param {number} params.position - Where it sits in the set, ascending.
      * @param {string} params.title - The fallback name shown when no locale matches.
@@ -259,14 +295,15 @@ export class CustomersValueLists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.AddressTypeRow>}
      */
-    customersAddressTypesUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.AddressTypeRow>;
+    customersAddressTypesUpdate(params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.AddressTypeRow>;
     /**
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `shipping` to wording of their own changes what people READ and nothing about what `addresses.type` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
      * @param {string} id - The address type to edit.
+     * @param {boolean} active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
      * @param {string} description - One line of help for whoever picks this value.
      * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
-     * @param {boolean} isDefault - Promote this value; the previous default is demoted.
+     * @param {boolean} isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
      * @param {object} labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
      * @param {number} position - Where it sits in the set, ascending.
      * @param {string} title - The fallback name shown when no locale matches.
@@ -275,29 +312,31 @@ export class CustomersValueLists {
      * @returns {Promise<Models.AddressTypeRow>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersAddressTypesUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.AddressTypeRow>;
+    customersAddressTypesUpdate(id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.AddressTypeRow>;
     customersAddressTypesUpdate(
-        paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
-        ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
+        paramsOrFirst: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
+        ...rest: [(boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
     ): Promise<Models.AddressTypeRow> {
-        let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+        let params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                description: rest[0] as string,
-                descriptions: rest[1] as object,
-                isDefault: rest[2] as boolean,
-                labels: rest[3] as object,
-                position: rest[4] as number,
-                title: rest[5] as string,
-                tone: rest[6] as Tone            
+                active: rest[0] as boolean,
+                description: rest[1] as string,
+                descriptions: rest[2] as object,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                position: rest[5] as number,
+                title: rest[6] as string,
+                tone: rest[7] as Tone            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -312,6 +351,9 @@ export class CustomersValueLists {
 
         const apiPath = '/v1/customers/address-types/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof description !== 'undefined') {
             apiPayload['description'] = description;
         }
@@ -348,15 +390,43 @@ export class CustomersValueLists {
     }
 
     /**
-     * What kind of entry lands on a customer timeline. 'system' is the app's own decision trail and a caller may not file one, whatever the set says. A fresh install is seeded with system, note, call, email, meeting, visit, task, and the set seeds on first read too, so the page is never empty and `contact_events.kind` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order and no column filters, so `page` describes the full set and `filter` is always empty.
+     * What kind of entry lands on a customer timeline. 'system' is the app's own decision trail and a caller may not file one, whatever the set says. A fresh install is seeded with system, note, call, email, meeting, visit, task, and the set seeds on first read too, so the page is never empty and `contact_events.kind` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
      *
+     * @param {boolean} params.active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    customersContactEventKindsList(): Promise<{}> {
+    customersContactEventKindsList(params?: { active?: boolean }): Promise<{}>;
+    /**
+     * What kind of entry lands on a customer timeline. 'system' is the app's own decision trail and a caller may not file one, whatever the set says. A fresh install is seeded with system, note, call, email, meeting, visit, task, and the set seeds on first read too, so the page is never empty and `contact_events.kind` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
+     *
+     * @param {boolean} active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactEventKindsList(active?: boolean): Promise<{}>;
+    customersContactEventKindsList(
+        paramsOrFirst?: { active?: boolean } | boolean    
+    ): Promise<{}> {
+        let params: { active?: boolean };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { active?: boolean };
+        } else {
+            params = {
+                active: paramsOrFirst as boolean            
+            };
+        }
+        
+        const active = params.active;
+
 
         const apiPath = '/v1/customers/contact-event-kinds';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -375,6 +445,7 @@ export class CustomersValueLists {
      *
      * @param {string} params.code - What `contact_events.kind` will store. Lowercase, starting with a letter; immutable afterwards.
      * @param {string} params.title - The fallback name shown when no locale matches.
+     * @param {boolean} params.active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
      * @param {string} params.description - One line of help for whoever picks this value.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
      * @param {boolean} params.isDefault - Promote this value; the previous default is demoted in the same call.
@@ -384,12 +455,13 @@ export class CustomersValueLists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.ContactEventKind>}
      */
-    customersContactEventKindsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.ContactEventKind>;
+    customersContactEventKindsCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.ContactEventKind>;
     /**
      * Extends this tenant's activity types set with a value of their own — the whole reason these four stopped being CHECK constraints. What kind of entry lands on a customer timeline. 'system' is the app's own decision trail and a caller may not file one, whatever the set says. The code is lowercase and becomes what `contact_events.kind` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
      *
      * @param {string} code - What `contact_events.kind` will store. Lowercase, starting with a letter; immutable afterwards.
      * @param {string} title - The fallback name shown when no locale matches.
+     * @param {boolean} active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
      * @param {string} description - One line of help for whoever picks this value.
      * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
      * @param {boolean} isDefault - Promote this value; the previous default is demoted in the same call.
@@ -400,30 +472,32 @@ export class CustomersValueLists {
      * @returns {Promise<Models.ContactEventKind>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersContactEventKindsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.ContactEventKind>;
+    customersContactEventKindsCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.ContactEventKind>;
     customersContactEventKindsCreate(
-        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
     ): Promise<Models.ContactEventKind> {
-        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 title: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                labels: rest[4] as object,
-                position: rest[5] as number,
-                tone: rest[6] as Tone            
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                labels: rest[5] as object,
+                position: rest[6] as number,
+                tone: rest[7] as Tone            
             };
         }
         
         const code = params.code;
         const title = params.title;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -440,6 +514,9 @@ export class CustomersValueLists {
 
         const apiPath = '/v1/customers/contact-event-kinds';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -584,9 +661,10 @@ export class CustomersValueLists {
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `call` to wording of their own changes what people READ and nothing about what `contact_events.kind` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
      * @param {string} params.id - The activity type to edit.
+     * @param {boolean} params.active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
      * @param {string} params.description - One line of help for whoever picks this value.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
-     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted.
+     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
      * @param {object} params.labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
      * @param {number} params.position - Where it sits in the set, ascending.
      * @param {string} params.title - The fallback name shown when no locale matches.
@@ -594,14 +672,15 @@ export class CustomersValueLists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.ContactEventKind>}
      */
-    customersContactEventKindsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.ContactEventKind>;
+    customersContactEventKindsUpdate(params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.ContactEventKind>;
     /**
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `call` to wording of their own changes what people READ and nothing about what `contact_events.kind` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
      * @param {string} id - The activity type to edit.
+     * @param {boolean} active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
      * @param {string} description - One line of help for whoever picks this value.
      * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
-     * @param {boolean} isDefault - Promote this value; the previous default is demoted.
+     * @param {boolean} isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
      * @param {object} labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
      * @param {number} position - Where it sits in the set, ascending.
      * @param {string} title - The fallback name shown when no locale matches.
@@ -610,29 +689,31 @@ export class CustomersValueLists {
      * @returns {Promise<Models.ContactEventKind>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersContactEventKindsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.ContactEventKind>;
+    customersContactEventKindsUpdate(id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.ContactEventKind>;
     customersContactEventKindsUpdate(
-        paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
-        ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
+        paramsOrFirst: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
+        ...rest: [(boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
     ): Promise<Models.ContactEventKind> {
-        let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+        let params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                description: rest[0] as string,
-                descriptions: rest[1] as object,
-                isDefault: rest[2] as boolean,
-                labels: rest[3] as object,
-                position: rest[4] as number,
-                title: rest[5] as string,
-                tone: rest[6] as Tone            
+                active: rest[0] as boolean,
+                description: rest[1] as string,
+                descriptions: rest[2] as object,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                position: rest[5] as number,
+                title: rest[6] as string,
+                tone: rest[7] as Tone            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -647,6 +728,9 @@ export class CustomersValueLists {
 
         const apiPath = '/v1/customers/contact-event-kinds/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof description !== 'undefined') {
             apiPayload['description'] = description;
         }
@@ -683,15 +767,420 @@ export class CustomersValueLists {
     }
 
     /**
-     * Which document a contact point receives. Four is what an ERP delivers per debtor; a merchant whose own mails a credit note or a statement separately adds theirs. A fresh install is seeded with invoice, order_confirmation, shipping_notice, dunning, and the set seeds on first read too, so the page is never empty. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order and no column filters, so `page` describes the full set and `filter` is always empty.
+     * Where a PERSON stands in the marketing and sales funnel, apart from the company's stage. The marketing apps name the six seeded codes; a merchant may rename them and add steps of their own. A fresh install is seeded with subscriber, lead, mql, sql, opportunity, customer, and the set seeds on first read too, so the page is never empty and `contacts.lifecycle_stage` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
      *
+     * @param {boolean} params.active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    customersContactPointKindsList(): Promise<{}> {
+    customersContactLifecycleStagesList(params?: { active?: boolean }): Promise<{}>;
+    /**
+     * Where a PERSON stands in the marketing and sales funnel, apart from the company's stage. The marketing apps name the six seeded codes; a merchant may rename them and add steps of their own. A fresh install is seeded with subscriber, lead, mql, sql, opportunity, customer, and the set seeds on first read too, so the page is never empty and `contacts.lifecycle_stage` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
+     *
+     * @param {boolean} active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactLifecycleStagesList(active?: boolean): Promise<{}>;
+    customersContactLifecycleStagesList(
+        paramsOrFirst?: { active?: boolean } | boolean    
+    ): Promise<{}> {
+        let params: { active?: boolean };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { active?: boolean };
+        } else {
+            params = {
+                active: paramsOrFirst as boolean            
+            };
+        }
+        
+        const active = params.active;
+
+
+        const apiPath = '/v1/customers/contact-lifecycle-stages';
+        const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Extends this tenant's contact stages set with a value of their own — the whole reason these four stopped being CHECK constraints. Where a PERSON stands in the marketing and sales funnel, apart from the company's stage. The marketing apps name the six seeded codes; a merchant may rename them and add steps of their own. The code is lowercase and becomes what `contacts.lifecycle_stage` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
+     *
+     * @param {string} params.code - What `contacts.lifecycle_stage` will store. Lowercase, starting with a letter; immutable afterwards.
+     * @param {string} params.title - The fallback name shown when no locale matches.
+     * @param {boolean} params.active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
+     * @param {string} params.description - One line of help for whoever picks this value.
+     * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted in the same call.
+     * @param {object} params.labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+     * @param {number} params.position - Where it sits in the set, ascending. Default 0.
+     * @param {Tone} params.tone - Semantic badge colour.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactLifecycleStage>}
+     */
+    customersContactLifecycleStagesCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.ContactLifecycleStage>;
+    /**
+     * Extends this tenant's contact stages set with a value of their own — the whole reason these four stopped being CHECK constraints. Where a PERSON stands in the marketing and sales funnel, apart from the company's stage. The marketing apps name the six seeded codes; a merchant may rename them and add steps of their own. The code is lowercase and becomes what `contacts.lifecycle_stage` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
+     *
+     * @param {string} code - What `contacts.lifecycle_stage` will store. Lowercase, starting with a letter; immutable afterwards.
+     * @param {string} title - The fallback name shown when no locale matches.
+     * @param {boolean} active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
+     * @param {string} description - One line of help for whoever picks this value.
+     * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+     * @param {boolean} isDefault - Promote this value; the previous default is demoted in the same call.
+     * @param {object} labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+     * @param {number} position - Where it sits in the set, ascending. Default 0.
+     * @param {Tone} tone - Semantic badge colour.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactLifecycleStage>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactLifecycleStagesCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.ContactLifecycleStage>;
+    customersContactLifecycleStagesCreate(
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
+    ): Promise<Models.ContactLifecycleStage> {
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+        } else {
+            params = {
+                code: paramsOrFirst as string,
+                title: rest[0] as string,
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                labels: rest[5] as object,
+                position: rest[6] as number,
+                tone: rest[7] as Tone            
+            };
+        }
+        
+        const code = params.code;
+        const title = params.title;
+        const active = params.active;
+        const description = params.description;
+        const descriptions = params.descriptions;
+        const isDefault = params.isDefault;
+        const labels = params.labels;
+        const position = params.position;
+        const tone = params.tone;
+
+        if (typeof code === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "code"');
+        }
+        if (typeof title === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "title"');
+        }
+
+        const apiPath = '/v1/customers/contact-lifecycle-stages';
+        const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
+        if (typeof code !== 'undefined') {
+            apiPayload['code'] = code;
+        }
+        if (typeof description !== 'undefined') {
+            apiPayload['description'] = description;
+        }
+        if (typeof descriptions !== 'undefined') {
+            apiPayload['descriptions'] = descriptions;
+        }
+        if (typeof isDefault !== 'undefined') {
+            apiPayload['is_default'] = isDefault;
+        }
+        if (typeof labels !== 'undefined') {
+            apiPayload['labels'] = labels;
+        }
+        if (typeof position !== 'undefined') {
+            apiPayload['position'] = position;
+        }
+        if (typeof title !== 'undefined') {
+            apiPayload['title'] = title;
+        }
+        if (typeof tone !== 'undefined') {
+            apiPayload['tone'] = tone;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Takes a value out of the contact stages set. There is no foreign key behind `contacts.lifecycle_stage` — one added to a table that starts empty fails the migration of every existing tenant — so this route IS the integrity: it refuses while any record still carries the code, and it refuses to empty the set. Retiring a value that is in use is therefore a two-step job: move the records onto another value first, then remove it.
+     *
+     * @param {string} params.id - The contact stage to remove.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    customersContactLifecycleStagesDelete(params: { id: string }): Promise<{}>;
+    /**
+     * Takes a value out of the contact stages set. There is no foreign key behind `contacts.lifecycle_stage` — one added to a table that starts empty fails the migration of every existing tenant — so this route IS the integrity: it refuses while any record still carries the code, and it refuses to empty the set. Retiring a value that is in use is therefore a two-step job: move the records onto another value first, then remove it.
+     *
+     * @param {string} id - The contact stage to remove.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactLifecycleStagesDelete(id: string): Promise<{}>;
+    customersContactLifecycleStagesDelete(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<{}> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/customers/contact-lifecycle-stages/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'delete',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * One value of the contact stages set, by its id — its code, its fallback title, the per-language `labels` an operator reads and the badge `tone` a client renders it with. Where a PERSON stands in the marketing and sales funnel, apart from the company's stage. The marketing apps name the six seeded codes; a merchant may rename them and add steps of their own. Reading one value is the rare path: `GET /customers/contact-lifecycle-stages` answers the whole set in a single page, which is what a select needs.
+     *
+     * @param {string} params.id - The contact stage to read. Note that records store the CODE, not this id.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactLifecycleStage>}
+     */
+    customersContactLifecycleStagesGet(params: { id: string }): Promise<Models.ContactLifecycleStage>;
+    /**
+     * One value of the contact stages set, by its id — its code, its fallback title, the per-language `labels` an operator reads and the badge `tone` a client renders it with. Where a PERSON stands in the marketing and sales funnel, apart from the company's stage. The marketing apps name the six seeded codes; a merchant may rename them and add steps of their own. Reading one value is the rare path: `GET /customers/contact-lifecycle-stages` answers the whole set in a single page, which is what a select needs.
+     *
+     * @param {string} id - The contact stage to read. Note that records store the CODE, not this id.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactLifecycleStage>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactLifecycleStagesGet(id: string): Promise<Models.ContactLifecycleStage>;
+    customersContactLifecycleStagesGet(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.ContactLifecycleStage> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/customers/contact-lifecycle-stages/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `lead` to wording of their own changes what people READ and nothing about what `contacts.lifecycle_stage` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
+     *
+     * @param {string} params.id - The contact stage to edit.
+     * @param {boolean} params.active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
+     * @param {string} params.description - One line of help for whoever picks this value.
+     * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
+     * @param {object} params.labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+     * @param {number} params.position - Where it sits in the set, ascending.
+     * @param {string} params.title - The fallback name shown when no locale matches.
+     * @param {Tone} params.tone - Semantic badge colour.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactLifecycleStage>}
+     */
+    customersContactLifecycleStagesUpdate(params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.ContactLifecycleStage>;
+    /**
+     * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `lead` to wording of their own changes what people READ and nothing about what `contacts.lifecycle_stage` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
+     *
+     * @param {string} id - The contact stage to edit.
+     * @param {boolean} active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
+     * @param {string} description - One line of help for whoever picks this value.
+     * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
+     * @param {boolean} isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
+     * @param {object} labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
+     * @param {number} position - Where it sits in the set, ascending.
+     * @param {string} title - The fallback name shown when no locale matches.
+     * @param {Tone} tone - Semantic badge colour.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ContactLifecycleStage>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactLifecycleStagesUpdate(id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.ContactLifecycleStage>;
+    customersContactLifecycleStagesUpdate(
+        paramsOrFirst: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
+        ...rest: [(boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
+    ): Promise<Models.ContactLifecycleStage> {
+        let params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                active: rest[0] as boolean,
+                description: rest[1] as string,
+                descriptions: rest[2] as object,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                position: rest[5] as number,
+                title: rest[6] as string,
+                tone: rest[7] as Tone            
+            };
+        }
+        
+        const id = params.id;
+        const active = params.active;
+        const description = params.description;
+        const descriptions = params.descriptions;
+        const isDefault = params.isDefault;
+        const labels = params.labels;
+        const position = params.position;
+        const title = params.title;
+        const tone = params.tone;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/customers/contact-lifecycle-stages/{id}'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
+        if (typeof description !== 'undefined') {
+            apiPayload['description'] = description;
+        }
+        if (typeof descriptions !== 'undefined') {
+            apiPayload['descriptions'] = descriptions;
+        }
+        if (typeof isDefault !== 'undefined') {
+            apiPayload['is_default'] = isDefault;
+        }
+        if (typeof labels !== 'undefined') {
+            apiPayload['labels'] = labels;
+        }
+        if (typeof position !== 'undefined') {
+            apiPayload['position'] = position;
+        }
+        if (typeof title !== 'undefined') {
+            apiPayload['title'] = title;
+        }
+        if (typeof tone !== 'undefined') {
+            apiPayload['tone'] = tone;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Which document a contact point receives. Four is what an ERP delivers per debtor; a merchant whose own mails a credit note or a statement separately adds theirs. A fresh install is seeded with invoice, order_confirmation, shipping_notice, dunning, and the set seeds on first read too, so the page is never empty. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
+     *
+     * @param {boolean} params.active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    customersContactPointKindsList(params?: { active?: boolean }): Promise<{}>;
+    /**
+     * Which document a contact point receives. Four is what an ERP delivers per debtor; a merchant whose own mails a credit note or a statement separately adds theirs. A fresh install is seeded with invoice, order_confirmation, shipping_notice, dunning, and the set seeds on first read too, so the page is never empty. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
+     *
+     * @param {boolean} active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersContactPointKindsList(active?: boolean): Promise<{}>;
+    customersContactPointKindsList(
+        paramsOrFirst?: { active?: boolean } | boolean    
+    ): Promise<{}> {
+        let params: { active?: boolean };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { active?: boolean };
+        } else {
+            params = {
+                active: paramsOrFirst as boolean            
+            };
+        }
+        
+        const active = params.active;
+
 
         const apiPath = '/v1/customers/contact-point-kinds';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -710,6 +1199,7 @@ export class CustomersValueLists {
      *
      * @param {string} params.code - What `contact_points.kind` will store. Lowercase, starting with a letter; immutable afterwards.
      * @param {string} params.title - The fallback name shown when no locale matches.
+     * @param {boolean} params.active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
      * @param {string} params.description - One line of help for whoever picks this value.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
      * @param {boolean} params.isDefault - Promote this value; the previous default is demoted in the same call.
@@ -719,12 +1209,13 @@ export class CustomersValueLists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.ContactPointKind>}
      */
-    customersContactPointKindsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.ContactPointKind>;
+    customersContactPointKindsCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.ContactPointKind>;
     /**
      * Extends this tenant's recipient types set with a value of their own — the whole reason these four stopped being CHECK constraints. Which document a contact point receives. Four is what an ERP delivers per debtor; a merchant whose own mails a credit note or a statement separately adds theirs. The code is lowercase and becomes what `contact_points.kind` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
      *
      * @param {string} code - What `contact_points.kind` will store. Lowercase, starting with a letter; immutable afterwards.
      * @param {string} title - The fallback name shown when no locale matches.
+     * @param {boolean} active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
      * @param {string} description - One line of help for whoever picks this value.
      * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
      * @param {boolean} isDefault - Promote this value; the previous default is demoted in the same call.
@@ -735,30 +1226,32 @@ export class CustomersValueLists {
      * @returns {Promise<Models.ContactPointKind>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersContactPointKindsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.ContactPointKind>;
+    customersContactPointKindsCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.ContactPointKind>;
     customersContactPointKindsCreate(
-        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
     ): Promise<Models.ContactPointKind> {
-        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 title: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                labels: rest[4] as object,
-                position: rest[5] as number,
-                tone: rest[6] as Tone            
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                labels: rest[5] as object,
+                position: rest[6] as number,
+                tone: rest[7] as Tone            
             };
         }
         
         const code = params.code;
         const title = params.title;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -775,6 +1268,9 @@ export class CustomersValueLists {
 
         const apiPath = '/v1/customers/contact-point-kinds';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -919,9 +1415,10 @@ export class CustomersValueLists {
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `invoice` to wording of their own changes what people READ and nothing about what `contact_points.kind` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
      * @param {string} params.id - The recipient type to edit.
+     * @param {boolean} params.active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
      * @param {string} params.description - One line of help for whoever picks this value.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
-     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted.
+     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
      * @param {object} params.labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
      * @param {number} params.position - Where it sits in the set, ascending.
      * @param {string} params.title - The fallback name shown when no locale matches.
@@ -929,14 +1426,15 @@ export class CustomersValueLists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.ContactPointKind>}
      */
-    customersContactPointKindsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.ContactPointKind>;
+    customersContactPointKindsUpdate(params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.ContactPointKind>;
     /**
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `invoice` to wording of their own changes what people READ and nothing about what `contact_points.kind` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
      * @param {string} id - The recipient type to edit.
+     * @param {boolean} active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
      * @param {string} description - One line of help for whoever picks this value.
      * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
-     * @param {boolean} isDefault - Promote this value; the previous default is demoted.
+     * @param {boolean} isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
      * @param {object} labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
      * @param {number} position - Where it sits in the set, ascending.
      * @param {string} title - The fallback name shown when no locale matches.
@@ -945,29 +1443,31 @@ export class CustomersValueLists {
      * @returns {Promise<Models.ContactPointKind>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersContactPointKindsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.ContactPointKind>;
+    customersContactPointKindsUpdate(id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.ContactPointKind>;
     customersContactPointKindsUpdate(
-        paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
-        ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
+        paramsOrFirst: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
+        ...rest: [(boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
     ): Promise<Models.ContactPointKind> {
-        let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+        let params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                description: rest[0] as string,
-                descriptions: rest[1] as object,
-                isDefault: rest[2] as boolean,
-                labels: rest[3] as object,
-                position: rest[4] as number,
-                title: rest[5] as string,
-                tone: rest[6] as Tone            
+                active: rest[0] as boolean,
+                description: rest[1] as string,
+                descriptions: rest[2] as object,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                position: rest[5] as number,
+                title: rest[6] as string,
+                tone: rest[7] as Tone            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -982,6 +1482,9 @@ export class CustomersValueLists {
 
         const apiPath = '/v1/customers/contact-point-kinds/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof description !== 'undefined') {
             apiPayload['description'] = description;
         }
@@ -1018,7 +1521,7 @@ export class CustomersValueLists {
     }
 
     /**
-     * What the app.installed event runs. It fills all 5 of the value sets a tenant needs before anything else works — the payment terms, the address types, the lifecycle stages, the activity types and the recipient types — in one call. Idempotent by code: a set that already has its rows is left completely alone, so a re-delivered event and a merchant's renames both survive. A tenant installed before these tables existed is seeded lazily instead, by the first read that finds one empty.
+     * What the app.installed event runs. It fills all 6 of the value sets a tenant needs before anything else works — the payment terms, the address types, the lifecycle stages, the contact stages, the activity types and the recipient types — in one call. Idempotent by code: a set that already has its rows is left completely alone, so a re-delivered event and a merchant's renames both survive. A tenant installed before these tables existed is seeded lazily instead, by the first read that finds one empty.
      *
      * @param {object} params.data - Request body
      * @throws {RevenexxException}
@@ -1026,7 +1529,7 @@ export class CustomersValueLists {
      */
     customersDefaults(params: { data: object }): Promise<Models.CustomersDefaultsResponse>;
     /**
-     * What the app.installed event runs. It fills all 5 of the value sets a tenant needs before anything else works — the payment terms, the address types, the lifecycle stages, the activity types and the recipient types — in one call. Idempotent by code: a set that already has its rows is left completely alone, so a re-delivered event and a merchant's renames both survive. A tenant installed before these tables existed is seeded lazily instead, by the first read that finds one empty.
+     * What the app.installed event runs. It fills all 6 of the value sets a tenant needs before anything else works — the payment terms, the address types, the lifecycle stages, the contact stages, the activity types and the recipient types — in one call. Idempotent by code: a set that already has its rows is left completely alone, so a re-delivered event and a merchant's renames both survive. A tenant installed before these tables existed is seeded lazily instead, by the first read that finds one empty.
      *
      * @param {object} data - Request body
      * @throws {RevenexxException}
@@ -1073,15 +1576,43 @@ export class CustomersValueLists {
     }
 
     /**
-     * Where a company stands in the sales pipeline — a separate axis from status, and one whose steps are a sales team's own. A fresh install is seeded with lead, prospect, customer, churned, and the set seeds on first read too, so the page is never empty and `organizations.lifecycle_stage` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order and no column filters, so `page` describes the full set and `filter` is always empty.
+     * Where a company stands in the sales pipeline — a separate axis from status, and one whose steps are a sales team's own. A fresh install is seeded with lead, prospect, customer, churned, and the set seeds on first read too, so the page is never empty and `organizations.lifecycle_stage` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
      *
+     * @param {boolean} params.active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    customersLifecycleStagesList(): Promise<{}> {
+    customersLifecycleStagesList(params?: { active?: boolean }): Promise<{}>;
+    /**
+     * Where a company stands in the sales pipeline — a separate axis from status, and one whose steps are a sales team's own. A fresh install is seeded with lead, prospect, customer, churned, and the set seeds on first read too, so the page is never empty and `organizations.lifecycle_stage` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
+     *
+     * @param {boolean} active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersLifecycleStagesList(active?: boolean): Promise<{}>;
+    customersLifecycleStagesList(
+        paramsOrFirst?: { active?: boolean } | boolean    
+    ): Promise<{}> {
+        let params: { active?: boolean };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { active?: boolean };
+        } else {
+            params = {
+                active: paramsOrFirst as boolean            
+            };
+        }
+        
+        const active = params.active;
+
 
         const apiPath = '/v1/customers/lifecycle-stages';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1100,6 +1631,7 @@ export class CustomersValueLists {
      *
      * @param {string} params.code - What `organizations.lifecycle_stage` will store. Lowercase, starting with a letter; immutable afterwards.
      * @param {string} params.title - The fallback name shown when no locale matches.
+     * @param {boolean} params.active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
      * @param {string} params.description - One line of help for whoever picks this value.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
      * @param {boolean} params.isDefault - Promote this value; the previous default is demoted in the same call.
@@ -1109,12 +1641,13 @@ export class CustomersValueLists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.LifecycleStage>}
      */
-    customersLifecycleStagesCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.LifecycleStage>;
+    customersLifecycleStagesCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.LifecycleStage>;
     /**
      * Extends this tenant's lifecycle stages set with a value of their own — the whole reason these four stopped being CHECK constraints. Where a company stands in the sales pipeline — a separate axis from status, and one whose steps are a sales team's own. The code is lowercase and becomes what `organizations.lifecycle_stage` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
      *
      * @param {string} code - What `organizations.lifecycle_stage` will store. Lowercase, starting with a letter; immutable afterwards.
      * @param {string} title - The fallback name shown when no locale matches.
+     * @param {boolean} active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
      * @param {string} description - One line of help for whoever picks this value.
      * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
      * @param {boolean} isDefault - Promote this value; the previous default is demoted in the same call.
@@ -1125,30 +1658,32 @@ export class CustomersValueLists {
      * @returns {Promise<Models.LifecycleStage>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersLifecycleStagesCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.LifecycleStage>;
+    customersLifecycleStagesCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.LifecycleStage>;
     customersLifecycleStagesCreate(
-        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
     ): Promise<Models.LifecycleStage> {
-        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 title: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                labels: rest[4] as object,
-                position: rest[5] as number,
-                tone: rest[6] as Tone            
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                labels: rest[5] as object,
+                position: rest[6] as number,
+                tone: rest[7] as Tone            
             };
         }
         
         const code = params.code;
         const title = params.title;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -1165,6 +1700,9 @@ export class CustomersValueLists {
 
         const apiPath = '/v1/customers/lifecycle-stages';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -1309,9 +1847,10 @@ export class CustomersValueLists {
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `customer` to wording of their own changes what people READ and nothing about what `organizations.lifecycle_stage` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
      * @param {string} params.id - The lifecycle stage to edit.
+     * @param {boolean} params.active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
      * @param {string} params.description - One line of help for whoever picks this value.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
-     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted.
+     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
      * @param {object} params.labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
      * @param {number} params.position - Where it sits in the set, ascending.
      * @param {string} params.title - The fallback name shown when no locale matches.
@@ -1319,14 +1858,15 @@ export class CustomersValueLists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.LifecycleStage>}
      */
-    customersLifecycleStagesUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.LifecycleStage>;
+    customersLifecycleStagesUpdate(params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.LifecycleStage>;
     /**
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `customer` to wording of their own changes what people READ and nothing about what `organizations.lifecycle_stage` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
      * @param {string} id - The lifecycle stage to edit.
+     * @param {boolean} active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
      * @param {string} description - One line of help for whoever picks this value.
      * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
-     * @param {boolean} isDefault - Promote this value; the previous default is demoted.
+     * @param {boolean} isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
      * @param {object} labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
      * @param {number} position - Where it sits in the set, ascending.
      * @param {string} title - The fallback name shown when no locale matches.
@@ -1335,29 +1875,31 @@ export class CustomersValueLists {
      * @returns {Promise<Models.LifecycleStage>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersLifecycleStagesUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.LifecycleStage>;
+    customersLifecycleStagesUpdate(id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.LifecycleStage>;
     customersLifecycleStagesUpdate(
-        paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
-        ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
+        paramsOrFirst: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
+        ...rest: [(boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
     ): Promise<Models.LifecycleStage> {
-        let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+        let params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                description: rest[0] as string,
-                descriptions: rest[1] as object,
-                isDefault: rest[2] as boolean,
-                labels: rest[3] as object,
-                position: rest[4] as number,
-                title: rest[5] as string,
-                tone: rest[6] as Tone            
+                active: rest[0] as boolean,
+                description: rest[1] as string,
+                descriptions: rest[2] as object,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                position: rest[5] as number,
+                title: rest[6] as string,
+                tone: rest[7] as Tone            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -1372,6 +1914,9 @@ export class CustomersValueLists {
 
         const apiPath = '/v1/customers/lifecycle-stages/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof description !== 'undefined') {
             apiPayload['description'] = description;
         }
@@ -1408,15 +1953,43 @@ export class CustomersValueLists {
     }
 
     /**
-     * When a company has to pay. A wholesaler who agrees net 45 with one customer used to need a release of this app to say so. A fresh install is seeded with prepayment, direct_debit, net_7, net_14, net_30, net_60, net_90, and the set seeds on first read too, so the page is never empty and `organizations.payment_terms` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order and no column filters, so `page` describes the full set and `filter` is always empty.
+     * When a company has to pay. A wholesaler who agrees net 45 with one customer used to need a release of this app to say so. A fresh install is seeded with prepayment, direct_debit, net_7, net_14, net_30, net_60, net_90, and the set seeds on first read too, so the page is never empty and `organizations.payment_terms` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
      *
+     * @param {boolean} params.active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    customersPaymentTermsList(): Promise<{}> {
+    customersPaymentTermsList(params?: { active?: boolean }): Promise<{}>;
+    /**
+     * When a company has to pay. A wholesaler who agrees net 45 with one customer used to need a release of this app to say so. A fresh install is seeded with prepayment, direct_debit, net_7, net_14, net_30, net_60, net_90, and the set seeds on first read too, so the page is never empty and `organizations.payment_terms` always has a value it may carry. The whole set comes back in one page in the tenant's own order — this route takes no limit/offset/order, so `page` describes the full set. Retired values are included; `?active=true` answers only the values on offer, `?active=false` only the retired ones. No other filter is taken.
+     *
+     * @param {boolean} active - true answers only the values still on offer (what a picker lists), false only the retired ones. Left out, every value comes back — a read never hides a retired value unless asked.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    customersPaymentTermsList(active?: boolean): Promise<{}>;
+    customersPaymentTermsList(
+        paramsOrFirst?: { active?: boolean } | boolean    
+    ): Promise<{}> {
+        let params: { active?: boolean };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { active?: boolean };
+        } else {
+            params = {
+                active: paramsOrFirst as boolean            
+            };
+        }
+        
+        const active = params.active;
+
 
         const apiPath = '/v1/customers/payment-terms';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -1435,6 +2008,7 @@ export class CustomersValueLists {
      *
      * @param {string} params.code - What `organizations.payment_terms` will store. Lowercase, starting with a letter; immutable afterwards.
      * @param {string} params.title - The fallback name shown when no locale matches.
+     * @param {boolean} params.active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
      * @param {string} params.description - One line of help for whoever picks this value.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
      * @param {boolean} params.isDefault - Promote this value; the previous default is demoted in the same call.
@@ -1444,12 +2018,13 @@ export class CustomersValueLists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.PaymentTerm>}
      */
-    customersPaymentTermsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.PaymentTerm>;
+    customersPaymentTermsCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone }): Promise<Models.PaymentTerm>;
     /**
      * Extends this tenant's payment terms set with a value of their own — the whole reason these four stopped being CHECK constraints. When a company has to pay. A wholesaler who agrees net 45 with one customer used to need a release of this app to say so. The code is lowercase and becomes what `organizations.payment_terms` stores; it cannot be changed afterwards, because every record carrying it would be orphaned.
      *
      * @param {string} code - What `organizations.payment_terms` will store. Lowercase, starting with a letter; immutable afterwards.
      * @param {string} title - The fallback name shown when no locale matches.
+     * @param {boolean} active - Whether pickers offer this value. Default true. An inactive value cannot be created as the default.
      * @param {string} description - One line of help for whoever picks this value.
      * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
      * @param {boolean} isDefault - Promote this value; the previous default is demoted in the same call.
@@ -1460,30 +2035,32 @@ export class CustomersValueLists {
      * @returns {Promise<Models.PaymentTerm>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersPaymentTermsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.PaymentTerm>;
+    customersPaymentTermsCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone): Promise<Models.PaymentTerm>;
     customersPaymentTermsCreate(
-        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (Tone)?]    
     ): Promise<Models.PaymentTerm> {
-        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: Tone };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 title: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                labels: rest[4] as object,
-                position: rest[5] as number,
-                tone: rest[6] as Tone            
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                labels: rest[5] as object,
+                position: rest[6] as number,
+                tone: rest[7] as Tone            
             };
         }
         
         const code = params.code;
         const title = params.title;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -1500,6 +2077,9 @@ export class CustomersValueLists {
 
         const apiPath = '/v1/customers/payment-terms';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -1644,9 +2224,10 @@ export class CustomersValueLists {
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `net_30` to wording of their own changes what people READ and nothing about what `organizations.payment_terms` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
      * @param {string} params.id - The payment term to edit.
+     * @param {boolean} params.active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
      * @param {string} params.description - One line of help for whoever picks this value.
      * @param {object} params.descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
-     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted.
+     * @param {boolean} params.isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
      * @param {object} params.labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
      * @param {number} params.position - Where it sits in the set, ascending.
      * @param {string} params.title - The fallback name shown when no locale matches.
@@ -1654,14 +2235,15 @@ export class CustomersValueLists {
      * @throws {RevenexxException}
      * @returns {Promise<Models.PaymentTerm>}
      */
-    customersPaymentTermsUpdate(params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.PaymentTerm>;
+    customersPaymentTermsUpdate(params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone }): Promise<Models.PaymentTerm>;
     /**
      * Everything about a value except the value itself: its titles, its help text, its badge tone, its `position` in the select, and which one of the set is the default. The `code` is immutable, so no record carrying it is ever orphaned by an edit here — a merchant who retitles `net_30` to wording of their own changes what people READ and nothing about what `organizations.payment_terms` stores. Seeded values (`is_system`) are renameable like any other, and re-seeding leaves the rename alone.
      *
      * @param {string} id - The payment term to edit.
+     * @param {boolean} active - False retires the value: records that carry it keep it, pickers stop offering it. Refused on the default — make another entry the default first.
      * @param {string} description - One line of help for whoever picks this value.
      * @param {object} descriptions - Localized descriptions, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `description`.
-     * @param {boolean} isDefault - Promote this value; the previous default is demoted.
+     * @param {boolean} isDefault - Promote this value; the previous default is demoted. Refused for an inactive value.
      * @param {object} labels - Localized titles, keyed by language tag ({ "en": …, "de": … }). Null when nobody translated this value — a client then falls back to `title`.
      * @param {number} position - Where it sits in the set, ascending.
      * @param {string} title - The fallback name shown when no locale matches.
@@ -1670,29 +2252,31 @@ export class CustomersValueLists {
      * @returns {Promise<Models.PaymentTerm>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    customersPaymentTermsUpdate(id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.PaymentTerm>;
+    customersPaymentTermsUpdate(id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone): Promise<Models.PaymentTerm>;
     customersPaymentTermsUpdate(
-        paramsOrFirst: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
-        ...rest: [(string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
+        paramsOrFirst: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone } | string,
+        ...rest: [(boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (Tone)?]    
     ): Promise<Models.PaymentTerm> {
-        let params: { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+        let params: { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: Tone };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                description: rest[0] as string,
-                descriptions: rest[1] as object,
-                isDefault: rest[2] as boolean,
-                labels: rest[3] as object,
-                position: rest[4] as number,
-                title: rest[5] as string,
-                tone: rest[6] as Tone            
+                active: rest[0] as boolean,
+                description: rest[1] as string,
+                descriptions: rest[2] as object,
+                isDefault: rest[3] as boolean,
+                labels: rest[4] as object,
+                position: rest[5] as number,
+                title: rest[6] as string,
+                tone: rest[7] as Tone            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -1707,6 +2291,9 @@ export class CustomersValueLists {
 
         const apiPath = '/v1/customers/payment-terms/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof description !== 'undefined') {
             apiPayload['description'] = description;
         }
@@ -1743,7 +2330,7 @@ export class CustomersValueLists {
     }
 
     /**
-     * Discovery for the vocabulary routes: every enum this app publishes, each as a name, a title and a description. The VALUES are deliberately left out — this is the call that says which vocabularies exist, and the detail route is the one that answers what is in them. Names: address-types, contact-event-kinds, contact-point-kinds, contact-statuses, credit-limit-modes, lifecycle-stages, locales, order-approval-modes, organization-statuses, payment-terms, registration-statuses, roles, rule-matches, segment-sources, shipping-advice. Fetch one with GET /customers/vocabularies/{name}; a client holding the qualified pair 'customers.<name>' builds that URL from the pair alone.
+     * Discovery for the vocabulary routes: every enum this app publishes, each as a name, a title and a description. The VALUES are deliberately left out — this is the call that says which vocabularies exist, and the detail route is the one that answers what is in them. Names: address-types, contact-event-kinds, contact-lifecycle-stages, contact-point-kinds, contact-statuses, credit-limit-modes, lead-sources, lifecycle-stages, locales, order-approval-modes, organization-statuses, payment-terms, permissions, registration-statuses, roles, rule-matches, segment-member-types, segment-sources, shipping-advice, shop-access. Fetch one with GET /customers/vocabularies/{name}; a client holding the qualified pair 'customers.<name>' builds that URL from the pair alone.
      *
      * @throws {RevenexxException}
      * @returns {Promise<Models.VocabularyIndex>}
@@ -1766,7 +2353,7 @@ export class CustomersValueLists {
     }
 
     /**
-     * One vocabulary in full: every permitted value, each with its title, its description and the badge tone a client renders it with — enough to build a select without a second call. Two kinds of set, and 'source' says which one answered. 'schema' — the values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift; a value added to the constraint appears here even before anyone labels it, titled from its own key. 'table' — the values are the TENANT's own rows (payment terms, address types, lifecycle stages, activity types, roles), so they carry labels/descriptions per locale, is_system and is_default, and a merchant may add to them without a release of this app. 'tenant'/'defaults' are the two answers for a set the merchant configures but may not extend. Either way 'closed' is true: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label. Values come back in the order a select should offer them — lifecycle order for a status, the merchant's own position for a table. Names: address-types, contact-event-kinds, contact-point-kinds, contact-statuses, credit-limit-modes, lifecycle-stages, locales, order-approval-modes, organization-statuses, payment-terms, registration-statuses, roles, rule-matches, segment-sources, shipping-advice.
+     * One vocabulary in full: every permitted value, each with its title, its description and the badge tone a client renders it with — enough to build a select without a second call. Two kinds of set, and 'source' says which one answered. 'schema' — the values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift; a value added to the constraint appears here even before anyone labels it, titled from its own key. 'table' — the values are the TENANT's own rows (payment terms, address types, lifecycle stages, activity types, roles), so they carry labels/descriptions per locale, is_system, is_default and active, and a merchant may add to them without a release of this app. A value the merchant retired (active: false) is not in 'values', which is what a picker offers; it is in 'inactive', in the same shape, so a screen still renders the title of a record that carries one from this one answer. 'tenant'/'defaults' are the two answers for a set the merchant configures but may not extend. Either way 'closed' is true: the set is exhaustive at this moment, so a value in neither 'values' nor 'inactive' is stale data rather than a missing label. Values come back in the order a select should offer them — lifecycle order for a status, the merchant's own position for a table. Names: address-types, contact-event-kinds, contact-lifecycle-stages, contact-point-kinds, contact-statuses, credit-limit-modes, lead-sources, lifecycle-stages, locales, order-approval-modes, organization-statuses, payment-terms, permissions, registration-statuses, roles, rule-matches, segment-member-types, segment-sources, shipping-advice, shop-access.
      *
      * @param {CustomersVocabulariesGetName} params.name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}
@@ -1774,7 +2361,7 @@ export class CustomersValueLists {
      */
     customersVocabulariesGet(params: { name: CustomersVocabulariesGetName }): Promise<Models.Vocabulary>;
     /**
-     * One vocabulary in full: every permitted value, each with its title, its description and the badge tone a client renders it with — enough to build a select without a second call. Two kinds of set, and 'source' says which one answered. 'schema' — the values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift; a value added to the constraint appears here even before anyone labels it, titled from its own key. 'table' — the values are the TENANT's own rows (payment terms, address types, lifecycle stages, activity types, roles), so they carry labels/descriptions per locale, is_system and is_default, and a merchant may add to them without a release of this app. 'tenant'/'defaults' are the two answers for a set the merchant configures but may not extend. Either way 'closed' is true: the set is exhaustive at this moment, so a value outside it is stale data rather than a missing label. Values come back in the order a select should offer them — lifecycle order for a status, the merchant's own position for a table. Names: address-types, contact-event-kinds, contact-point-kinds, contact-statuses, credit-limit-modes, lifecycle-stages, locales, order-approval-modes, organization-statuses, payment-terms, registration-statuses, roles, rule-matches, segment-sources, shipping-advice.
+     * One vocabulary in full: every permitted value, each with its title, its description and the badge tone a client renders it with — enough to build a select without a second call. Two kinds of set, and 'source' says which one answered. 'schema' — the values are read out of the column's CHECK constraint, so the served set IS the enforced set and the two cannot drift; a value added to the constraint appears here even before anyone labels it, titled from its own key. 'table' — the values are the TENANT's own rows (payment terms, address types, lifecycle stages, activity types, roles), so they carry labels/descriptions per locale, is_system, is_default and active, and a merchant may add to them without a release of this app. A value the merchant retired (active: false) is not in 'values', which is what a picker offers; it is in 'inactive', in the same shape, so a screen still renders the title of a record that carries one from this one answer. 'tenant'/'defaults' are the two answers for a set the merchant configures but may not extend. Either way 'closed' is true: the set is exhaustive at this moment, so a value in neither 'values' nor 'inactive' is stale data rather than a missing label. Values come back in the order a select should offer them — lifecycle order for a status, the merchant's own position for a table. Names: address-types, contact-event-kinds, contact-lifecycle-stages, contact-point-kinds, contact-statuses, credit-limit-modes, lead-sources, lifecycle-stages, locales, order-approval-modes, organization-statuses, payment-terms, permissions, registration-statuses, roles, rule-matches, segment-member-types, segment-sources, shipping-advice, shop-access.
      *
      * @param {CustomersVocabulariesGetName} name - The vocabulary name — the part after the dot in the qualified id.
      * @throws {RevenexxException}

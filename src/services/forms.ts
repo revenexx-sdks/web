@@ -25,6 +25,8 @@ export class Forms {
      * @param {string} params.name - Filter to one form by its exact name. Whole-value equality and case-sensitive — there is no substring search on this API.
      * @param {string} params.slug - Filter to one form by its slug — unique per tenant, so this is how a storefront resolves a form without knowing its id. `?slug=contact&status=live&limit=1` is the call the cover BFF makes for every rendered form.
      * @param {FormStatus} params.status - Filter to one lifecycle status. `?status=live` is the set the storefront may render; `?status=draft` is what is still being built.
+     * @param {string} params.campaignRef - Filter to the forms one campaign claimed — what the campaigns calendar reads (`?campaign_ref={campaign_id}`).
+     * @param {string} params.leadStage - Filter to the forms that file their senders at one contact stage.
      * @param {string} params.createdAt - Filter to forms created at EXACTLY this instant. Equality, not a range: a date alone matches only a row whose timestamp is exactly that, so it selects nothing for a whole day. To read by time, sort instead (`order=created_at.desc`) and page. A value the data plane cannot read as a timestamp is refused with 400 `invalid_value`.
      * @param {string} params.updatedAt - Filter to forms last written at EXACTLY this instant — the same equality-not-range caveat as `created_at`.
      * @param {number} params.limit - Page size. Default 50; a value above 200 is clamped to 200 rather than refused, and `page.limit` says what was applied.
@@ -33,7 +35,7 @@ export class Forms {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    formsList(params?: { id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    formsList(params?: { id?: string, name?: string, slug?: string, status?: FormStatus, campaignRef?: string, leadStage?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * The catalogue of forms this tenant has authored, a page at a time. A row is the whole form — `definition`, `settings`, `status`, `slug` — so a list read is not a summary view that has to be followed by a read per row.
      * 
@@ -45,6 +47,8 @@ export class Forms {
      * @param {string} name - Filter to one form by its exact name. Whole-value equality and case-sensitive — there is no substring search on this API.
      * @param {string} slug - Filter to one form by its slug — unique per tenant, so this is how a storefront resolves a form without knowing its id. `?slug=contact&status=live&limit=1` is the call the cover BFF makes for every rendered form.
      * @param {FormStatus} status - Filter to one lifecycle status. `?status=live` is the set the storefront may render; `?status=draft` is what is still being built.
+     * @param {string} campaignRef - Filter to the forms one campaign claimed — what the campaigns calendar reads (`?campaign_ref={campaign_id}`).
+     * @param {string} leadStage - Filter to the forms that file their senders at one contact stage.
      * @param {string} createdAt - Filter to forms created at EXACTLY this instant. Equality, not a range: a date alone matches only a row whose timestamp is exactly that, so it selects nothing for a whole day. To read by time, sort instead (`order=created_at.desc`) and page. A value the data plane cannot read as a timestamp is refused with 400 `invalid_value`.
      * @param {string} updatedAt - Filter to forms last written at EXACTLY this instant — the same equality-not-range caveat as `created_at`.
      * @param {number} limit - Page size. Default 50; a value above 200 is clamped to 200 rather than refused, and `page.limit` says what was applied.
@@ -54,26 +58,28 @@ export class Forms {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsList(id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    formsList(id?: string, name?: string, slug?: string, status?: FormStatus, campaignRef?: string, leadStage?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     formsList(
-        paramsOrFirst?: { id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (FormStatus)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, name?: string, slug?: string, status?: FormStatus, campaignRef?: string, leadStage?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (FormStatus)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, name?: string, slug?: string, status?: FormStatus, campaignRef?: string, leadStage?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, name?: string, slug?: string, status?: FormStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, name?: string, slug?: string, status?: FormStatus, campaignRef?: string, leadStage?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 name: rest[0] as string,
                 slug: rest[1] as string,
                 status: rest[2] as FormStatus,
-                createdAt: rest[3] as string,
-                updatedAt: rest[4] as string,
-                limit: rest[5] as number,
-                offset: rest[6] as number,
-                order: rest[7] as string            
+                campaignRef: rest[3] as string,
+                leadStage: rest[4] as string,
+                createdAt: rest[5] as string,
+                updatedAt: rest[6] as string,
+                limit: rest[7] as number,
+                offset: rest[8] as number,
+                order: rest[9] as string            
             };
         }
         
@@ -81,6 +87,8 @@ export class Forms {
         const name = params.name;
         const slug = params.slug;
         const status = params.status;
+        const campaignRef = params.campaignRef;
+        const leadStage = params.leadStage;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
         const limit = params.limit;
@@ -101,6 +109,12 @@ export class Forms {
         }
         if (typeof status !== 'undefined') {
             apiPayload['status'] = status;
+        }
+        if (typeof campaignRef !== 'undefined') {
+            apiPayload['campaign_ref'] = campaignRef;
+        }
+        if (typeof leadStage !== 'undefined') {
+            apiPayload['lead_stage'] = leadStage;
         }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
@@ -139,6 +153,7 @@ export class Forms {
      *
      * @param {string} params.name - What this form is called in the Cockpit's form list. Operator-facing only — the storefront never renders it, so renaming a form breaks no page.
      * @param {string} params.slug - URL-safe identifier, unique per tenant. This is the name a storefront resolves a form by (`GET /v1/forms?slug=contact&status=live&limit=1`), so it is part of the page's contract: changing it changes which form a page renders. Lower-case letters, digits and inner hyphens. Taken already? That is the 409 — one slug answers for one form.
+     * @param {string} params.campaignRef - The campaign this form belongs to — the id of a campaign in the campaigns app, written by that app when it claims the form (`PUT /v1/forms/{id} { campaign_ref }`, null releases it). Copied onto every submission as `campaign_ref`, and used as the contact's `lead_source_ref`. Null for a form no campaign claimed. Not a uuid → 400.
      * @param {object[]} params.definition - The form itself: a FormKit schema, held as a flat ARRAY of nodes (it defaults to `[]`, never to an object) and rendered verbatim by the storefront.
 
 Read it as the field list. Every node carrying a non-empty `name` collects one value and writes it into a submission's `data` under exactly that name — the example below produces `{"company": …, "email": …, "message": …}` — while `$el` content nodes and `$rxStep` step markers collect nothing. Order is render order, and a `$rxStep` marker starts a new wizard step.
@@ -146,13 +161,14 @@ Read it as the field list. Every node carrying a non-empty `name` collects one v
 See the `FormKitNode` schema for what a node may carry.
 
 On the way IN a node is any object: this is unconstrained jsonb, FormKit owns the grammar, and the one rule this app applies is the tenant's `max_form_fields` ceiling counted over the nodes with a non-empty `name`. Anything that is not an array at all is a 400.
+     * @param {string} params.leadStage - The contact stage a sender is filed at in the customers app: a person not known yet is created at this stage, a subscriber (or a bare contact nobody placed) is moved to it, anybody further along is left where they are. Default 'lead'; a newsletter form says 'subscriber'; null means the form files no contact at all (an RMA form, a job application).
      * @param {object} params.metadata - Free-form metadata on the FORM, which this app neither reads nor writes: yours to key however an integration needs, stored and returned verbatim. (The metadata this app does write is on a SUBMISSION — see `FormSubmissionMetadata`.)
      * @param {object} params.settings - Submit label, success message, per-form notify email, post-submit actions, translations — see the `FormSettings` schema for every key that is read. Unconstrained jsonb on the way in: nothing here is required and no key is refused.
      * @param {FormStatus} params.status - Lifecycle. `draft` while it is being built; `live` once the storefront may render it — the cover BFF resolves live forms only, so a draft is a 404 on the storefront and never a broken page; `archived` for a form that is kept for its submissions but no longer offered. Default 'draft'.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Form>}
      */
-    formsCreate(params: { name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus }): Promise<Models.Form>;
+    formsCreate(params: { name: string, slug: string, campaignRef?: string, definition?: object[], leadStage?: string, metadata?: object, settings?: object, status?: FormStatus }): Promise<Models.Form>;
     /**
      * A form is born a `draft` and stays off the storefront until somebody moves it to `live`, so creating one is safe: the cover BFF resolves live forms only, and nothing renders until the status says it may. `definition` may be omitted entirely — the row is then the empty shell the Form Builder fills in.
      * 
@@ -162,6 +178,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      *
      * @param {string} name - What this form is called in the Cockpit's form list. Operator-facing only — the storefront never renders it, so renaming a form breaks no page.
      * @param {string} slug - URL-safe identifier, unique per tenant. This is the name a storefront resolves a form by (`GET /v1/forms?slug=contact&status=live&limit=1`), so it is part of the page's contract: changing it changes which form a page renders. Lower-case letters, digits and inner hyphens. Taken already? That is the 409 — one slug answers for one form.
+     * @param {string} campaignRef - The campaign this form belongs to — the id of a campaign in the campaigns app, written by that app when it claims the form (`PUT /v1/forms/{id} { campaign_ref }`, null releases it). Copied onto every submission as `campaign_ref`, and used as the contact's `lead_source_ref`. Null for a form no campaign claimed. Not a uuid → 400.
      * @param {object[]} definition - The form itself: a FormKit schema, held as a flat ARRAY of nodes (it defaults to `[]`, never to an object) and rendered verbatim by the storefront.
 
 Read it as the field list. Every node carrying a non-empty `name` collects one value and writes it into a submission's `data` under exactly that name — the example below produces `{"company": …, "email": …, "message": …}` — while `$el` content nodes and `$rxStep` step markers collect nothing. Order is render order, and a `$rxStep` marker starts a new wizard step.
@@ -169,6 +186,7 @@ Read it as the field list. Every node carrying a non-empty `name` collects one v
 See the `FormKitNode` schema for what a node may carry.
 
 On the way IN a node is any object: this is unconstrained jsonb, FormKit owns the grammar, and the one rule this app applies is the tenant's `max_form_fields` ceiling counted over the nodes with a non-empty `name`. Anything that is not an array at all is a 400.
+     * @param {string} leadStage - The contact stage a sender is filed at in the customers app: a person not known yet is created at this stage, a subscriber (or a bare contact nobody placed) is moved to it, anybody further along is left where they are. Default 'lead'; a newsletter form says 'subscriber'; null means the form files no contact at all (an RMA form, a job application).
      * @param {object} metadata - Free-form metadata on the FORM, which this app neither reads nor writes: yours to key however an integration needs, stored and returned verbatim. (The metadata this app does write is on a SUBMISSION — see `FormSubmissionMetadata`.)
      * @param {object} settings - Submit label, success message, per-form notify email, post-submit actions, translations — see the `FormSettings` schema for every key that is read. Unconstrained jsonb on the way in: nothing here is required and no key is refused.
      * @param {FormStatus} status - Lifecycle. `draft` while it is being built; `live` once the storefront may render it — the cover BFF resolves live forms only, so a draft is a 404 on the storefront and never a broken page; `archived` for a form that is kept for its submissions but no longer offered. Default 'draft'.
@@ -176,29 +194,33 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @returns {Promise<Models.Form>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsCreate(name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus): Promise<Models.Form>;
+    formsCreate(name: string, slug: string, campaignRef?: string, definition?: object[], leadStage?: string, metadata?: object, settings?: object, status?: FormStatus): Promise<Models.Form>;
     formsCreate(
-        paramsOrFirst: { name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus } | string,
-        ...rest: [(string)?, (object[])?, (object)?, (object)?, (FormStatus)?]    
+        paramsOrFirst: { name: string, slug: string, campaignRef?: string, definition?: object[], leadStage?: string, metadata?: object, settings?: object, status?: FormStatus } | string,
+        ...rest: [(string)?, (string)?, (object[])?, (string)?, (object)?, (object)?, (FormStatus)?]    
     ): Promise<Models.Form> {
-        let params: { name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus };
+        let params: { name: string, slug: string, campaignRef?: string, definition?: object[], leadStage?: string, metadata?: object, settings?: object, status?: FormStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { name: string, slug: string, definition?: object[], metadata?: object, settings?: object, status?: FormStatus };
+            params = (paramsOrFirst || {}) as { name: string, slug: string, campaignRef?: string, definition?: object[], leadStage?: string, metadata?: object, settings?: object, status?: FormStatus };
         } else {
             params = {
                 name: paramsOrFirst as string,
                 slug: rest[0] as string,
-                definition: rest[1] as object[],
-                metadata: rest[2] as object,
-                settings: rest[3] as object,
-                status: rest[4] as FormStatus            
+                campaignRef: rest[1] as string,
+                definition: rest[2] as object[],
+                leadStage: rest[3] as string,
+                metadata: rest[4] as object,
+                settings: rest[5] as object,
+                status: rest[6] as FormStatus            
             };
         }
         
         const name = params.name;
         const slug = params.slug;
+        const campaignRef = params.campaignRef;
         const definition = params.definition;
+        const leadStage = params.leadStage;
         const metadata = params.metadata;
         const settings = params.settings;
         const status = params.status;
@@ -212,8 +234,14 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
 
         const apiPath = '/v1/forms';
         const apiPayload: Payload = {};
+        if (typeof campaignRef !== 'undefined') {
+            apiPayload['campaign_ref'] = campaignRef;
+        }
         if (typeof definition !== 'undefined') {
             apiPayload['definition'] = definition;
+        }
+        if (typeof leadStage !== 'undefined') {
+            apiPayload['lead_stage'] = leadStage;
         }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
@@ -283,6 +311,10 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @param {string} params.formSlug - Filter to one form's inbox by slug — the denormalised copy, so neither a join nor a prior lookup of the form is needed.
      * @param {string} params.source - Filter to one origin, exactly as it was recorded — normally the page path the storefront sent. Whole-value equality, so it selects one page and not a prefix.
      * @param {FormSubmissionStatus} params.status - Filter to one inbox status. `?status=new` is the unread inbox; `?status=spam` is what the honeypot caught.
+     * @param {string} params.contactId - Filter to one person's submissions — the audiences rule `form_submitted` and a contact's timeline read this.
+     * @param {string} params.pageUrl - Filter to one page, by its exact URL.
+     * @param {string} params.campaignRef - Filter to the submissions one campaign brought in.
+     * @param {string} params.leadStage - Filter to the submissions filed at one contact stage.
      * @param {string} params.createdAt - Filter to submissions that arrived at EXACTLY this instant. Equality, not a range, so this is not how a date span is read — sort (`order=created_at.desc`) and page for that, and use POST /forms/submissions/prune for anything age-based.
      * @param {string} params.updatedAt - Filter to submissions last written at EXACTLY this instant — the same equality-not-range caveat as `created_at`.
      * @param {number} params.limit - Page size. Default 50; a value above 200 is clamped to 200 rather than refused, and `page.limit` says what was applied.
@@ -291,7 +323,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    formsSubmissionsList(params?: { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    formsSubmissionsList(params?: { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, contactId?: string, pageUrl?: string, campaignRef?: string, leadStage?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * The inbox: every submission this tenant has received, a page at a time. A row is the whole submission, `data` included, so the list is the inbox and the detail view at once — nothing has to be fetched per row to show what somebody wrote. Treat all of it as END-USER data.
      * 
@@ -304,6 +336,10 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @param {string} formSlug - Filter to one form's inbox by slug — the denormalised copy, so neither a join nor a prior lookup of the form is needed.
      * @param {string} source - Filter to one origin, exactly as it was recorded — normally the page path the storefront sent. Whole-value equality, so it selects one page and not a prefix.
      * @param {FormSubmissionStatus} status - Filter to one inbox status. `?status=new` is the unread inbox; `?status=spam` is what the honeypot caught.
+     * @param {string} contactId - Filter to one person's submissions — the audiences rule `form_submitted` and a contact's timeline read this.
+     * @param {string} pageUrl - Filter to one page, by its exact URL.
+     * @param {string} campaignRef - Filter to the submissions one campaign brought in.
+     * @param {string} leadStage - Filter to the submissions filed at one contact stage.
      * @param {string} createdAt - Filter to submissions that arrived at EXACTLY this instant. Equality, not a range, so this is not how a date span is read — sort (`order=created_at.desc`) and page for that, and use POST /forms/submissions/prune for anything age-based.
      * @param {string} updatedAt - Filter to submissions last written at EXACTLY this instant — the same equality-not-range caveat as `created_at`.
      * @param {number} limit - Page size. Default 50; a value above 200 is clamped to 200 rather than refused, and `page.limit` says what was applied.
@@ -313,15 +349,15 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsSubmissionsList(id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    formsSubmissionsList(id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, contactId?: string, pageUrl?: string, campaignRef?: string, leadStage?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     formsSubmissionsList(
-        paramsOrFirst?: { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (FormSubmissionStatus)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, contactId?: string, pageUrl?: string, campaignRef?: string, leadStage?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (FormSubmissionStatus)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, contactId?: string, pageUrl?: string, campaignRef?: string, leadStage?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, formId?: string, formSlug?: string, source?: string, status?: FormSubmissionStatus, contactId?: string, pageUrl?: string, campaignRef?: string, leadStage?: string, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -329,11 +365,15 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
                 formSlug: rest[1] as string,
                 source: rest[2] as string,
                 status: rest[3] as FormSubmissionStatus,
-                createdAt: rest[4] as string,
-                updatedAt: rest[5] as string,
-                limit: rest[6] as number,
-                offset: rest[7] as number,
-                order: rest[8] as string            
+                contactId: rest[4] as string,
+                pageUrl: rest[5] as string,
+                campaignRef: rest[6] as string,
+                leadStage: rest[7] as string,
+                createdAt: rest[8] as string,
+                updatedAt: rest[9] as string,
+                limit: rest[10] as number,
+                offset: rest[11] as number,
+                order: rest[12] as string            
             };
         }
         
@@ -342,6 +382,10 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
         const formSlug = params.formSlug;
         const source = params.source;
         const status = params.status;
+        const contactId = params.contactId;
+        const pageUrl = params.pageUrl;
+        const campaignRef = params.campaignRef;
+        const leadStage = params.leadStage;
         const createdAt = params.createdAt;
         const updatedAt = params.updatedAt;
         const limit = params.limit;
@@ -365,6 +409,18 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
         }
         if (typeof status !== 'undefined') {
             apiPayload['status'] = status;
+        }
+        if (typeof contactId !== 'undefined') {
+            apiPayload['contact_id'] = contactId;
+        }
+        if (typeof pageUrl !== 'undefined') {
+            apiPayload['page_url'] = pageUrl;
+        }
+        if (typeof campaignRef !== 'undefined') {
+            apiPayload['campaign_ref'] = campaignRef;
+        }
+        if (typeof leadStage !== 'undefined') {
+            apiPayload['lead_stage'] = leadStage;
         }
         if (typeof createdAt !== 'undefined') {
             apiPayload['created_at'] = createdAt;
@@ -411,12 +467,17 @@ The VALUE type follows the input type, which is why this object is not typed fur
 
 Two values are NOT here: the honeypot field, if the tenant configured one, is stripped before the row is written (it is a trap, not an answer the visitor gave), and the resolved notification recipient lives in `metadata`, not in what somebody typed.
      * @param {string} params.formId - The form this submission was made against. It is resolved at insert, so an id no form in this tenant holds is a 404 and nothing is stored — a submission with no form is a lead nobody can read. Required on a create: it is the only thing that says which form was filled in.
+     * @param {string} params.campaignRef - Create only: the campaign the visitor came through, when the storefront resolved one from the UTM campaign. Used only when the form itself belongs to no campaign.
+     * @param {string} params.ip - Create only: the visitor's address, handed to the consent app as proof of the opt-in and NOT stored on the submission.
+     * @param {string} params.locale - Create only: the language the visitor read the form in — handed to the consent app for the confirmation mail.
      * @param {object} params.metadata - Free-form metadata, yours to key as an integration needs. The resolved notification recipient is merged OVER it at insert, so `notify_email` and `notify_source` sent here are overwritten — see the `FormSubmissionMetadata` schema.
+     * @param {string} params.pageUrl - Create only: the page the form was sent from. Stored as `page_url`.
      * @param {string} params.source - Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
+     * @param {string} params.userAgent - Create only: the visitor's browser, handed to the consent app with the opt-in and NOT stored on the submission.
      * @throws {RevenexxException}
      * @returns {Promise<Models.FormSubmission>}
      */
-    formsSubmissionsCreate(params: { data: object, formId: string, metadata?: object, source?: string }): Promise<Models.FormSubmission>;
+    formsSubmissionsCreate(params: { data: object, formId: string, campaignRef?: string, ip?: string, locale?: string, metadata?: object, pageUrl?: string, source?: string, userAgent?: string }): Promise<Models.FormSubmission>;
     /**
      * The storefront's path, and the moment a lead enters the platform. A stored submission emits `form.submitted` onto the tenant event bus with the row itself as the payload — that is the event an Integration Studio workflow or a notification email listens to, and it is the only event this app raises about a submission. A call that is refused therefore leaves no trace anywhere: no row, and no automation that ever hears about it.
      * 
@@ -434,34 +495,49 @@ The VALUE type follows the input type, which is why this object is not typed fur
 
 Two values are NOT here: the honeypot field, if the tenant configured one, is stripped before the row is written (it is a trap, not an answer the visitor gave), and the resolved notification recipient lives in `metadata`, not in what somebody typed.
      * @param {string} formId - The form this submission was made against. It is resolved at insert, so an id no form in this tenant holds is a 404 and nothing is stored — a submission with no form is a lead nobody can read. Required on a create: it is the only thing that says which form was filled in.
+     * @param {string} campaignRef - Create only: the campaign the visitor came through, when the storefront resolved one from the UTM campaign. Used only when the form itself belongs to no campaign.
+     * @param {string} ip - Create only: the visitor's address, handed to the consent app as proof of the opt-in and NOT stored on the submission.
+     * @param {string} locale - Create only: the language the visitor read the form in — handed to the consent app for the confirmation mail.
      * @param {object} metadata - Free-form metadata, yours to key as an integration needs. The resolved notification recipient is merged OVER it at insert, so `notify_email` and `notify_source` sent here are overwritten — see the `FormSubmissionMetadata` schema.
+     * @param {string} pageUrl - Create only: the page the form was sent from. Stored as `page_url`.
      * @param {string} source - Where the submission came from. The storefront sends the `window.location.pathname` of the page that carried the form, so this is normally a path rather than an absolute URL; any other surface (an app, an import) puts its own name here. Null when the caller sent none.
+     * @param {string} userAgent - Create only: the visitor's browser, handed to the consent app with the opt-in and NOT stored on the submission.
      * @throws {RevenexxException}
      * @returns {Promise<Models.FormSubmission>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsSubmissionsCreate(data: object, formId: string, metadata?: object, source?: string): Promise<Models.FormSubmission>;
+    formsSubmissionsCreate(data: object, formId: string, campaignRef?: string, ip?: string, locale?: string, metadata?: object, pageUrl?: string, source?: string, userAgent?: string): Promise<Models.FormSubmission>;
     formsSubmissionsCreate(
-        paramsOrFirst: { data: object, formId: string, metadata?: object, source?: string } | object,
-        ...rest: [(string)?, (object)?, (string)?]    
+        paramsOrFirst: { data: object, formId: string, campaignRef?: string, ip?: string, locale?: string, metadata?: object, pageUrl?: string, source?: string, userAgent?: string } | object,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (object)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.FormSubmission> {
-        let params: { data: object, formId: string, metadata?: object, source?: string };
+        let params: { data: object, formId: string, campaignRef?: string, ip?: string, locale?: string, metadata?: object, pageUrl?: string, source?: string, userAgent?: string };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst || 'formId' in paramsOrFirst || 'metadata' in paramsOrFirst || 'source' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { data: object, formId: string, metadata?: object, source?: string };
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst || 'formId' in paramsOrFirst || 'campaignRef' in paramsOrFirst || 'ip' in paramsOrFirst || 'locale' in paramsOrFirst || 'metadata' in paramsOrFirst || 'pageUrl' in paramsOrFirst || 'source' in paramsOrFirst || 'userAgent' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { data: object, formId: string, campaignRef?: string, ip?: string, locale?: string, metadata?: object, pageUrl?: string, source?: string, userAgent?: string };
         } else {
             params = {
                 data: paramsOrFirst as object,
                 formId: rest[0] as string,
-                metadata: rest[1] as object,
-                source: rest[2] as string            
+                campaignRef: rest[1] as string,
+                ip: rest[2] as string,
+                locale: rest[3] as string,
+                metadata: rest[4] as object,
+                pageUrl: rest[5] as string,
+                source: rest[6] as string,
+                userAgent: rest[7] as string            
             };
         }
         
         const data = params.data;
         const formId = params.formId;
+        const campaignRef = params.campaignRef;
+        const ip = params.ip;
+        const locale = params.locale;
         const metadata = params.metadata;
+        const pageUrl = params.pageUrl;
         const source = params.source;
+        const userAgent = params.userAgent;
 
         if (typeof data === 'undefined') {
             throw new RevenexxException('Missing required parameter: "data"');
@@ -472,17 +548,32 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
 
         const apiPath = '/v1/forms/submissions';
         const apiPayload: Payload = {};
+        if (typeof campaignRef !== 'undefined') {
+            apiPayload['campaign_ref'] = campaignRef;
+        }
         if (typeof data !== 'undefined') {
             apiPayload['data'] = data;
         }
         if (typeof formId !== 'undefined') {
             apiPayload['form_id'] = formId;
         }
+        if (typeof ip !== 'undefined') {
+            apiPayload['ip'] = ip;
+        }
+        if (typeof locale !== 'undefined') {
+            apiPayload['locale'] = locale;
+        }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;
         }
+        if (typeof pageUrl !== 'undefined') {
+            apiPayload['page_url'] = pageUrl;
+        }
         if (typeof source !== 'undefined') {
             apiPayload['source'] = source;
+        }
+        if (typeof userAgent !== 'undefined') {
+            apiPayload['user_agent'] = userAgent;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1049,6 +1140,7 @@ Two values are NOT here: the honeypot field, if the tenant configured one, is st
      * Moving `slug` is the edit to think about twice. It is unique per tenant, so a rename onto a slug another form holds is a 409 — but it is the rename that SUCCEEDS that changes behaviour, because the slug is how a storefront page resolves this form: change it and the page naming the old one resolves nothing. The submissions already collected are unaffected either way; each keeps the slug it arrived under in its own `form_slug`, which is exactly what that copy is for.
      *
      * @param {string} params.id - The form, by id.
+     * @param {string} params.campaignRef - The campaign this form belongs to — the id of a campaign in the campaigns app, written by that app when it claims the form (`PUT /v1/forms/{id} { campaign_ref }`, null releases it). Copied onto every submission as `campaign_ref`, and used as the contact's `lead_source_ref`. Null for a form no campaign claimed. Not a uuid → 400.
      * @param {object[]} params.definition - The form itself: a FormKit schema, held as a flat ARRAY of nodes (it defaults to `[]`, never to an object) and rendered verbatim by the storefront.
 
 Read it as the field list. Every node carrying a non-empty `name` collects one value and writes it into a submission's `data` under exactly that name — the example below produces `{"company": …, "email": …, "message": …}` — while `$el` content nodes and `$rxStep` step markers collect nothing. Order is render order, and a `$rxStep` marker starts a new wizard step.
@@ -1056,6 +1148,7 @@ Read it as the field list. Every node carrying a non-empty `name` collects one v
 See the `FormKitNode` schema for what a node may carry.
 
 On the way IN a node is any object: this is unconstrained jsonb, FormKit owns the grammar, and the one rule this app applies is the tenant's `max_form_fields` ceiling counted over the nodes with a non-empty `name`. Anything that is not an array at all is a 400.
+     * @param {string} params.leadStage - The contact stage a sender is filed at in the customers app: a person not known yet is created at this stage, a subscriber (or a bare contact nobody placed) is moved to it, anybody further along is left where they are. Default 'lead'; a newsletter form says 'subscriber'; null means the form files no contact at all (an RMA form, a job application).
      * @param {object} params.metadata - Free-form metadata on the FORM, which this app neither reads nor writes: yours to key however an integration needs, stored and returned verbatim. (The metadata this app does write is on a SUBMISSION — see `FormSubmissionMetadata`.)
      * @param {string} params.name - What this form is called in the Cockpit's form list. Operator-facing only — the storefront never renders it, so renaming a form breaks no page.
      * @param {object} params.settings - Submit label, success message, per-form notify email, post-submit actions, translations — see the `FormSettings` schema for every key that is read. Unconstrained jsonb on the way in: nothing here is required and no key is refused.
@@ -1064,7 +1157,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @throws {RevenexxException}
      * @returns {Promise<Models.Form>}
      */
-    formsUpdate(params: { id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus }): Promise<Models.Form>;
+    formsUpdate(params: { id: string, campaignRef?: string, definition?: object[], leadStage?: string, metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus }): Promise<Models.Form>;
     /**
      * A partial update over everything a create may set — `definition`, `settings`, `status`, `name`, `slug`, `metadata` — where an omitted field keeps the value it has. It is the write behind the Form Builder's save, and equally behind the one-field change that publishes a form by moving `status` from `draft` to `live`. `updated_at` is stamped on every call, so it is the column an editor sorts by.
      * 
@@ -1073,6 +1166,7 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * Moving `slug` is the edit to think about twice. It is unique per tenant, so a rename onto a slug another form holds is a 409 — but it is the rename that SUCCEEDS that changes behaviour, because the slug is how a storefront page resolves this form: change it and the page naming the old one resolves nothing. The submissions already collected are unaffected either way; each keeps the slug it arrived under in its own `form_slug`, which is exactly what that copy is for.
      *
      * @param {string} id - The form, by id.
+     * @param {string} campaignRef - The campaign this form belongs to — the id of a campaign in the campaigns app, written by that app when it claims the form (`PUT /v1/forms/{id} { campaign_ref }`, null releases it). Copied onto every submission as `campaign_ref`, and used as the contact's `lead_source_ref`. Null for a form no campaign claimed. Not a uuid → 400.
      * @param {object[]} definition - The form itself: a FormKit schema, held as a flat ARRAY of nodes (it defaults to `[]`, never to an object) and rendered verbatim by the storefront.
 
 Read it as the field list. Every node carrying a non-empty `name` collects one value and writes it into a submission's `data` under exactly that name — the example below produces `{"company": …, "email": …, "message": …}` — while `$el` content nodes and `$rxStep` step markers collect nothing. Order is render order, and a `$rxStep` marker starts a new wizard step.
@@ -1080,6 +1174,7 @@ Read it as the field list. Every node carrying a non-empty `name` collects one v
 See the `FormKitNode` schema for what a node may carry.
 
 On the way IN a node is any object: this is unconstrained jsonb, FormKit owns the grammar, and the one rule this app applies is the tenant's `max_form_fields` ceiling counted over the nodes with a non-empty `name`. Anything that is not an array at all is a 400.
+     * @param {string} leadStage - The contact stage a sender is filed at in the customers app: a person not known yet is created at this stage, a subscriber (or a bare contact nobody placed) is moved to it, anybody further along is left where they are. Default 'lead'; a newsletter form says 'subscriber'; null means the form files no contact at all (an RMA form, a job application).
      * @param {object} metadata - Free-form metadata on the FORM, which this app neither reads nor writes: yours to key however an integration needs, stored and returned verbatim. (The metadata this app does write is on a SUBMISSION — see `FormSubmissionMetadata`.)
      * @param {string} name - What this form is called in the Cockpit's form list. Operator-facing only — the storefront never renders it, so renaming a form breaks no page.
      * @param {object} settings - Submit label, success message, per-form notify email, post-submit actions, translations — see the `FormSettings` schema for every key that is read. Unconstrained jsonb on the way in: nothing here is required and no key is refused.
@@ -1089,29 +1184,33 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
      * @returns {Promise<Models.Form>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    formsUpdate(id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus): Promise<Models.Form>;
+    formsUpdate(id: string, campaignRef?: string, definition?: object[], leadStage?: string, metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus): Promise<Models.Form>;
     formsUpdate(
-        paramsOrFirst: { id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus } | string,
-        ...rest: [(object[])?, (object)?, (string)?, (object)?, (string)?, (FormStatus)?]    
+        paramsOrFirst: { id: string, campaignRef?: string, definition?: object[], leadStage?: string, metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus } | string,
+        ...rest: [(string)?, (object[])?, (string)?, (object)?, (string)?, (object)?, (string)?, (FormStatus)?]    
     ): Promise<Models.Form> {
-        let params: { id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus };
+        let params: { id: string, campaignRef?: string, definition?: object[], leadStage?: string, metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, definition?: object[], metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus };
+            params = (paramsOrFirst || {}) as { id: string, campaignRef?: string, definition?: object[], leadStage?: string, metadata?: object, name?: string, settings?: object, slug?: string, status?: FormStatus };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                definition: rest[0] as object[],
-                metadata: rest[1] as object,
-                name: rest[2] as string,
-                settings: rest[3] as object,
-                slug: rest[4] as string,
-                status: rest[5] as FormStatus            
+                campaignRef: rest[0] as string,
+                definition: rest[1] as object[],
+                leadStage: rest[2] as string,
+                metadata: rest[3] as object,
+                name: rest[4] as string,
+                settings: rest[5] as object,
+                slug: rest[6] as string,
+                status: rest[7] as FormStatus            
             };
         }
         
         const id = params.id;
+        const campaignRef = params.campaignRef;
         const definition = params.definition;
+        const leadStage = params.leadStage;
         const metadata = params.metadata;
         const name = params.name;
         const settings = params.settings;
@@ -1124,8 +1223,14 @@ On the way IN a node is any object: this is unconstrained jsonb, FormKit owns th
 
         const apiPath = '/v1/forms/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof campaignRef !== 'undefined') {
+            apiPayload['campaign_ref'] = campaignRef;
+        }
         if (typeof definition !== 'undefined') {
             apiPayload['definition'] = definition;
+        }
+        if (typeof leadStage !== 'undefined') {
+            apiPayload['lead_stage'] = leadStage;
         }
         if (typeof metadata !== 'undefined') {
             apiPayload['metadata'] = metadata;

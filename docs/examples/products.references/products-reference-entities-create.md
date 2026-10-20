@@ -11,6 +11,7 @@ const productsReferences = new ProductsReferences(client);
 
 const result = await productsReferences.productsReferenceEntitiesCreate({
     code: 'brand',
+    active: true, // optional
     externalId: 'REG-BRAND', // optional
     externalRefs: {
         "entitys": "4711",

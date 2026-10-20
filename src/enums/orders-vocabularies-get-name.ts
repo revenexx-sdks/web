@@ -1,6 +1,9 @@
 export enum OrdersVocabulariesGetName {
+    Cancellationkinds = 'cancellation-kinds',
     Cancellationscopes = 'cancellation-scopes',
     Commentvisibilities = 'comment-visibilities',
+    Deliverysources = 'delivery-sources',
+    Deliverystatuses = 'delivery-statuses',
     Discountappliesto = 'discount-applies-to',
     Discounteffectkinds = 'discount-effect-kinds',
     Discountplacements = 'discount-placements',
@@ -8,6 +11,7 @@ export enum OrdersVocabulariesGetName {
     Discountvaluetypes = 'discount-value-types',
     Fulfillmentstatuses = 'fulfillment-statuses',
     Itemtypes = 'item-types',
+    Ordercancellationkinds = 'order-cancellation-kinds',
     Paymentstatuses = 'payment-statuses',
     Refundmodes = 'refund-modes',
     Returnreasontones = 'return-reason-tones',

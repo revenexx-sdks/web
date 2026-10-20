@@ -1,5 +1,5 @@
 ```javascript
-import { Client, PromotionsPromotions, PromotionsConditionsCreateKind, MatchMode } from "@revenexx/sdk";
+import { Client, PromotionsPromotions, AudiencesRulesCreateKind, MatchMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -11,17 +11,17 @@ const promotionsPromotions = new PromotionsPromotions(client);
 
 const result = await promotionsPromotions.promotionsConditionsUpdate({
     id: '',
-    promotionId: '',
     addend: 9.99, // optional
-    compareValue: {}, // optional
-    compareValueTo: {}, // optional
+    compareValue: null, // optional
+    compareValueTo: null, // optional
     comparison: '', // optional
     factor: 9.99, // optional
-    kind: PromotionsConditionsCreateKind.Group, // optional
+    kind: AudiencesRulesCreateKind.Group, // optional
     matchMode: MatchMode.All, // optional
     negate: true, // optional
     parentId: '', // optional
     position: 1, // optional
+    promotionId: '', // optional
     rightSubject: '', // optional
     subject: '' // optional
 });

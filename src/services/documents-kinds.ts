@@ -21,6 +21,7 @@ export class DocumentsKinds {
      * @param {string} params.title - Filter to rows whose `title` is exactly this value. What the value is called for a person, in the tenant's working language. At least one character. A locale map goes in `labels`.
      * @param {string} params.description - Filter to rows whose `description` is exactly this value. One sentence a person reads under the title — what this value is for. Optional.
      * @param {boolean} params.isDefault - Filter to the default kind. Exactly one row carries the flag, so `true` answers one.
+     * @param {boolean} params.active - Filter by whether the kind is still offered. `true` is what a picker for a new document shows; `false` lists the kinds a merchant retired.
      * @param {Tone} params.tone - Filter to rows whose `tone` is exactly this value. The badge colour a screen renders this value in — semantic, not a hex code: the vocabulary says what a value MEANS and the client decides what 'warning' looks like in its own design system. One of 'neutral', 'info', 'success', 'warning', 'danger'.
      * @param {number} params.position - Filter to rows whose `position` is exactly this value. Sort order in a select or a list, ascending. Values that tie fall back to their code, so a table where every position is 0 is still in a stable order.
      * @param {boolean} params.isSystem - Filter by whether this app seeded the value. `false` is the set a merchant added themselves.
@@ -32,7 +33,7 @@ export class DocumentsKinds {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    documentsKindsList(params?: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    documentsKindsList(params?: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
     /**
      * A document kind is a value the MERCHANT keeps: a code every document stores, the words a person reads for it and the badge colour a screen renders. Four arrive with the app because an order produces them; a merchant adds a proforma invoice or a dunning letter without a release of this app. This is the list `documents.kind` is validated against on every write, so it is the first thing to read when a document is refused as an unknown kind. It SEEDS on read: a tenant whose table is empty — one whose install announcement never arrived — is given the four kinds here rather than being told it has none and then being unable to file anything. Exactly one row carries `is_default`, and the read repairs that too, so a client may rely on finding one.
      *
@@ -41,6 +42,7 @@ export class DocumentsKinds {
      * @param {string} title - Filter to rows whose `title` is exactly this value. What the value is called for a person, in the tenant's working language. At least one character. A locale map goes in `labels`.
      * @param {string} description - Filter to rows whose `description` is exactly this value. One sentence a person reads under the title — what this value is for. Optional.
      * @param {boolean} isDefault - Filter to the default kind. Exactly one row carries the flag, so `true` answers one.
+     * @param {boolean} active - Filter by whether the kind is still offered. `true` is what a picker for a new document shows; `false` lists the kinds a merchant retired.
      * @param {Tone} tone - Filter to rows whose `tone` is exactly this value. The badge colour a screen renders this value in — semantic, not a hex code: the vocabulary says what a value MEANS and the client decides what 'warning' looks like in its own design system. One of 'neutral', 'info', 'success', 'warning', 'danger'.
      * @param {number} position - Filter to rows whose `position` is exactly this value. Sort order in a select or a list, ascending. Values that tie fall back to their code, so a table where every position is 0 is still in a stable order.
      * @param {boolean} isSystem - Filter by whether this app seeded the value. `false` is the set a merchant added themselves.
@@ -53,15 +55,15 @@ export class DocumentsKinds {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    documentsKindsList(id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    documentsKindsList(id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
     documentsKindsList(
-        paramsOrFirst?: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (boolean)?, (Tone)?, (number)?, (boolean)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+        paramsOrFirst?: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (boolean)?, (boolean)?, (Tone)?, (number)?, (boolean)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
     ): Promise<{}> {
-        let params: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+        let params: { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
+            params = (paramsOrFirst || {}) as { id?: string, code?: string, title?: string, description?: string, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string, limit?: number, offset?: number, order?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
@@ -69,14 +71,15 @@ export class DocumentsKinds {
                 title: rest[1] as string,
                 description: rest[2] as string,
                 isDefault: rest[3] as boolean,
-                tone: rest[4] as Tone,
-                position: rest[5] as number,
-                isSystem: rest[6] as boolean,
-                createdAt: rest[7] as string,
-                updatedAt: rest[8] as string,
-                limit: rest[9] as number,
-                offset: rest[10] as number,
-                order: rest[11] as string            
+                active: rest[4] as boolean,
+                tone: rest[5] as Tone,
+                position: rest[6] as number,
+                isSystem: rest[7] as boolean,
+                createdAt: rest[8] as string,
+                updatedAt: rest[9] as string,
+                limit: rest[10] as number,
+                offset: rest[11] as number,
+                order: rest[12] as string            
             };
         }
         
@@ -85,6 +88,7 @@ export class DocumentsKinds {
         const title = params.title;
         const description = params.description;
         const isDefault = params.isDefault;
+        const active = params.active;
         const tone = params.tone;
         const position = params.position;
         const isSystem = params.isSystem;
@@ -111,6 +115,9 @@ export class DocumentsKinds {
         }
         if (typeof isDefault !== 'undefined') {
             apiPayload['is_default'] = isDefault;
+        }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
         }
         if (typeof tone !== 'undefined') {
             apiPayload['tone'] = tone;
@@ -154,6 +161,7 @@ export class DocumentsKinds {
      *
      * @param {string} params.code - The value's stable identifier, and the string a document stores in `kind`. Lowercase letters, digits, `-` and `_`, starting with a letter. Unique per tenant and FIXED once created: renaming it would orphan every document carrying it, so an edit that changes it is refused and the title is what a merchant renames.
      * @param {string} params.title - What the value is called for a person, in the tenant's working language. At least one character. A locale map goes in `labels`.
+     * @param {boolean} params.active - Whether the value is still offered for a new record. An inactive value stays valid on every document that already carries it and keeps its title, but it is left out of the values the vocabulary offers and a new document may not take it on. The default cannot be inactive: deactivating it, or making an inactive value the default, is refused with 409. Every value is active until a merchant says otherwise. Defaults to `true` on create. `false` retires the kind from new documents; the default may not be retired.
      * @param {string} params.description - One sentence a person reads under the title — what this value is for. Optional.
      * @param {object} params.descriptions - The description per language tag. Falls back to `description` when a tag is missing.
      * @param {boolean} params.isDefault - Whether this is the value a caller falls back to. Exactly ONE row of the table carries it: promoting another demotes the current one, so a client can mark the default without reading anything else. Deleting the default hands the flag to the first remaining row. Sending `true` promotes this value and demotes whichever held the flag. `false` is ignored — demote by promoting another.
@@ -163,12 +171,13 @@ export class DocumentsKinds {
      * @throws {RevenexxException}
      * @returns {Promise<Models.DocumentKind>}
      */
-    documentsKindsCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: DocumentKindTone }): Promise<Models.DocumentKind>;
+    documentsKindsCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: DocumentKindTone }): Promise<Models.DocumentKind>;
     /**
      * A document kind is a value the MERCHANT keeps: a code every document stores, the words a person reads for it and the badge colour a screen renders. Four arrive with the app because an order produces them; a merchant adds a proforma invoice or a dunning letter without a release of this app. This is the route that makes the set open. A proforma invoice, a dunning letter, a works certificate or a scrap certificate is a kind this app was never going to enumerate, and a document may name it the moment it exists here — no release, no migration. `code` is lowercase letters, digits, `-` and `_`, unique per tenant and FIXED from here on; `title` is what a merchant renames later. The value is created as the merchant's own (`is_system: false`) and not as the default unless `is_default: true` says so, in which case whichever row held the flag is demoted in the same call.
      *
      * @param {string} code - The value's stable identifier, and the string a document stores in `kind`. Lowercase letters, digits, `-` and `_`, starting with a letter. Unique per tenant and FIXED once created: renaming it would orphan every document carrying it, so an edit that changes it is refused and the title is what a merchant renames.
      * @param {string} title - What the value is called for a person, in the tenant's working language. At least one character. A locale map goes in `labels`.
+     * @param {boolean} active - Whether the value is still offered for a new record. An inactive value stays valid on every document that already carries it and keeps its title, but it is left out of the values the vocabulary offers and a new document may not take it on. The default cannot be inactive: deactivating it, or making an inactive value the default, is refused with 409. Every value is active until a merchant says otherwise. Defaults to `true` on create. `false` retires the kind from new documents; the default may not be retired.
      * @param {string} description - One sentence a person reads under the title — what this value is for. Optional.
      * @param {object} descriptions - The description per language tag. Falls back to `description` when a tag is missing.
      * @param {boolean} isDefault - Whether this is the value a caller falls back to. Exactly ONE row of the table carries it: promoting another demotes the current one, so a client can mark the default without reading anything else. Deleting the default hands the flag to the first remaining row. Sending `true` promotes this value and demotes whichever held the flag. `false` is ignored — demote by promoting another.
@@ -179,30 +188,32 @@ export class DocumentsKinds {
      * @returns {Promise<Models.DocumentKind>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    documentsKindsCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: DocumentKindTone): Promise<Models.DocumentKind>;
+    documentsKindsCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: DocumentKindTone): Promise<Models.DocumentKind>;
     documentsKindsCreate(
-        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: DocumentKindTone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (DocumentKindTone)?]    
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: DocumentKindTone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (DocumentKindTone)?]    
     ): Promise<Models.DocumentKind> {
-        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: DocumentKindTone };
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: DocumentKindTone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: DocumentKindTone };
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, tone?: DocumentKindTone };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 title: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                labels: rest[4] as object,
-                position: rest[5] as number,
-                tone: rest[6] as DocumentKindTone            
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                labels: rest[5] as object,
+                position: rest[6] as number,
+                tone: rest[7] as DocumentKindTone            
             };
         }
         
         const code = params.code;
         const title = params.title;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -219,6 +230,9 @@ export class DocumentsKinds {
 
         const apiPath = '/v1/documents/kinds';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -418,6 +432,7 @@ export class DocumentsKinds {
      * A document kind is a value the MERCHANT keeps: a code every document stores, the words a person reads for it and the badge colour a screen renders. Four arrive with the app because an order produces them; a merchant adds a proforma invoice or a dunning letter without a release of this app. What a merchant edits here is the WORDS: the title, the per-language labels, the description, the badge tone and the position in a select. What they cannot edit is the `code` — every document stores it, so renaming it would orphan each one, and a body that changes it is refused with a 400 that says to create a new kind and move the documents over. A seeded kind is as editable as any other: `is_system` records that this app put the row there and grants it no protection.
      *
      * @param {string} params.id - The document kind to edit.
+     * @param {boolean} params.active - Whether the value is still offered for a new record. An inactive value stays valid on every document that already carries it and keeps its title, but it is left out of the values the vocabulary offers and a new document may not take it on. The default cannot be inactive: deactivating it, or making an inactive value the default, is refused with 409. Every value is active until a merchant says otherwise. Defaults to `true` on create. `false` retires the kind from new documents; the default may not be retired.
      * @param {string} params.code - The value's stable identifier, and the string a document stores in `kind`. Lowercase letters, digits, `-` and `_`, starting with a letter. Unique per tenant and FIXED once created: renaming it would orphan every document carrying it, so an edit that changes it is refused and the title is what a merchant renames.
      * @param {string} params.description - One sentence a person reads under the title — what this value is for. Optional.
      * @param {object} params.descriptions - The description per language tag. Falls back to `description` when a tag is missing.
@@ -429,11 +444,12 @@ export class DocumentsKinds {
      * @throws {RevenexxException}
      * @returns {Promise<Models.DocumentKind>}
      */
-    documentsKindsUpdate(params: { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: DocumentKindTone }): Promise<Models.DocumentKind>;
+    documentsKindsUpdate(params: { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: DocumentKindTone }): Promise<Models.DocumentKind>;
     /**
      * A document kind is a value the MERCHANT keeps: a code every document stores, the words a person reads for it and the badge colour a screen renders. Four arrive with the app because an order produces them; a merchant adds a proforma invoice or a dunning letter without a release of this app. What a merchant edits here is the WORDS: the title, the per-language labels, the description, the badge tone and the position in a select. What they cannot edit is the `code` — every document stores it, so renaming it would orphan each one, and a body that changes it is refused with a 400 that says to create a new kind and move the documents over. A seeded kind is as editable as any other: `is_system` records that this app put the row there and grants it no protection.
      *
      * @param {string} id - The document kind to edit.
+     * @param {boolean} active - Whether the value is still offered for a new record. An inactive value stays valid on every document that already carries it and keeps its title, but it is left out of the values the vocabulary offers and a new document may not take it on. The default cannot be inactive: deactivating it, or making an inactive value the default, is refused with 409. Every value is active until a merchant says otherwise. Defaults to `true` on create. `false` retires the kind from new documents; the default may not be retired.
      * @param {string} code - The value's stable identifier, and the string a document stores in `kind`. Lowercase letters, digits, `-` and `_`, starting with a letter. Unique per tenant and FIXED once created: renaming it would orphan every document carrying it, so an edit that changes it is refused and the title is what a merchant renames.
      * @param {string} description - One sentence a person reads under the title — what this value is for. Optional.
      * @param {object} descriptions - The description per language tag. Falls back to `description` when a tag is missing.
@@ -446,30 +462,32 @@ export class DocumentsKinds {
      * @returns {Promise<Models.DocumentKind>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    documentsKindsUpdate(id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: DocumentKindTone): Promise<Models.DocumentKind>;
+    documentsKindsUpdate(id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: DocumentKindTone): Promise<Models.DocumentKind>;
     documentsKindsUpdate(
-        paramsOrFirst: { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: DocumentKindTone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (DocumentKindTone)?]    
+        paramsOrFirst: { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: DocumentKindTone } | string,
+        ...rest: [(boolean)?, (string)?, (string)?, (object)?, (boolean)?, (object)?, (number)?, (string)?, (DocumentKindTone)?]    
     ): Promise<Models.DocumentKind> {
-        let params: { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: DocumentKindTone };
+        let params: { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: DocumentKindTone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: DocumentKindTone };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, labels?: object, position?: number, title?: string, tone?: DocumentKindTone };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                code: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                labels: rest[4] as object,
-                position: rest[5] as number,
-                title: rest[6] as string,
-                tone: rest[7] as DocumentKindTone            
+                active: rest[0] as boolean,
+                code: rest[1] as string,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                labels: rest[5] as object,
+                position: rest[6] as number,
+                title: rest[7] as string,
+                tone: rest[8] as DocumentKindTone            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const code = params.code;
         const description = params.description;
         const descriptions = params.descriptions;
@@ -485,6 +503,9 @@ export class DocumentsKinds {
 
         const apiPath = '/v1/documents/kinds/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }

@@ -11,20 +11,20 @@ const promotionsPromotions = new PromotionsPromotions(client);
 
 const result = await promotionsPromotions.promotionsEffectsUpdate({
     id: '',
-    promotionId: '',
     amount: 9.99, // optional
-    appliesTo: {}, // optional
+    appliesTo: null, // optional
     bundleId: '', // optional
-    customPayload: {}, // optional
+    customPayload: null, // optional
     customShapeVersion: 1, // optional
     customTypeId: '', // optional
     freeItemQuantity: 1, // optional
-    freeItems: {}, // optional
+    freeItems: null, // optional
     kind: PromotionsEffectsCreateKind.Discount, // optional
     maxDiscount: 9.99, // optional
-    message: {}, // optional
-    metadata: {}, // optional
+    message: null, // optional
+    metadata: null, // optional
     position: 1, // optional
+    promotionId: '', // optional
     requiresChoice: true, // optional
     spread: true, // optional
     targetScope: TargetScope.UnitPrice, // optional

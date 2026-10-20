@@ -12,6 +12,7 @@ const carts = new Carts(client);
 const result = await carts.cartsClaim({
     contactId: '',
     sessionKey: 'a1b2c3d4e5f6',
+    organizationId: '', // optional
     strategy: CartMergeStrategy.Merge, // optional
     targetCartId: '' // optional
 });

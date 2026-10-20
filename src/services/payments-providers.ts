@@ -2,6 +2,7 @@ import { Service } from '../service';
 import { RevenexxException, Client, type Payload, UploadProgress } from '../client';
 import type { Models } from '../models';
 
+import { Variant } from '../enums/variant';
 
 export class PaymentsProviders {
     client: Client;
@@ -11,36 +12,41 @@ export class PaymentsProviders {
     }
 
     /**
-     * Answers the SVG document for a catalog provider code (a shipped assets/logos/{code}.svg, otherwise a generated monogram tile), with content-type image/svg+xml and a one-day cache. It is the one route in this app that needs no tenant identity: the logos are bundled with the app rather than owned by anyone, so nothing here is tenant data and no key or tenant header is required to fetch one — which is what lets a storefront or a Cockpit screen point an <img> straight at it. Called directly on the app domain (https://revenexx-payments.apps.revenexx.io/payments/logos/stripe) the response carries its real content-type; through the gateway the body is passed through but labelled application/json, so use the app domain for <img> sources.
+     * Answers the SVG document for a catalog provider code (a shipped assets/logos/{code}.svg, otherwise a generated monogram tile), with content-type image/svg+xml and a one-day cache. For a connector whose brand files are on the platform CDN it redirects (302) there instead: to the full logo, or with `?variant=symbol` to the square symbol. It is the one route in this app that needs no tenant identity: the logos are bundled with the app rather than owned by anyone, so nothing here is tenant data and no key or tenant header is required to fetch one — which is what lets a storefront or a Cockpit screen point an <img> straight at it. Called directly on the app domain (https://revenexx-payments.apps.revenexx.io/payments/logos/stripe) the response carries its real content-type; through the gateway the body is passed through but labelled application/json, so use the app domain for <img> sources.
      *
      * @param {string} params.slug - A catalog provider code, as GET /payments/providers/catalog lists it. Case-insensitive, and a trailing '.svg' is ignored. Not tenant data: the logos ship with the app and are identical for everyone.
+     * @param {Variant} params.variant - Which image of a connector with brand files on the CDN to redirect to: the full `logo` (default) or the square `symbol`. Without uploaded files both answer the same monogram tile.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    paymentsLogosGet(params: { slug: string }): Promise<{}>;
+    paymentsLogosGet(params: { slug: string, variant?: Variant }): Promise<{}>;
     /**
-     * Answers the SVG document for a catalog provider code (a shipped assets/logos/{code}.svg, otherwise a generated monogram tile), with content-type image/svg+xml and a one-day cache. It is the one route in this app that needs no tenant identity: the logos are bundled with the app rather than owned by anyone, so nothing here is tenant data and no key or tenant header is required to fetch one — which is what lets a storefront or a Cockpit screen point an <img> straight at it. Called directly on the app domain (https://revenexx-payments.apps.revenexx.io/payments/logos/stripe) the response carries its real content-type; through the gateway the body is passed through but labelled application/json, so use the app domain for <img> sources.
+     * Answers the SVG document for a catalog provider code (a shipped assets/logos/{code}.svg, otherwise a generated monogram tile), with content-type image/svg+xml and a one-day cache. For a connector whose brand files are on the platform CDN it redirects (302) there instead: to the full logo, or with `?variant=symbol` to the square symbol. It is the one route in this app that needs no tenant identity: the logos are bundled with the app rather than owned by anyone, so nothing here is tenant data and no key or tenant header is required to fetch one — which is what lets a storefront or a Cockpit screen point an <img> straight at it. Called directly on the app domain (https://revenexx-payments.apps.revenexx.io/payments/logos/stripe) the response carries its real content-type; through the gateway the body is passed through but labelled application/json, so use the app domain for <img> sources.
      *
      * @param {string} slug - A catalog provider code, as GET /payments/providers/catalog lists it. Case-insensitive, and a trailing '.svg' is ignored. Not tenant data: the logos ship with the app and are identical for everyone.
+     * @param {Variant} variant - Which image of a connector with brand files on the CDN to redirect to: the full `logo` (default) or the square `symbol`. Without uploaded files both answer the same monogram tile.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    paymentsLogosGet(slug: string): Promise<{}>;
+    paymentsLogosGet(slug: string, variant?: Variant): Promise<{}>;
     paymentsLogosGet(
-        paramsOrFirst: { slug: string } | string    
+        paramsOrFirst: { slug: string, variant?: Variant } | string,
+        ...rest: [(Variant)?]    
     ): Promise<{}> {
-        let params: { slug: string };
+        let params: { slug: string, variant?: Variant };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { slug: string };
+            params = (paramsOrFirst || {}) as { slug: string, variant?: Variant };
         } else {
             params = {
-                slug: paramsOrFirst as string            
+                slug: paramsOrFirst as string,
+                variant: rest[0] as Variant            
             };
         }
         
         const slug = params.slug;
+        const variant = params.variant;
 
         if (typeof slug === 'undefined') {
             throw new RevenexxException('Missing required parameter: "slug"');
@@ -48,6 +54,9 @@ export class PaymentsProviders {
 
         const apiPath = '/v1/payments/logos/{slug}'.replace('{slug}', slug);
         const apiPayload: Payload = {};
+        if (typeof variant !== 'undefined') {
+            apiPayload['variant'] = variant;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
@@ -152,10 +161,10 @@ export class PaymentsProviders {
      * Activates one PSP account of this tenant. The `provider` code is not free text: it has to be one the catalog carries, and anything else is refused with 400 and a message listing the codes that are — so GET /payments/providers/catalog is the call that comes first, both for the code itself and for the credential field names this provider expects. PSP secrets are write-only: 'credentials' and 'webhook_secret' are accepted on create/update, stored for the drivers, and never returned by any route — the responses carry the public columns only (id, provider, name, enabled, test_mode, options, timestamps). To rotate a secret, write the new value; there is no way to read the current one back.
      *
      * @param {string} params.provider - The catalog code of the PSP this row configures — one row per provider per tenant. GET /payments/providers/catalog lists every code that may appear here. It is what every payment and every method naming this PSP resolves it by, so changing it is refused with 409 for as long as one of them does. Required on create, and refused with 400 when the catalog does not carry it.
-     * @param {object} params.credentials - The PSP's own API credentials, under the key names its auth scheme expects — `GET /payments/providers/catalog` publishes them per provider as `credential_fields` (Stripe: `api_key`; PayPal: `client_id` + `client_secret`; Novalnet: `api_key` + `payment_access_key` + `tariff_id`). They come from the provider's own dashboard, are handed to the driver in-process, and are never read back by any route. Write-only: to rotate one, write the new value. Whatever a document shows here is a placeholder.
+     * @param {object} params.credentials - The PSP's own API credentials, under the key names of the payment SDK's config for that connector — `GET /payments/providers/catalog` publishes them per provider as `credential_schema` (labelled, with which are required and which are secret) and `credential_fields` (names only). Stripe: `api_key`; PayPal: `client_id` + `client_secret`; Novalnet: `product_activation_key` + `payment_access_key` + `tariff_id`. A key the connector does not take is refused with 400 `unknown_credential_key`; a key an earlier version spelled differently (Novalnet `api_key`) is stored under today's name. They come from the provider's own dashboard, are handed to the driver in-process, and are never read back by any route. Write-only: to rotate one, write the new value. Whatever a document shows here is a placeholder.
      * @param {boolean} params.enabled - Only an enabled provider takes NEW payments: a method pointing at a disabled one falls through to the tenant's `fallback_provider`, and to a 422 if there is none. Nothing else reads it — capture, cancel and refund on the payments this PSP already holds go on working — which is what makes disabling the safe retirement and deleting the refused one. Defaults to false — finish the credentials before switching it on.
      * @param {string} params.name - Operator-facing name of the configuration. Defaults to the catalog label, and is worth changing when a tenant runs two accounts with one PSP. null, omitted or empty falls back to the catalog label.
-     * @param {object} params.options - Per-provider switches this app understands, plus anything the merchant keeps beside them. Three keys are the app's own: `logo_url` (the bundled logo, filled in when the provider is seeded), `capture_method` and `three_ds` (what the prism driver does today). Free jsonb — an unknown key is stored and ignored.
+     * @param {object} params.options - Per-provider switches this app understands, plus anything the merchant keeps beside them. Four keys are the app's own: `logo_url` (the bundled logo, filled in when the provider is seeded — superseded by the generated `logo_url` column), `capture_method` and `three_ds` (what the prism driver does today), and `last_check` (the last connection check). Free jsonb — an unknown key is stored and ignored.
      * @param {boolean} params.testMode - Whether the driver talks to the PSP's sandbox. New configurations start in test mode: a provider nobody verified must not touch live money. Unstated takes the tenant's own `test_mode_default` setting.
      * @param {string} params.webhookSecret - The signing secret the PSP issues when its webhook endpoint is created, in the provider's own dashboard. webhooks.revenexx.com verifies each callback against it before the dispatcher hands the envelope to this app. Write-only, like `credentials`: it is stored, used, and never read back by any route, so there is nothing to compare a value against — to rotate it, write the new one. Whatever a document shows here is a generated placeholder, not a usable secret — writing it verbatim leaves every callback failing verification.
      * @throws {RevenexxException}
@@ -166,10 +175,10 @@ export class PaymentsProviders {
      * Activates one PSP account of this tenant. The `provider` code is not free text: it has to be one the catalog carries, and anything else is refused with 400 and a message listing the codes that are — so GET /payments/providers/catalog is the call that comes first, both for the code itself and for the credential field names this provider expects. PSP secrets are write-only: 'credentials' and 'webhook_secret' are accepted on create/update, stored for the drivers, and never returned by any route — the responses carry the public columns only (id, provider, name, enabled, test_mode, options, timestamps). To rotate a secret, write the new value; there is no way to read the current one back.
      *
      * @param {string} provider - The catalog code of the PSP this row configures — one row per provider per tenant. GET /payments/providers/catalog lists every code that may appear here. It is what every payment and every method naming this PSP resolves it by, so changing it is refused with 409 for as long as one of them does. Required on create, and refused with 400 when the catalog does not carry it.
-     * @param {object} credentials - The PSP's own API credentials, under the key names its auth scheme expects — `GET /payments/providers/catalog` publishes them per provider as `credential_fields` (Stripe: `api_key`; PayPal: `client_id` + `client_secret`; Novalnet: `api_key` + `payment_access_key` + `tariff_id`). They come from the provider's own dashboard, are handed to the driver in-process, and are never read back by any route. Write-only: to rotate one, write the new value. Whatever a document shows here is a placeholder.
+     * @param {object} credentials - The PSP's own API credentials, under the key names of the payment SDK's config for that connector — `GET /payments/providers/catalog` publishes them per provider as `credential_schema` (labelled, with which are required and which are secret) and `credential_fields` (names only). Stripe: `api_key`; PayPal: `client_id` + `client_secret`; Novalnet: `product_activation_key` + `payment_access_key` + `tariff_id`. A key the connector does not take is refused with 400 `unknown_credential_key`; a key an earlier version spelled differently (Novalnet `api_key`) is stored under today's name. They come from the provider's own dashboard, are handed to the driver in-process, and are never read back by any route. Write-only: to rotate one, write the new value. Whatever a document shows here is a placeholder.
      * @param {boolean} enabled - Only an enabled provider takes NEW payments: a method pointing at a disabled one falls through to the tenant's `fallback_provider`, and to a 422 if there is none. Nothing else reads it — capture, cancel and refund on the payments this PSP already holds go on working — which is what makes disabling the safe retirement and deleting the refused one. Defaults to false — finish the credentials before switching it on.
      * @param {string} name - Operator-facing name of the configuration. Defaults to the catalog label, and is worth changing when a tenant runs two accounts with one PSP. null, omitted or empty falls back to the catalog label.
-     * @param {object} options - Per-provider switches this app understands, plus anything the merchant keeps beside them. Three keys are the app's own: `logo_url` (the bundled logo, filled in when the provider is seeded), `capture_method` and `three_ds` (what the prism driver does today). Free jsonb — an unknown key is stored and ignored.
+     * @param {object} options - Per-provider switches this app understands, plus anything the merchant keeps beside them. Four keys are the app's own: `logo_url` (the bundled logo, filled in when the provider is seeded — superseded by the generated `logo_url` column), `capture_method` and `three_ds` (what the prism driver does today), and `last_check` (the last connection check). Free jsonb — an unknown key is stored and ignored.
      * @param {boolean} testMode - Whether the driver talks to the PSP's sandbox. New configurations start in test mode: a provider nobody verified must not touch live money. Unstated takes the tenant's own `test_mode_default` setting.
      * @param {string} webhookSecret - The signing secret the PSP issues when its webhook endpoint is created, in the provider's own dashboard. webhooks.revenexx.com verifies each callback against it before the dispatcher hands the envelope to this app. Write-only, like `credentials`: it is stored, used, and never read back by any route, so there is nothing to compare a value against — to rotate it, write the new one. Whatever a document shows here is a generated placeholder, not a usable secret — writing it verbatim leaves every callback failing verification.
      * @throws {RevenexxException}
@@ -221,7 +230,7 @@ export class PaymentsProviders {
             apiPayload['name'] = name;
         }
         if (typeof options !== 'undefined') {
-            apiPayload['options'] = Client.toWireKeys(options, {"captureMethod":{"wire":"capture_method","children":null},"logoUrl":{"wire":"logo_url","children":null},"threeDs":{"wire":"three_ds","children":null}});
+            apiPayload['options'] = Client.toWireKeys(options, {"captureMethod":{"wire":"capture_method","children":null},"lastCheck":{"wire":"last_check","children":null},"logoUrl":{"wire":"logo_url","children":null},"threeDs":{"wire":"three_ds","children":null}});
         }
         if (typeof provider !== 'undefined') {
             apiPayload['provider'] = provider;
@@ -247,7 +256,7 @@ export class PaymentsProviders {
     }
 
     /**
-     * The closed set of `provider` codes POST /payments/providers accepts — anything else is refused with 400 and a message listing these. It runs to roughly thirty connectors, and each entry says which `driver` moves the money for it: nearly all of them go through the one connector layer this app embeds, hyperswitch-prism, with the built-in mock PSP alongside for demos and E2E. Read it to build the picker on an "add provider" form and to know what a credentials form has to ask for: `auth_type` is the scheme the connector authenticates with and `credential_fields` are the KEY NAMES to put inside `credentials` (never values, which come from the PSP's own dashboard). It says nothing about this tenant: no credential, no enabled flag, no test mode — that is GET /payments/providers. Watch `available`: a code with `false` has no driver in this deployment yet, so it can be created and stored and every transaction through it fails with `provider_unavailable`. The list is app-shipped and identical for everyone, so it is safe to cache hard and it changes only with a release of this app.
+     * The connectors this app offers, presented for a picker: EU-headquartered providers first by rank (Novalnet and Mollie lead), then the rest of Europe, then everything else — every entry says its `region`, `hq_country` and whom it is `recommended_for`. Read it to build the "add provider" picker and the credentials form: `credential_schema` is the labelled list of keys to put inside `credentials` (with help text, whether each is required and whether it is a secret), and `credential_fields` the same names as a flat list. Codes POST /payments/providers accepts are these plus the built-in `mock`; nothing is listed that the bundled driver cannot run, and a code the app knows but does not offer is refused on create (422 `provider_not_offered`). It says nothing secret about this tenant — only which codes it already has (`configured`, `addable`). `testable` says whether POST /payments/providers/{id}/check can check it. Answers an `ETag`; send it back as `If-None-Match` for a 304.
      *
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
@@ -375,10 +384,10 @@ export class PaymentsProviders {
      * A partial write: omitted fields keep their value. Three things are changed here in practice — the `credentials` (and `webhook_secret`) when a key is rotated, `test_mode` when an account moves from the PSP's sandbox to live, and `enabled` when it is switched on or taken out of service. PSP secrets are write-only: 'credentials' and 'webhook_secret' are accepted on create/update, stored for the drivers, and never returned by any route — the responses carry the public columns only (id, provider, name, enabled, test_mode, options, timestamps). To rotate a secret, write the new value; there is no way to read the current one back. One field is not like the others: `provider` is the CODE every payment and every method resolves this PSP by, so writing a different one is the delete through another door and is refused with the same 409 while anything still names the current code. Switching acquirer is a second configuration plus `enabled: false` on this one, never a rename.
      *
      * @param {string} params.id - The PSP configuration. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
-     * @param {object} params.credentials - The PSP's own API credentials, under the key names its auth scheme expects — `GET /payments/providers/catalog` publishes them per provider as `credential_fields` (Stripe: `api_key`; PayPal: `client_id` + `client_secret`; Novalnet: `api_key` + `payment_access_key` + `tariff_id`). They come from the provider's own dashboard, are handed to the driver in-process, and are never read back by any route. Write-only: to rotate one, write the new value. Whatever a document shows here is a placeholder.
+     * @param {object} params.credentials - The PSP's own API credentials, under the key names of the payment SDK's config for that connector — `GET /payments/providers/catalog` publishes them per provider as `credential_schema` (labelled, with which are required and which are secret) and `credential_fields` (names only). Stripe: `api_key`; PayPal: `client_id` + `client_secret`; Novalnet: `product_activation_key` + `payment_access_key` + `tariff_id`. A key the connector does not take is refused with 400 `unknown_credential_key`; a key an earlier version spelled differently (Novalnet `api_key`) is stored under today's name. They come from the provider's own dashboard, are handed to the driver in-process, and are never read back by any route. Write-only: to rotate one, write the new value. Whatever a document shows here is a placeholder.
      * @param {boolean} params.enabled - Only an enabled provider takes NEW payments: a method pointing at a disabled one falls through to the tenant's `fallback_provider`, and to a 422 if there is none. Nothing else reads it — capture, cancel and refund on the payments this PSP already holds go on working — which is what makes disabling the safe retirement and deleting the refused one. Defaults to false — finish the credentials before switching it on.
      * @param {string} params.name - Operator-facing name of the configuration. Defaults to the catalog label, and is worth changing when a tenant runs two accounts with one PSP. Written straight to the database, which refuses an empty one.
-     * @param {object} params.options - Per-provider switches this app understands, plus anything the merchant keeps beside them. Three keys are the app's own: `logo_url` (the bundled logo, filled in when the provider is seeded), `capture_method` and `three_ds` (what the prism driver does today). Free jsonb — an unknown key is stored and ignored.
+     * @param {object} params.options - Per-provider switches this app understands, plus anything the merchant keeps beside them. Four keys are the app's own: `logo_url` (the bundled logo, filled in when the provider is seeded — superseded by the generated `logo_url` column), `capture_method` and `three_ds` (what the prism driver does today), and `last_check` (the last connection check). Free jsonb — an unknown key is stored and ignored.
      * @param {string} params.provider - The catalog code of the PSP this row configures — one row per provider per tenant. GET /payments/providers/catalog lists every code that may appear here. It is what every payment and every method naming this PSP resolves it by, so changing it is refused with 409 for as long as one of them does. Required on create, and refused with 400 when the catalog does not carry it.
      * @param {boolean} params.testMode - Whether the driver talks to the PSP's sandbox. New configurations start in test mode: a provider nobody verified must not touch live money. Unstated takes the tenant's own `test_mode_default` setting.
      * @param {string} params.webhookSecret - The signing secret the PSP issues when its webhook endpoint is created, in the provider's own dashboard. webhooks.revenexx.com verifies each callback against it before the dispatcher hands the envelope to this app. Write-only, like `credentials`: it is stored, used, and never read back by any route, so there is nothing to compare a value against — to rotate it, write the new one. Whatever a document shows here is a generated placeholder, not a usable secret — writing it verbatim leaves every callback failing verification.
@@ -390,10 +399,10 @@ export class PaymentsProviders {
      * A partial write: omitted fields keep their value. Three things are changed here in practice — the `credentials` (and `webhook_secret`) when a key is rotated, `test_mode` when an account moves from the PSP's sandbox to live, and `enabled` when it is switched on or taken out of service. PSP secrets are write-only: 'credentials' and 'webhook_secret' are accepted on create/update, stored for the drivers, and never returned by any route — the responses carry the public columns only (id, provider, name, enabled, test_mode, options, timestamps). To rotate a secret, write the new value; there is no way to read the current one back. One field is not like the others: `provider` is the CODE every payment and every method resolves this PSP by, so writing a different one is the delete through another door and is refused with the same 409 while anything still names the current code. Switching acquirer is a second configuration plus `enabled: false` on this one, never a rename.
      *
      * @param {string} id - The PSP configuration. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
-     * @param {object} credentials - The PSP's own API credentials, under the key names its auth scheme expects — `GET /payments/providers/catalog` publishes them per provider as `credential_fields` (Stripe: `api_key`; PayPal: `client_id` + `client_secret`; Novalnet: `api_key` + `payment_access_key` + `tariff_id`). They come from the provider's own dashboard, are handed to the driver in-process, and are never read back by any route. Write-only: to rotate one, write the new value. Whatever a document shows here is a placeholder.
+     * @param {object} credentials - The PSP's own API credentials, under the key names of the payment SDK's config for that connector — `GET /payments/providers/catalog` publishes them per provider as `credential_schema` (labelled, with which are required and which are secret) and `credential_fields` (names only). Stripe: `api_key`; PayPal: `client_id` + `client_secret`; Novalnet: `product_activation_key` + `payment_access_key` + `tariff_id`. A key the connector does not take is refused with 400 `unknown_credential_key`; a key an earlier version spelled differently (Novalnet `api_key`) is stored under today's name. They come from the provider's own dashboard, are handed to the driver in-process, and are never read back by any route. Write-only: to rotate one, write the new value. Whatever a document shows here is a placeholder.
      * @param {boolean} enabled - Only an enabled provider takes NEW payments: a method pointing at a disabled one falls through to the tenant's `fallback_provider`, and to a 422 if there is none. Nothing else reads it — capture, cancel and refund on the payments this PSP already holds go on working — which is what makes disabling the safe retirement and deleting the refused one. Defaults to false — finish the credentials before switching it on.
      * @param {string} name - Operator-facing name of the configuration. Defaults to the catalog label, and is worth changing when a tenant runs two accounts with one PSP. Written straight to the database, which refuses an empty one.
-     * @param {object} options - Per-provider switches this app understands, plus anything the merchant keeps beside them. Three keys are the app's own: `logo_url` (the bundled logo, filled in when the provider is seeded), `capture_method` and `three_ds` (what the prism driver does today). Free jsonb — an unknown key is stored and ignored.
+     * @param {object} options - Per-provider switches this app understands, plus anything the merchant keeps beside them. Four keys are the app's own: `logo_url` (the bundled logo, filled in when the provider is seeded — superseded by the generated `logo_url` column), `capture_method` and `three_ds` (what the prism driver does today), and `last_check` (the last connection check). Free jsonb — an unknown key is stored and ignored.
      * @param {string} provider - The catalog code of the PSP this row configures — one row per provider per tenant. GET /payments/providers/catalog lists every code that may appear here. It is what every payment and every method naming this PSP resolves it by, so changing it is refused with 409 for as long as one of them does. Required on create, and refused with 400 when the catalog does not carry it.
      * @param {boolean} testMode - Whether the driver talks to the PSP's sandbox. New configurations start in test mode: a provider nobody verified must not touch live money. Unstated takes the tenant's own `test_mode_default` setting.
      * @param {string} webhookSecret - The signing secret the PSP issues when its webhook endpoint is created, in the provider's own dashboard. webhooks.revenexx.com verifies each callback against it before the dispatcher hands the envelope to this app. Write-only, like `credentials`: it is stored, used, and never read back by any route, so there is nothing to compare a value against — to rotate it, write the new one. Whatever a document shows here is a generated placeholder, not a usable secret — writing it verbatim leaves every callback failing verification.
@@ -448,7 +457,7 @@ export class PaymentsProviders {
             apiPayload['name'] = name;
         }
         if (typeof options !== 'undefined') {
-            apiPayload['options'] = Client.toWireKeys(options, {"captureMethod":{"wire":"capture_method","children":null},"logoUrl":{"wire":"logo_url","children":null},"threeDs":{"wire":"three_ds","children":null}});
+            apiPayload['options'] = Client.toWireKeys(options, {"captureMethod":{"wire":"capture_method","children":null},"lastCheck":{"wire":"last_check","children":null},"logoUrl":{"wire":"logo_url","children":null},"threeDs":{"wire":"three_ds","children":null}});
         }
         if (typeof provider !== 'undefined') {
             apiPayload['provider'] = provider;
@@ -467,6 +476,57 @@ export class PaymentsProviders {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * "Verbindung prüfen": one cheap authenticated call to the provider in the configuration's own environment (sandbox in test mode, live otherwise) — Stripe reads its balance, PayPal issues an access token, Novalnet reads the merchant details. Nothing is charged and nothing is created at the provider. The outcome is stored as `options.last_check` `{ at, ok, code, environment }` and answered with the configuration; `code` is ok, auth_failed, environment_mismatch (a live key on a test-mode provider or the reverse), missing_credentials, unreachable or provider_error. Credentials appear in no answer and no log. Only connectors the catalog marks `testable` can be checked.
+     *
+     * @param {string} params.id - The PSP configuration. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PaymentProviderCheck>}
+     */
+    paymentsProvidersCheck(params: { id: string }): Promise<Models.PaymentProviderCheck>;
+    /**
+     * "Verbindung prüfen": one cheap authenticated call to the provider in the configuration's own environment (sandbox in test mode, live otherwise) — Stripe reads its balance, PayPal issues an access token, Novalnet reads the merchant details. Nothing is charged and nothing is created at the provider. The outcome is stored as `options.last_check` `{ at, ok, code, environment }` and answered with the configuration; `code` is ok, auth_failed, environment_mismatch (a live key on a test-mode provider or the reverse), missing_credentials, unreachable or provider_error. Credentials appear in no answer and no log. Only connectors the catalog marks `testable` can be checked.
+     *
+     * @param {string} id - The PSP configuration. A uuid — the data plane casts this segment and answers 400, not 404, for anything else.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.PaymentProviderCheck>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    paymentsProvidersCheck(id: string): Promise<Models.PaymentProviderCheck>;
+    paymentsProvidersCheck(
+        paramsOrFirst: { id: string } | string    
+    ): Promise<Models.PaymentProviderCheck> {
+        let params: { id: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string            
+            };
+        }
+        
+        const id = params.id;
+
+        if (typeof id === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "id"');
+        }
+
+        const apiPath = '/v1/payments/providers/{id}/check'.replace('{id}', id);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload

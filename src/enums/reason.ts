@@ -1,6 +1,6 @@
 export enum Reason {
-    HardBounce = 'hard_bounce',
-    Complaint = 'complaint',
-    Unsubscribe = 'unsubscribe',
-    Manual = 'manual',
+    LeftCompany = 'left_company',
+    Misuse = 'misuse',
+    CustomerRequest = 'customer_request',
+    Other = 'other',
 }

@@ -12,7 +12,9 @@ const pagesDelivery = new PagesDelivery(client);
 const result = await pagesDelivery.pagesDeliveryPage({
     slug: 'about-us', // optional
     id: '', // optional
-    langcode: 'de' // optional
+    langcode: 'de', // optional
+    audiences: 'newsletter-de,stammkunden', // optional
+    consents: 'marketing,analytics' // optional
 });
 
 console.log(result);

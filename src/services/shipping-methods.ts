@@ -135,6 +135,7 @@ export class ShippingMethods {
      * @param {string} params.name - Display name shown in the checkout.
      * @param {string} params.carrier - Carrier CODE, kept from before shipping_carriers existed. Looked up in the carrier table when carrier_id is not set, so an existing value keeps working and gains a tracking template; a code nobody maintains is still reported as a plain name.
      * @param {string} params.carrierId - The carrier this method ships with. Wins over `carrier` and supplies the tracking template, pickup cut-off, handling time and transit days.
+     * @param {object} params.checkoutNotes - The note the checkout prints under the method, per language — a delivery hint the name and description do not carry. A flat map keyed by locale — the Cockpit falls back to `en`. Null means the row has no translations and every client shows the untranslated column instead.
      * @param {string[]} params.countries - The countries this method may be offered into. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the carrier's own reach.
      * @param {string} params.currency - ISO 4217 code (default EUR) the price, the free-above threshold and the tiers are in. Exactly three characters — the column says so. Every rate carries it, and a rate request naming another currency is not offered this method: this app converts nothing.
      * @param {string} params.description - The sentence under the name in the checkout — the delivery promise in words. Null when the name says enough.
@@ -158,7 +159,7 @@ export class ShippingMethods {
      * @throws {RevenexxException}
      * @returns {Promise<Models.ShippingMethod>}
      */
-    shippingMethodsCreate(params: { code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string }): Promise<Models.ShippingMethod>;
+    shippingMethodsCreate(params: { code: string, name: string, carrier?: string, carrierId?: string, checkoutNotes?: object, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string }): Promise<Models.ShippingMethod>;
     /**
      * A shipping method is the line a buyer picks in the checkout: a pricing model ('fixed', 'free' or 'matrix'), the countries it may be offered into, a free-above threshold, and the carrier it ships with. The method owns the PRICE; the delivery promise — tracking template, cut-off, handling and transit days — is inherited from the carrier wherever the method states none of its own. A create cannot omit `code` and `name`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` or `external_id` — that is the 409. The new method is quoted by nobody until two further things are true: `enabled` defaults to FALSE, and a 'matrix' method has no tiers yet — until POST or PUT …/tiers gives it some it appears in `excluded` with 'matrix has no rate tiers configured' rather than in the rates. `carrier_id` and the legacy `carrier` code are both accepted and neither is verified against the carrier table here: an unmatched code is a plain carrier name on the rate, not an error.
      *
@@ -166,6 +167,7 @@ export class ShippingMethods {
      * @param {string} name - Display name shown in the checkout.
      * @param {string} carrier - Carrier CODE, kept from before shipping_carriers existed. Looked up in the carrier table when carrier_id is not set, so an existing value keeps working and gains a tracking template; a code nobody maintains is still reported as a plain name.
      * @param {string} carrierId - The carrier this method ships with. Wins over `carrier` and supplies the tracking template, pickup cut-off, handling time and transit days.
+     * @param {object} checkoutNotes - The note the checkout prints under the method, per language — a delivery hint the name and description do not carry. A flat map keyed by locale — the Cockpit falls back to `en`. Null means the row has no translations and every client shows the untranslated column instead.
      * @param {string[]} countries - The countries this method may be offered into. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the carrier's own reach.
      * @param {string} currency - ISO 4217 code (default EUR) the price, the free-above threshold and the tiers are in. Exactly three characters — the column says so. Every rate carries it, and a rate request naming another currency is not offered this method: this app converts nothing.
      * @param {string} description - The sentence under the name in the checkout — the delivery promise in words. Null when the name says enough.
@@ -190,41 +192,42 @@ export class ShippingMethods {
      * @returns {Promise<Models.ShippingMethod>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingMethodsCreate(code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string): Promise<Models.ShippingMethod>;
+    shippingMethodsCreate(code: string, name: string, carrier?: string, carrierId?: string, checkoutNotes?: object, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string): Promise<Models.ShippingMethod>;
     shippingMethodsCreate(
-        paramsOrFirst: { code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string[])?, (string)?, (string)?, (boolean)?, (number)?, (number)?, (string)?, (object)?, (number)?, (object)?, (string)?, (ShippingMethodMatrixBasis)?, (object)?, (number)?, (number)?, (ShippingMethodPricingType)?, (number)?, (object)?, (string)?, (string)?]    
+        paramsOrFirst: { code: string, name: string, carrier?: string, carrierId?: string, checkoutNotes?: object, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (object)?, (string[])?, (string)?, (string)?, (boolean)?, (number)?, (number)?, (string)?, (object)?, (number)?, (object)?, (string)?, (ShippingMethodMatrixBasis)?, (object)?, (number)?, (number)?, (ShippingMethodPricingType)?, (number)?, (object)?, (string)?, (string)?]    
     ): Promise<Models.ShippingMethod> {
-        let params: { code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string };
+        let params: { code: string, name: string, carrier?: string, carrierId?: string, checkoutNotes?: object, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, name: string, carrier?: string, carrierId?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string };
+            params = (paramsOrFirst || {}) as { code: string, name: string, carrier?: string, carrierId?: string, checkoutNotes?: object, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 name: rest[0] as string,
                 carrier: rest[1] as string,
                 carrierId: rest[2] as string,
-                countries: rest[3] as string[],
-                currency: rest[4] as string,
-                description: rest[5] as string,
-                enabled: rest[6] as boolean,
-                etaDaysMax: rest[7] as number,
-                etaDaysMin: rest[8] as number,
-                externalId: rest[9] as string,
-                externalRefs: rest[10] as object,
-                freeAbove: rest[11] as number,
-                labels: rest[12] as object,
-                matrixAttribute: rest[13] as string,
-                matrixBasis: rest[14] as ShippingMethodMatrixBasis,
-                metadata: rest[15] as object,
-                position: rest[16] as number,
-                price: rest[17] as number,
-                pricingType: rest[18] as ShippingMethodPricingType,
-                quoteAbove: rest[19] as number,
-                sourceData: rest[20] as object,
-                sourceSyncedAt: rest[21] as string,
-                taxClass: rest[22] as string            
+                checkoutNotes: rest[3] as object,
+                countries: rest[4] as string[],
+                currency: rest[5] as string,
+                description: rest[6] as string,
+                enabled: rest[7] as boolean,
+                etaDaysMax: rest[8] as number,
+                etaDaysMin: rest[9] as number,
+                externalId: rest[10] as string,
+                externalRefs: rest[11] as object,
+                freeAbove: rest[12] as number,
+                labels: rest[13] as object,
+                matrixAttribute: rest[14] as string,
+                matrixBasis: rest[15] as ShippingMethodMatrixBasis,
+                metadata: rest[16] as object,
+                position: rest[17] as number,
+                price: rest[18] as number,
+                pricingType: rest[19] as ShippingMethodPricingType,
+                quoteAbove: rest[20] as number,
+                sourceData: rest[21] as object,
+                sourceSyncedAt: rest[22] as string,
+                taxClass: rest[23] as string            
             };
         }
         
@@ -232,6 +235,7 @@ export class ShippingMethods {
         const name = params.name;
         const carrier = params.carrier;
         const carrierId = params.carrierId;
+        const checkoutNotes = params.checkoutNotes;
         const countries = params.countries;
         const currency = params.currency;
         const description = params.description;
@@ -267,6 +271,9 @@ export class ShippingMethods {
         }
         if (typeof carrierId !== 'undefined') {
             apiPayload['carrier_id'] = carrierId;
+        }
+        if (typeof checkoutNotes !== 'undefined') {
+            apiPayload['checkout_notes'] = checkoutNotes;
         }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
@@ -479,6 +486,7 @@ export class ShippingMethods {
      * @param {string} params.id - The row id.
      * @param {string} params.carrier - Carrier CODE, kept from before shipping_carriers existed. Looked up in the carrier table when carrier_id is not set, so an existing value keeps working and gains a tracking template; a code nobody maintains is still reported as a plain name.
      * @param {string} params.carrierId - The carrier this method ships with. Wins over `carrier` and supplies the tracking template, pickup cut-off, handling time and transit days.
+     * @param {object} params.checkoutNotes - The note the checkout prints under the method, per language — a delivery hint the name and description do not carry. A flat map keyed by locale — the Cockpit falls back to `en`. Null means the row has no translations and every client shows the untranslated column instead.
      * @param {string} params.code - Stable method code, unique per tenant (e.g. standard, express). What a checkout and an order line store, so it is the value every integration joins on.
      * @param {string[]} params.countries - The countries this method may be offered into. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the carrier's own reach.
      * @param {string} params.currency - ISO 4217 code (default EUR) the price, the free-above threshold and the tiers are in. Exactly three characters — the column says so. Every rate carries it, and a rate request naming another currency is not offered this method: this app converts nothing.
@@ -504,13 +512,14 @@ export class ShippingMethods {
      * @throws {RevenexxException}
      * @returns {Promise<Models.ShippingMethod>}
      */
-    shippingMethodsUpdate(params: { id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string }): Promise<Models.ShippingMethod>;
+    shippingMethodsUpdate(params: { id: string, carrier?: string, carrierId?: string, checkoutNotes?: object, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string }): Promise<Models.ShippingMethod>;
     /**
      * A shipping method is the line a buyer picks in the checkout: a pricing model ('fixed', 'free' or 'matrix'), the countries it may be offered into, a free-above threshold, and the carrier it ships with. The method owns the PRICE; the delivery promise — tracking template, cut-off, handling and transit days — is inherited from the carrier wherever the method states none of its own. A partial update — send only what changes, whether that is taking the method in or out of the checkout, its pricing, the countries it is restricted to or the delivery estimate it states of its own; a payload carrying no column at all is refused rather than answering a row it did not touch. Flipping `enabled` is what puts the method in front of a buyer or takes it away, and a disabled method is reported in the rate answer's `excluded` rather than hidden. Changing `pricing_type` away from 'matrix' does NOT delete the tier table — it stops being read, and changing back reinstates the old prices, so a method switched to 'fixed' and back quotes what it quoted before. Two rows of this tenant may not share `code` or `external_id` — that is the 409.
      *
      * @param {string} id - The row id.
      * @param {string} carrier - Carrier CODE, kept from before shipping_carriers existed. Looked up in the carrier table when carrier_id is not set, so an existing value keeps working and gains a tracking template; a code nobody maintains is still reported as a plain name.
      * @param {string} carrierId - The carrier this method ships with. Wins over `carrier` and supplies the tracking template, pickup cut-off, handling time and transit days.
+     * @param {object} checkoutNotes - The note the checkout prints under the method, per language — a delivery hint the name and description do not carry. A flat map keyed by locale — the Cockpit falls back to `en`. Null means the row has no translations and every client shows the untranslated column instead.
      * @param {string} code - Stable method code, unique per tenant (e.g. standard, express). What a checkout and an order line store, so it is the value every integration joins on.
      * @param {string[]} countries - The countries this method may be offered into. ISO 3166-1 alpha-2 codes; null or an empty array means no restriction. Compared without regard to case, so a lower-case entry still matches; anything but a two-letter code is refused with 400 `invalid_countries`. Declared as an array rather than the bare object a jsonb column derives to — this one is always a list. ANDed with the carrier's own reach.
      * @param {string} currency - ISO 4217 code (default EUR) the price, the free-above threshold and the tiers are in. Exactly three characters — the column says so. Every rate carries it, and a rate request naming another currency is not offered this method: this app converts nothing.
@@ -537,48 +546,50 @@ export class ShippingMethods {
      * @returns {Promise<Models.ShippingMethod>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    shippingMethodsUpdate(id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string): Promise<Models.ShippingMethod>;
+    shippingMethodsUpdate(id: string, carrier?: string, carrierId?: string, checkoutNotes?: object, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string): Promise<Models.ShippingMethod>;
     shippingMethodsUpdate(
-        paramsOrFirst: { id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string[])?, (string)?, (string)?, (boolean)?, (number)?, (number)?, (string)?, (object)?, (number)?, (object)?, (string)?, (ShippingMethodMatrixBasis)?, (object)?, (string)?, (number)?, (number)?, (ShippingMethodPricingType)?, (number)?, (object)?, (string)?, (string)?]    
+        paramsOrFirst: { id: string, carrier?: string, carrierId?: string, checkoutNotes?: object, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string } | string,
+        ...rest: [(string)?, (string)?, (object)?, (string)?, (string[])?, (string)?, (string)?, (boolean)?, (number)?, (number)?, (string)?, (object)?, (number)?, (object)?, (string)?, (ShippingMethodMatrixBasis)?, (object)?, (string)?, (number)?, (number)?, (ShippingMethodPricingType)?, (number)?, (object)?, (string)?, (string)?]    
     ): Promise<Models.ShippingMethod> {
-        let params: { id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string };
+        let params: { id: string, carrier?: string, carrierId?: string, checkoutNotes?: object, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, carrier?: string, carrierId?: string, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string };
+            params = (paramsOrFirst || {}) as { id: string, carrier?: string, carrierId?: string, checkoutNotes?: object, code?: string, countries?: string[], currency?: string, description?: string, enabled?: boolean, etaDaysMax?: number, etaDaysMin?: number, externalId?: string, externalRefs?: object, freeAbove?: number, labels?: object, matrixAttribute?: string, matrixBasis?: ShippingMethodMatrixBasis, metadata?: object, name?: string, position?: number, price?: number, pricingType?: ShippingMethodPricingType, quoteAbove?: number, sourceData?: object, sourceSyncedAt?: string, taxClass?: string };
         } else {
             params = {
                 id: paramsOrFirst as string,
                 carrier: rest[0] as string,
                 carrierId: rest[1] as string,
-                code: rest[2] as string,
-                countries: rest[3] as string[],
-                currency: rest[4] as string,
-                description: rest[5] as string,
-                enabled: rest[6] as boolean,
-                etaDaysMax: rest[7] as number,
-                etaDaysMin: rest[8] as number,
-                externalId: rest[9] as string,
-                externalRefs: rest[10] as object,
-                freeAbove: rest[11] as number,
-                labels: rest[12] as object,
-                matrixAttribute: rest[13] as string,
-                matrixBasis: rest[14] as ShippingMethodMatrixBasis,
-                metadata: rest[15] as object,
-                name: rest[16] as string,
-                position: rest[17] as number,
-                price: rest[18] as number,
-                pricingType: rest[19] as ShippingMethodPricingType,
-                quoteAbove: rest[20] as number,
-                sourceData: rest[21] as object,
-                sourceSyncedAt: rest[22] as string,
-                taxClass: rest[23] as string            
+                checkoutNotes: rest[2] as object,
+                code: rest[3] as string,
+                countries: rest[4] as string[],
+                currency: rest[5] as string,
+                description: rest[6] as string,
+                enabled: rest[7] as boolean,
+                etaDaysMax: rest[8] as number,
+                etaDaysMin: rest[9] as number,
+                externalId: rest[10] as string,
+                externalRefs: rest[11] as object,
+                freeAbove: rest[12] as number,
+                labels: rest[13] as object,
+                matrixAttribute: rest[14] as string,
+                matrixBasis: rest[15] as ShippingMethodMatrixBasis,
+                metadata: rest[16] as object,
+                name: rest[17] as string,
+                position: rest[18] as number,
+                price: rest[19] as number,
+                pricingType: rest[20] as ShippingMethodPricingType,
+                quoteAbove: rest[21] as number,
+                sourceData: rest[22] as object,
+                sourceSyncedAt: rest[23] as string,
+                taxClass: rest[24] as string            
             };
         }
         
         const id = params.id;
         const carrier = params.carrier;
         const carrierId = params.carrierId;
+        const checkoutNotes = params.checkoutNotes;
         const code = params.code;
         const countries = params.countries;
         const currency = params.currency;
@@ -613,6 +624,9 @@ export class ShippingMethods {
         }
         if (typeof carrierId !== 'undefined') {
             apiPayload['carrier_id'] = carrierId;
+        }
+        if (typeof checkoutNotes !== 'undefined') {
+            apiPayload['checkout_notes'] = checkoutNotes;
         }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
@@ -1227,7 +1241,7 @@ export class ShippingMethods {
      * @param {number} params.orderValueNet - Order value excluding tax. Compared against free-above thresholds, and measured by order_value matrices, when free_above_compares is 'net'.
      * @param {number} params.quantity - Total quantity — measure for quantity matrices. Below 0 is refused with 400 `negative_measure`.
      * @param {number} params.weight - Total weight — measure for weight matrices. Read in weight_unit and converted to the unit the tiers are keyed in. Below 0 is refused with 400 `negative_measure`.
-     * @param {string} params.weightUnit - The unit `weight` is expressed in, as a CODE into the tenant's own weight units (GET /shipping/weight-units). Omitted, it is the unit this market quotes in. A unit the tenant does not keep is a 400 — a mis-read weight prices the wrong bracket silently, and guessing is worse than refusing.
+     * @param {string} params.weightUnit - The unit `weight` is expressed in, as a CODE into the tenant's own weight units (GET /shipping/weight-units). Omitted, it is the unit this market quotes in. A unit the tenant does not keep is a 400; one the merchant retired is a 409 (`weight_unit_inactive`) unless it is the unit this market still quotes in — a mis-read weight prices the wrong bracket silently, and guessing is worse than refusing.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
@@ -1245,7 +1259,7 @@ export class ShippingMethods {
      * @param {number} orderValueNet - Order value excluding tax. Compared against free-above thresholds, and measured by order_value matrices, when free_above_compares is 'net'.
      * @param {number} quantity - Total quantity — measure for quantity matrices. Below 0 is refused with 400 `negative_measure`.
      * @param {number} weight - Total weight — measure for weight matrices. Read in weight_unit and converted to the unit the tiers are keyed in. Below 0 is refused with 400 `negative_measure`.
-     * @param {string} weightUnit - The unit `weight` is expressed in, as a CODE into the tenant's own weight units (GET /shipping/weight-units). Omitted, it is the unit this market quotes in. A unit the tenant does not keep is a 400 — a mis-read weight prices the wrong bracket silently, and guessing is worse than refusing.
+     * @param {string} weightUnit - The unit `weight` is expressed in, as a CODE into the tenant's own weight units (GET /shipping/weight-units). Omitted, it is the unit this market quotes in. A unit the tenant does not keep is a 400; one the merchant retired is a 409 (`weight_unit_inactive`) unless it is the unit this market still quotes in — a mis-read weight prices the wrong bracket silently, and guessing is worse than refusing.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.

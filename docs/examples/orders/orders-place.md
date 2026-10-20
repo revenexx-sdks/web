@@ -11,13 +11,32 @@ const orders = new Orders(client);
 
 const result = await orders.ordersPlace({
     items: [],
+    attribution: {
+        "campaign_ref": "c0ffee00-0000-4000-8000-000000000001",
+        "consent": {
+            "ads": false,
+            "analytics": true,
+            "policy_version": "2026-07"
+        },
+        "objection_notice_shown": true,
+        "utm_campaign": "herbst-2026",
+        "utm_medium": "email",
+        "utm_source": "newsletter"
+    }, // optional
     billingAddress: {
-        "city": "Berlin",
-        "company": "Beispiel Industrietechnik GmbH",
-        "country": "DE",
-        "name": "Anna Berger",
-        "street": "Musterstra\u00dfe 12",
-        "zip": "10115"
+        "address_line1": "Musterstra\u00dfe 12",
+        "country_code": "DE",
+        "formatted": [
+            "Anna Berger",
+            "Beispiel Industrietechnik GmbH",
+            "Musterstra\u00dfe 12",
+            "10115 Berlin",
+            "GERMANY"
+        ],
+        "locality": "Berlin",
+        "organization_name": "Beispiel Industrietechnik GmbH",
+        "postal_code": "10115",
+        "recipient_name": "Anna Berger"
     }, // optional
     buyer: {
         "company": "Beispiel Industrietechnik GmbH",
@@ -45,18 +64,26 @@ const result = await orders.ordersPlace({
         "status": "open"
     }, // optional
     requestedDeliveryDate: '2026-03-17', // optional
+    senderCountry: 'DE', // optional
     shipping: {
         "method": "standard",
         "price": 5.9,
         "tax_rate": 19
     }, // optional
     shippingAddress: {
-        "city": "Berlin",
-        "company": "Beispiel Industrietechnik GmbH",
-        "country": "DE",
-        "name": "Anna Berger",
-        "street": "Musterstra\u00dfe 12",
-        "zip": "10115"
+        "address_line1": "Musterstra\u00dfe 12",
+        "country_code": "DE",
+        "formatted": [
+            "Anna Berger",
+            "Beispiel Industrietechnik GmbH",
+            "Musterstra\u00dfe 12",
+            "10115 Berlin",
+            "GERMANY"
+        ],
+        "locality": "Berlin",
+        "organization_name": "Beispiel Industrietechnik GmbH",
+        "postal_code": "10115",
+        "recipient_name": "Anna Berger"
     }, // optional
     shippingTotal: 5.9, // optional
     sourceData: {

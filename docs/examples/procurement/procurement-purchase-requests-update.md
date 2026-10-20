@@ -25,6 +25,7 @@ const result = await procurement.procurementPurchaseRequestsUpdate({
     number: '', // optional
     organizationId: '', // optional
     payment: {}, // optional
+    senderCountry: 'DE', // optional
     shipping: {}, // optional
     shippingAddress: {}, // optional
     shippingTotal: 9.99, // optional

@@ -11,7 +11,8 @@ const carts = new Carts(client);
 
 const result = await carts.cartsMergeInto({
     id: '',
-    targetCartId: ''
+    targetCartId: '',
+    sessionKey: 'a1b2c3d4e5f6' // optional
 });
 
 console.log(result);

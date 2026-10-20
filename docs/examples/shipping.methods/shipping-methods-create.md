@@ -14,6 +14,10 @@ const result = await shippingMethods.shippingMethodsCreate({
     name: 'Express delivery',
     carrier: 'acme-parcel', // optional
     carrierId: '8a4d1c7e-2b93-4f61-b0d2-6c5a9e3f1a44', // optional
+    checkoutNotes: {
+        "de": "Lieferung nur werktags.",
+        "en": "Delivered on working days only."
+    }, // optional
     countries: ["DE","AT","CH"], // optional
     currency: 'EUR', // optional
     description: 'Delivered by the next working day when ordered before the cut-off.', // optional

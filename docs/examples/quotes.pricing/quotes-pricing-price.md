@@ -18,6 +18,7 @@ const result = await quotesPricing.quotesPricingPrice({
     }, // optional
     items: [], // optional
     sellerNote: '', // optional
+    senderCountry: 'DE', // optional
     shippingAmount: 9.99, // optional
     shippingTaxRate: 9.99, // optional
     sourceData: {

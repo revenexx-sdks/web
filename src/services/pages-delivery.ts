@@ -82,40 +82,48 @@ export class PagesDelivery {
      * @param {string} params.slug - The page slug, or the slug of one of its translations, without a leading slash — the path segment the storefront routes. Either this or `id`.
      * @param {string} params.id - The page id, for a storefront that already holds one (from `GET /pages/delivery/pages`). Either this or `slug`.
      * @param {string} params.langcode - Language to resolve the tree for, e.g. `de`. Falls back to the page's source language per field, so a partly translated page still renders whole.
+     * @param {string} params.audiences - Comma-separated audience codes the visitor belongs to, as the storefront resolved them for a signed-in contact (`POST /v1/audiences/memberships`). Absent means an anonymous visitor: only blocks naming no audience are shown.
+     * @param {string} params.consents - Comma-separated consent purposes the consent manager holds for the visitor. A block or pop-up that names a `consent_purpose` is shown only when it is in this list.
      * @throws {RevenexxException}
      * @returns {Promise<Models.DeliveryPage>}
      */
-    pagesDeliveryPage(params?: { slug?: string, id?: string, langcode?: string }): Promise<Models.DeliveryPage>;
+    pagesDeliveryPage(params?: { slug?: string, id?: string, langcode?: string, audiences?: string, consents?: string }): Promise<Models.DeliveryPage>;
     /**
      * What a storefront calls to render a URL: `GET /pages/delivery/page?slug=about-us&langcode=de`. Send exactly one selector — `slug` or `id`. `slug` is matched against the page and then against its translations, so a localized URL resolves to its page. Only the PUBLISHED revision is served, so an edit in progress never leaks. What comes back is finished rather than raw: `langcode` is resolved field by field with the page's source language behind it, blocks whose publish window has not opened or has already closed are left out, and every library reference is expanded into the subtree it points at — so a renderer walks the tree it is given and makes no second call for any of it.
      *
      * @param {string} slug - The page slug, or the slug of one of its translations, without a leading slash — the path segment the storefront routes. Either this or `id`.
      * @param {string} id - The page id, for a storefront that already holds one (from `GET /pages/delivery/pages`). Either this or `slug`.
      * @param {string} langcode - Language to resolve the tree for, e.g. `de`. Falls back to the page's source language per field, so a partly translated page still renders whole.
+     * @param {string} audiences - Comma-separated audience codes the visitor belongs to, as the storefront resolved them for a signed-in contact (`POST /v1/audiences/memberships`). Absent means an anonymous visitor: only blocks naming no audience are shown.
+     * @param {string} consents - Comma-separated consent purposes the consent manager holds for the visitor. A block or pop-up that names a `consent_purpose` is shown only when it is in this list.
      * @throws {RevenexxException}
      * @returns {Promise<Models.DeliveryPage>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    pagesDeliveryPage(slug?: string, id?: string, langcode?: string): Promise<Models.DeliveryPage>;
+    pagesDeliveryPage(slug?: string, id?: string, langcode?: string, audiences?: string, consents?: string): Promise<Models.DeliveryPage>;
     pagesDeliveryPage(
-        paramsOrFirst?: { slug?: string, id?: string, langcode?: string } | string,
-        ...rest: [(string)?, (string)?]    
+        paramsOrFirst?: { slug?: string, id?: string, langcode?: string, audiences?: string, consents?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?]    
     ): Promise<Models.DeliveryPage> {
-        let params: { slug?: string, id?: string, langcode?: string };
+        let params: { slug?: string, id?: string, langcode?: string, audiences?: string, consents?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { slug?: string, id?: string, langcode?: string };
+            params = (paramsOrFirst || {}) as { slug?: string, id?: string, langcode?: string, audiences?: string, consents?: string };
         } else {
             params = {
                 slug: paramsOrFirst as string,
                 id: rest[0] as string,
-                langcode: rest[1] as string            
+                langcode: rest[1] as string,
+                audiences: rest[2] as string,
+                consents: rest[3] as string            
             };
         }
         
         const slug = params.slug;
         const id = params.id;
         const langcode = params.langcode;
+        const audiences = params.audiences;
+        const consents = params.consents;
 
 
         const apiPath = '/v1/pages/delivery/page';
@@ -128,6 +136,12 @@ export class PagesDelivery {
         }
         if (typeof langcode !== 'undefined') {
             apiPayload['langcode'] = langcode;
+        }
+        if (typeof audiences !== 'undefined') {
+            apiPayload['audiences'] = audiences;
+        }
+        if (typeof consents !== 'undefined') {
+            apiPayload['consents'] = consents;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -201,6 +215,72 @@ export class PagesDelivery {
         }
         if (typeof bundle !== 'undefined') {
             apiPayload['bundle'] = bundle;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * What a storefront asks on every page: the pop-ups switched on, inside their window and visible to this visitor — `audiences` and `consents` as for a page; anonymous sees only those naming no audience — with their content resolved in `langcode`. The storefront applies the trigger and the frequency and posts impressions and clicks to the campaigns app (`POST /v1/campaigns/touches`).
+     *
+     * @param {string} params.langcode - Language to resolve the content for. Falls back to the source language.
+     * @param {string} params.audiences - Comma-separated audience codes the visitor belongs to, as the storefront resolved them for a signed-in contact (`POST /v1/audiences/memberships`). Absent means an anonymous visitor: only blocks naming no audience are shown.
+     * @param {string} params.consents - Comma-separated consent purposes the consent manager holds for the visitor. A block or pop-up that names a `consent_purpose` is shown only when it is in this list.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DeliveryPopups>}
+     */
+    pagesDeliveryPopups(params?: { langcode?: string, audiences?: string, consents?: string }): Promise<Models.DeliveryPopups>;
+    /**
+     * What a storefront asks on every page: the pop-ups switched on, inside their window and visible to this visitor — `audiences` and `consents` as for a page; anonymous sees only those naming no audience — with their content resolved in `langcode`. The storefront applies the trigger and the frequency and posts impressions and clicks to the campaigns app (`POST /v1/campaigns/touches`).
+     *
+     * @param {string} langcode - Language to resolve the content for. Falls back to the source language.
+     * @param {string} audiences - Comma-separated audience codes the visitor belongs to, as the storefront resolved them for a signed-in contact (`POST /v1/audiences/memberships`). Absent means an anonymous visitor: only blocks naming no audience are shown.
+     * @param {string} consents - Comma-separated consent purposes the consent manager holds for the visitor. A block or pop-up that names a `consent_purpose` is shown only when it is in this list.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.DeliveryPopups>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    pagesDeliveryPopups(langcode?: string, audiences?: string, consents?: string): Promise<Models.DeliveryPopups>;
+    pagesDeliveryPopups(
+        paramsOrFirst?: { langcode?: string, audiences?: string, consents?: string } | string,
+        ...rest: [(string)?, (string)?]    
+    ): Promise<Models.DeliveryPopups> {
+        let params: { langcode?: string, audiences?: string, consents?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { langcode?: string, audiences?: string, consents?: string };
+        } else {
+            params = {
+                langcode: paramsOrFirst as string,
+                audiences: rest[0] as string,
+                consents: rest[1] as string            
+            };
+        }
+        
+        const langcode = params.langcode;
+        const audiences = params.audiences;
+        const consents = params.consents;
+
+
+        const apiPath = '/v1/pages/delivery/popups';
+        const apiPayload: Payload = {};
+        if (typeof langcode !== 'undefined') {
+            apiPayload['langcode'] = langcode;
+        }
+        if (typeof audiences !== 'undefined') {
+            apiPayload['audiences'] = audiences;
+        }
+        if (typeof consents !== 'undefined') {
+            apiPayload['consents'] = consents;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

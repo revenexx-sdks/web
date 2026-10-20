@@ -103,7 +103,7 @@ export class InventoriesStock {
     }
 
     /**
-     * THE stock call of this app, and a batch one: name any number of items and each comes back with `on_hand`, `reserved` and the derived `available` (their difference, computed on read and stored nowhere), summed across the locations in scope and broken down per location, plus `orderable` — whether this much of it can be promised at this moment. An item this app has never seen is NOT an error: it comes back tracked:false, and the storefront decides whether an untracked item sells freely. It answers the two facts a buyer would otherwise telephone sales about, per location and rolled up for the item: `expected_at`, when it is due back, and `availability_code`, what the source system says about it as one of the codes this tenant keeps — and `orderable` weighs that code's `orderable` policy as well as the quantity, with `unorderable_reason` saying which of the two said no. It is also the most customised surface this product has in the field. A tenant whose stock really lives in an ERP — SAP live stock is the ordinary case, not the exotic one — replaces exactly this one capability, 1:1, with a custom app through the gateway's capability override, while every other route here keeps doing the stock-keeping CRUD unchanged. That is why the request and response shapes below read as a contract to be implemented rather than as an implementation detail: whatever ends up answering this path has to answer in these terms, these six fields included.
+     * THE stock call of this app, and a batch one: name any number of items and each comes back with `on_hand`, `reserved` and the derived `available` (their difference), summed across the locations in scope and broken down per location, plus `orderable` — whether this much of it can be promised at this moment. An item this app has never seen is NOT an error: it comes back tracked:false, and the storefront decides whether an untracked item sells freely. It answers the two facts a buyer would otherwise telephone sales about, per location and rolled up for the item: `expected_at`, when it is due back, and `availability_code`, what the source system says about it as one of the codes this tenant keeps — and `orderable` weighs that code's `orderable` policy as well as the quantity, with `unorderable_reason` saying which of the two said no. It is also the most customised surface this product has in the field. A tenant whose stock really lives in an ERP — SAP live stock is the ordinary case, not the exotic one — replaces exactly this one capability, 1:1, with a custom app through the gateway's capability override, while every other route here keeps doing the stock-keeping CRUD unchanged. That is why the request and response shapes below read as a contract to be implemented rather than as an implementation detail: whatever ends up answering this path has to answer in these terms, these six fields included.
      *
      * @param {Models.InventoryAvailabilityItem[]} params.items - The items to check, at most 200 in one call. A cart, a category page, a feed row — one call answers them all, which is why this route is the batch one.
      * @param {string} params.locationCode - Restrict the check to ONE location, by its code — the stock a click-and-collect store can promise today. Omitted, every ENABLED location is summed; a disabled one is never counted either way, so a disabled location's code answers every item untracked. A code no location carries is answered 404 `unknown_location`.
@@ -115,7 +115,7 @@ export class InventoriesStock {
      */
     inventoriesAvailability(params?: { items?: Models.InventoryAvailabilityItem[], locationCode?: string, productId?: string, quantity?: number, sku?: string }): Promise<{}>;
     /**
-     * THE stock call of this app, and a batch one: name any number of items and each comes back with `on_hand`, `reserved` and the derived `available` (their difference, computed on read and stored nowhere), summed across the locations in scope and broken down per location, plus `orderable` — whether this much of it can be promised at this moment. An item this app has never seen is NOT an error: it comes back tracked:false, and the storefront decides whether an untracked item sells freely. It answers the two facts a buyer would otherwise telephone sales about, per location and rolled up for the item: `expected_at`, when it is due back, and `availability_code`, what the source system says about it as one of the codes this tenant keeps — and `orderable` weighs that code's `orderable` policy as well as the quantity, with `unorderable_reason` saying which of the two said no. It is also the most customised surface this product has in the field. A tenant whose stock really lives in an ERP — SAP live stock is the ordinary case, not the exotic one — replaces exactly this one capability, 1:1, with a custom app through the gateway's capability override, while every other route here keeps doing the stock-keeping CRUD unchanged. That is why the request and response shapes below read as a contract to be implemented rather than as an implementation detail: whatever ends up answering this path has to answer in these terms, these six fields included.
+     * THE stock call of this app, and a batch one: name any number of items and each comes back with `on_hand`, `reserved` and the derived `available` (their difference), summed across the locations in scope and broken down per location, plus `orderable` — whether this much of it can be promised at this moment. An item this app has never seen is NOT an error: it comes back tracked:false, and the storefront decides whether an untracked item sells freely. It answers the two facts a buyer would otherwise telephone sales about, per location and rolled up for the item: `expected_at`, when it is due back, and `availability_code`, what the source system says about it as one of the codes this tenant keeps — and `orderable` weighs that code's `orderable` policy as well as the quantity, with `unorderable_reason` saying which of the two said no. It is also the most customised surface this product has in the field. A tenant whose stock really lives in an ERP — SAP live stock is the ordinary case, not the exotic one — replaces exactly this one capability, 1:1, with a custom app through the gateway's capability override, while every other route here keeps doing the stock-keeping CRUD unchanged. That is why the request and response shapes below read as a contract to be implemented rather than as an implementation detail: whatever ends up answering this path has to answer in these terms, these six fields included.
      *
      * @param {Models.InventoryAvailabilityItem[]} items - The items to check, at most 200 in one call. A cart, a category page, a feed row — one call answers them all, which is why this route is the batch one.
      * @param {string} locationCode - Restrict the check to ONE location, by its code — the stock a click-and-collect store can promise today. Omitted, every ENABLED location is summed; a disabled one is never counted either way, so a disabled location's code answers every item untracked. A code no location carries is answered 404 `unknown_location`.
@@ -197,6 +197,7 @@ export class InventoriesStock {
      * @param {string} params.descriptions - Exact-match filter on `descriptions`. The description per language tag, on the same rule as `labels`: the tag if it is there, else `description`. The WHOLE jsonb document is compared, serialized as JSON — this is equality, not a key lookup or a containment query, and a value that does not parse is answered 400.
      * @param {boolean} params.orderable - Exact-match filter on `orderable`. The states a shop keeps selling in. `false` is the subset that takes the order button away.
      * @param {boolean} params.isDefault - Exact-match filter on `is_default`. Whether this is the state an import falls back to when a source value maps to none of the others.
+     * @param {boolean} params.active - Exact-match filter on `active`. False when the merchant retired this state (RAD-255).
      * @param {Tone} params.tone - Exact-match filter on `tone`. Semantic badge colour for this state — what it MEANS, not what it looks like: 'success' for sellable, 'info' for on its way, 'warning' for not right now, 'danger' for gone for good, 'neutral' for anything else.
      * @param {number} params.position - Exact-match filter on `position`. Where this state sits in a select or a legend: the set is served ASCENDING, so a lower number comes first, and states that tie fall back to their code.
      * @param {boolean} params.isSystem - Exact-match filter on `is_system`. `true` is the four this app seeded, `false` the ones this tenant added.
@@ -205,7 +206,7 @@ export class InventoriesStock {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    inventoriesAvailabilityStatesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, title?: string, description?: string, labels?: string, descriptions?: string, orderable?: boolean, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    inventoriesAvailabilityStatesList(params?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, title?: string, description?: string, labels?: string, descriptions?: string, orderable?: boolean, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
      * An availability state is one of the codes THIS TENANT keeps for what a source system says about an article: a stock row stores one in `availability_code`, and the row's `expected_at` says when the article is due back. The set is a table rather than a fixed list because the number a source system delivers for availability is that system's number and what it means is the merchant's to state. Each value carries `orderable` — whether an item in this state may still be ordered — which is the fact a storefront needs in order to offer or withhold the order button without keeping a list of its own. This is the operator's view of the set — the rows, filterable and paged, in whatever order you ask for. A CLIENT that only wants to render a code does not want this route: GET /inventories/vocabularies/availability-states answers the same set keyed by code, ordered by `position`, with the titles per language and the `orderable` flag already merged, and it is the shape every other vocabulary in this platform is read in. A tenant who has never been seeded reads an EMPTY list here, because the seed runs on install and on POST /inventories/locations/defaults; the vocabulary route seeds on an empty read and this one does not.
      *
@@ -220,6 +221,7 @@ export class InventoriesStock {
      * @param {string} descriptions - Exact-match filter on `descriptions`. The description per language tag, on the same rule as `labels`: the tag if it is there, else `description`. The WHOLE jsonb document is compared, serialized as JSON — this is equality, not a key lookup or a containment query, and a value that does not parse is answered 400.
      * @param {boolean} orderable - Exact-match filter on `orderable`. The states a shop keeps selling in. `false` is the subset that takes the order button away.
      * @param {boolean} isDefault - Exact-match filter on `is_default`. Whether this is the state an import falls back to when a source value maps to none of the others.
+     * @param {boolean} active - Exact-match filter on `active`. False when the merchant retired this state (RAD-255).
      * @param {Tone} tone - Exact-match filter on `tone`. Semantic badge colour for this state — what it MEANS, not what it looks like: 'success' for sellable, 'info' for on its way, 'warning' for not right now, 'danger' for gone for good, 'neutral' for anything else.
      * @param {number} position - Exact-match filter on `position`. Where this state sits in a select or a legend: the set is served ASCENDING, so a lower number comes first, and states that tie fall back to their code.
      * @param {boolean} isSystem - Exact-match filter on `is_system`. `true` is the four this app seeded, `false` the ones this tenant added.
@@ -229,15 +231,15 @@ export class InventoriesStock {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesAvailabilityStatesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, title?: string, description?: string, labels?: string, descriptions?: string, orderable?: boolean, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string): Promise<{}>;
+    inventoriesAvailabilityStatesList(limit?: number, offset?: number, order?: string, id?: string, code?: string, title?: string, description?: string, labels?: string, descriptions?: string, orderable?: boolean, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string): Promise<{}>;
     inventoriesAvailabilityStatesList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, title?: string, description?: string, labels?: string, descriptions?: string, orderable?: boolean, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (Tone)?, (number)?, (boolean)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, code?: string, title?: string, description?: string, labels?: string, descriptions?: string, orderable?: boolean, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (boolean)?, (boolean)?, (Tone)?, (number)?, (boolean)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, title?: string, description?: string, labels?: string, descriptions?: string, orderable?: boolean, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, code?: string, title?: string, description?: string, labels?: string, descriptions?: string, orderable?: boolean, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, title?: string, description?: string, labels?: string, descriptions?: string, orderable?: boolean, isDefault?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, code?: string, title?: string, description?: string, labels?: string, descriptions?: string, orderable?: boolean, isDefault?: boolean, active?: boolean, tone?: Tone, position?: number, isSystem?: boolean, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -251,11 +253,12 @@ export class InventoriesStock {
                 descriptions: rest[7] as string,
                 orderable: rest[8] as boolean,
                 isDefault: rest[9] as boolean,
-                tone: rest[10] as Tone,
-                position: rest[11] as number,
-                isSystem: rest[12] as boolean,
-                createdAt: rest[13] as string,
-                updatedAt: rest[14] as string            
+                active: rest[10] as boolean,
+                tone: rest[11] as Tone,
+                position: rest[12] as number,
+                isSystem: rest[13] as boolean,
+                createdAt: rest[14] as string,
+                updatedAt: rest[15] as string            
             };
         }
         
@@ -270,6 +273,7 @@ export class InventoriesStock {
         const descriptions = params.descriptions;
         const orderable = params.orderable;
         const isDefault = params.isDefault;
+        const active = params.active;
         const tone = params.tone;
         const position = params.position;
         const isSystem = params.isSystem;
@@ -312,6 +316,9 @@ export class InventoriesStock {
         if (typeof isDefault !== 'undefined') {
             apiPayload['is_default'] = isDefault;
         }
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof tone !== 'undefined') {
             apiPayload['tone'] = tone;
         }
@@ -345,9 +352,10 @@ export class InventoriesStock {
      *
      * @param {string} params.code - The value a stock row's `availability_code` stores, and the key the vocabulary serves it under. Lowercase letters, digits, '-' and '_' (CHECK `code ~ '^[a-z][a-z0-9_-]*$'`), unique per tenant. Treat it as permanent: nothing in the database points at it, so renaming it here leaves every stock row carrying the old one, and the honest move is a new code plus an update of the rows that name it.
      * @param {string} params.title - What a person reads for this state, in the tenant's working language. At least one character (CHECK `length(title) > 0`). A value nobody titled is served with its own code made readable, so this is a better label rather than the only one.
+     * @param {boolean} params.active - False when the merchant retired this state (RAD-255). It stays valid on every stock row that already carries it, its title still resolves and its `orderable` still governs the stock call, but it is no longer assigned: a stock create, or an edit that moves a row onto it, is refused with 409 'availability_state_inactive', and GET /inventories/vocabularies/availability-states answers it under `inactive` instead of `values`, so no picker offers it while its title still resolves. Nothing in this app derives a code on its own, so that write guard is the whole of 'not newly assigned'. The default cannot be inactive: retiring it is 409 'default_must_stay_active', making a retired state the default is 409 'inactive_cannot_be_default'. A seeded state may be retired like any other; the seed never switches one back on. Defaults to true. False retires the state: rows that carry it keep it, nothing new is assigned it. Refused (409 'default_must_stay_active') on the default — make another entry the default first.
      * @param {string} params.description - One sentence a screen can put under the title, in the tenant's working language — what this state means for a buyer looking at the article. Optional; a state with none is served with a null description rather than an invented one.
      * @param {object} params.descriptions - The description per language tag, on the same rule as `labels`: the tag if it is there, else `description`. Keys are language tags, values plain strings.
-     * @param {boolean} params.isDefault - Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say. Defaults to false, and nothing enforces that at most one state carries it.
+     * @param {boolean} params.isDefault - Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say. A state that carries it cannot be inactive. Defaults to false, and nothing enforces that at most one state carries it. Refused (409 `inactive_cannot_be_default`) on an inactive state.
      * @param {boolean} params.isSystem - True for the four states this app seeds on install, false for anything the tenant added. It means "we put it there" and nothing more: a seeded state may be renamed, re-toned, reordered, corrected or deleted exactly like an added one, and the flag is there so a screen can say where a value came from. Send false, or leave it out: it marks the states this app seeded, and setting it on your own would only make one harder to tell apart.
      * @param {object} params.labels - The title per language tag, for a shop that has to render it in the reader's language. Falls back to `title` when a tag is missing. Keys are language tags, values plain strings.
      * @param {boolean} params.orderable - Whether an item in this state may still be ordered — the reason this set is a table and not a list of names. A code on its own tells a storefront nothing it can act on: it has to be matched against a list the theme keeps, and that list is wrong the first time a merchant adds a code. This flag travels with the value, so a shop asks the vocabulary whether to offer the order button instead of asking itself. POST /inventories/availability reads it: a state that says false takes the order button away from every item the governing row puts in that state, whatever the quantity says, and that call reports it as `unorderable_reason: 'state'`. It stays the merchant's policy about the STATE — it moves no stock and books no movement, and the per-location `state_orderable` in that answer is this flag, held apart from the verdict. Defaults to true, so a state created without an answer is one a shop keeps selling in — set it deliberately.
@@ -356,15 +364,16 @@ export class InventoriesStock {
      * @throws {RevenexxException}
      * @returns {Promise<Models.AvailabilityState>}
      */
-    inventoriesAvailabilityStatesCreate(params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, tone?: AvailabilityStateTone }): Promise<Models.AvailabilityState>;
+    inventoriesAvailabilityStatesCreate(params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, tone?: AvailabilityStateTone }): Promise<Models.AvailabilityState>;
     /**
      * An availability state is one of the codes THIS TENANT keeps for what a source system says about an article: a stock row stores one in `availability_code`, and the row's `expected_at` says when the article is due back. The set is a table rather than a fixed list because the number a source system delivers for availability is that system's number and what it means is the merchant's to state. Each value carries `orderable` — whether an item in this state may still be ordered — which is the fact a storefront needs in order to offer or withhold the order button without keeping a list of its own. Reach for this when a source system distinguishes something the four seeded states do not — a partial delivery, a made-to-order line, a stock held for one customer. A create cannot omit `code` and `title`; every other column is optional or defaulted by the database. Two rows of this tenant may not share `code` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert. Two fields decide what the state DOES rather than how it reads: `orderable`, which defaults to true and is what a shop acts on, and `code`, which is what a stock row stores and should be treated as permanent — nothing points at it, so renaming it later leaves every row carrying the old one. Creating a state changes nothing on its own: a stock row has to carry its code before it means anything, and the mapping from a source system's own values onto these codes is made where the import runs.
      *
      * @param {string} code - The value a stock row's `availability_code` stores, and the key the vocabulary serves it under. Lowercase letters, digits, '-' and '_' (CHECK `code ~ '^[a-z][a-z0-9_-]*$'`), unique per tenant. Treat it as permanent: nothing in the database points at it, so renaming it here leaves every stock row carrying the old one, and the honest move is a new code plus an update of the rows that name it.
      * @param {string} title - What a person reads for this state, in the tenant's working language. At least one character (CHECK `length(title) > 0`). A value nobody titled is served with its own code made readable, so this is a better label rather than the only one.
+     * @param {boolean} active - False when the merchant retired this state (RAD-255). It stays valid on every stock row that already carries it, its title still resolves and its `orderable` still governs the stock call, but it is no longer assigned: a stock create, or an edit that moves a row onto it, is refused with 409 'availability_state_inactive', and GET /inventories/vocabularies/availability-states answers it under `inactive` instead of `values`, so no picker offers it while its title still resolves. Nothing in this app derives a code on its own, so that write guard is the whole of 'not newly assigned'. The default cannot be inactive: retiring it is 409 'default_must_stay_active', making a retired state the default is 409 'inactive_cannot_be_default'. A seeded state may be retired like any other; the seed never switches one back on. Defaults to true. False retires the state: rows that carry it keep it, nothing new is assigned it. Refused (409 'default_must_stay_active') on the default — make another entry the default first.
      * @param {string} description - One sentence a screen can put under the title, in the tenant's working language — what this state means for a buyer looking at the article. Optional; a state with none is served with a null description rather than an invented one.
      * @param {object} descriptions - The description per language tag, on the same rule as `labels`: the tag if it is there, else `description`. Keys are language tags, values plain strings.
-     * @param {boolean} isDefault - Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say. Defaults to false, and nothing enforces that at most one state carries it.
+     * @param {boolean} isDefault - Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say. A state that carries it cannot be inactive. Defaults to false, and nothing enforces that at most one state carries it. Refused (409 `inactive_cannot_be_default`) on an inactive state.
      * @param {boolean} isSystem - True for the four states this app seeds on install, false for anything the tenant added. It means "we put it there" and nothing more: a seeded state may be renamed, re-toned, reordered, corrected or deleted exactly like an added one, and the flag is there so a screen can say where a value came from. Send false, or leave it out: it marks the states this app seeded, and setting it on your own would only make one harder to tell apart.
      * @param {object} labels - The title per language tag, for a shop that has to render it in the reader's language. Falls back to `title` when a tag is missing. Keys are language tags, values plain strings.
      * @param {boolean} orderable - Whether an item in this state may still be ordered — the reason this set is a table and not a list of names. A code on its own tells a storefront nothing it can act on: it has to be matched against a list the theme keeps, and that list is wrong the first time a merchant adds a code. This flag travels with the value, so a shop asks the vocabulary whether to offer the order button instead of asking itself. POST /inventories/availability reads it: a state that says false takes the order button away from every item the governing row puts in that state, whatever the quantity says, and that call reports it as `unorderable_reason: 'state'`. It stays the merchant's policy about the STATE — it moves no stock and books no movement, and the per-location `state_orderable` in that answer is this flag, held apart from the verdict. Defaults to true, so a state created without an answer is one a shop keeps selling in — set it deliberately.
@@ -374,32 +383,34 @@ export class InventoriesStock {
      * @returns {Promise<Models.AvailabilityState>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesAvailabilityStatesCreate(code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, tone?: AvailabilityStateTone): Promise<Models.AvailabilityState>;
+    inventoriesAvailabilityStatesCreate(code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, tone?: AvailabilityStateTone): Promise<Models.AvailabilityState>;
     inventoriesAvailabilityStatesCreate(
-        paramsOrFirst: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, tone?: AvailabilityStateTone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (boolean)?, (object)?, (boolean)?, (number)?, (AvailabilityStateTone)?]    
+        paramsOrFirst: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, tone?: AvailabilityStateTone } | string,
+        ...rest: [(string)?, (boolean)?, (string)?, (object)?, (boolean)?, (boolean)?, (object)?, (boolean)?, (number)?, (AvailabilityStateTone)?]    
     ): Promise<Models.AvailabilityState> {
-        let params: { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, tone?: AvailabilityStateTone };
+        let params: { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, tone?: AvailabilityStateTone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, title: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, tone?: AvailabilityStateTone };
+            params = (paramsOrFirst || {}) as { code: string, title: string, active?: boolean, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, tone?: AvailabilityStateTone };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 title: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                isSystem: rest[4] as boolean,
-                labels: rest[5] as object,
-                orderable: rest[6] as boolean,
-                position: rest[7] as number,
-                tone: rest[8] as AvailabilityStateTone            
+                active: rest[1] as boolean,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                isSystem: rest[5] as boolean,
+                labels: rest[6] as object,
+                orderable: rest[7] as boolean,
+                position: rest[8] as number,
+                tone: rest[9] as AvailabilityStateTone            
             };
         }
         
         const code = params.code;
         const title = params.title;
+        const active = params.active;
         const description = params.description;
         const descriptions = params.descriptions;
         const isDefault = params.isDefault;
@@ -418,6 +429,9 @@ export class InventoriesStock {
 
         const apiPath = '/v1/inventories/availability-states';
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -568,10 +582,11 @@ export class InventoriesStock {
      * Partial update: send the fields that change. An availability state is one of the codes THIS TENANT keeps for what a source system says about an article: a stock row stores one in `availability_code`, and the row's `expected_at` says when the article is due back. The set is a table rather than a fixed list because the number a source system delivers for availability is that system's number and what it means is the merchant's to state. Each value carries `orderable` — whether an item in this state may still be ordered — which is the fact a storefront needs in order to offer or withhold the order button without keeping a list of its own. The safe edits are the readable ones — `title`, `labels`, `description`, `descriptions`, `tone`, `position` — and they reach every screen at once, which is the point of the set living here. `orderable` is the consequential one: flipping it to false takes the order button away from every article in this state on the next read, with no stock row touched and no movement booked. `code` is the one to leave alone — a stock row stores the code, nothing in the database points at it, so moving it orphans every row that names the old value. Two rows of this tenant may not share `code` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert.
      *
      * @param {string} params.id - The row id of the availability state to change, as the list answered it.
+     * @param {boolean} params.active - False when the merchant retired this state (RAD-255). It stays valid on every stock row that already carries it, its title still resolves and its `orderable` still governs the stock call, but it is no longer assigned: a stock create, or an edit that moves a row onto it, is refused with 409 'availability_state_inactive', and GET /inventories/vocabularies/availability-states answers it under `inactive` instead of `values`, so no picker offers it while its title still resolves. Nothing in this app derives a code on its own, so that write guard is the whole of 'not newly assigned'. The default cannot be inactive: retiring it is 409 'default_must_stay_active', making a retired state the default is 409 'inactive_cannot_be_default'. A seeded state may be retired like any other; the seed never switches one back on. Defaults to true. False retires the state: rows that carry it keep it, nothing new is assigned it. Refused (409 'default_must_stay_active') on the default — make another entry the default first.
      * @param {string} params.code - The value a stock row's `availability_code` stores, and the key the vocabulary serves it under. Lowercase letters, digits, '-' and '_' (CHECK `code ~ '^[a-z][a-z0-9_-]*$'`), unique per tenant. Treat it as permanent: nothing in the database points at it, so renaming it here leaves every stock row carrying the old one, and the honest move is a new code plus an update of the rows that name it.
      * @param {string} params.description - One sentence a screen can put under the title, in the tenant's working language — what this state means for a buyer looking at the article. Optional; a state with none is served with a null description rather than an invented one.
      * @param {object} params.descriptions - The description per language tag, on the same rule as `labels`: the tag if it is there, else `description`. Keys are language tags, values plain strings.
-     * @param {boolean} params.isDefault - Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say. Defaults to false, and nothing enforces that at most one state carries it.
+     * @param {boolean} params.isDefault - Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say. A state that carries it cannot be inactive. Defaults to false, and nothing enforces that at most one state carries it. Refused (409 `inactive_cannot_be_default`) on an inactive state.
      * @param {boolean} params.isSystem - True for the four states this app seeds on install, false for anything the tenant added. It means "we put it there" and nothing more: a seeded state may be renamed, re-toned, reordered, corrected or deleted exactly like an added one, and the flag is there so a screen can say where a value came from. Send false, or leave it out: it marks the states this app seeded, and setting it on your own would only make one harder to tell apart.
      * @param {object} params.labels - The title per language tag, for a shop that has to render it in the reader's language. Falls back to `title` when a tag is missing. Keys are language tags, values plain strings.
      * @param {boolean} params.orderable - Whether an item in this state may still be ordered — the reason this set is a table and not a list of names. A code on its own tells a storefront nothing it can act on: it has to be matched against a list the theme keeps, and that list is wrong the first time a merchant adds a code. This flag travels with the value, so a shop asks the vocabulary whether to offer the order button instead of asking itself. POST /inventories/availability reads it: a state that says false takes the order button away from every item the governing row puts in that state, whatever the quantity says, and that call reports it as `unorderable_reason: 'state'`. It stays the merchant's policy about the STATE — it moves no stock and books no movement, and the per-location `state_orderable` in that answer is this flag, held apart from the verdict. Defaults to true, so a state created without an answer is one a shop keeps selling in — set it deliberately.
@@ -581,15 +596,16 @@ export class InventoriesStock {
      * @throws {RevenexxException}
      * @returns {Promise<Models.AvailabilityState>}
      */
-    inventoriesAvailabilityStatesUpdate(params: { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, title?: string, tone?: AvailabilityStateTone }): Promise<Models.AvailabilityState>;
+    inventoriesAvailabilityStatesUpdate(params: { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, title?: string, tone?: AvailabilityStateTone }): Promise<Models.AvailabilityState>;
     /**
      * Partial update: send the fields that change. An availability state is one of the codes THIS TENANT keeps for what a source system says about an article: a stock row stores one in `availability_code`, and the row's `expected_at` says when the article is due back. The set is a table rather than a fixed list because the number a source system delivers for availability is that system's number and what it means is the merchant's to state. Each value carries `orderable` — whether an item in this state may still be ordered — which is the fact a storefront needs in order to offer or withhold the order button without keeping a list of its own. The safe edits are the readable ones — `title`, `labels`, `description`, `descriptions`, `tone`, `position` — and they reach every screen at once, which is the point of the set living here. `orderable` is the consequential one: flipping it to false takes the order button away from every article in this state on the next read, with no stock row touched and no movement booked. `code` is the one to leave alone — a stock row stores the code, nothing in the database points at it, so moving it orphans every row that names the old value. Two rows of this tenant may not share `code` — that is the 409, and it answers an update that moves a row onto a sibling's value exactly as it answers a second insert.
      *
      * @param {string} id - The row id of the availability state to change, as the list answered it.
+     * @param {boolean} active - False when the merchant retired this state (RAD-255). It stays valid on every stock row that already carries it, its title still resolves and its `orderable` still governs the stock call, but it is no longer assigned: a stock create, or an edit that moves a row onto it, is refused with 409 'availability_state_inactive', and GET /inventories/vocabularies/availability-states answers it under `inactive` instead of `values`, so no picker offers it while its title still resolves. Nothing in this app derives a code on its own, so that write guard is the whole of 'not newly assigned'. The default cannot be inactive: retiring it is 409 'default_must_stay_active', making a retired state the default is 409 'inactive_cannot_be_default'. A seeded state may be retired like any other; the seed never switches one back on. Defaults to true. False retires the state: rows that carry it keep it, nothing new is assigned it. Refused (409 'default_must_stay_active') on the default — make another entry the default first.
      * @param {string} code - The value a stock row's `availability_code` stores, and the key the vocabulary serves it under. Lowercase letters, digits, '-' and '_' (CHECK `code ~ '^[a-z][a-z0-9_-]*$'`), unique per tenant. Treat it as permanent: nothing in the database points at it, so renaming it here leaves every stock row carrying the old one, and the honest move is a new code plus an update of the rows that name it.
      * @param {string} description - One sentence a screen can put under the title, in the tenant's working language — what this state means for a buyer looking at the article. Optional; a state with none is served with a null description rather than an invented one.
      * @param {object} descriptions - The description per language tag, on the same rule as `labels`: the tag if it is there, else `description`. Keys are language tags, values plain strings.
-     * @param {boolean} isDefault - Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say. Defaults to false, and nothing enforces that at most one state carries it.
+     * @param {boolean} isDefault - Whether this is the state an import falls back to when a source value maps to none of the others. Nothing in this app reads it — the fallback happens where the mapping happens — and it is served on the vocabulary so an importer can find it here instead of keeping a convention of its own. No seeded state carries it: which state an unmapped value means is the tenant's to say. A state that carries it cannot be inactive. Defaults to false, and nothing enforces that at most one state carries it. Refused (409 `inactive_cannot_be_default`) on an inactive state.
      * @param {boolean} isSystem - True for the four states this app seeds on install, false for anything the tenant added. It means "we put it there" and nothing more: a seeded state may be renamed, re-toned, reordered, corrected or deleted exactly like an added one, and the flag is there so a screen can say where a value came from. Send false, or leave it out: it marks the states this app seeded, and setting it on your own would only make one harder to tell apart.
      * @param {object} labels - The title per language tag, for a shop that has to render it in the reader's language. Falls back to `title` when a tag is missing. Keys are language tags, values plain strings.
      * @param {boolean} orderable - Whether an item in this state may still be ordered — the reason this set is a table and not a list of names. A code on its own tells a storefront nothing it can act on: it has to be matched against a list the theme keeps, and that list is wrong the first time a merchant adds a code. This flag travels with the value, so a shop asks the vocabulary whether to offer the order button instead of asking itself. POST /inventories/availability reads it: a state that says false takes the order button away from every item the governing row puts in that state, whatever the quantity says, and that call reports it as `unorderable_reason: 'state'`. It stays the merchant's policy about the STATE — it moves no stock and books no movement, and the per-location `state_orderable` in that answer is this flag, held apart from the verdict. Defaults to true, so a state created without an answer is one a shop keeps selling in — set it deliberately.
@@ -600,32 +616,34 @@ export class InventoriesStock {
      * @returns {Promise<Models.AvailabilityState>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesAvailabilityStatesUpdate(id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, title?: string, tone?: AvailabilityStateTone): Promise<Models.AvailabilityState>;
+    inventoriesAvailabilityStatesUpdate(id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, title?: string, tone?: AvailabilityStateTone): Promise<Models.AvailabilityState>;
     inventoriesAvailabilityStatesUpdate(
-        paramsOrFirst: { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, title?: string, tone?: AvailabilityStateTone } | string,
-        ...rest: [(string)?, (string)?, (object)?, (boolean)?, (boolean)?, (object)?, (boolean)?, (number)?, (string)?, (AvailabilityStateTone)?]    
+        paramsOrFirst: { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, title?: string, tone?: AvailabilityStateTone } | string,
+        ...rest: [(boolean)?, (string)?, (string)?, (object)?, (boolean)?, (boolean)?, (object)?, (boolean)?, (number)?, (string)?, (AvailabilityStateTone)?]    
     ): Promise<Models.AvailabilityState> {
-        let params: { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, title?: string, tone?: AvailabilityStateTone };
+        let params: { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, title?: string, tone?: AvailabilityStateTone };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { id: string, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, title?: string, tone?: AvailabilityStateTone };
+            params = (paramsOrFirst || {}) as { id: string, active?: boolean, code?: string, description?: string, descriptions?: object, isDefault?: boolean, isSystem?: boolean, labels?: object, orderable?: boolean, position?: number, title?: string, tone?: AvailabilityStateTone };
         } else {
             params = {
                 id: paramsOrFirst as string,
-                code: rest[0] as string,
-                description: rest[1] as string,
-                descriptions: rest[2] as object,
-                isDefault: rest[3] as boolean,
-                isSystem: rest[4] as boolean,
-                labels: rest[5] as object,
-                orderable: rest[6] as boolean,
-                position: rest[7] as number,
-                title: rest[8] as string,
-                tone: rest[9] as AvailabilityStateTone            
+                active: rest[0] as boolean,
+                code: rest[1] as string,
+                description: rest[2] as string,
+                descriptions: rest[3] as object,
+                isDefault: rest[4] as boolean,
+                isSystem: rest[5] as boolean,
+                labels: rest[6] as object,
+                orderable: rest[7] as boolean,
+                position: rest[8] as number,
+                title: rest[9] as string,
+                tone: rest[10] as AvailabilityStateTone            
             };
         }
         
         const id = params.id;
+        const active = params.active;
         const code = params.code;
         const description = params.description;
         const descriptions = params.descriptions;
@@ -643,6 +661,9 @@ export class InventoriesStock {
 
         const apiPath = '/v1/inventories/availability-states/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        if (typeof active !== 'undefined') {
+            apiPayload['active'] = active;
+        }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
         }
@@ -1143,7 +1164,7 @@ export class InventoriesStock {
     }
 
     /**
-     * A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, and it is derived on read and never stored, so there is no `available` column to read, filter or order by. This is the operator's view — the whole book, filtered by location or by item — not the shop's: a storefront asking "can I sell five of this" wants POST /inventories/availability, which sums an item across locations and answers `orderable` instead of leaving the caller to subtract. Two things this list will not do: it has no range filters, so "everything running low" is GET /inventories/reorder-alerts and not a query here; and it does not promise one row per item per location — no unique index enforces that. POST /inventories/stock refuses a duplicate with a 409, but that is a check and not a constraint, so a row written past it, or one that predates the guard, still splits an item's balance in two, and the write routes find and update whichever of them the database returns first.
+     * A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, `available`, which the database works out from the two on every write (a generated column): it can be read, filtered and ordered by, and never written. `below_reorder` beside it is true while `available` is at or below the row's OWN `reorder_point` (above 0); the tenant default is not part of it, which is what GET /inventories/reorder-alerts adds. This is the operator's view — the whole book, filtered by location or by item — not the shop's: a storefront asking "can I sell five of this" wants POST /inventories/availability, which sums an item across locations and answers `orderable` instead of leaving the caller to subtract. Two things this list will not do: it has no range filters, so "everything running low" is GET /inventories/reorder-alerts (which also applies the tenant default) or, for rows with their own point, `?below_reorder=true`; and it does not promise one row per item per location — no unique index enforces that. POST /inventories/stock refuses a duplicate with a 409, but that is a check and not a constraint, so a row written past it, or one that predates the guard, still splits an item's balance in two, and the write routes find and update whichever of them the database returns first.
      *
      * @param {number} params.limit - Page size (default 50, max 200). A larger value is clamped rather than refused.
      * @param {number} params.offset - Row offset for pagination (default 0). Page with `page.total` and `page.hasMore`.
@@ -1154,6 +1175,8 @@ export class InventoriesStock {
      * @param {string} params.sku - Exact-match filter on `sku`. The rows tracking one SKU — the identity used when an item has no product id.
      * @param {number} params.onHand - Exact-match filter on `on_hand`. Exact balance, which is rarely what a reader wants: `?on_hand=0` finds the rows that are empty. There is no range filter here — GET /inventories/reorder-alerts is the "running low" question.
      * @param {number} params.reserved - Exact-match filter on `reserved`. Exact reserved quantity. `?reserved=0` finds the rows nothing is holding.
+     * @param {number} params.available - Exact-match filter on `available`. What may still be sold at this location: `on_hand` − `reserved`.
+     * @param {boolean} params.belowReorder - Exact-match filter on `below_reorder`. True while `available` is at or below this row's OWN `reorder_point` and that point is above 0.
      * @param {number} params.reorderPoint - Exact-match filter on `reorder_point`. The available quantity at or below which this row belongs on the replenishment worklist (GET /inventories/reorder-alerts).
      * @param {string} params.expectedAt - Exact-match filter on `expected_at`. When this item is expected back in stock at this location — a DATE, not a timestamp, because a supplier promises a day and not an hour.
      * @param {string} params.availabilityCode - Exact-match filter on `availability_code`. What the source system says about this item's availability, as one of the codes THIS TENANT keeps (GET /inventories/availability-states, or GET /inventories/vocabularies/availability-states for the same set with its words and its `orderable` flag).
@@ -1167,9 +1190,9 @@ export class InventoriesStock {
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
-    inventoriesStockList(params?: { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, onHand?: number, reserved?: number, reorderPoint?: number, expectedAt?: string, availabilityCode?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
+    inventoriesStockList(params?: { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, onHand?: number, reserved?: number, available?: number, belowReorder?: boolean, reorderPoint?: number, expectedAt?: string, availabilityCode?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string }): Promise<{}>;
     /**
-     * A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, and it is derived on read and never stored, so there is no `available` column to read, filter or order by. This is the operator's view — the whole book, filtered by location or by item — not the shop's: a storefront asking "can I sell five of this" wants POST /inventories/availability, which sums an item across locations and answers `orderable` instead of leaving the caller to subtract. Two things this list will not do: it has no range filters, so "everything running low" is GET /inventories/reorder-alerts and not a query here; and it does not promise one row per item per location — no unique index enforces that. POST /inventories/stock refuses a duplicate with a 409, but that is a check and not a constraint, so a row written past it, or one that predates the guard, still splits an item's balance in two, and the write routes find and update whichever of them the database returns first.
+     * A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, `available`, which the database works out from the two on every write (a generated column): it can be read, filtered and ordered by, and never written. `below_reorder` beside it is true while `available` is at or below the row's OWN `reorder_point` (above 0); the tenant default is not part of it, which is what GET /inventories/reorder-alerts adds. This is the operator's view — the whole book, filtered by location or by item — not the shop's: a storefront asking "can I sell five of this" wants POST /inventories/availability, which sums an item across locations and answers `orderable` instead of leaving the caller to subtract. Two things this list will not do: it has no range filters, so "everything running low" is GET /inventories/reorder-alerts (which also applies the tenant default) or, for rows with their own point, `?below_reorder=true`; and it does not promise one row per item per location — no unique index enforces that. POST /inventories/stock refuses a duplicate with a 409, but that is a check and not a constraint, so a row written past it, or one that predates the guard, still splits an item's balance in two, and the write routes find and update whichever of them the database returns first.
      *
      * @param {number} limit - Page size (default 50, max 200). A larger value is clamped rather than refused.
      * @param {number} offset - Row offset for pagination (default 0). Page with `page.total` and `page.hasMore`.
@@ -1180,6 +1203,8 @@ export class InventoriesStock {
      * @param {string} sku - Exact-match filter on `sku`. The rows tracking one SKU — the identity used when an item has no product id.
      * @param {number} onHand - Exact-match filter on `on_hand`. Exact balance, which is rarely what a reader wants: `?on_hand=0` finds the rows that are empty. There is no range filter here — GET /inventories/reorder-alerts is the "running low" question.
      * @param {number} reserved - Exact-match filter on `reserved`. Exact reserved quantity. `?reserved=0` finds the rows nothing is holding.
+     * @param {number} available - Exact-match filter on `available`. What may still be sold at this location: `on_hand` − `reserved`.
+     * @param {boolean} belowReorder - Exact-match filter on `below_reorder`. True while `available` is at or below this row's OWN `reorder_point` and that point is above 0.
      * @param {number} reorderPoint - Exact-match filter on `reorder_point`. The available quantity at or below which this row belongs on the replenishment worklist (GET /inventories/reorder-alerts).
      * @param {string} expectedAt - Exact-match filter on `expected_at`. When this item is expected back in stock at this location — a DATE, not a timestamp, because a supplier promises a day and not an hour.
      * @param {string} availabilityCode - Exact-match filter on `availability_code`. What the source system says about this item's availability, as one of the codes THIS TENANT keeps (GET /inventories/availability-states, or GET /inventories/vocabularies/availability-states for the same set with its words and its `orderable` flag).
@@ -1194,15 +1219,15 @@ export class InventoriesStock {
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    inventoriesStockList(limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, onHand?: number, reserved?: number, reorderPoint?: number, expectedAt?: string, availabilityCode?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
+    inventoriesStockList(limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, onHand?: number, reserved?: number, available?: number, belowReorder?: boolean, reorderPoint?: number, expectedAt?: string, availabilityCode?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string): Promise<{}>;
     inventoriesStockList(
-        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, onHand?: number, reserved?: number, reorderPoint?: number, expectedAt?: string, availabilityCode?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string } | number,
-        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
+        paramsOrFirst?: { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, onHand?: number, reserved?: number, available?: number, belowReorder?: boolean, reorderPoint?: number, expectedAt?: string, availabilityCode?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string } | number,
+        ...rest: [(number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (number)?, (boolean)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?]    
     ): Promise<{}> {
-        let params: { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, onHand?: number, reserved?: number, reorderPoint?: number, expectedAt?: string, availabilityCode?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
+        let params: { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, onHand?: number, reserved?: number, available?: number, belowReorder?: boolean, reorderPoint?: number, expectedAt?: string, availabilityCode?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
         
         if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, onHand?: number, reserved?: number, reorderPoint?: number, expectedAt?: string, availabilityCode?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
+            params = (paramsOrFirst || {}) as { limit?: number, offset?: number, order?: string, id?: string, locationId?: string, productId?: string, sku?: string, onHand?: number, reserved?: number, available?: number, belowReorder?: boolean, reorderPoint?: number, expectedAt?: string, availabilityCode?: string, metadata?: string, externalId?: string, externalRefs?: string, sourceSyncedAt?: string, sourceData?: string, createdAt?: string, updatedAt?: string };
         } else {
             params = {
                 limit: paramsOrFirst as number,
@@ -1214,16 +1239,18 @@ export class InventoriesStock {
                 sku: rest[5] as string,
                 onHand: rest[6] as number,
                 reserved: rest[7] as number,
-                reorderPoint: rest[8] as number,
-                expectedAt: rest[9] as string,
-                availabilityCode: rest[10] as string,
-                metadata: rest[11] as string,
-                externalId: rest[12] as string,
-                externalRefs: rest[13] as string,
-                sourceSyncedAt: rest[14] as string,
-                sourceData: rest[15] as string,
-                createdAt: rest[16] as string,
-                updatedAt: rest[17] as string            
+                available: rest[8] as number,
+                belowReorder: rest[9] as boolean,
+                reorderPoint: rest[10] as number,
+                expectedAt: rest[11] as string,
+                availabilityCode: rest[12] as string,
+                metadata: rest[13] as string,
+                externalId: rest[14] as string,
+                externalRefs: rest[15] as string,
+                sourceSyncedAt: rest[16] as string,
+                sourceData: rest[17] as string,
+                createdAt: rest[18] as string,
+                updatedAt: rest[19] as string            
             };
         }
         
@@ -1236,6 +1263,8 @@ export class InventoriesStock {
         const sku = params.sku;
         const onHand = params.onHand;
         const reserved = params.reserved;
+        const available = params.available;
+        const belowReorder = params.belowReorder;
         const reorderPoint = params.reorderPoint;
         const expectedAt = params.expectedAt;
         const availabilityCode = params.availabilityCode;
@@ -1276,6 +1305,12 @@ export class InventoriesStock {
         }
         if (typeof reserved !== 'undefined') {
             apiPayload['reserved'] = reserved;
+        }
+        if (typeof available !== 'undefined') {
+            apiPayload['available'] = available;
+        }
+        if (typeof belowReorder !== 'undefined') {
+            apiPayload['below_reorder'] = belowReorder;
         }
         if (typeof reorderPoint !== 'undefined') {
             apiPayload['reorder_point'] = reorderPoint;
@@ -1419,7 +1454,7 @@ export class InventoriesStock {
     }
 
     /**
-     * Stops tracking one item at one location. A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, and it is derived on read and never stored, so there is no `available` column to read, filter or order by. A deleted balance is not recoverable: the ledger is the audit trail, not the source of truth, and nothing in this app ever replays it to rebuild a number — so the next receipt for the same item here creates a FRESH row at zero, standing next to movements that say otherwise. That used to be a trap a caller discovered afterwards. It is a stated property now, because the route REFUSES while the row still holds anything, and answers 409 with what it holds. The two things that block are the location delete's two, asked of one row. A reservation still `active` against this item at this location is the sharper one: /release and /commit look their stock row up by (location, item) on the very next call and would find nothing, so the hold would lower no `reserved` and /commit would book the whole quantity as a shortfall — orphaned immediately rather than eventually. `on_hand` above zero is the stronger one: deleting a LOCATION at least meant "close this warehouse" and took the balances as a side effect of the cascade, while this row IS the balance, so the delete can only ever mean "no longer tracked here" — true once the number is zero and a lie while it is not. POST /inventories/stock/{id}/adjust to zero is the operation that makes it true, and it BOOKS the movement, so the stock leaves through the ledger instead of vanishing with the row. Nothing points at it by foreign key, so the database takes nothing else with it. History therefore never blocks and is never deleted — the ledger is keyed on (location, item) and never on this id, so its bookings survive a row that is gone, BY DESIGN, exactly as they survive a location that is gone.
+     * Stops tracking one item at one location. A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, `available`, which the database works out from the two on every write (a generated column): it can be read, filtered and ordered by, and never written. `below_reorder` beside it is true while `available` is at or below the row's OWN `reorder_point` (above 0); the tenant default is not part of it, which is what GET /inventories/reorder-alerts adds. A deleted balance is not recoverable: the ledger is the audit trail, not the source of truth, and nothing in this app ever replays it to rebuild a number — so the next receipt for the same item here creates a FRESH row at zero, standing next to movements that say otherwise. That used to be a trap a caller discovered afterwards. It is a stated property now, because the route REFUSES while the row still holds anything, and answers 409 with what it holds. The two things that block are the location delete's two, asked of one row. A reservation still `active` against this item at this location is the sharper one: /release and /commit look their stock row up by (location, item) on the very next call and would find nothing, so the hold would lower no `reserved` and /commit would book the whole quantity as a shortfall — orphaned immediately rather than eventually. `on_hand` above zero is the stronger one: deleting a LOCATION at least meant "close this warehouse" and took the balances as a side effect of the cascade, while this row IS the balance, so the delete can only ever mean "no longer tracked here" — true once the number is zero and a lie while it is not. POST /inventories/stock/{id}/adjust to zero is the operation that makes it true, and it BOOKS the movement, so the stock leaves through the ledger instead of vanishing with the row. Nothing points at it by foreign key, so the database takes nothing else with it. History therefore never blocks and is never deleted — the ledger is keyed on (location, item) and never on this id, so its bookings survive a row that is gone, BY DESIGN, exactly as they survive a location that is gone.
      *
      * @param {string} params.id - The stock row.
      * @throws {RevenexxException}
@@ -1427,7 +1462,7 @@ export class InventoriesStock {
      */
     inventoriesStockDelete(params: { id: string }): Promise<{}>;
     /**
-     * Stops tracking one item at one location. A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, and it is derived on read and never stored, so there is no `available` column to read, filter or order by. A deleted balance is not recoverable: the ledger is the audit trail, not the source of truth, and nothing in this app ever replays it to rebuild a number — so the next receipt for the same item here creates a FRESH row at zero, standing next to movements that say otherwise. That used to be a trap a caller discovered afterwards. It is a stated property now, because the route REFUSES while the row still holds anything, and answers 409 with what it holds. The two things that block are the location delete's two, asked of one row. A reservation still `active` against this item at this location is the sharper one: /release and /commit look their stock row up by (location, item) on the very next call and would find nothing, so the hold would lower no `reserved` and /commit would book the whole quantity as a shortfall — orphaned immediately rather than eventually. `on_hand` above zero is the stronger one: deleting a LOCATION at least meant "close this warehouse" and took the balances as a side effect of the cascade, while this row IS the balance, so the delete can only ever mean "no longer tracked here" — true once the number is zero and a lie while it is not. POST /inventories/stock/{id}/adjust to zero is the operation that makes it true, and it BOOKS the movement, so the stock leaves through the ledger instead of vanishing with the row. Nothing points at it by foreign key, so the database takes nothing else with it. History therefore never blocks and is never deleted — the ledger is keyed on (location, item) and never on this id, so its bookings survive a row that is gone, BY DESIGN, exactly as they survive a location that is gone.
+     * Stops tracking one item at one location. A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, `available`, which the database works out from the two on every write (a generated column): it can be read, filtered and ordered by, and never written. `below_reorder` beside it is true while `available` is at or below the row's OWN `reorder_point` (above 0); the tenant default is not part of it, which is what GET /inventories/reorder-alerts adds. A deleted balance is not recoverable: the ledger is the audit trail, not the source of truth, and nothing in this app ever replays it to rebuild a number — so the next receipt for the same item here creates a FRESH row at zero, standing next to movements that say otherwise. That used to be a trap a caller discovered afterwards. It is a stated property now, because the route REFUSES while the row still holds anything, and answers 409 with what it holds. The two things that block are the location delete's two, asked of one row. A reservation still `active` against this item at this location is the sharper one: /release and /commit look their stock row up by (location, item) on the very next call and would find nothing, so the hold would lower no `reserved` and /commit would book the whole quantity as a shortfall — orphaned immediately rather than eventually. `on_hand` above zero is the stronger one: deleting a LOCATION at least meant "close this warehouse" and took the balances as a side effect of the cascade, while this row IS the balance, so the delete can only ever mean "no longer tracked here" — true once the number is zero and a lie while it is not. POST /inventories/stock/{id}/adjust to zero is the operation that makes it true, and it BOOKS the movement, so the stock leaves through the ledger instead of vanishing with the row. Nothing points at it by foreign key, so the database takes nothing else with it. History therefore never blocks and is never deleted — the ledger is keyed on (location, item) and never on this id, so its bookings survive a row that is gone, BY DESIGN, exactly as they survive a location that is gone.
      *
      * @param {string} id - The stock row.
      * @throws {RevenexxException}
@@ -1470,7 +1505,7 @@ export class InventoriesStock {
     }
 
     /**
-     * A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, and it is derived on read and never stored, so there is no `available` column to read, filter or order by. Read it to see one item's position at one place, and to get the id the two row-scoped routes take: POST /inventories/stock/{id}/adjust corrects this balance, and GET /inventories/reorder-alerts reports it by this id. What it does not answer is how the balance got here — that is GET /inventories/movements filtered by the location and item on this row, because a movement points at (location, item) and never at a stock row id.
+     * A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, `available`, which the database works out from the two on every write (a generated column): it can be read, filtered and ordered by, and never written. `below_reorder` beside it is true while `available` is at or below the row's OWN `reorder_point` (above 0); the tenant default is not part of it, which is what GET /inventories/reorder-alerts adds. Read it to see one item's position at one place, and to get the id the two row-scoped routes take: POST /inventories/stock/{id}/adjust corrects this balance, and GET /inventories/reorder-alerts reports it by this id. What it does not answer is how the balance got here — that is GET /inventories/movements filtered by the location and item on this row, because a movement points at (location, item) and never at a stock row id.
      *
      * @param {string} params.id - The stock row.
      * @throws {RevenexxException}
@@ -1478,7 +1513,7 @@ export class InventoriesStock {
      */
     inventoriesStockGet(params: { id: string }): Promise<Models.StockLevel>;
     /**
-     * A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, and it is derived on read and never stored, so there is no `available` column to read, filter or order by. Read it to see one item's position at one place, and to get the id the two row-scoped routes take: POST /inventories/stock/{id}/adjust corrects this balance, and GET /inventories/reorder-alerts reports it by this id. What it does not answer is how the balance got here — that is GET /inventories/movements filtered by the location and item on this row, because a movement points at (location, item) and never at a stock row id.
+     * A stock level is ONE item at ONE location, and it carries two numbers, neither of which is the sellable one: `on_hand` is what is physically there INCLUDING everything already promised, and `reserved` is what has been promised — it never reduces `on_hand`. What may still be sold is their difference, `available`, which the database works out from the two on every write (a generated column): it can be read, filtered and ordered by, and never written. `below_reorder` beside it is true while `available` is at or below the row's OWN `reorder_point` (above 0); the tenant default is not part of it, which is what GET /inventories/reorder-alerts adds. Read it to see one item's position at one place, and to get the id the two row-scoped routes take: POST /inventories/stock/{id}/adjust corrects this balance, and GET /inventories/reorder-alerts reports it by this id. What it does not answer is how the balance got here — that is GET /inventories/movements filtered by the location and item on this row, because a movement points at (location, item) and never at a stock row id.
      *
      * @param {string} id - The stock row.
      * @throws {RevenexxException}

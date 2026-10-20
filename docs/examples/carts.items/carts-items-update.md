@@ -12,6 +12,7 @@ const cartsItems = new CartsItems(client);
 const result = await cartsItems.cartsItemsUpdate({
     cartId: '',
     id: '',
+    sessionKey: 'a1b2c3d4e5f6', // optional
     configuration: {
         "colour": "RAL 7016",
         "finish": "brushed",

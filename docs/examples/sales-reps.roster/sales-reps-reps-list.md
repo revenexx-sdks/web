@@ -18,6 +18,9 @@ const result = await salesRepsRoster.salesRepsRepsList({
     territory: 'Nordbayern', // optional
     active: true, // optional
     platformUserId: 'usr_7c19f4a2e0', // optional
+    hasLogin: true, // optional
+    customerCount: 12, // optional
+    primaryCount: 4, // optional
     externalId: 'BC-SALESPERSON-0007', // optional
     sourceSyncedAt: '2026-01-01T12:00:00Z', // optional
     createdAt: '2026-01-01T12:00:00Z', // optional
