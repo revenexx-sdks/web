@@ -2817,6 +2817,61 @@ export class ProductsDataModel {
     }
 
     /**
+     * Creates the smallest catalog model a tenant can work with, for a tenant that has none: the product attributes `name` (text, localizable), `description` (textarea, localizable) and `images` (asset_collection), and the family `standard` („Standard“) carrying the three, with `name` as its label attribute and required, and `images` as its image attribute. It writes only into a tenant without any attribute or family — the rows an earlier run of this call wrote excepted, so a run that stopped half-way is finished by the next. A tenant with one attribute or family of its own is answered `seeded: false` with `reason: not_empty` and nothing is written. Idempotent: a second run writes nothing. The model is founded without a market. The install announcement runs the same seeding, but it is not reliably delivered, so support can call this for an existing empty tenant.
+     *
+     * @param {object} params.data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ProductDefaultsResult>}
+     */
+    productsDefaultsRun(params: { data: object }): Promise<Models.ProductDefaultsResult>;
+    /**
+     * Creates the smallest catalog model a tenant can work with, for a tenant that has none: the product attributes `name` (text, localizable), `description` (textarea, localizable) and `images` (asset_collection), and the family `standard` („Standard“) carrying the three, with `name` as its label attribute and required, and `images` as its image attribute. It writes only into a tenant without any attribute or family — the rows an earlier run of this call wrote excepted, so a run that stopped half-way is finished by the next. A tenant with one attribute or family of its own is answered `seeded: false` with `reason: not_empty` and nothing is written. Idempotent: a second run writes nothing. The model is founded without a market. The install announcement runs the same seeding, but it is not reliably delivered, so support can call this for an existing empty tenant.
+     *
+     * @param {object} data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ProductDefaultsResult>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsDefaultsRun(data: object): Promise<Models.ProductDefaultsResult>;
+    productsDefaultsRun(
+        paramsOrFirst: { data: object } | object    
+    ): Promise<Models.ProductDefaultsResult> {
+        let params: { data: object };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { data: object };
+        } else {
+            params = {
+                data: paramsOrFirst as object            
+            };
+        }
+        
+        const data = params.data;
+
+        if (typeof data === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "data"');
+        }
+
+        const apiPath = '/v1/products/defaults';
+        const apiPayload: Payload = {};
+        if (typeof data !== 'undefined') {
+            Object.assign(apiPayload, data);
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
      * A family decides WHICH attributes a product has — the set is `family_attributes`, and every family-driven surface follows from it. It also names which attribute carries the display name (`label_attribute`) and which carries the main image. A product with no family has no required attributes at all, so its completeness cannot be measured and its name never resolves past the SKU; `POST /products/{id}/family` is the call that ends that state.
      * 
      * Every column of `families` is an exact-match query parameter, `order` sorts by one column, and `limit`/`offset` page through `page.total`. A query key that is NOT a column is dropped rather than refused, and the `filter` object echoes the ones that were understood — that echo is the only way to tell an unfiltered answer from an empty one. It reads rows exactly as they are stored: no join is resolved, no jsonb value is unpacked.

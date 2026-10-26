@@ -12,6 +12,7 @@ export enum PunchoutVocabulariesGetName {
     Protocolversions = 'protocol-versions',
     Protocols = 'protocols',
     Purchasemodes = 'purchase-modes',
+    Refusaldetails = 'refusal-details',
     Refusalreasons = 'refusal-reasons',
     Returnmethods = 'return-methods',
     Sessionstatuses = 'session-statuses',

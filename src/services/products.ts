@@ -1321,6 +1321,57 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
     }
 
     /**
+     * markets.tax_classes is the source of record for the rate and a product points at it by CODE in `tax_class` — a variant is a product row and carries its own. It is not a foreign key and could not be (ADR-0055), so integrity is a question one app asks the other, and this is the answering half: markets calls it when an operator tries to delete a tax class, and a count above zero is what stops the delete. A tax class is unique per market, so 'reduced' may exist in several: the caller names the class's market in `x-revenexx-market`, and only the products visible in that market count — the ones assigned to it plus the unassigned ones, which are sold in every market and so are taxed through its class too. Without the header every product of the tenant counts. Products in the trash count as well, because a restore brings them back naming the class; `trashed` says how many of them are. Reports at most 1000 products and names the first 20 by SKU. Every code answers, used or not — a code nobody points at is `in_use: false`, never a 404.
+     *
+     * @param {string} params.code - The tax-class CODE, as markets spells it — not a row id. Matched against the `tax_class` of every product visible in the request's market (every product when it names none).
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ProductTaxClassUsage>}
+     */
+    productsTaxClassesUsage(params: { code: string }): Promise<Models.ProductTaxClassUsage>;
+    /**
+     * markets.tax_classes is the source of record for the rate and a product points at it by CODE in `tax_class` — a variant is a product row and carries its own. It is not a foreign key and could not be (ADR-0055), so integrity is a question one app asks the other, and this is the answering half: markets calls it when an operator tries to delete a tax class, and a count above zero is what stops the delete. A tax class is unique per market, so 'reduced' may exist in several: the caller names the class's market in `x-revenexx-market`, and only the products visible in that market count — the ones assigned to it plus the unassigned ones, which are sold in every market and so are taxed through its class too. Without the header every product of the tenant counts. Products in the trash count as well, because a restore brings them back naming the class; `trashed` says how many of them are. Reports at most 1000 products and names the first 20 by SKU. Every code answers, used or not — a code nobody points at is `in_use: false`, never a 404.
+     *
+     * @param {string} code - The tax-class CODE, as markets spells it — not a row id. Matched against the `tax_class` of every product visible in the request's market (every product when it names none).
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.ProductTaxClassUsage>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    productsTaxClassesUsage(code: string): Promise<Models.ProductTaxClassUsage>;
+    productsTaxClassesUsage(
+        paramsOrFirst: { code: string } | string    
+    ): Promise<Models.ProductTaxClassUsage> {
+        let params: { code: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { code: string };
+        } else {
+            params = {
+                code: paramsOrFirst as string            
+            };
+        }
+        
+        const code = params.code;
+
+        if (typeof code === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "code"');
+        }
+
+        const apiPath = '/v1/products/tax-classes/{code}/usage'.replace('{code}', code);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
      * Deletes the products in the trash for good, oldest first, up to 200 per call, each through the same checks as a second `DELETE`. One that is held is reported with its reason and the rest go on; `more` says another call has work left. Refused with 403 for a storefront contact.
      *
      * @throws {RevenexxException}

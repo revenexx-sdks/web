@@ -628,7 +628,9 @@ export { MarketLocaleGranularity } from './enums/market-locale-granularity';
 export { MarketPricingSource } from './enums/market-pricing-source';
 export { MarketTaxBasis } from './enums/market-tax-basis';
 export { MarketReadinessCheckId } from './enums/market-readiness-check-id';
+export { MarketReadinessWarningReasons } from './enums/market-readiness-warning-reasons';
 export { MarketReadinessSeverity } from './enums/market-readiness-severity';
+export { MarketReadinessReportWarningReasons } from './enums/market-readiness-report-warning-reasons';
 export { MarketsVocabularyTone } from './enums/markets-vocabulary-tone';
 export { MarketsVocabularySource } from './enums/markets-vocabulary-source';
 export { MarketsVocabularySummaryName } from './enums/markets-vocabulary-summary-name';
@@ -713,6 +715,7 @@ export { ProcurementVocabularySummaryName } from './enums/procurement-vocabulary
 export { ProcurementVocabularyValueTone } from './enums/procurement-vocabulary-value-tone';
 export { ProductChannelsAssignRequestMode } from './enums/product-channels-assign-request-mode';
 export { ProductCopyRequestParts } from './enums/product-copy-request-parts';
+export { ProductDefaultsResultReason } from './enums/product-defaults-result-reason';
 export { ProductGridColumnSource } from './enums/product-grid-column-source';
 export { ProductLabelSource } from './enums/product-label-source';
 export { ProductLabelAttributeSource } from './enums/product-label-attribute-source';

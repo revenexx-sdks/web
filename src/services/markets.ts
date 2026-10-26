@@ -165,7 +165,7 @@ export class Markets {
     }
 
     /**
-     * A market needs a 'code' and a 'name' — currency defaults to EUR, status to active. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
+     * A market needs a 'code' and a 'name' — currency defaults to EUR. A tenant's first market starts active and becomes the default market when the body names neither (a first market created inactive stays unflagged); every later market starts inactive unless the body names a status, because it still needs its locales, currencies and tax classes before it sells. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
      *
      * @param {string} params.code - Market code — the market scope slug every other app stores. Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`). Fixed once the market exists: an update that changes it is refused with 409 `code_immutable`; the same value sent back is accepted and ignored.
      * @param {string} params.name - Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
@@ -181,7 +181,7 @@ export class Markets {
      */
     marketsCreate(params: { code: string, name: string, currency?: string, isDefault?: boolean, labels?: object, position?: number, shipFromCountry?: string, shipFromCountryReview?: boolean, status?: MarketStatus }): Promise<Models.Market>;
     /**
-     * A market needs a 'code' and a 'name' — currency defaults to EUR, status to active. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
+     * A market needs a 'code' and a 'name' — currency defaults to EUR. A tenant's first market starts active and becomes the default market when the body names neither (a first market created inactive stays unflagged); every later market starts inactive unless the body names a status, because it still needs its locales, currencies and tax classes before it sells. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
      *
      * @param {string} code - Market code — the market scope slug every other app stores. Lowercase letters, digits and underscores, starting with a letter, at most 63 characters (400 `invalid_market_code`). Fixed once the market exists: an update that changes it is refused with 409 `code_immutable`; the same value sent back is accepted and ignored.
      * @param {string} name - Display name, in the operator's own language. Cockpit copy only — nothing resolves a market by it.
@@ -2136,7 +2136,7 @@ export class Markets {
     }
 
     /**
-     * Refused with a 409 for as long as another app still points at this tax class by its code. A tax class is the source of record for a rate, and other apps name it by CODE with no foreign key behind it — a cross-app FK is what ADR-0055 forbids. So this asks the shipping app what still uses the code (shipping.tax-classes.usage) and answers 409 with the count and the first few names rather than leaving methods quoting a rate nobody defines. The check FAILS OPEN: a tenant without the shipping app, or an unreachable one, deletes as before, and the answer says which happened in 'usage_checked'. Matched on the code, which is shared across markets — the refusal message says so.
+     * Refused with a 409 (`tax_class_in_use`) for as long as another app still points at this tax class by its code. A tax class is the source of record for a rate, and other apps name it by CODE with no foreign key behind it — a cross-app FK is what ADR-0055 forbids. So this asks shipping, products and payments what still uses the code (shipping.tax-classes.usage, products.tax-classes.usage, payments.tax-classes.usage), each in the class's own market (`x-revenexx-market`, never the caller's), and answers 409 with the counts and the first few names per app rather than leaving records quoting a rate nobody defines. The check FAILS OPEN: an app that is not installed, does not answer yet, or is unreachable does not stop the delete, and 'usage_checked' says whether every app answered.
      *
      * @param {string} params.marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} params.id - The tax class of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.
@@ -2145,7 +2145,7 @@ export class Markets {
      */
     marketsTaxClassesDelete(params: { marketId: string, id: string }): Promise<Models.MarketTaxClassDeleted>;
     /**
-     * Refused with a 409 for as long as another app still points at this tax class by its code. A tax class is the source of record for a rate, and other apps name it by CODE with no foreign key behind it — a cross-app FK is what ADR-0055 forbids. So this asks the shipping app what still uses the code (shipping.tax-classes.usage) and answers 409 with the count and the first few names rather than leaving methods quoting a rate nobody defines. The check FAILS OPEN: a tenant without the shipping app, or an unreachable one, deletes as before, and the answer says which happened in 'usage_checked'. Matched on the code, which is shared across markets — the refusal message says so.
+     * Refused with a 409 (`tax_class_in_use`) for as long as another app still points at this tax class by its code. A tax class is the source of record for a rate, and other apps name it by CODE with no foreign key behind it — a cross-app FK is what ADR-0055 forbids. So this asks shipping, products and payments what still uses the code (shipping.tax-classes.usage, products.tax-classes.usage, payments.tax-classes.usage), each in the class's own market (`x-revenexx-market`, never the caller's), and answers 409 with the counts and the first few names per app rather than leaving records quoting a rate nobody defines. The check FAILS OPEN: an app that is not installed, does not answer yet, or is unreachable does not stop the delete, and 'usage_checked' says whether every app answered.
      *
      * @param {string} marketId - The owning market. A uuid — this route does not accept a market code. An unknown market lists empty rather than 404.
      * @param {string} id - The tax class of a market, by its primary key. A uuid — this route does not resolve a code, so a segment that will not cast is a 400 before any row is read.

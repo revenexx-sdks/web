@@ -278,7 +278,9 @@ import { MarketLocaleGranularity } from "./enums/market-locale-granularity"
 import { MarketPricingSource } from "./enums/market-pricing-source"
 import { MarketTaxBasis } from "./enums/market-tax-basis"
 import { MarketReadinessCheckId } from "./enums/market-readiness-check-id"
+import { MarketReadinessWarningReasons } from "./enums/market-readiness-warning-reasons"
 import { MarketReadinessSeverity } from "./enums/market-readiness-severity"
+import { MarketReadinessReportWarningReasons } from "./enums/market-readiness-report-warning-reasons"
 import { MarketsVocabularyTone } from "./enums/markets-vocabulary-tone"
 import { MarketsVocabularyName } from "./enums/markets-vocabulary-name"
 import { MarketsVocabularySource } from "./enums/markets-vocabulary-source"
@@ -386,6 +388,7 @@ import { ProcurementVocabularyValueTone } from "./enums/procurement-vocabulary-v
 import { ProductCategoriesSource } from "./enums/product-categories-source"
 import { ProductChannelsAssignRequestMode } from "./enums/product-channels-assign-request-mode"
 import { ProductCopyRequestParts } from "./enums/product-copy-request-parts"
+import { ProductDefaultsResultReason } from "./enums/product-defaults-result-reason"
 import { ProductGridColumnSource } from "./enums/product-grid-column-source"
 import { ProductLabelSource } from "./enums/product-label-source"
 import { ProductLabelAttributeSource } from "./enums/product-label-attribute-source"
@@ -13944,7 +13947,7 @@ response carries no `tenant_id` (the listing envelope does) and no
         /**
          * 
          */
-        organization_id?: string | null;
+        organization_id: string;
         /**
          * What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
          */
@@ -14080,7 +14083,7 @@ response carries no `tenant_id` (the listing envelope does) and no
         /**
          * 
          */
-        organization_id?: string | null;
+        organization_id?: string;
         /**
          * What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
          */
@@ -22302,7 +22305,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * A market needs a 'code' and a 'name' — currency defaults to EUR, status to active. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
+     * A market needs a 'code' and a 'name' — currency defaults to EUR. A tenant's first market starts active and becomes the default market when the body names neither (a first market created inactive stays unflagged); every later market starts inactive unless the body names a status, because it still needs its locales, currencies and tax classes before it sells. To get a market that can actually trade, clone an existing one instead: POST /markets/{id}/clone.
      */
     export type MarketCreateRequest = {
         /**
@@ -22903,6 +22906,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         serving?: boolean;
         /**
+         * `warnings`, each as the reason behind it, in the same order. Equal to the id except where one id covers two states a person reads differently: a market with no locale at all reads 'locales_missing' (the tenant's fallback locale applies), one whose locales lack a single default stays 'locales'. For a screen that words the warnings; a client branching on a check keeps reading `warnings`.
+         */
+        warning_reasons?: string[];
+        /**
          * Ids of the checks that failed as WARNINGS — degraded but serviceable, because something else covers for them. A missing locale is only a warning while the tenant declares a fallback_locale.
          */
         warnings?: string[];
@@ -22949,7 +22956,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * Can this market actually trade? `ready` is false only when a BLOCKING check failed — no currency to quote in, no tax class to tax with. Warnings are degraded-but-serviceable. The market it is about, what it is made of, and the verdict — the readiness block is inlined here rather than nested, so this is MarketReadiness plus two keys.
+     * Can this market actually trade? `ready` is false only when a BLOCKING check failed — no currency to quote in, no tax class to tax with. Warnings are degraded-but-serviceable. The market it is about, what it is made of, and the verdict — the readiness block is inlined here rather than nested, so this is MarketReadiness plus three keys.
      */
     export type MarketReadinessReport = {
         /**
@@ -22965,6 +22972,10 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         counts?: MarketReadinessCounts;
         /**
+         * The fallback_locale setting as it applies to this market — the language a market without a locale of its own is shown in, and what the `locales` warning names. Null when the setting is empty, which is what makes a missing locale blocking.
+         */
+        fallback_locale?: string | null;
+        /**
          * The market the verdict is about, identified rather than returned in full — the five columns a reader needs to know which market answered. Read GET /markets/{id} for the rest.
          */
         market?: MarketReadinessSubject;
@@ -22976,6 +22987,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * true when the market's status is 'active'. An active market that is not ready is live and broken — that combination is the one worth an alert.
          */
         serving?: boolean;
+        /**
+         * `warnings`, each as the reason behind it, in the same order. Equal to the id except where one id covers two states a person reads differently: a market with no locale at all reads 'locales_missing' (the tenant's fallback locale applies), one whose locales lack a single default stays 'locales'. For a screen that words the warnings; a client branching on a check keeps reading `warnings`.
+         */
+        warning_reasons?: string[];
         /**
          * Ids of the checks that failed as WARNINGS — degraded but serviceable, because something else covers for them. A missing locale is only a warning while the tenant declares a fallback_locale.
          */
@@ -23073,7 +23088,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The owning market comes from the route path ('market_id').
+     * The owning market comes from the route path ('market_id'). The market's first tax class becomes its default when the body names no 'is_default' and the class is active.
      */
     export type MarketTaxClassCreateRequest = {
         /**
@@ -23119,7 +23134,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         id?: string;
         /**
-         * False when the cross-app usage question could not be asked (shipping not installed, or unreachable) — the row was deleted without that guarantee.
+         * True only when shipping, products and payments all answered. False when any of them could not be asked (not installed, not answering yet, or unreachable) — the row was deleted without that guarantee for that app.
          */
         usage_checked?: boolean;
     }
@@ -30288,6 +30303,32 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
+     * What in this app still points at a market tax class, by code.
+     */
+    export type PaymentTaxClassUsage = {
+        /**
+         * The tax-class code that was asked about, echoed back.
+         */
+        code?: string;
+        /**
+         * How many payment methods name this code as their own tax_class — in the market of the request when it carries one (its own methods plus the unassigned ones), else across the tenant. Capped at 500.
+         */
+        count?: number;
+        /**
+         * True when this market's payment_fee_tax_class setting names the code — the class every method that names none is taxed as.
+         */
+        fallback_setting?: boolean;
+        /**
+         * True when at least one method or the market fallback setting names it. The single field a caller deciding whether to allow a delete needs; the rest is so it can word the refusal.
+         */
+        in_use?: boolean;
+        /**
+         * The first 20 of them, so a refusal can name names instead of a number.
+         */
+        samples?: object[];
+    }
+
+    /**
      * One value of the payment terms set. When a company has to pay. A wholesaler who agrees net 45 with one customer used to need a release of this app to say so.
      */
     export type PaymentTerm = {
@@ -33214,6 +33255,38 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
     }
 
     /**
+     * No body; send `{}`.
+     */
+    export type ProductDefaultsRequest = {
+    }
+
+    /**
+     * What this run wrote.
+     */
+    export type ProductDefaultsResult = {
+        /**
+         * Attributes this run put into the family.
+         */
+        assigned?: number;
+        /**
+         * Codes of the attributes this run created.
+         */
+        attributes?: string[];
+        /**
+         * The family code when this run created the family, else null.
+         */
+        family?: string | null;
+        /**
+         * Why nothing was written: `not_empty` — the tenant has attributes or families of its own; `already_seeded` — the base model is already complete. Absent when something was written.
+         */
+        reason?: ProductDefaultsResultReason;
+        /**
+         * True when this run wrote anything.
+         */
+        seeded?: boolean;
+    }
+
+    /**
      * Name the family either way — `family_id` wins when both are sent. The family has to exist already; this route assigns one, it does not create one.
      */
     export type ProductFamilyAssignRequest = {
@@ -33403,6 +33476,32 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * 
          */
         product_id?: string;
+    }
+
+    /**
+     * What in this app still points at a market tax class, by code.
+     */
+    export type ProductTaxClassUsage = {
+        /**
+         * The tax-class code that was asked about, echoed back.
+         */
+        code?: string;
+        /**
+         * How many products name this code as their tax_class — in the market of the request when it carries one (its own products plus the unassigned ones), else across the tenant. Trashed products included. Capped at 1000.
+         */
+        count?: number;
+        /**
+         * True when at least one product names it. The single field a caller deciding whether to allow a delete needs; the rest is so it can word the refusal.
+         */
+        in_use?: boolean;
+        /**
+         * The first 20 of them by SKU, so a refusal can name names instead of a number.
+         */
+        samples?: object[];
+        /**
+         * How many of the counted products are in the trash.
+         */
+        trashed?: number;
     }
 
     /**
@@ -36124,6 +36223,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
         /**
          * 
          */
+        detail?: string | null;
+        /**
+         * 
+         */
+        detail_context?: string | null;
+        /**
+         * 
+         */
         id?: string;
         /**
          * 
@@ -36221,6 +36328,10 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          * 
          */
         protocol?: PunchoutEntryTestResultProtocol;
+        /**
+         * Why the call was refused, as the refusal list records it — the half the protocol answer never says. Null when it was let in.
+         */
+        refusal?: object | null;
         /**
          * The call that was made, with its credentials redacted — the half an operator compares against what their customer's system sends.
          */
@@ -39149,6 +39260,14 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         announced?: object[];
         /**
+         * Approved PRs whose Order orders still holds for its own approval; they wait and are not failures (RAD-230).
+         */
+        awaiting_order?: string[];
+        /**
+         * Approved PRs cancelled because orders called their Order off before it was placed; their reservation is released (RAD-230).
+         */
+        cancelled?: string[];
+        /**
          * Direct orders whose budget commit was completed (RAD-100).
          */
         committed?: string[];
@@ -40659,11 +40778,15 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         idempotent?: boolean;
         /**
-         * The placed Order once approved→ordered completed.
+         * The placed Order once approved→ordered completed, or the Order as orders left it.
          */
         order?: object | null;
         /**
-         * PR is approved but Order creation must still be retried (orders unavailable).
+         * Why the PR is not ordered yet, when order_pending is true; null while orders holds the Order for its own approval.
+         */
+        order_error?: string | null;
+        /**
+         * PR is approved but not ordered: Order creation must still be retried (orders unavailable), or orders holds the Order for its own approval and the PR waits for it to be placed (RAD-230).
          */
         order_pending?: boolean;
         /**
@@ -41973,6 +42096,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * What this run created, by name, per section.
          */
         added?: object;
+        /**
+         * False when the run stopped starting pages because its time budget was spent; `deferred` names those pages. Everything else the body carried was still seeded. A second call in `fill` mode with the same body writes the deferred pages and keeps the rest.
+         */
+        complete?: boolean;
+        /**
+         * What this run left for a follow-up fill because its time budget was spent, per section. Only pages are ever deferred.
+         */
+        deferred?: object;
         /**
          * What this run left as it was because the tenant already had it, by name, per section. An entry skipped for a missing field is not here — it is in that section's `skipped` with its reason.
          */
@@ -43596,6 +43727,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         code?: string;
         /**
+         * How many methods name this code as their own tax_class — in the market of the request when it carries one (its own methods plus the unassigned ones), else across the tenant. Capped at 500 — a tenant with more shipping methods than that has a bigger problem than an imprecise count. The field name every app answering this question shares; equal to `shipping_methods`.
+         */
+        count?: number;
+        /**
          * True when this market's shipping_tax_class setting names the code — the class every method that names none falls back to.
          */
         fallback_setting?: boolean;
@@ -43604,11 +43739,15 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         in_use?: boolean;
         /**
-         * The first 20 of them, so a refusal can name names instead of a number.
+         * Same as `samples`, kept for existing callers.
          */
         methods?: object[];
         /**
-         * How many methods name this code as their own tax_class. Capped at 500 — a tenant with more shipping methods than that has a bigger problem than an imprecise count.
+         * The first 20 of them, so a refusal can name names instead of a number. Equal to `methods`.
+         */
+        samples?: object[];
+        /**
+         * Same as `count`, kept for existing callers.
          */
         shipping_methods?: number;
     }
@@ -44742,6 +44881,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         order?: object | null;
         /**
+         * When order_pending is true: null while orders holds the Order for approval, or why its status could not be read as placed.
+         */
+        order_error?: string | null;
+        /**
+         * True when orders accepted the Order of a direct outcome but holds it for its own approval (status pending): it is not placed yet. The budget is still committed; a rejection in orders gives it back as a cancellation does (RAD-230). Absent otherwise.
+         */
+        order_pending?: boolean;
+        /**
          * 
          */
         outcome?: SubmitCartResultOutcome;
@@ -44943,6 +45090,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * The placed Order (direct outcome).
          */
         order?: object | null;
+        /**
+         * When order_pending is true: null while orders holds the Order for approval, or why its status could not be read as placed.
+         */
+        order_error?: string | null;
+        /**
+         * True when orders accepted the Order of a direct outcome but holds it for its own approval (status pending): it is not placed yet. The budget is still committed; a rejection in orders gives it back as a cancellation does (RAD-230). Absent otherwise.
+         */
+        order_pending?: boolean;
         /**
          * 
          */
@@ -46471,7 +46626,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
     }
 
     /**
-     * Buyer identity + per-line context. Restrictions are open-by-default, AND across dimensions, OR within one.
+     * Buyer identity + per-line context. Restrictions are open-by-default, AND across dimensions, OR within one. Only the named organisation's centres are offered (RAD-93).
      */
     export type UsableRequest = {
         /**
@@ -46485,7 +46640,7 @@ Which attributes a record of this entity has comes from `attributes` rows with `
         /**
          * 
          */
-        organization_id?: string | null;
+        organization_id: string;
         /**
          * Code of the punchout account the request is made in. Omit outside a punchout session: a cost centre restricted with mode 'only' is then out of reach, and one restricted with 'except' is offered. A value that is not a non-empty string is refused with 400.
          */

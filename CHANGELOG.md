@@ -1,3 +1,6 @@
+## v0.6.0
+- Breaking: costCentersCostCentersCreate now requires organizationId, and it moved ahead of the optional parameters (positional callers must update); Search and model signatures changed; the Collection enum was removed. Regenerated from the latest API specification.
+
 ## v0.5.0
 - Required + nullable parameters are now required and typed T | null (fixes the 0.4.0 build); includes ordersApprove / ordersReject.
 

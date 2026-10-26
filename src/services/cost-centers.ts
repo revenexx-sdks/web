@@ -1262,6 +1262,7 @@ export class CostCenters {
      *
      * @param {string} params.code - 
      * @param {string} params.name - 
+     * @param {string} params.organizationId - 
      * @param {string} params.accountableContactId - 
      * @param {boolean} params.active - 
      * @param {BudgetType} params.budgetType - 
@@ -1269,17 +1270,17 @@ export class CostCenters {
      * @param {string} params.externalId - The key this cost centre has in the system that OWNS it — the dimension value an ERP books against, which is rarely the `code` a controller types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a centre opened in the Cockpit carries none and never will.
      * @param {object} params.externalRefs - Every OTHER system that knows this cost centre, keyed by system name — a second ERP, the procurement platform a punchout session comes from, the shop this tenant migrated off. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: the store compares such a field as a WHOLE document, so a filter over part of one is refused. Look the centre up by `external_id` and read this off the answer.
      * @param {object} params.metadata - 
-     * @param {string} params.organizationId - 
      * @param {object} params.sourceData - What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
      * @param {string} params.sourceSyncedAt - When this cost centre was last confirmed against its source. A delta run asks the source for what changed since it, and a controller reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what the ERP has stopped delivering.
      * @throws {RevenexxException}
      * @returns {Promise<Models.CostCenter>}
      */
-    costCentersCostCentersCreate(params: { code: string, name: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.CostCenter>;
+    costCentersCostCentersCreate(params: { code: string, name: string, organizationId: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string }): Promise<Models.CostCenter>;
     /**
      *
      * @param {string} code - 
      * @param {string} name - 
+     * @param {string} organizationId - 
      * @param {string} accountableContactId - 
      * @param {boolean} active - 
      * @param {BudgetType} budgetType - 
@@ -1287,34 +1288,33 @@ export class CostCenters {
      * @param {string} externalId - The key this cost centre has in the system that OWNS it — the dimension value an ERP books against, which is rarely the `code` a controller types here. Unique per tenant where it is set, so a repeated import upserts on it instead of matching on a name; a centre opened in the Cockpit carries none and never will.
      * @param {object} externalRefs - Every OTHER system that knows this cost centre, keyed by system name — a second ERP, the procurement platform a punchout session comes from, the shop this tenant migrated off. `external_id` names the leading system; this is the rest, and the next one costs no column. Answered on read and carrying no query parameter: the store compares such a field as a WHOLE document, so a filter over part of one is refused. Look the centre up by `external_id` and read this off the answer.
      * @param {object} metadata - 
-     * @param {string} organizationId - 
      * @param {object} sourceData - What the source said about this cost centre, kept as it said it: `{"system": …, "etag": …, "raw": {…}}`. The `etag` is what a write-back has to send back in `If-Match`, and there is nowhere else to keep it between two runs. `raw` holds the source fields this app does not model — a responsible department, an account range — so an edit here does not silently throw them away.
      * @param {string} sourceSyncedAt - When this cost centre was last confirmed against its source. A delta run asks the source for what changed since it, and a controller reads it to see that a feed has gone quiet. An edit made HERE does not touch it — it records when the source was last seen, not when the row changed — so a stale value beside a fresh `updated_at` means somebody is maintaining by hand what the ERP has stopped delivering.
      * @throws {RevenexxException}
      * @returns {Promise<Models.CostCenter>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    costCentersCostCentersCreate(code: string, name: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, sourceData?: object, sourceSyncedAt?: string): Promise<Models.CostCenter>;
+    costCentersCostCentersCreate(code: string, name: string, organizationId: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string): Promise<Models.CostCenter>;
     costCentersCostCentersCreate(
-        paramsOrFirst: { code: string, name: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, sourceData?: object, sourceSyncedAt?: string } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (BudgetType)?, (string)?, (string)?, (object)?, (object)?, (string)?, (object)?, (string)?]    
+        paramsOrFirst: { code: string, name: string, organizationId: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?, (boolean)?, (BudgetType)?, (string)?, (string)?, (object)?, (object)?, (object)?, (string)?]    
     ): Promise<Models.CostCenter> {
-        let params: { code: string, name: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, sourceData?: object, sourceSyncedAt?: string };
+        let params: { code: string, name: string, organizationId: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { code: string, name: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, organizationId?: string, sourceData?: object, sourceSyncedAt?: string };
+            params = (paramsOrFirst || {}) as { code: string, name: string, organizationId: string, accountableContactId?: string, active?: boolean, budgetType?: BudgetType, currency?: string, externalId?: string, externalRefs?: object, metadata?: object, sourceData?: object, sourceSyncedAt?: string };
         } else {
             params = {
                 code: paramsOrFirst as string,
                 name: rest[0] as string,
-                accountableContactId: rest[1] as string,
-                active: rest[2] as boolean,
-                budgetType: rest[3] as BudgetType,
-                currency: rest[4] as string,
-                externalId: rest[5] as string,
-                externalRefs: rest[6] as object,
-                metadata: rest[7] as object,
-                organizationId: rest[8] as string,
+                organizationId: rest[1] as string,
+                accountableContactId: rest[2] as string,
+                active: rest[3] as boolean,
+                budgetType: rest[4] as BudgetType,
+                currency: rest[5] as string,
+                externalId: rest[6] as string,
+                externalRefs: rest[7] as object,
+                metadata: rest[8] as object,
                 sourceData: rest[9] as object,
                 sourceSyncedAt: rest[10] as string            
             };
@@ -1322,6 +1322,7 @@ export class CostCenters {
         
         const code = params.code;
         const name = params.name;
+        const organizationId = params.organizationId;
         const accountableContactId = params.accountableContactId;
         const active = params.active;
         const budgetType = params.budgetType;
@@ -1329,7 +1330,6 @@ export class CostCenters {
         const externalId = params.externalId;
         const externalRefs = params.externalRefs;
         const metadata = params.metadata;
-        const organizationId = params.organizationId;
         const sourceData = params.sourceData;
         const sourceSyncedAt = params.sourceSyncedAt;
 
@@ -1338,6 +1338,9 @@ export class CostCenters {
         }
         if (typeof name === 'undefined') {
             throw new RevenexxException('Missing required parameter: "name"');
+        }
+        if (typeof organizationId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "organizationId"');
         }
 
         const apiPath = '/v1/cost-centers/cost-centers';
@@ -2450,52 +2453,55 @@ export class CostCenters {
     /**
      *
      * @param {object[]} params.lines - 
-     * @param {string} params.contactId - 
      * @param {string} params.organizationId - 
+     * @param {string} params.contactId - 
      * @param {string} params.punchoutAccountCode - Code of the punchout account the request is made in. Omit outside a punchout session: a cost centre restricted with mode 'only' is then out of reach, and one restricted with 'except' is offered. A value that is not a non-empty string is refused with 400.
      * @param {string[]} params.roles - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.UsableResult>}
      */
-    costCentersUsable(params: { lines: object[], contactId?: string, organizationId?: string, punchoutAccountCode?: string, roles?: string[] }): Promise<Models.UsableResult>;
+    costCentersUsable(params: { lines: object[], organizationId: string, contactId?: string, punchoutAccountCode?: string, roles?: string[] }): Promise<Models.UsableResult>;
     /**
      *
      * @param {object[]} lines - 
-     * @param {string} contactId - 
      * @param {string} organizationId - 
+     * @param {string} contactId - 
      * @param {string} punchoutAccountCode - Code of the punchout account the request is made in. Omit outside a punchout session: a cost centre restricted with mode 'only' is then out of reach, and one restricted with 'except' is offered. A value that is not a non-empty string is refused with 400.
      * @param {string[]} roles - 
      * @throws {RevenexxException}
      * @returns {Promise<Models.UsableResult>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    costCentersUsable(lines: object[], contactId?: string, organizationId?: string, punchoutAccountCode?: string, roles?: string[]): Promise<Models.UsableResult>;
+    costCentersUsable(lines: object[], organizationId: string, contactId?: string, punchoutAccountCode?: string, roles?: string[]): Promise<Models.UsableResult>;
     costCentersUsable(
-        paramsOrFirst: { lines: object[], contactId?: string, organizationId?: string, punchoutAccountCode?: string, roles?: string[] } | object[],
+        paramsOrFirst: { lines: object[], organizationId: string, contactId?: string, punchoutAccountCode?: string, roles?: string[] } | object[],
         ...rest: [(string)?, (string)?, (string)?, (string[])?]    
     ): Promise<Models.UsableResult> {
-        let params: { lines: object[], contactId?: string, organizationId?: string, punchoutAccountCode?: string, roles?: string[] };
+        let params: { lines: object[], organizationId: string, contactId?: string, punchoutAccountCode?: string, roles?: string[] };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('lines' in paramsOrFirst || 'contactId' in paramsOrFirst || 'organizationId' in paramsOrFirst || 'punchoutAccountCode' in paramsOrFirst || 'roles' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { lines: object[], contactId?: string, organizationId?: string, punchoutAccountCode?: string, roles?: string[] };
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('lines' in paramsOrFirst || 'organizationId' in paramsOrFirst || 'contactId' in paramsOrFirst || 'punchoutAccountCode' in paramsOrFirst || 'roles' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { lines: object[], organizationId: string, contactId?: string, punchoutAccountCode?: string, roles?: string[] };
         } else {
             params = {
                 lines: paramsOrFirst as object[],
-                contactId: rest[0] as string,
-                organizationId: rest[1] as string,
+                organizationId: rest[0] as string,
+                contactId: rest[1] as string,
                 punchoutAccountCode: rest[2] as string,
                 roles: rest[3] as string[]            
             };
         }
         
         const lines = params.lines;
-        const contactId = params.contactId;
         const organizationId = params.organizationId;
+        const contactId = params.contactId;
         const punchoutAccountCode = params.punchoutAccountCode;
         const roles = params.roles;
 
         if (typeof lines === 'undefined') {
             throw new RevenexxException('Missing required parameter: "lines"');
+        }
+        if (typeof organizationId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "organizationId"');
         }
 
         const apiPath = '/v1/cost-centers/usable';
