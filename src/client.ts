@@ -89,7 +89,7 @@ type RealtimeRequest = {
 /**
  * Realtime event response structure with generic payload type.
  */
-type RealtimeResponseEvent<T extends unknown> = {
+type RealtimeResponseEvent<T> = {
     /**
      * List of event names associated with the response.
      */
@@ -389,7 +389,7 @@ class Client {
         'x-sdk-name': 'Revenexx Web',
         'x-sdk-platform': '',
         'x-sdk-language': 'web',
-        'x-sdk-version': '0.6.0',
+        'x-sdk-version': '0.6.1',
     };
 
     /**
@@ -683,7 +683,7 @@ class Client {
         cleanUp: (channels, queries) => {
             this.realtime.channels.forEach(channel => {
                 if (channels.includes(channel)) {
-                    let found = Array.from(this.realtime.subscriptions).some(([_key, subscription] )=> {
+                    const found = Array.from(this.realtime.subscriptions).some(([_key, subscription] )=> {
                         return subscription.channels.includes(channel);
                     })
 
@@ -695,7 +695,7 @@ class Client {
 
             this.realtime.queries.forEach(query => {
                 if (queries.includes(query)) {
-                    let found = Array.from(this.realtime.subscriptions).some(([_key, subscription]) => {
+                    const found = Array.from(this.realtime.subscriptions).some(([_key, subscription]) => {
                         return subscription.queries?.includes(query);
                     });
 
@@ -726,7 +726,7 @@ class Client {
      * @param {(payload: RealtimeMessage) => void} callback Is called on every realtime update.
      * @returns {() => void} Unsubscribes from events.
      */
-    subscribe<T extends unknown>(
+    subscribe<T>(
         channels: string | string[] | Channel<any> | ActionableChannel | ResolvedChannel | (Channel<any> | ActionableChannel | ResolvedChannel)[],
         callback: (payload: RealtimeResponseEvent<T>) => void,
         queries: (string | Query)[] = []
@@ -770,7 +770,7 @@ class Client {
 
         headers = Object.assign({}, this.headers, headers);
 
-        let options: RequestInit = {
+        const options: RequestInit = {
             method,
             headers,
         };
@@ -787,7 +787,7 @@ class Client {
                     options.body = JSONbig.stringify(params);
                     break;
 
-                case 'multipart/form-data':
+                case 'multipart/form-data': {
                     const formData = new FormData();
 
                     for (const [key, value] of Object.entries(params)) {
@@ -805,6 +805,7 @@ class Client {
                     options.body = formData;
                     delete headers['content-type'];
                     break;
+                }
             }
         }
 
@@ -922,7 +923,7 @@ class Client {
         let output: Payload = {};
 
         for (const [key, value] of Object.entries(data)) {
-            let finalKey = prefix ? prefix + '[' + key +']' : key;
+            const finalKey = prefix ? prefix + '[' + key +']' : key;
             if (Array.isArray(value)) {
                 output = { ...output, ...Client.flatten(value, finalKey) };
             } else {

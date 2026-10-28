@@ -1,4 +1,7 @@
 [
+    ".github/dependabot.yml",
+    ".github/rulesets/main.json",
+    ".github/workflows/ci.yml",
     ".github/workflows/publish.yml",
     ".gitignore",
     "CHANGELOG.md",
@@ -1413,6 +1416,7 @@
     "docs/examples/tag-manager.tags/tag-manager-variables-update.md",
     "docs/examples/tag-manager.tags/tag-manager-vocabularies-list.md",
     "docs/index.md",
+    "eslint.config.mjs",
     "mkdocs.yml",
     "package.json",
     "rollup.config.js",

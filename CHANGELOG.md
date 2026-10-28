@@ -1,3 +1,6 @@
+## v0.6.1
+- CI checks on every pull request, publish behind the checks, Dependabot security updates and a committed branch ruleset
+
 ## v0.6.0
 - Breaking: costCentersCostCentersCreate now requires organizationId, and it moved ahead of the optional parameters (positional callers must update); Search and model signatures changed; the Collection enum was removed. Regenerated from the latest API specification.
 

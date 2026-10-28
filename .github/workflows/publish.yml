@@ -10,7 +10,14 @@ permissions:
   contents: read
 
 jobs:
+  # The gate in front of the publish: the same checks a pull request runs
+  # (ci.yml), in this run. A release that does not build or type-check never
+  # reaches npm.
+  check:
+    uses: ./.github/workflows/ci.yml
+
   publish:
+    needs: check
     runs-on: ubuntu-latest
 
     steps:
@@ -34,9 +41,10 @@ jobs:
           echo "tag=latest" >> "$GITHUB_OUTPUT"
         fi
 
+    # From the lockfile the gate checked, so what is published is what passed.
     - name: Install dependencies and build
       run: |
-        npm install
+        npm ci
         npm run build
 
     - name: Publish
