@@ -31,7 +31,7 @@ export class CartsItems {
      * @param {number} params.limit - Page size (default 50, max 200).
      * @param {number} params.offset - Row offset for pagination (default 0).
      * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
-     * @param {string} params.sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} params.sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
@@ -56,7 +56,7 @@ export class CartsItems {
      * @param {number} limit - Page size (default 50, max 200).
      * @param {number} offset - Row offset for pagination (default 0).
      * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending. Anything else is refused with 400.
-     * @param {string} sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -186,7 +186,7 @@ export class CartsItems {
      * Adds one line to an ACTIVE cart — the add-to-basket call. `name` or `sku` is required (a line sent with only a SKU takes the SKU as its name, so a line always has something to show) and `quantity` must be greater than zero; everything else defaults. The line is priced in the CART's currency and stores none of its own, so a `currency` in the payload may only repeat the cart's — a different one is a 409. The one thing that surprises a caller: a plain product line with the same product/sku AND the same `unit_price` as a line already in the cart does not open a second row — its quantity is added to that line, and the 201 names a row that already existed. Price is part of that identity on purpose, so a changed price never averages into an old line. A configured or custom line always stands alone. The cart's `item_count` (the sum of QUANTITIES) and `subtotal` are recomputed before the answer, and `max_items_per_cart` / `max_quantity_per_line` are checked on the RESULT of the merge (422), so ten calls of one piece cannot walk past a limit one call of ten would hit.
      *
      * @param {string} params.cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
-     * @param {string} params.sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} params.sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @param {object} params.configuration - What was configured on this line, in the configurator's own vocabulary — this app stores it and reads nothing out of it. Its mere PRESENCE is behaviour: a line that carries a configuration never merges with another, because two differently configured units of the same article are not one line. Keys are the configurator's; the example is one shape, not the shape.
      * @param {string} params.currency - Optional, and it cannot change anything: a line is read in its CART's currency and stores none of its own. Sending the cart's code (or nothing) is accepted — which is what makes an exported line re-importable — and sending a different one answers 409 `currency_mismatch` rather than being converted or quietly stored.
      * @param {object} params.metadata - Free-form data the storefront hangs on the line. Stored and returned verbatim; no key in here is read by this app.
@@ -208,7 +208,7 @@ export class CartsItems {
      * Adds one line to an ACTIVE cart — the add-to-basket call. `name` or `sku` is required (a line sent with only a SKU takes the SKU as its name, so a line always has something to show) and `quantity` must be greater than zero; everything else defaults. The line is priced in the CART's currency and stores none of its own, so a `currency` in the payload may only repeat the cart's — a different one is a 409. The one thing that surprises a caller: a plain product line with the same product/sku AND the same `unit_price` as a line already in the cart does not open a second row — its quantity is added to that line, and the 201 names a row that already existed. Price is part of that identity on purpose, so a changed price never averages into an old line. A configured or custom line always stands alone. The cart's `item_count` (the sum of QUANTITIES) and `subtotal` are recomputed before the answer, and `max_items_per_cart` / `max_quantity_per_line` are checked on the RESULT of the merge (422), so ten calls of one piece cannot walk past a limit one call of ten would hit.
      *
      * @param {string} cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
-     * @param {string} sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @param {object} configuration - What was configured on this line, in the configurator's own vocabulary — this app stores it and reads nothing out of it. Its mere PRESENCE is behaviour: a line that carries a configuration never merges with another, because two differently configured units of the same article are not one line. Keys are the configurator's; the example is one shape, not the shape.
      * @param {string} currency - Optional, and it cannot change anything: a line is read in its CART's currency and stores none of its own. Sending the cart's code (or nothing) is accepted — which is what makes an exported line re-importable — and sending a different one answers 409 `currency_mismatch` rather than being converted or quietly stored.
      * @param {object} metadata - Free-form data the storefront hangs on the line. Stored and returned verbatim; no key in here is read by this app.
@@ -338,7 +338,7 @@ export class CartsItems {
      *
      * @param {string} params.cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
      * @param {Models.CartItemCreateRequest[]} params.items - The complete new item set (set semantics).
-     * @param {string} params.sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} params.sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
@@ -348,7 +348,7 @@ export class CartsItems {
      *
      * @param {string} cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
      * @param {Models.CartItemCreateRequest[]} items - The complete new item set (set semantics).
-     * @param {string} sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -407,7 +407,7 @@ export class CartsItems {
      * The operator's add-to-basket. The caller names an article and a quantity; the line is written with the article's name and SKU from the products catalogue and the price the prices app resolves for THIS cart's buyer — contact, organization, currency and market (the request's market, else the cart's own) — so a cart filled in a customer's name carries the prices that customer sees in the shop. This app still sets no price: it asks, exactly as a storefront asks before it adds. An agreed price may be stated as `unit_price`; the snapshot then keeps the resolved price beside it. From there the line goes the way every add goes — an identical product line at the same price folds into the existing one, the line limits apply and the totals are recomputed. It fails closed: an article prices cannot price for this buyer answers 422 `no_price` unless an agreed price was sent, and a tax rate that cannot be resolved is a refusal, never a line at 0 %. A request acting for a contact is refused with 403.
      *
      * @param {string} params.cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
-     * @param {string} params.sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} params.sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @param {string} params.productId - The catalogue product. Send this or `sku`.
      * @param {number} params.quantity - How much of it — default 1. It is also the quantity the price is resolved for, so a tier price applies.
      * @param {string} params.sku - The article number, when no product id is at hand. Resolved against the products catalogue.
@@ -421,7 +421,7 @@ export class CartsItems {
      * The operator's add-to-basket. The caller names an article and a quantity; the line is written with the article's name and SKU from the products catalogue and the price the prices app resolves for THIS cart's buyer — contact, organization, currency and market (the request's market, else the cart's own) — so a cart filled in a customer's name carries the prices that customer sees in the shop. This app still sets no price: it asks, exactly as a storefront asks before it adds. An agreed price may be stated as `unit_price`; the snapshot then keeps the resolved price beside it. From there the line goes the way every add goes — an identical product line at the same price folds into the existing one, the line limits apply and the totals are recomputed. It fails closed: an article prices cannot price for this buyer answers 422 `no_price` unless an agreed price was sent, and a tax rate that cannot be resolved is a refusal, never a line at 0 %. A request acting for a contact is refused with 403.
      *
      * @param {string} cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
-     * @param {string} sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @param {string} productId - The catalogue product. Send this or `sku`.
      * @param {number} quantity - How much of it — default 1. It is also the quantity the price is resolved for, so a tier price applies.
      * @param {string} sku - The article number, when no product id is at hand. Resolved against the products catalogue.
@@ -503,7 +503,7 @@ export class CartsItems {
      *
      * @param {string} params.cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
      * @param {string} params.id - The line, by its id. The cart in the path is checked too: a line that belongs to a different cart answers 404, so an id guessed from another cart never resolves here.
-     * @param {string} params.sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} params.sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      */
@@ -513,7 +513,7 @@ export class CartsItems {
      *
      * @param {string} cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
      * @param {string} id - The line, by its id. The cart in the path is checked too: a line that belongs to a different cart answers 404, so an id guessed from another cart never resolves here.
-     * @param {string} sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @throws {RevenexxException}
      * @returns {Promise<{}>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -569,7 +569,7 @@ export class CartsItems {
      *
      * @param {string} params.cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
      * @param {string} params.id - The line, by its id. The cart in the path is checked too: a line that belongs to a different cart answers 404, so an id guessed from another cart never resolves here.
-     * @param {string} params.sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} params.sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @throws {RevenexxException}
      * @returns {Promise<Models.CartItem>}
      */
@@ -579,7 +579,7 @@ export class CartsItems {
      *
      * @param {string} cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
      * @param {string} id - The line, by its id. The cart in the path is checked too: a line that belongs to a different cart answers 404, so an id guessed from another cart never resolves here.
-     * @param {string} sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @throws {RevenexxException}
      * @returns {Promise<Models.CartItem>}
      * @deprecated Use the object parameter style method for a better developer experience.
@@ -635,7 +635,7 @@ export class CartsItems {
      *
      * @param {string} params.cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
      * @param {string} params.id - The line, by its id. The cart in the path is checked too: a line that belongs to a different cart answers 404, so an id guessed from another cart never resolves here.
-     * @param {string} params.sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} params.sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @param {object} params.configuration - What was configured on this line, in the configurator's own vocabulary — this app stores it and reads nothing out of it. Its mere PRESENCE is behaviour: a line that carries a configuration never merges with another, because two differently configured units of the same article are not one line. Keys are the configurator's; the example is one shape, not the shape.
      * @param {string} params.currency - Optional, and it cannot change anything: a line is read in its CART's currency and stores none of its own. Sending the cart's code (or nothing) is accepted — which is what makes an exported line re-importable — and sending a different one answers 409 `currency_mismatch` rather than being converted or quietly stored.
      * @param {object} params.metadata - Free-form data the storefront hangs on the line. Stored and returned verbatim; no key in here is read by this app.
@@ -658,7 +658,7 @@ export class CartsItems {
      *
      * @param {string} cartId - The cart the line belongs to, by its id. An id no cart in this tenant has answers 404 rather than an empty list, so a wrong cart is never mistaken for an empty one.
      * @param {string} id - The line, by its id. The cart in the path is checked too: a line that belongs to a different cart answers 404, so an id guessed from another cart never resolves here.
-     * @param {string} sessionKey - The session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Accepted and not yet checked; from 3.0.0 on, a call acting for a contact reaches such a cart only with it.
+     * @param {string} sessionKey - For a call acting for a contact: the session key of a cart owned by no contact — a guest's, or a punchout visit's pSid. Such a cart answers 404 to a buyer who does not present its key. A contact's cart is never reached by a key. Ignored on a call acting for no contact.
      * @param {object} configuration - What was configured on this line, in the configurator's own vocabulary — this app stores it and reads nothing out of it. Its mere PRESENCE is behaviour: a line that carries a configuration never merges with another, because two differently configured units of the same article are not one line. Keys are the configurator's; the example is one shape, not the shape.
      * @param {string} currency - Optional, and it cannot change anything: a line is read in its CART's currency and stores none of its own. Sending the cart's code (or nothing) is accepted — which is what makes an exported line re-importable — and sending a different one answers 409 `currency_mismatch` rather than being converted or quietly stored.
      * @param {object} metadata - Free-form data the storefront hangs on the line. Stored and returned verbatim; no key in here is read by this app.

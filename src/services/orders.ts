@@ -7,6 +7,8 @@ import { OrderPaymentStatus } from '../enums/order-payment-status';
 import { OrderFulfillmentStatus } from '../enums/order-fulfillment-status';
 import { OrderCancellationKind } from '../enums/order-cancellation-kind';
 import { OrderVocabularyTone } from '../enums/order-vocabulary-tone';
+import { OrderReturnStatus } from '../enums/order-return-status';
+import { OrderReturnRefundMode } from '../enums/order-return-refund-mode';
 import { OrdersVocabulariesGetName } from '../enums/orders-vocabularies-get-name';
 import { OrderCommentVisibility } from '../enums/order-comment-visibility';
 import { OrderReturnSettlement } from '../enums/order-return-settlement';
@@ -991,7 +993,7 @@ export class Orders {
      * @param {string} params.customerOrderNumber - The BUYER's own reference — their purchase-order number. Free text, not unique, never generated here: it exists so the paperwork can carry the number the buyer's accounts payable will look for. One of the few fields PUT /orders/{id} may still change.
      * @param {string} params.externalId - The key this order has in the system that OWNS it — the ERP's own handle on the sales order, which is what a write-back addresses. Distinct from `external_ref`, which is the readable ORDER NUMBER that system quotes at a human, and from `number`, which is the one this app issued. Unique per tenant where set, so a retried import that sends the same key again is refused rather than founding a second order. Null for an order the shop owns. Sending it a second time is a 409, not a second order: the key is unique per tenant, which is what makes a retried import safe to run. Recover by reading the order back with GET /orders?external_id=… and correcting that one.
      * @param {object} params.externalRefs - Every OTHER system that knows this order, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
-     * @param {number} params.grandTotal - Optional, and CHECKED rather than used: the order always computes its own total from the positions, the shipping cost and the tax. Send it as a checksum on that arithmetic — if it agrees the order is placed, and if it disagrees the call is refused with 400 naming both numbers, yours and the computed one. The comparison is at 2 decimal places (this app stores 4, ERPs work to 2, so a difference below a cent is agreement). It is never taken as the order value: the approval threshold and the revenue rollup read the computed number, which is why a total that disagrees is an error rather than an override.
+     * @param {number} params.grandTotal - Optional, and CHECKED rather than used: the order always computes its own total from the positions, the shipping cost and the tax. Under on_unorderable_position = drop it is the total of the positions that remain. Send it as a checksum on that arithmetic — if it agrees the order is placed, and if it disagrees the call is refused with 400 naming both numbers, yours and the computed one. The comparison is at 2 decimal places (this app stores 4, ERPs work to 2, so a difference below a cent is agreement). It is never taken as the order value: the approval threshold and the revenue rollup read the computed number, which is why a total that disagrees is an error rather than an override.
      * @param {object} params.metadata - Free-form data belonging to the INTEGRATION side — an ERP's own bookkeeping about this order. Stored and returned untouched; nothing here reads it.
      * @param {string} params.organizationId - The COMPANY the order is booked on — an organization in the customers app, and the B2B half of who ordered. This is what orders.reports.customer-rollup aggregates by and what makes an order visible to a buyer's colleagues. Null on a private or guest order, which the rollup counts separately because it cannot attribute it. A principal's own organization wins over this when it has one.
      * @param {object} params.payment - The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'; a buyer's own call may only send 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
@@ -1021,7 +1023,7 @@ export class Orders {
      * @param {string} customerOrderNumber - The BUYER's own reference — their purchase-order number. Free text, not unique, never generated here: it exists so the paperwork can carry the number the buyer's accounts payable will look for. One of the few fields PUT /orders/{id} may still change.
      * @param {string} externalId - The key this order has in the system that OWNS it — the ERP's own handle on the sales order, which is what a write-back addresses. Distinct from `external_ref`, which is the readable ORDER NUMBER that system quotes at a human, and from `number`, which is the one this app issued. Unique per tenant where set, so a retried import that sends the same key again is refused rather than founding a second order. Null for an order the shop owns. Sending it a second time is a 409, not a second order: the key is unique per tenant, which is what makes a retried import safe to run. Recover by reading the order back with GET /orders?external_id=… and correcting that one.
      * @param {object} externalRefs - Every OTHER system that knows this order, keyed by system name — a second ERP, a procurement platform, a portal. `external_id` is the leading system; this is the rest. Not a query parameter: a jsonb column is compared as a whole document, so look the row up by `external_id` and read this off the answer.
-     * @param {number} grandTotal - Optional, and CHECKED rather than used: the order always computes its own total from the positions, the shipping cost and the tax. Send it as a checksum on that arithmetic — if it agrees the order is placed, and if it disagrees the call is refused with 400 naming both numbers, yours and the computed one. The comparison is at 2 decimal places (this app stores 4, ERPs work to 2, so a difference below a cent is agreement). It is never taken as the order value: the approval threshold and the revenue rollup read the computed number, which is why a total that disagrees is an error rather than an override.
+     * @param {number} grandTotal - Optional, and CHECKED rather than used: the order always computes its own total from the positions, the shipping cost and the tax. Under on_unorderable_position = drop it is the total of the positions that remain. Send it as a checksum on that arithmetic — if it agrees the order is placed, and if it disagrees the call is refused with 400 naming both numbers, yours and the computed one. The comparison is at 2 decimal places (this app stores 4, ERPs work to 2, so a difference below a cent is agreement). It is never taken as the order value: the approval threshold and the revenue rollup read the computed number, which is why a total that disagrees is an error rather than an override.
      * @param {object} metadata - Free-form data belonging to the INTEGRATION side — an ERP's own bookkeeping about this order. Stored and returned untouched; nothing here reads it.
      * @param {string} organizationId - The COMPANY the order is booked on — an organization in the customers app, and the B2B half of who ordered. This is what orders.reports.customer-rollup aggregates by and what makes an order visible to a buyer's colleagues. Null on a private or guest order, which the rollup counts separately because it cannot attribute it. A principal's own organization wins over this when it has one.
      * @param {object} payment - The payment arrangement as it was chosen, FROZEN. This app reads exactly two keys and stores the rest untouched: 'status' seeds payment_status at place-time when it names one of the permitted values (anything else is ignored and the order starts 'open'; a buyer's own call may only send 'open'), and 'payment_id' is merged in by POST /orders/{id}/payment-status. The method itself, its provider fields and any redirect state belong to the payments app.
@@ -1442,6 +1444,205 @@ export class Orders {
 
         const apiPath = '/v1/orders/return-reasons/{id}'.replace('{id}', id);
         const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Every return of this tenant, whichever order it belongs to, oldest first — in every state, settled and rejected ones included. The read a nightly sweep makes: settling a return writes the return and the order's positions but never the order row, so an order's `updated_at` does not move and a sweep over orders cannot see it. Ask `?status=completed&completed_at=gte.<last run>&order=completed_at.asc` instead, and each row names its `order_id`, the `positions` that came back, the `resolution`, the `refund_mode` and the `refund_total`. Every timestamp column takes one bound (gt., gte., lt., lte.); every other parameter is an exact match on the column it names, and a key that names no column is 400 unknown_filter. The jsonb columns are not offered: the data plane answers 400 for anything that is not a whole JSON document. A sweep should start its next window a little before its last one ended: `completed_at` is the app's clock at the completion, taken just before the row is written, so a completion can land a moment after a read that already covered its time. Read-only — a return is registered and moved under its own order.
+     *
+     * @param {string} params.id - Filter to rows whose `id` is exactly this value. Primary key of the return. The {rid} segment of the return routes.
+     * @param {string} params.orderId - Filter to rows whose `order_id` is exactly this value. The order the goods are coming back from. A return of another order is a 404 on these routes, not a cross-order write.
+     * @param {string} params.number - Filter to rows whose `number` is exactly this value. The RETURN number — drawn from the tenant's return range, unique per tenant, and a third series alongside orders and delivery notes. What the customer writes on the parcel.
+     * @param {OrderReturnStatus} params.status - Filter to rows whose `status` is exactly this value. Where the return stands: 'registered' = announced, nothing booked; 'received' = the goods are back but not yet settled; 'completed' = settled, and the only transition that books quantity_returned; 'rejected' = refused, nothing booked. The last two are final.
+     * @param {string} params.reasonCode - Filter to rows whose `reason_code` is exactly this value. Why the goods are coming back, as a code out of the set THIS TENANT keeps — GET /orders/return-reasons lists them. This is the field a report groups by; `reason` beside it is the sentence somebody wrote about this one return, and the two are separate because 'Damaged', 'damaged' and 'arrived broken' were one reason counted three times. Null on a return registered without one, which is allowed. There is no foreign key behind it: the registration refuses a code the tenant does not keep, and a code retired afterwards leaves the return carrying it rather than breaking it.
+     * @param {string} params.reason - Filter to rows whose `reason` is exactly this value. Why the goods are coming back, free text as the customer or the desk stated it — the sentence beside the code, not a replacement for it. Also what /reject stores when it is given no resolution out of the published set.
+     * @param {string} params.registeredAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the return was announced. Defaults to now.
+     * @param {string} params.receivedAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the goods physically arrived back. Null until POST …/receive — and null forever on a return that was completed straight out of registered, which is allowed.
+     * @param {string} params.completedAt - Bound it to find what SETTLED in a period: `completed_at=gte.<last run>` is the sweep. One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the return was settled, stamped by the SERVER. Never taken from the body: a client clock records when a client thinks it acted, not when the goods were booked.
+     * @param {string} params.rejectedAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the return was refused. Null unless it was.
+     * @param {string} params.resolution - Filter to rows whose `resolution` is exactly this value. How it ended, in one of the words this app publishes — the settlement words on a completion (refund, partial_refund, replacement, repair, store_credit), the refusal words on a rejection (wear_and_tear, not_returnable); GET /orders/vocabularies/return-resolutions carries both sets with the stage that accepts each. The column carries no database constraint; the ROUTES enforce the set, which is what stopped a client settling returns with a word nobody else knew. On a rejection that named no resolution, the free-text reason is stored here instead — which is the one case a value outside the two sets appears.
+     * @param {OrderReturnRefundMode} params.refundMode - Filter to rows whose `refund_mode` is exactly this value. How the money was decided: 'proportional' — the buyer gets back the share of what THEY paid, discount and all, which is what this app computes; 'recomputed' — the merchant re-decided what the kept goods are worth and sent the figures with the call. The second exists because "buy three pay two" with one piece returned is a judgement about the offer, and that judgement is the promotions app's, not this one's.
+     * @param {number} params.refundTotal - Filter to rows whose `refund_total` is exactly this value. What is owed back, in the order currency. Computed from what the buyer actually paid for the returned quantities — line_total_discounted, not line_total, because refunding a share of the list price on a discounted order hands the buyer money the promotion already took off. This app states the figure; it moves no money.
+     * @param {number} params.discountReturned - Filter to rows whose `discount_returned` is exactly this value. How much of the order's discount went back with these goods, included in refund_total rather than added to it. Stated on its own because an ERP reconciling a promotion's cost needs to know what was given back as well as what was given.
+     * @param {string} params.externalId - Filter to rows whose `external_id` is exactly this value. The key this return case has in the system that owns it — an ERP return order, an RMA portal's case handle. `number` beside it is the return number the customer writes on the parcel; this is what a write-back addresses. Unique per tenant where set. Null for a return registered here.
+     * @param {string} params.sourceSyncedAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When this return was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a return no source owns.
+     * @param {string} params.createdAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the return row was written.
+     * @param {string} params.updatedAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the return last changed — each of its transitions writes it.
+     * @param {string} params.organizationId - Filter to rows whose `organization_id` is exactly this value. The buyer's organization, copied from the order when the return is registered. Null on returns registered before it was recorded.
+     * @param {number} params.limit - Page size (default 50, max 200). A larger value is clamped to 200 rather than refused.
+     * @param {number} params.offset - Row offset for pagination (default 0).
+     * @param {string} params.order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending, the direction is lower case, and the column has to exist — the value reaches the data plane verbatim and anything else is a 400.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    ordersReturnsList(params?: { id?: string, orderId?: string, number?: string, status?: OrderReturnStatus, reasonCode?: string, reason?: string, registeredAt?: string, receivedAt?: string, completedAt?: string, rejectedAt?: string, resolution?: string, refundMode?: OrderReturnRefundMode, refundTotal?: number, discountReturned?: number, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, organizationId?: string, limit?: number, offset?: number, order?: string }): Promise<{}>;
+    /**
+     * Every return of this tenant, whichever order it belongs to, oldest first — in every state, settled and rejected ones included. The read a nightly sweep makes: settling a return writes the return and the order's positions but never the order row, so an order's `updated_at` does not move and a sweep over orders cannot see it. Ask `?status=completed&completed_at=gte.<last run>&order=completed_at.asc` instead, and each row names its `order_id`, the `positions` that came back, the `resolution`, the `refund_mode` and the `refund_total`. Every timestamp column takes one bound (gt., gte., lt., lte.); every other parameter is an exact match on the column it names, and a key that names no column is 400 unknown_filter. The jsonb columns are not offered: the data plane answers 400 for anything that is not a whole JSON document. A sweep should start its next window a little before its last one ended: `completed_at` is the app's clock at the completion, taken just before the row is written, so a completion can land a moment after a read that already covered its time. Read-only — a return is registered and moved under its own order.
+     *
+     * @param {string} id - Filter to rows whose `id` is exactly this value. Primary key of the return. The {rid} segment of the return routes.
+     * @param {string} orderId - Filter to rows whose `order_id` is exactly this value. The order the goods are coming back from. A return of another order is a 404 on these routes, not a cross-order write.
+     * @param {string} number - Filter to rows whose `number` is exactly this value. The RETURN number — drawn from the tenant's return range, unique per tenant, and a third series alongside orders and delivery notes. What the customer writes on the parcel.
+     * @param {OrderReturnStatus} status - Filter to rows whose `status` is exactly this value. Where the return stands: 'registered' = announced, nothing booked; 'received' = the goods are back but not yet settled; 'completed' = settled, and the only transition that books quantity_returned; 'rejected' = refused, nothing booked. The last two are final.
+     * @param {string} reasonCode - Filter to rows whose `reason_code` is exactly this value. Why the goods are coming back, as a code out of the set THIS TENANT keeps — GET /orders/return-reasons lists them. This is the field a report groups by; `reason` beside it is the sentence somebody wrote about this one return, and the two are separate because 'Damaged', 'damaged' and 'arrived broken' were one reason counted three times. Null on a return registered without one, which is allowed. There is no foreign key behind it: the registration refuses a code the tenant does not keep, and a code retired afterwards leaves the return carrying it rather than breaking it.
+     * @param {string} reason - Filter to rows whose `reason` is exactly this value. Why the goods are coming back, free text as the customer or the desk stated it — the sentence beside the code, not a replacement for it. Also what /reject stores when it is given no resolution out of the published set.
+     * @param {string} registeredAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the return was announced. Defaults to now.
+     * @param {string} receivedAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the goods physically arrived back. Null until POST …/receive — and null forever on a return that was completed straight out of registered, which is allowed.
+     * @param {string} completedAt - Bound it to find what SETTLED in a period: `completed_at=gte.<last run>` is the sweep. One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the return was settled, stamped by the SERVER. Never taken from the body: a client clock records when a client thinks it acted, not when the goods were booked.
+     * @param {string} rejectedAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the return was refused. Null unless it was.
+     * @param {string} resolution - Filter to rows whose `resolution` is exactly this value. How it ended, in one of the words this app publishes — the settlement words on a completion (refund, partial_refund, replacement, repair, store_credit), the refusal words on a rejection (wear_and_tear, not_returnable); GET /orders/vocabularies/return-resolutions carries both sets with the stage that accepts each. The column carries no database constraint; the ROUTES enforce the set, which is what stopped a client settling returns with a word nobody else knew. On a rejection that named no resolution, the free-text reason is stored here instead — which is the one case a value outside the two sets appears.
+     * @param {OrderReturnRefundMode} refundMode - Filter to rows whose `refund_mode` is exactly this value. How the money was decided: 'proportional' — the buyer gets back the share of what THEY paid, discount and all, which is what this app computes; 'recomputed' — the merchant re-decided what the kept goods are worth and sent the figures with the call. The second exists because "buy three pay two" with one piece returned is a judgement about the offer, and that judgement is the promotions app's, not this one's.
+     * @param {number} refundTotal - Filter to rows whose `refund_total` is exactly this value. What is owed back, in the order currency. Computed from what the buyer actually paid for the returned quantities — line_total_discounted, not line_total, because refunding a share of the list price on a discounted order hands the buyer money the promotion already took off. This app states the figure; it moves no money.
+     * @param {number} discountReturned - Filter to rows whose `discount_returned` is exactly this value. How much of the order's discount went back with these goods, included in refund_total rather than added to it. Stated on its own because an ERP reconciling a promotion's cost needs to know what was given back as well as what was given.
+     * @param {string} externalId - Filter to rows whose `external_id` is exactly this value. The key this return case has in the system that owns it — an ERP return order, an RMA portal's case handle. `number` beside it is the return number the customer writes on the parcel; this is what a write-back addresses. Unique per tenant where set. Null for a return registered here.
+     * @param {string} sourceSyncedAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When this return was last confirmed against its source. What a delta run asks for changes since, and what tells an operator that a feed has gone quiet — an edit made here does not touch it, because it says when the SOURCE was last seen, not when the row changed. Null for a return no source owns.
+     * @param {string} createdAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the return row was written.
+     * @param {string} updatedAt - One bound in the data plane's own grammar — `gte.2026-10-01T00:00:00Z` (also gt., lt., lte.) — or an exact moment. The bound is an ISO 8601 moment WITH its offset (Z or ±hh:mm), or a calendar day read as UTC midnight; anything else is 400 invalid_value. One bound per column: sending the key twice is 400 invalid_value rather than a window, and an operator on any other column is 400 unsupported_filter_operator. When the return last changed — each of its transitions writes it.
+     * @param {string} organizationId - Filter to rows whose `organization_id` is exactly this value. The buyer's organization, copied from the order when the return is registered. Null on returns registered before it was recorded.
+     * @param {number} limit - Page size (default 50, max 200). A larger value is clamped to 200 rather than refused.
+     * @param {number} offset - Row offset for pagination (default 0).
+     * @param {string} order - Sort by one column: 'column' | 'column.asc' | 'column.desc'. A bare column sorts ascending, the direction is lower case, and the column has to exist — the value reaches the data plane verbatim and anything else is a 400.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    ordersReturnsList(id?: string, orderId?: string, number?: string, status?: OrderReturnStatus, reasonCode?: string, reason?: string, registeredAt?: string, receivedAt?: string, completedAt?: string, rejectedAt?: string, resolution?: string, refundMode?: OrderReturnRefundMode, refundTotal?: number, discountReturned?: number, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, organizationId?: string, limit?: number, offset?: number, order?: string): Promise<{}>;
+    ordersReturnsList(
+        paramsOrFirst?: { id?: string, orderId?: string, number?: string, status?: OrderReturnStatus, reasonCode?: string, reason?: string, registeredAt?: string, receivedAt?: string, completedAt?: string, rejectedAt?: string, resolution?: string, refundMode?: OrderReturnRefundMode, refundTotal?: number, discountReturned?: number, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, organizationId?: string, limit?: number, offset?: number, order?: string } | string,
+        ...rest: [(string)?, (string)?, (OrderReturnStatus)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (string)?, (OrderReturnRefundMode)?, (number)?, (number)?, (string)?, (string)?, (string)?, (string)?, (string)?, (number)?, (number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { id?: string, orderId?: string, number?: string, status?: OrderReturnStatus, reasonCode?: string, reason?: string, registeredAt?: string, receivedAt?: string, completedAt?: string, rejectedAt?: string, resolution?: string, refundMode?: OrderReturnRefundMode, refundTotal?: number, discountReturned?: number, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, organizationId?: string, limit?: number, offset?: number, order?: string };
+        
+        if (!paramsOrFirst || (paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { id?: string, orderId?: string, number?: string, status?: OrderReturnStatus, reasonCode?: string, reason?: string, registeredAt?: string, receivedAt?: string, completedAt?: string, rejectedAt?: string, resolution?: string, refundMode?: OrderReturnRefundMode, refundTotal?: number, discountReturned?: number, externalId?: string, sourceSyncedAt?: string, createdAt?: string, updatedAt?: string, organizationId?: string, limit?: number, offset?: number, order?: string };
+        } else {
+            params = {
+                id: paramsOrFirst as string,
+                orderId: rest[0] as string,
+                number: rest[1] as string,
+                status: rest[2] as OrderReturnStatus,
+                reasonCode: rest[3] as string,
+                reason: rest[4] as string,
+                registeredAt: rest[5] as string,
+                receivedAt: rest[6] as string,
+                completedAt: rest[7] as string,
+                rejectedAt: rest[8] as string,
+                resolution: rest[9] as string,
+                refundMode: rest[10] as OrderReturnRefundMode,
+                refundTotal: rest[11] as number,
+                discountReturned: rest[12] as number,
+                externalId: rest[13] as string,
+                sourceSyncedAt: rest[14] as string,
+                createdAt: rest[15] as string,
+                updatedAt: rest[16] as string,
+                organizationId: rest[17] as string,
+                limit: rest[18] as number,
+                offset: rest[19] as number,
+                order: rest[20] as string            
+            };
+        }
+        
+        const id = params.id;
+        const orderId = params.orderId;
+        const number = params.number;
+        const status = params.status;
+        const reasonCode = params.reasonCode;
+        const reason = params.reason;
+        const registeredAt = params.registeredAt;
+        const receivedAt = params.receivedAt;
+        const completedAt = params.completedAt;
+        const rejectedAt = params.rejectedAt;
+        const resolution = params.resolution;
+        const refundMode = params.refundMode;
+        const refundTotal = params.refundTotal;
+        const discountReturned = params.discountReturned;
+        const externalId = params.externalId;
+        const sourceSyncedAt = params.sourceSyncedAt;
+        const createdAt = params.createdAt;
+        const updatedAt = params.updatedAt;
+        const organizationId = params.organizationId;
+        const limit = params.limit;
+        const offset = params.offset;
+        const order = params.order;
+
+
+        const apiPath = '/v1/orders/returns';
+        const apiPayload: Payload = {};
+        if (typeof id !== 'undefined') {
+            apiPayload['id'] = id;
+        }
+        if (typeof orderId !== 'undefined') {
+            apiPayload['order_id'] = orderId;
+        }
+        if (typeof number !== 'undefined') {
+            apiPayload['number'] = number;
+        }
+        if (typeof status !== 'undefined') {
+            apiPayload['status'] = status;
+        }
+        if (typeof reasonCode !== 'undefined') {
+            apiPayload['reason_code'] = reasonCode;
+        }
+        if (typeof reason !== 'undefined') {
+            apiPayload['reason'] = reason;
+        }
+        if (typeof registeredAt !== 'undefined') {
+            apiPayload['registered_at'] = registeredAt;
+        }
+        if (typeof receivedAt !== 'undefined') {
+            apiPayload['received_at'] = receivedAt;
+        }
+        if (typeof completedAt !== 'undefined') {
+            apiPayload['completed_at'] = completedAt;
+        }
+        if (typeof rejectedAt !== 'undefined') {
+            apiPayload['rejected_at'] = rejectedAt;
+        }
+        if (typeof resolution !== 'undefined') {
+            apiPayload['resolution'] = resolution;
+        }
+        if (typeof refundMode !== 'undefined') {
+            apiPayload['refund_mode'] = refundMode;
+        }
+        if (typeof refundTotal !== 'undefined') {
+            apiPayload['refund_total'] = refundTotal;
+        }
+        if (typeof discountReturned !== 'undefined') {
+            apiPayload['discount_returned'] = discountReturned;
+        }
+        if (typeof externalId !== 'undefined') {
+            apiPayload['external_id'] = externalId;
+        }
+        if (typeof sourceSyncedAt !== 'undefined') {
+            apiPayload['source_synced_at'] = sourceSyncedAt;
+        }
+        if (typeof createdAt !== 'undefined') {
+            apiPayload['created_at'] = createdAt;
+        }
+        if (typeof updatedAt !== 'undefined') {
+            apiPayload['updated_at'] = updatedAt;
+        }
+        if (typeof organizationId !== 'undefined') {
+            apiPayload['organization_id'] = organizationId;
+        }
+        if (typeof limit !== 'undefined') {
+            apiPayload['limit'] = limit;
+        }
+        if (typeof offset !== 'undefined') {
+            apiPayload['offset'] = offset;
+        }
+        if (typeof order !== 'undefined') {
+            apiPayload['order'] = order;
+        }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {

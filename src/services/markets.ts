@@ -280,6 +280,61 @@ export class Markets {
     }
 
     /**
+     * Stores, for this tenant, every setting the app needs STORED rather than merely declared and that the tenant has not stored yet — today `locale_granularity`, which the search service refuses to publish without. The value is the declared default, and a value the tenant already stored is never touched, so the call is idempotent and safe to repeat. The app does the same by itself whenever a market's locales change. Answers what was written, what was already stored, and why nothing was written when nothing was.
+     *
+     * @param {object} params.data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.MarketsStoredDefaults>}
+     */
+    marketsDefaults(params: { data: object }): Promise<Models.MarketsStoredDefaults>;
+    /**
+     * Stores, for this tenant, every setting the app needs STORED rather than merely declared and that the tenant has not stored yet — today `locale_granularity`, which the search service refuses to publish without. The value is the declared default, and a value the tenant already stored is never touched, so the call is idempotent and safe to repeat. The app does the same by itself whenever a market's locales change. Answers what was written, what was already stored, and why nothing was written when nothing was.
+     *
+     * @param {object} data - Request body
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.MarketsStoredDefaults>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    marketsDefaults(data: object): Promise<Models.MarketsStoredDefaults>;
+    marketsDefaults(
+        paramsOrFirst: { data: object } | object    
+    ): Promise<Models.MarketsStoredDefaults> {
+        let params: { data: object };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('data' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { data: object };
+        } else {
+            params = {
+                data: paramsOrFirst as object            
+            };
+        }
+        
+        const data = params.data;
+
+        if (typeof data === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "data"');
+        }
+
+        const apiPath = '/v1/markets/defaults';
+        const apiPayload: Payload = {};
+        if (typeof data !== 'undefined') {
+            Object.assign(apiPayload, data);
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
      * How this tenant keys its translations, resolved for a surface that stands in no market at all. The Cockpit edits a tenant BASELINE when no market is selected, and a baseline value has to be readable by every market — so the locale set answered here is the UNION of every market's locales, each one already resolved to the key it is written under, not one market's list and not a pair of setting names to re-implement. Each entry names the markets that asked for that locale: an editor listing six inputs without saying who needs them invites translations nobody will ever read. Write/read keys follow the same two settings as the per-market answer, so a baseline and a market value can never be keyed differently.
      *
      * @throws {RevenexxException}
@@ -288,6 +343,29 @@ export class Markets {
     marketsLocalePolicy(): Promise<Models.TenantLocalePolicy> {
 
         const apiPath = '/v1/markets/locale-policy';
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * What this app needs once before it is ready, as the checklist the Cockpit's „Einrichtung“ shows: every step of `cockpit.json#setup`, done or not, in the order declared. A step is done when what it names exists — at least one market, one locale, one tax class — or, for the locale policy, when the tenant's settings STORE how locales are maintained (the declared default alone is no answer). A read only: it stores nothing. Not cached: a changed setting reaches no code here.
+     *
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.MarketsSetupState>}
+     */
+    marketsSetup(): Promise<Models.MarketsSetupState> {
+
+        const apiPath = '/v1/markets/setup';
         const apiPayload: Payload = {};
         const uri = new URL(this.client.config.endpoint + apiPath);
 

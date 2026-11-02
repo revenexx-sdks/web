@@ -291,6 +291,8 @@ export { OrderPaymentStatus } from './enums/order-payment-status';
 export { OrderFulfillmentStatus } from './enums/order-fulfillment-status';
 export { OrderCancellationKind } from './enums/order-cancellation-kind';
 export { OrderVocabularyTone } from './enums/order-vocabulary-tone';
+export { OrderReturnStatus } from './enums/order-return-status';
+export { OrderReturnRefundMode } from './enums/order-return-refund-mode';
 export { OrdersVocabulariesGetName } from './enums/orders-vocabularies-get-name';
 export { OrderCommentVisibility } from './enums/order-comment-visibility';
 export { OrderReturnSettlement } from './enums/order-return-settlement';
@@ -653,8 +655,6 @@ export { OrderListVocabularyDefaultTone } from './enums/order-list-vocabulary-de
 export { OrderListVocabularyName } from './enums/order-list-vocabulary-name';
 export { OrderListVocabularySource } from './enums/order-list-vocabulary-source';
 export { OrderListVocabularyTone } from './enums/order-list-vocabulary-tone';
-export { OrderReturnRefundMode } from './enums/order-return-refund-mode';
-export { OrderReturnStatus } from './enums/order-return-status';
 export { OrderShipmentDeliverySource } from './enums/order-shipment-delivery-source';
 export { OrderShipmentDeliveryStatus } from './enums/order-shipment-delivery-status';
 export { OrderVocabularyName } from './enums/order-vocabulary-name';

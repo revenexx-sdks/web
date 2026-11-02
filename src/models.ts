@@ -22894,7 +22894,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         blocking?: string[];
         /**
-         * Every check that ran, passed or failed, in a fixed order: locales, currencies, tax_classes, tax_basis. `blocking` and `warnings` are the failures from this list by id; this is where the reason lives.
+         * Every check that ran, passed or failed, in a fixed order: locales, currencies, tax_classes, ship_from_country, tax_basis. `blocking` and `warnings` are the failures from this list by id; this is where the reason lives.
          */
         checks?: MarketReadinessCheck[];
         /**
@@ -22924,7 +22924,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         detail?: string;
         /**
-         * Which question. 'locales' — is there a language to render in? 'currencies' — is the base currency registered and marked default? 'tax_classes' — is there a rate to tax with? 'tax_basis' — informational, restating whether stored prices are gross or net.
+         * Which question. 'locales' — is there a language to render in? 'currencies' — is the base currency registered and marked default? 'tax_classes' — is there a rate to tax with? 'ship_from_country' — does the market name a confirmed country it ships from? 'tax_basis' — informational, restating whether stored prices are gross or net.
          */
         id?: MarketReadinessCheckId;
         /**
@@ -22964,7 +22964,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         blocking?: string[];
         /**
-         * Every check that ran, passed or failed, in a fixed order: locales, currencies, tax_classes, tax_basis. `blocking` and `warnings` are the failures from this list by id; this is where the reason lives.
+         * Every check that ran, passed or failed, in a fixed order: locales, currencies, tax_classes, ship_from_country, tax_basis. `blocking` and `warnings` are the failures from this list by id; this is where the reason lives.
          */
         checks?: MarketReadinessCheck[];
         /**
@@ -23284,6 +23284,17 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
+     * No payload — send {}.
+     */
+    export type MarketsDefaultsRequest = {
+    }
+
+    export type DefaultMarketsDefaultsRequest = MarketsDefaultsRequest & {
+        [key: string]: any;
+        [__default]: true;
+    };
+
+    /**
      * Where in the result set this answer sits. `limit` and `offset` are the values that were APPLIED, not the ones that were asked for — the data plane clamps rather than refuses, so an out-of-range or unparseable value comes back corrected here instead of as a 400.
      */
     export type MarketsPage = {
@@ -23307,6 +23318,70 @@ are no `created_at` / `updated_at` fields on this resource.
          * Rows matching the filter across ALL pages, ignoring limit and offset — the number to paginate against.
          */
         total?: number;
+    }
+
+    /**
+     * The checklist, step by step, and how many of the required steps are done.
+     */
+    export type MarketsSetupState = {
+        /**
+         * This app.
+         */
+        app?: string;
+        /**
+         * Whether every required step is done.
+         */
+        complete?: boolean;
+        /**
+         * Required steps done.
+         */
+        done?: number;
+        /**
+         * Every step of the checklist, in the order the manifest declares them.
+         */
+        steps?: object[];
+        /**
+         * Required steps.
+         */
+        total?: number;
+    }
+
+    /**
+     * The outcome of storing the defaults.
+     */
+    export type MarketsStoredDefaults = {
+        /**
+         * Whether a write was sent. False when everything was already stored, or the settings could not be read.
+         */
+        attempted?: boolean;
+        /**
+         * Why an attempted write did not happen.
+         */
+        error?: string;
+        /**
+         * Settings the settings service dropped because this app does not declare them.
+         */
+        ignored?: string[];
+        /**
+         * Settings left alone because the tenant had stored them meanwhile.
+         */
+        kept?: string[];
+        /**
+         * Whether the write was accepted. Absent when none was attempted.
+         */
+        ok?: boolean;
+        /**
+         * Why no write was attempted.
+         */
+        reason?: string;
+        /**
+         * HTTP status of the settings service's answer to the write; 0 when it was never asked. Absent when none was attempted.
+         */
+        status?: number;
+        /**
+         * Settings stored by this call.
+         */
+        written?: string[];
     }
 
     /**
@@ -24477,7 +24552,7 @@ are no `created_at` / `updated_at` fields on this resource.
         /**
          * What an invoice has to quote: how the discount fell across the tax rates present, highest rate first. A 10.00 voucher on a cart holding 19 % and 7 % lines is not 10.00 at one rate — it is split in proportion, and that split is what makes the tax on the invoice defensible. Null when nothing was discounted. Derivable from the components and stored anyway, because an invoice must not have to be recomputed years later by code that has moved on.
          */
-        discount_tax_split?: object[];
+        discount_tax_split?: object[] | null;
         /**
          * Every discount a promotion took off this order, summed: the positions' discounts, a head-level voucher distributed across them, a discount placed as its own position, and any reduction of the shipping charge. COMPUTED here from the components the caller evaluated — a caller cannot set it. `subtotal` stays the UNDISCOUNTED sum, so the two together say what was charged and what was given away.
          */
@@ -24991,7 +25066,7 @@ are no `created_at` / `updated_at` fields on this resource.
         /**
          * What an invoice has to quote: how the discount fell across the tax rates present, highest rate first. A 10.00 voucher on a cart holding 19 % and 7 % lines is not 10.00 at one rate — it is split in proportion, and that split is what makes the tax on the invoice defensible. Null when nothing was discounted. Derivable from the components and stored anyway, because an invoice must not have to be recomputed years later by code that has moved on.
          */
-        discount_tax_split?: object[];
+        discount_tax_split?: object[] | null;
         /**
          * Every discount a promotion took off this order, summed: the positions' discounts, a head-level voucher distributed across them, a discount placed as its own position, and any reduction of the shipping charge. COMPUTED here from the components the caller evaluated — a caller cannot set it. `subtotal` stays the UNDISCOUNTED sum, so the two together say what was charged and what was given away.
          */
@@ -25329,7 +25404,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         order_id?: string;
         /**
-         * The machine-readable body, and its shape follows `name`. order.placed / order.requested carry number, grand_total, currency, item_count, cart_id — plus approval_reason (permission | value_threshold) and threshold when the order is waiting for sign-off. order.shipment.created carries shipment_id, number, carrier, tracking_code and the booked positions. order.item.cancelled and order.return.* carry positions and the reason or resolution. order.completed carries via (shipment | payment | manual). order.payment_status.changed carries from, to and payment_id. Nothing validates it: it is what the route that wrote the row put there.
+         * The machine-readable body, and its shape follows `name`. order.placed / order.requested carry number, grand_total, currency, item_count, cart_id — plus approval_reason (permission | value_threshold) and threshold when the order is waiting for sign-off, and dropped ([{ item_index, position, sku, name }]) when positions marked orderable: false were left out under on_unorderable_position = drop. order.shipment.created carries shipment_id, number, carrier, tracking_code and the booked positions. order.item.cancelled and order.return.* carry positions and the reason or resolution. order.completed carries via (shipment | payment | manual). order.payment_status.changed carries from, to and payment_id. Nothing validates it: it is what the route that wrote the row put there.
          */
         payload?: object | null;
     }
@@ -25507,7 +25582,11 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         name?: string | null;
         /**
-         * The line number a human reads, and what the order is sorted by. Numbered in steps of the range's position_step (10, 20, 30) unless the caller set it explicitly — the gap is what lets a line be inserted later without renumbering. Omitted = numbered in steps of the order range's position_step.
+         * Send false for a position that can no longer be ordered — withdrawn, out of stock, its price gone — as the caller's own cart calculation found. The tenant's on_unorderable_position setting decides: 'place' (default) orders it anyway, 'drop' leaves it out and names it in the answer's 'dropped', 'refuse' answers 400. Read, never stored; omitted or true is an ordinary position.
+         */
+        orderable?: boolean | null;
+        /**
+         * The line number a human reads, and what the order is sorted by. Numbered in steps of the range's position_step (10, 20, 30) unless the caller set it explicitly — the gap is what lets a line be inserted later without renumbering. Omitted = numbered in steps of the order range's position_step. One beyond ±2,000,000,000 is a 400 (code 'invalid_position'); one that is not whole is refused as not an integer. A discount placed as a position of its own is numbered after the last position of the request.
          */
         position?: number | null;
         /**
@@ -26701,7 +26780,7 @@ are no `created_at` / `updated_at` fields on this resource.
     }
 
     /**
-     * The snapshot payload: items plus frozen buyer/addresses/payment/shipping. The order number is drawn from the order range, totals are computed from the items.
+     * The snapshot payload: items plus frozen buyer/addresses/payment/shipping. The order number is drawn from the order range, totals are computed from the items. A discount in 'discounts' that names a line by 'line_position' names it by its 1-based place in 'items' — never by the line's own 'position' number — and a discount naming a line that is not there, or was left out under on_unorderable_position = drop, takes nothing off.
      */
     export type OrderPlaceRequest = {
         /**
@@ -26745,7 +26824,7 @@ are no `created_at` / `updated_at` fields on this resource.
          */
         external_refs?: object | null;
         /**
-         * Optional, and CHECKED rather than used: the order always computes its own total from the positions, the shipping cost and the tax. Send it as a checksum on that arithmetic — if it agrees the order is placed, and if it disagrees the call is refused with 400 naming both numbers, yours and the computed one. The comparison is at 2 decimal places (this app stores 4, ERPs work to 2, so a difference below a cent is agreement). It is never taken as the order value: the approval threshold and the revenue rollup read the computed number, which is why a total that disagrees is an error rather than an override.
+         * Optional, and CHECKED rather than used: the order always computes its own total from the positions, the shipping cost and the tax. Under on_unorderable_position = drop it is the total of the positions that remain. Send it as a checksum on that arithmetic — if it agrees the order is placed, and if it disagrees the call is refused with 400 naming both numbers, yours and the computed one. The comparison is at 2 decimal places (this app stores 4, ERPs work to 2, so a difference below a cent is agreement). It is never taken as the order value: the approval threshold and the revenue rollup read the computed number, which is why a total that disagrees is an error rather than an override.
          */
         grand_total?: number | null;
         /**
@@ -26869,7 +26948,7 @@ are no `created_at` / `updated_at` fields on this resource.
         /**
          * What an invoice has to quote: how the discount fell across the tax rates present, highest rate first. A 10.00 voucher on a cart holding 19 % and 7 % lines is not 10.00 at one rate — it is split in proportion, and that split is what makes the tax on the invoice defensible. Null when nothing was discounted. Derivable from the components and stored anyway, because an invoice must not have to be recomputed years later by code that has moved on.
          */
-        discount_tax_split?: object[];
+        discount_tax_split?: object[] | null;
         /**
          * Every discount a promotion took off this order, summed: the positions' discounts, a head-level voucher distributed across them, a discount placed as its own position, and any reduction of the shipping charge. COMPUTED here from the components the caller evaluated — a caller cannot set it. `subtotal` stays the UNDISCOUNTED sum, so the two together say what was charged and what was given away.
          */
@@ -26878,6 +26957,10 @@ are no `created_at` / `updated_at` fields on this resource.
          * The discount steps that were applied, in the order they were applied. Empty when the placement carried no promotion.
          */
         discounts?: OrderDiscount[];
+        /**
+         * Present only when on_unorderable_position is 'drop' and a position marked orderable: false was left out. The same list travels on order.placed / order.requested.
+         */
+        dropped?: object[];
         /**
          * The key this order has in the system that OWNS it — the ERP's own handle on the sales order, which is what a write-back addresses. Distinct from `external_ref`, which is the readable ORDER NUMBER that system quotes at a human, and from `number`, which is the one this app issued. Unique per tenant where set, so a retried import that sends the same key again is refused rather than founding a second order. Null for an order the shop owns.
          */
