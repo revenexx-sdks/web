@@ -1,0 +1,23 @@
+# customers.follow-ups
+
+## customers-contact-events-done
+
+Mark a follow-up done
+
+```javascript
+import { Client, CustomersFollowUps } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const customersFollowUps = new CustomersFollowUps(client);
+
+const result = await customersFollowUps.customersContactEventsDone({
+    id: ''
+});
+
+console.log(result);
+```

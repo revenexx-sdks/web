@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Sites, SitesCreateTemplateDeploymentType } from "@revenexx/sdk";
+import { Client, Sites, CubesCreateVcsDeploymentType } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -12,7 +12,7 @@ const sites = new Sites(client);
 const result = await sites.sitesCreateVcsDeployment({
     siteId: '',
     reference: 'main',
-    type: SitesCreateTemplateDeploymentType.Branch,
+    type: CubesCreateVcsDeploymentType.Branch,
     activate: true // optional
 });
 

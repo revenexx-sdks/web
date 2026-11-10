@@ -1,4 +1,4 @@
-export enum SitesCreateTemplateDeploymentType {
+export enum CubesCreateVcsDeploymentType {
     Branch = 'branch',
     Commit = 'commit',
     Tag = 'tag',

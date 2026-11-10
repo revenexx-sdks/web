@@ -1,3 +1,6 @@
+## v0.8.0
+- New: DELETE /v1/cubes/{cubeId}, GET /v1/cubes, GET /v1/cubes/{cubeId}, GET /v1/cubes/{cubeId}/deployments and 5 more. Regenerated from the latest API specification.
+
 ## v0.7.0
 - Regenerated from the latest API specification
 

@@ -7478,6 +7478,10 @@ Which attributes an asset of this family has comes from `attributes` rows with `
         /**
          * 
          */
+        return_id?: string | null;
+        /**
+         * 
+         */
         scope?: BudgetReleaseScope;
         /**
          * 
@@ -39355,11 +39359,11 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         committed?: string[];
         /**
-         * Budget releases recorded for cancellations found on orders changed in the last 48 hours (RAD-112).
+         * Budget releases recorded for cancellations found on orders changed in the last 48 hours (RAD-112), and for returns completed in the last 48 hours (RAD-126).
          */
         discovered?: string[];
         /**
-         * Per-record failures ({ purchase_request_id | direct_order_id | budget_release_id | order_id, step, error }); the sweep continues past them.
+         * Per-record failures ({ purchase_request_id | direct_order_id | budget_release_id | order_id, return_id?, step, error }; `step` discover_returns for a return that could not be read or settled); the sweep continues past them.
          */
         failed?: object[];
         /**
@@ -39367,7 +39371,7 @@ It exists because a PIM import (Akeneo, BMEcat) carries these in one blob keyed 
          */
         ordered?: string[];
         /**
-         * Budget releases of cancelled orders given back or found to have nothing to give back (RAD-112).
+         * Budget releases of cancelled or returned orders given back or found to have nothing to give back (RAD-112, RAD-126).
          */
         released?: string[];
         /**
@@ -49486,6 +49490,98 @@ Which attributes a record of this entity has comes from `attributes` rows with `
         countries: Country[];
         /**
          * Total number of countries that matched your query.
+         */
+        total: number;
+    }
+
+    /**
+     * Cube
+     */
+    export type Cube = {
+        /**
+         * Cube creation date in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Cube ID.
+         */
+        $id: string;
+        /**
+         * Cube update date in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * Active deployment creation date in ISO 8601 format.
+         */
+        deploymentCreatedAt: string;
+        /**
+         * Cube's active deployment ID.
+         */
+        deploymentId: string;
+        /**
+         * Cube enabled.
+         */
+        enabled: boolean;
+        /**
+         * Cube VCS (Version Control System) installation id.
+         */
+        installationId: string;
+        /**
+         * Latest deployment creation date in ISO 8601 format.
+         */
+        latestDeploymentCreatedAt: string;
+        /**
+         * Cube's latest deployment ID.
+         */
+        latestDeploymentId: string;
+        /**
+         * Status of latest deployment. Possible values are "waiting", "processing", "building", "ready", and "failed".
+         */
+        latestDeploymentStatus: string;
+        /**
+         * Is the Cube released with the latest configuration? Set to false when the name or root directory changes and a new deployment is needed.
+         */
+        live: boolean;
+        /**
+         * When disabled, build logs and errors are excluded.
+         */
+        logging: boolean;
+        /**
+         * Cube name.
+         */
+        name: string;
+        /**
+         * VCS (Version Control System) branch name
+         */
+        providerBranch: string;
+        /**
+         * VCS (Version Control System) Repository ID
+         */
+        providerRepositoryId: string;
+        /**
+         * Path to the Cube in the VCS (Version Control System) repository
+         */
+        providerRootDirectory: string;
+        /**
+         * Is VCS (Version Control System) connection in silent mode? When in silent mode, no comments are posted on pull or merge requests.
+         */
+        providerSilentMode: boolean;
+        /**
+         * When a VCS deployment is triggered: "push" on every branch push, "tag" only on tag push or published release.
+         */
+        vcsTriggerMode: string;
+    }
+
+    /**
+     * Cubes List
+     */
+    export type CubeList = {
+        /**
+         * List of cubes.
+         */
+        cubes: Cube[];
+        /**
+         * Total number of cubes that matched your query.
          */
         total: number;
     }

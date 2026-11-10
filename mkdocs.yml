@@ -1,6 +1,8 @@
 site_name: Revenexx Web
 site_description: "Revenexx Web SDK for browsers and SSR frameworks."
 docs_dir: docs
+exclude_docs: |
+  /examples/
 
 theme:
   name: material

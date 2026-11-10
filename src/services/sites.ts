@@ -5,7 +5,7 @@ import type { Models } from '../models';
 import { BuildRuntime } from '../enums/build-runtime';
 import { Framework } from '../enums/framework';
 import { Adapter } from '../enums/adapter';
-import { SitesCreateTemplateDeploymentType } from '../enums/sites-create-template-deployment-type';
+import { CubesCreateVcsDeploymentType } from '../enums/cubes-create-vcs-deployment-type';
 import { AppsGetDeploymentDownloadType } from '../enums/apps-get-deployment-download-type';
 
 export class Sites {
@@ -898,12 +898,12 @@ export class Sites {
      * @param {string} params.reference - Reference value, can be a commit hash, branch name, or release tag
      * @param {string} params.repository - Repository name of the template.
      * @param {string} params.rootDirectory - Path to site code in the template repo.
-     * @param {SitesCreateTemplateDeploymentType} params.type - Type for the reference provided. Can be commit, branch, or tag
+     * @param {CubesCreateVcsDeploymentType} params.type - Type for the reference provided. Can be commit, branch, or tag
      * @param {boolean} params.activate - Automatically activate the deployment when it is finished building.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      */
-    sitesCreateTemplateDeployment(params: { siteId: string, owner: string, reference: string, repository: string, rootDirectory: string, type: SitesCreateTemplateDeploymentType, activate?: boolean }): Promise<Models.Deployment>;
+    sitesCreateTemplateDeployment(params: { siteId: string, owner: string, reference: string, repository: string, rootDirectory: string, type: CubesCreateVcsDeploymentType, activate?: boolean }): Promise<Models.Deployment>;
     /**
      * Create a deployment based on a template.
      * 
@@ -914,21 +914,21 @@ export class Sites {
      * @param {string} reference - Reference value, can be a commit hash, branch name, or release tag
      * @param {string} repository - Repository name of the template.
      * @param {string} rootDirectory - Path to site code in the template repo.
-     * @param {SitesCreateTemplateDeploymentType} type - Type for the reference provided. Can be commit, branch, or tag
+     * @param {CubesCreateVcsDeploymentType} type - Type for the reference provided. Can be commit, branch, or tag
      * @param {boolean} activate - Automatically activate the deployment when it is finished building.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    sitesCreateTemplateDeployment(siteId: string, owner: string, reference: string, repository: string, rootDirectory: string, type: SitesCreateTemplateDeploymentType, activate?: boolean): Promise<Models.Deployment>;
+    sitesCreateTemplateDeployment(siteId: string, owner: string, reference: string, repository: string, rootDirectory: string, type: CubesCreateVcsDeploymentType, activate?: boolean): Promise<Models.Deployment>;
     sitesCreateTemplateDeployment(
-        paramsOrFirst: { siteId: string, owner: string, reference: string, repository: string, rootDirectory: string, type: SitesCreateTemplateDeploymentType, activate?: boolean } | string,
-        ...rest: [(string)?, (string)?, (string)?, (string)?, (SitesCreateTemplateDeploymentType)?, (boolean)?]    
+        paramsOrFirst: { siteId: string, owner: string, reference: string, repository: string, rootDirectory: string, type: CubesCreateVcsDeploymentType, activate?: boolean } | string,
+        ...rest: [(string)?, (string)?, (string)?, (string)?, (CubesCreateVcsDeploymentType)?, (boolean)?]    
     ): Promise<Models.Deployment> {
-        let params: { siteId: string, owner: string, reference: string, repository: string, rootDirectory: string, type: SitesCreateTemplateDeploymentType, activate?: boolean };
+        let params: { siteId: string, owner: string, reference: string, repository: string, rootDirectory: string, type: CubesCreateVcsDeploymentType, activate?: boolean };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { siteId: string, owner: string, reference: string, repository: string, rootDirectory: string, type: SitesCreateTemplateDeploymentType, activate?: boolean };
+            params = (paramsOrFirst || {}) as { siteId: string, owner: string, reference: string, repository: string, rootDirectory: string, type: CubesCreateVcsDeploymentType, activate?: boolean };
         } else {
             params = {
                 siteId: paramsOrFirst as string,
@@ -936,7 +936,7 @@ export class Sites {
                 reference: rest[1] as string,
                 repository: rest[2] as string,
                 rootDirectory: rest[3] as string,
-                type: rest[4] as SitesCreateTemplateDeploymentType,
+                type: rest[4] as CubesCreateVcsDeploymentType,
                 activate: rest[5] as boolean            
             };
         }
@@ -1009,12 +1009,12 @@ export class Sites {
      *
      * @param {string} params.siteId - Site ID.
      * @param {string} params.reference - VCS reference to create deployment from. Depending on type this can be: branch name, commit hash
-     * @param {SitesCreateTemplateDeploymentType} params.type - Type of reference passed. Allowed values are: branch, commit
+     * @param {CubesCreateVcsDeploymentType} params.type - Type of reference passed. Allowed values are: branch, commit
      * @param {boolean} params.activate - Automatically activate the deployment when it is finished building.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      */
-    sitesCreateVcsDeployment(params: { siteId: string, reference: string, type: SitesCreateTemplateDeploymentType, activate?: boolean }): Promise<Models.Deployment>;
+    sitesCreateVcsDeployment(params: { siteId: string, reference: string, type: CubesCreateVcsDeploymentType, activate?: boolean }): Promise<Models.Deployment>;
     /**
      * Create a deployment when a site is connected to VCS.
      * 
@@ -1022,26 +1022,26 @@ export class Sites {
      *
      * @param {string} siteId - Site ID.
      * @param {string} reference - VCS reference to create deployment from. Depending on type this can be: branch name, commit hash
-     * @param {SitesCreateTemplateDeploymentType} type - Type of reference passed. Allowed values are: branch, commit
+     * @param {CubesCreateVcsDeploymentType} type - Type of reference passed. Allowed values are: branch, commit
      * @param {boolean} activate - Automatically activate the deployment when it is finished building.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    sitesCreateVcsDeployment(siteId: string, reference: string, type: SitesCreateTemplateDeploymentType, activate?: boolean): Promise<Models.Deployment>;
+    sitesCreateVcsDeployment(siteId: string, reference: string, type: CubesCreateVcsDeploymentType, activate?: boolean): Promise<Models.Deployment>;
     sitesCreateVcsDeployment(
-        paramsOrFirst: { siteId: string, reference: string, type: SitesCreateTemplateDeploymentType, activate?: boolean } | string,
-        ...rest: [(string)?, (SitesCreateTemplateDeploymentType)?, (boolean)?]    
+        paramsOrFirst: { siteId: string, reference: string, type: CubesCreateVcsDeploymentType, activate?: boolean } | string,
+        ...rest: [(string)?, (CubesCreateVcsDeploymentType)?, (boolean)?]    
     ): Promise<Models.Deployment> {
-        let params: { siteId: string, reference: string, type: SitesCreateTemplateDeploymentType, activate?: boolean };
+        let params: { siteId: string, reference: string, type: CubesCreateVcsDeploymentType, activate?: boolean };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { siteId: string, reference: string, type: SitesCreateTemplateDeploymentType, activate?: boolean };
+            params = (paramsOrFirst || {}) as { siteId: string, reference: string, type: CubesCreateVcsDeploymentType, activate?: boolean };
         } else {
             params = {
                 siteId: paramsOrFirst as string,
                 reference: rest[0] as string,
-                type: rest[1] as SitesCreateTemplateDeploymentType,
+                type: rest[1] as CubesCreateVcsDeploymentType,
                 activate: rest[2] as boolean            
             };
         }
