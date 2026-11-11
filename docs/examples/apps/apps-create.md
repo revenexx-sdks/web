@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Apps, Runtime, Scopes } from "@revenexx/sdk";
+import { Client, Apps, Runtime, Scopes, VcsTriggerMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -27,7 +27,9 @@ const result = await apps.appsCreate({
     schedule: '0 3 * * *', // optional
     scopes: [Scopes.SessionsWrite], // optional
     specification: 's-1vcpu-512mb', // optional
-    timeout: 1 // optional
+    timeout: 1, // optional
+    vcsPreviewsEnabled: true, // optional
+    vcsTriggerMode: VcsTriggerMode.Push // optional
 });
 
 console.log(result);

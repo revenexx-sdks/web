@@ -160,7 +160,7 @@ console.log(result);
 Create deployment
 
 ```javascript
-import { Client, Cubes } from "@revenexx/sdk";
+import { Client, Cubes, ReleaseMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -173,7 +173,8 @@ const cubes = new Cubes(client);
 const result = await cubes.cubesCreateDeployment({
     cubeId: '',
     code: document.getElementById('uploader').files[0],
-    activate: true // optional
+    activate: true, // optional
+    releaseMode: ReleaseMode.Deploy // optional
 });
 
 console.log(result);
@@ -222,6 +223,77 @@ const cubes = new Cubes(client);
 const result = await cubes.cubesGetDeployment({
     cubeId: '',
     deploymentId: ''
+});
+
+console.log(result);
+```
+
+## cubes-list-releases
+
+List cube releases
+
+```javascript
+import { Client, Cubes } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const cubes = new Cubes(client);
+
+const result = await cubes.cubesListReleases({
+    cubeId: ''
+});
+
+console.log(result);
+```
+
+## cubes-accept-release
+
+Accept cube release candidate
+
+```javascript
+import { Client, Cubes } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const cubes = new Cubes(client);
+
+const result = await cubes.cubesAcceptRelease({
+    cubeId: '',
+    rc: 1, // optional
+    version: '' // optional
+});
+
+console.log(result);
+```
+
+## cubes-rebuild-release
+
+Rebuild cube release
+
+```javascript
+import { Client, Cubes } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const cubes = new Cubes(client);
+
+const result = await cubes.cubesRebuildRelease({
+    cubeId: '',
+    version: '',
+    commit: '', // optional
+    deploymentId: '' // optional
 });
 
 console.log(result);

@@ -4,9 +4,11 @@ import type { Models } from '../models';
 
 import { Runtime } from '../enums/runtime';
 import { Scopes } from '../enums/scopes';
+import { VcsTriggerMode } from '../enums/vcs-trigger-mode';
 import { Runtimes } from '../enums/runtimes';
 import { UseCases } from '../enums/use-cases';
 import { Range } from '../enums/range';
+import { ReleaseMode } from '../enums/release-mode';
 import { Type } from '../enums/type';
 import { AppsCreateVcsDeploymentType } from '../enums/apps-create-vcs-deployment-type';
 import { AppsGetDeploymentDownloadType } from '../enums/apps-get-deployment-download-type';
@@ -108,10 +110,12 @@ export class Apps {
      * @param {Scopes[]} params.scopes - List of scopes allowed for API key auto-generated for every execution. Maximum of 100 scopes are allowed.
      * @param {string} params.specification - Runtime specification for the function and builds.
      * @param {number} params.timeout - Function maximum execution time in seconds.
+     * @param {boolean} params.vcsPreviewsEnabled - Whether pull request events create preview deployments and PR comments.
+     * @param {VcsTriggerMode} params.vcsTriggerMode - Controls when a VCS deployment is triggered. "push" deploys on every branch push, "tag" deploys only when a tag is pushed or a GitHub release is published.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Function>}
      */
-    appsCreate(params: { functionId: string, name: string, runtime: Runtime, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number }): Promise<Models.Function>;
+    appsCreate(params: { functionId: string, name: string, runtime: Runtime, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode }): Promise<Models.Function>;
     /**
      * Create a new revenexx App. An App is the deployment surface for code that runs on the platform — backend jobs, APIs, integrations. The created App owns subsequent deployments and executions.
      * 
@@ -135,19 +139,21 @@ export class Apps {
      * @param {Scopes[]} scopes - List of scopes allowed for API key auto-generated for every execution. Maximum of 100 scopes are allowed.
      * @param {string} specification - Runtime specification for the function and builds.
      * @param {number} timeout - Function maximum execution time in seconds.
+     * @param {boolean} vcsPreviewsEnabled - Whether pull request events create preview deployments and PR comments.
+     * @param {VcsTriggerMode} vcsTriggerMode - Controls when a VCS deployment is triggered. "push" deploys on every branch push, "tag" deploys only when a tag is pushed or a GitHub release is published.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Function>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    appsCreate(functionId: string, name: string, runtime: Runtime, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number): Promise<Models.Function>;
+    appsCreate(functionId: string, name: string, runtime: Runtime, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode): Promise<Models.Function>;
     appsCreate(
-        paramsOrFirst: { functionId: string, name: string, runtime: Runtime, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number } | string,
-        ...rest: [(string)?, (Runtime)?, (string)?, (boolean)?, (string)?, (string[])?, (string[])?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (Scopes[])?, (string)?, (number)?]    
+        paramsOrFirst: { functionId: string, name: string, runtime: Runtime, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode } | string,
+        ...rest: [(string)?, (Runtime)?, (string)?, (boolean)?, (string)?, (string[])?, (string[])?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (Scopes[])?, (string)?, (number)?, (boolean)?, (VcsTriggerMode)?]    
     ): Promise<Models.Function> {
-        let params: { functionId: string, name: string, runtime: Runtime, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number };
+        let params: { functionId: string, name: string, runtime: Runtime, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { functionId: string, name: string, runtime: Runtime, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number };
+            params = (paramsOrFirst || {}) as { functionId: string, name: string, runtime: Runtime, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode };
         } else {
             params = {
                 functionId: paramsOrFirst as string,
@@ -167,7 +173,9 @@ export class Apps {
                 schedule: rest[13] as string,
                 scopes: rest[14] as Scopes[],
                 specification: rest[15] as string,
-                timeout: rest[16] as number            
+                timeout: rest[16] as number,
+                vcsPreviewsEnabled: rest[17] as boolean,
+                vcsTriggerMode: rest[18] as VcsTriggerMode            
             };
         }
         
@@ -189,6 +197,8 @@ export class Apps {
         const scopes = params.scopes;
         const specification = params.specification;
         const timeout = params.timeout;
+        const vcsPreviewsEnabled = params.vcsPreviewsEnabled;
+        const vcsTriggerMode = params.vcsTriggerMode;
 
         if (typeof functionId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "functionId"');
@@ -255,6 +265,12 @@ export class Apps {
         }
         if (typeof timeout !== 'undefined') {
             apiPayload['timeout'] = timeout;
+        }
+        if (typeof vcsPreviewsEnabled !== 'undefined') {
+            apiPayload['vcsPreviewsEnabled'] = vcsPreviewsEnabled;
+        }
+        if (typeof vcsTriggerMode !== 'undefined') {
+            apiPayload['vcsTriggerMode'] = vcsTriggerMode;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -387,6 +403,85 @@ export class Apps {
         }
         if (typeof owner !== 'undefined') {
             apiPayload['owner'] = owner;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Rebuild the source a release of this App was built from, so
+     * its release gates run again and a new release round opens.
+     * Picks the newest deployment whose manifest names this app and
+     * version; `commit` narrows it to that commit.
+     *
+     * @param {string} params.name - App name as in its manifest.
+     * @param {string} params.version - Version to rebuild.
+     * @param {string} params.commit - Commit SHA the round recorded (7 to 64 hex characters). Optional.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Deployment>}
+     */
+    appsRebuildRelease(params: { name: string, version: string, commit?: string }): Promise<Models.Deployment>;
+    /**
+     * Rebuild the source a release of this App was built from, so
+     * its release gates run again and a new release round opens.
+     * Picks the newest deployment whose manifest names this app and
+     * version; `commit` narrows it to that commit.
+     *
+     * @param {string} name - App name as in its manifest.
+     * @param {string} version - Version to rebuild.
+     * @param {string} commit - Commit SHA the round recorded (7 to 64 hex characters). Optional.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Deployment>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    appsRebuildRelease(name: string, version: string, commit?: string): Promise<Models.Deployment>;
+    appsRebuildRelease(
+        paramsOrFirst: { name: string, version: string, commit?: string } | string,
+        ...rest: [(string)?, (string)?]    
+    ): Promise<Models.Deployment> {
+        let params: { name: string, version: string, commit?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { name: string, version: string, commit?: string };
+        } else {
+            params = {
+                name: paramsOrFirst as string,
+                version: rest[0] as string,
+                commit: rest[1] as string            
+            };
+        }
+        
+        const name = params.name;
+        const version = params.version;
+        const commit = params.commit;
+
+        if (typeof name === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "name"');
+        }
+        if (typeof version === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "version"');
+        }
+
+        const apiPath = '/v1/apps/releases/rebuild';
+        const apiPayload: Payload = {};
+        if (typeof commit !== 'undefined') {
+            apiPayload['commit'] = commit;
+        }
+        if (typeof name !== 'undefined') {
+            apiPayload['name'] = name;
+        }
+        if (typeof version !== 'undefined') {
+            apiPayload['version'] = version;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -753,10 +848,12 @@ export class Apps {
      * @param {Scopes[]} params.scopes - List of scopes allowed for API Key auto-generated for every execution. Maximum of 100 scopes are allowed.
      * @param {string} params.specification - Runtime specification for the function and builds.
      * @param {number} params.timeout - Maximum execution time in seconds.
+     * @param {boolean} params.vcsPreviewsEnabled - Whether pull request events create preview deployments and PR comments.
+     * @param {VcsTriggerMode} params.vcsTriggerMode - Controls when a VCS deployment is triggered. "push" deploys on every branch push, "tag" deploys only when a tag is pushed or a GitHub release is published.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Function>}
      */
-    appsUpdate(params: { functionId: string, name: string, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, runtime?: Runtime, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number }): Promise<Models.Function>;
+    appsUpdate(params: { functionId: string, name: string, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, runtime?: Runtime, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode }): Promise<Models.Function>;
     /**
      * Update an App. Use this endpoint to rename, change runtime, schedule, environment variables and other configuration.
      *
@@ -778,19 +875,21 @@ export class Apps {
      * @param {Scopes[]} scopes - List of scopes allowed for API Key auto-generated for every execution. Maximum of 100 scopes are allowed.
      * @param {string} specification - Runtime specification for the function and builds.
      * @param {number} timeout - Maximum execution time in seconds.
+     * @param {boolean} vcsPreviewsEnabled - Whether pull request events create preview deployments and PR comments.
+     * @param {VcsTriggerMode} vcsTriggerMode - Controls when a VCS deployment is triggered. "push" deploys on every branch push, "tag" deploys only when a tag is pushed or a GitHub release is published.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Function>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    appsUpdate(functionId: string, name: string, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, runtime?: Runtime, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number): Promise<Models.Function>;
+    appsUpdate(functionId: string, name: string, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, runtime?: Runtime, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode): Promise<Models.Function>;
     appsUpdate(
-        paramsOrFirst: { functionId: string, name: string, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, runtime?: Runtime, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number } | string,
-        ...rest: [(string)?, (string)?, (boolean)?, (string)?, (string[])?, (string[])?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (boolean)?, (Runtime)?, (string)?, (Scopes[])?, (string)?, (number)?]    
+        paramsOrFirst: { functionId: string, name: string, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, runtime?: Runtime, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode } | string,
+        ...rest: [(string)?, (string)?, (boolean)?, (string)?, (string[])?, (string[])?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (boolean)?, (Runtime)?, (string)?, (Scopes[])?, (string)?, (number)?, (boolean)?, (VcsTriggerMode)?]    
     ): Promise<Models.Function> {
-        let params: { functionId: string, name: string, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, runtime?: Runtime, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number };
+        let params: { functionId: string, name: string, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, runtime?: Runtime, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { functionId: string, name: string, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, runtime?: Runtime, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number };
+            params = (paramsOrFirst || {}) as { functionId: string, name: string, commands?: string, enabled?: boolean, entrypoint?: string, events?: string[], execute?: string[], installationId?: string, logging?: boolean, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, runtime?: Runtime, schedule?: string, scopes?: Scopes[], specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode };
         } else {
             params = {
                 functionId: paramsOrFirst as string,
@@ -810,7 +909,9 @@ export class Apps {
                 schedule: rest[13] as string,
                 scopes: rest[14] as Scopes[],
                 specification: rest[15] as string,
-                timeout: rest[16] as number            
+                timeout: rest[16] as number,
+                vcsPreviewsEnabled: rest[17] as boolean,
+                vcsTriggerMode: rest[18] as VcsTriggerMode            
             };
         }
         
@@ -832,6 +933,8 @@ export class Apps {
         const scopes = params.scopes;
         const specification = params.specification;
         const timeout = params.timeout;
+        const vcsPreviewsEnabled = params.vcsPreviewsEnabled;
+        const vcsTriggerMode = params.vcsTriggerMode;
 
         if (typeof functionId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "functionId"');
@@ -892,6 +995,12 @@ export class Apps {
         }
         if (typeof timeout !== 'undefined') {
             apiPayload['timeout'] = timeout;
+        }
+        if (typeof vcsPreviewsEnabled !== 'undefined') {
+            apiPayload['vcsPreviewsEnabled'] = vcsPreviewsEnabled;
+        }
+        if (typeof vcsTriggerMode !== 'undefined') {
+            apiPayload['vcsTriggerMode'] = vcsTriggerMode;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1054,10 +1163,11 @@ export class Apps {
      * @param {File} params.code - Your source directory packaged as a gzipped tar archive (`.tar.gz`), sent as the file part of the multipart request.
      * @param {string} params.commands - Build Commands.
      * @param {string} params.entrypoint - Entrypoint File.
+     * @param {ReleaseMode} params.releaseMode - Release mode: `deploy` releases the version once its round is approved; `preview` makes it a candidate the vendor accepts after seeing it run. Only meaningful for App and Theme deployments.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      */
-    appsCreateDeployment(params: { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, onProgress?: (progress: UploadProgress) => void }): Promise<Models.Deployment>;
+    appsCreateDeployment(params: { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, releaseMode?: ReleaseMode, onProgress?: (progress: UploadProgress) => void }): Promise<Models.Deployment>;
     /**
      * Upload a new code deployment for an App. Accepts a `.tar.gz`
      * archive containing the App source. Phase 2 will extract the
@@ -1069,20 +1179,21 @@ export class Apps {
      * @param {File} code - Your source directory packaged as a gzipped tar archive (`.tar.gz`), sent as the file part of the multipart request.
      * @param {string} commands - Build Commands.
      * @param {string} entrypoint - Entrypoint File.
+     * @param {ReleaseMode} releaseMode - Release mode: `deploy` releases the version once its round is approved; `preview` makes it a candidate the vendor accepts after seeing it run. Only meaningful for App and Theme deployments.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    appsCreateDeployment(functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, onProgress?: (progress: UploadProgress) => void): Promise<Models.Deployment>;
+    appsCreateDeployment(functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, releaseMode?: ReleaseMode, onProgress?: (progress: UploadProgress) => void): Promise<Models.Deployment>;
     appsCreateDeployment(
-        paramsOrFirst: { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, onProgress?: (progress: UploadProgress) => void } | string,
-        ...rest: [(boolean)?, (File)?, (string)?, (string)?,((progress: UploadProgress) => void)?]    
+        paramsOrFirst: { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, releaseMode?: ReleaseMode, onProgress?: (progress: UploadProgress) => void } | string,
+        ...rest: [(boolean)?, (File)?, (string)?, (string)?, (ReleaseMode)?,((progress: UploadProgress) => void)?]    
     ): Promise<Models.Deployment> {
-        let params: { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string };
+        let params: { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, releaseMode?: ReleaseMode };
         let onProgress: ((progress: UploadProgress) => void);
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string };
+            params = (paramsOrFirst || {}) as { functionId: string, activate: boolean, code: File, commands?: string, entrypoint?: string, releaseMode?: ReleaseMode };
             onProgress = (paramsOrFirst as { onProgress?: (progress: UploadProgress) => void }).onProgress as ((progress: UploadProgress) => void);
         } else {
             params = {
@@ -1090,9 +1201,10 @@ export class Apps {
                 activate: rest[0] as boolean,
                 code: rest[1] as File,
                 commands: rest[2] as string,
-                entrypoint: rest[3] as string            
+                entrypoint: rest[3] as string,
+                releaseMode: rest[4] as ReleaseMode            
             };
-            onProgress = rest[4] as ((progress: UploadProgress) => void);
+            onProgress = rest[5] as ((progress: UploadProgress) => void);
         }
         
         const functionId = params.functionId;
@@ -1100,6 +1212,7 @@ export class Apps {
         const code = params.code;
         const commands = params.commands;
         const entrypoint = params.entrypoint;
+        const releaseMode = params.releaseMode;
 
         if (typeof functionId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "functionId"');
@@ -1124,6 +1237,9 @@ export class Apps {
         }
         if (typeof entrypoint !== 'undefined') {
             apiPayload['entrypoint'] = entrypoint;
+        }
+        if (typeof releaseMode !== 'undefined') {
+            apiPayload['releaseMode'] = releaseMode;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -1923,7 +2039,7 @@ export class Apps {
     }
 
     /**
-     * Read-through view of the App's App Registry row — visibility + Marketplace publish flag. Used by Cockpit to render the Publish/Unpublish button correctly on cold load.
+     * Read-through view of the App's App Registry row — app type + Marketplace publish flag. Used by Cockpit to render the Publish/Unpublish button correctly on cold load.
      *
      * @param {string} params.functionId - App ID.
      * @throws {RevenexxException}
@@ -1931,7 +2047,7 @@ export class Apps {
      */
     appsGetMarketplaceStatus(params: { functionId: string }): Promise<{}>;
     /**
-     * Read-through view of the App's App Registry row — visibility + Marketplace publish flag. Used by Cockpit to render the Publish/Unpublish button correctly on cold load.
+     * Read-through view of the App's App Registry row — app type + Marketplace publish flag. Used by Cockpit to render the Publish/Unpublish button correctly on cold load.
      *
      * @param {string} functionId - App ID.
      * @throws {RevenexxException}
@@ -2027,8 +2143,8 @@ export class Apps {
     /**
      * Publish this App to the Marketplace. The App must have at
      * least one `ready` deployment with a registered manifest,
-     * and its visibility (derived from `billing.json`) must be
-     * `public` or `included`. Idempotent.
+     * and its manifest field `type` must not be `private`.
+     * Idempotent.
      *
      * @param {string} params.functionId - App ID.
      * @throws {RevenexxException}
@@ -2038,8 +2154,8 @@ export class Apps {
     /**
      * Publish this App to the Marketplace. The App must have at
      * least one `ready` deployment with a registered manifest,
-     * and its visibility (derived from `billing.json`) must be
-     * `public` or `included`. Idempotent.
+     * and its manifest field `type` must not be `private`.
+     * Idempotent.
      *
      * @param {string} functionId - App ID.
      * @throws {RevenexxException}
@@ -2071,6 +2187,138 @@ export class Apps {
         const uri = new URL(this.client.config.endpoint + apiPath);
 
         const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * List the release rounds of this App as the App Registry holds
+     * them: version, round number, state (submitted, candidate,
+     * approved, rejected), release mode, gate results, decision
+     * deadline and rejection reason.
+     *
+     * @param {string} params.functionId - App ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    appsListReleases(params: { functionId: string }): Promise<{}>;
+    /**
+     * List the release rounds of this App as the App Registry holds
+     * them: version, round number, state (submitted, candidate,
+     * approved, rejected), release mode, gate results, decision
+     * deadline and rejection reason.
+     *
+     * @param {string} functionId - App ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    appsListReleases(functionId: string): Promise<{}>;
+    appsListReleases(
+        paramsOrFirst: { functionId: string } | string    
+    ): Promise<{}> {
+        let params: { functionId: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { functionId: string };
+        } else {
+            params = {
+                functionId: paramsOrFirst as string            
+            };
+        }
+        
+        const functionId = params.functionId;
+
+        if (typeof functionId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "functionId"');
+        }
+
+        const apiPath = '/v1/apps/{functionId}/releases'.replace('{functionId}', functionId);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Accept a preview candidate of this App after seeing it run.
+     * Without `version` the version of the latest registered
+     * deployment is accepted; without `rc` its newest candidate
+     * round. Only the App's vendor can accept, and only a candidate
+     * in preview mode.
+     *
+     * @param {string} params.functionId - App ID.
+     * @param {number} params.rc - Release round to accept. Defaults to the newest candidate round of the version.
+     * @param {string} params.version - Version to accept. Defaults to the version of the latest registered deployment.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    appsAcceptRelease(params: { functionId: string, rc?: number, version?: string }): Promise<{}>;
+    /**
+     * Accept a preview candidate of this App after seeing it run.
+     * Without `version` the version of the latest registered
+     * deployment is accepted; without `rc` its newest candidate
+     * round. Only the App's vendor can accept, and only a candidate
+     * in preview mode.
+     *
+     * @param {string} functionId - App ID.
+     * @param {number} rc - Release round to accept. Defaults to the newest candidate round of the version.
+     * @param {string} version - Version to accept. Defaults to the version of the latest registered deployment.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    appsAcceptRelease(functionId: string, rc?: number, version?: string): Promise<{}>;
+    appsAcceptRelease(
+        paramsOrFirst: { functionId: string, rc?: number, version?: string } | string,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { functionId: string, rc?: number, version?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { functionId: string, rc?: number, version?: string };
+        } else {
+            params = {
+                functionId: paramsOrFirst as string,
+                rc: rest[0] as number,
+                version: rest[1] as string            
+            };
+        }
+        
+        const functionId = params.functionId;
+        const rc = params.rc;
+        const version = params.version;
+
+        if (typeof functionId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "functionId"');
+        }
+
+        const apiPath = '/v1/apps/{functionId}/releases/accept'.replace('{functionId}', functionId);
+        const apiPayload: Payload = {};
+        if (typeof rc !== 'undefined') {
+            apiPayload['rc'] = rc;
+        }
+        if (typeof version !== 'undefined') {
+            apiPayload['version'] = version;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
         }
 
         return this.client.call(
@@ -2467,6 +2715,250 @@ export class Apps {
 
         return this.client.call(
             'put',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Unpublish this Theme from the Marketplace. Existing tenant
+     * installations are unaffected; only future Marketplace
+     * discovery is gated. Idempotent.
+     *
+     * @param {string} params.siteId - Site ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    appsUnpublishTheme(params: { siteId: string }): Promise<{}>;
+    /**
+     * Unpublish this Theme from the Marketplace. Existing tenant
+     * installations are unaffected; only future Marketplace
+     * discovery is gated. Idempotent.
+     *
+     * @param {string} siteId - Site ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    appsUnpublishTheme(siteId: string): Promise<{}>;
+    appsUnpublishTheme(
+        paramsOrFirst: { siteId: string } | string    
+    ): Promise<{}> {
+        let params: { siteId: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { siteId: string };
+        } else {
+            params = {
+                siteId: paramsOrFirst as string            
+            };
+        }
+        
+        const siteId = params.siteId;
+
+        if (typeof siteId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "siteId"');
+        }
+
+        const apiPath = '/v1/sites/{siteId}/publish'.replace('{siteId}', siteId);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'delete',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Publish this Theme to the Marketplace. The Site must have at
+     * least one `ready` deployment with a registered theme manifest
+     * (theme.json) declaring `kind: theme`, and its manifest field
+     * `type` must not be `private`. Idempotent.
+     *
+     * @param {string} params.siteId - Site ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    appsPublishTheme(params: { siteId: string }): Promise<{}>;
+    /**
+     * Publish this Theme to the Marketplace. The Site must have at
+     * least one `ready` deployment with a registered theme manifest
+     * (theme.json) declaring `kind: theme`, and its manifest field
+     * `type` must not be `private`. Idempotent.
+     *
+     * @param {string} siteId - Site ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    appsPublishTheme(siteId: string): Promise<{}>;
+    appsPublishTheme(
+        paramsOrFirst: { siteId: string } | string    
+    ): Promise<{}> {
+        let params: { siteId: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { siteId: string };
+        } else {
+            params = {
+                siteId: paramsOrFirst as string            
+            };
+        }
+        
+        const siteId = params.siteId;
+
+        if (typeof siteId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "siteId"');
+        }
+
+        const apiPath = '/v1/sites/{siteId}/publish'.replace('{siteId}', siteId);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * List the release rounds of this Theme as the App Registry holds
+     * them: version, round number, state (submitted, candidate,
+     * approved, rejected), release mode, gate results, decision
+     * deadline and rejection reason.
+     *
+     * @param {string} params.siteId - Site ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    appsListThemeReleases(params: { siteId: string }): Promise<{}>;
+    /**
+     * List the release rounds of this Theme as the App Registry holds
+     * them: version, round number, state (submitted, candidate,
+     * approved, rejected), release mode, gate results, decision
+     * deadline and rejection reason.
+     *
+     * @param {string} siteId - Site ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    appsListThemeReleases(siteId: string): Promise<{}>;
+    appsListThemeReleases(
+        paramsOrFirst: { siteId: string } | string    
+    ): Promise<{}> {
+        let params: { siteId: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { siteId: string };
+        } else {
+            params = {
+                siteId: paramsOrFirst as string            
+            };
+        }
+        
+        const siteId = params.siteId;
+
+        if (typeof siteId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "siteId"');
+        }
+
+        const apiPath = '/v1/sites/{siteId}/releases'.replace('{siteId}', siteId);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Accept a preview candidate of this Theme after seeing it run.
+     * Without `version` the version of the latest registered
+     * deployment is accepted; without `rc` its newest candidate
+     * round. Only the Theme's vendor can accept, and only a candidate
+     * in preview mode.
+     *
+     * @param {string} params.siteId - Site ID.
+     * @param {number} params.rc - Release round to accept. Defaults to the newest candidate round of the version.
+     * @param {string} params.version - Version to accept. Defaults to the version of the latest registered deployment.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    appsAcceptThemeRelease(params: { siteId: string, rc?: number, version?: string }): Promise<{}>;
+    /**
+     * Accept a preview candidate of this Theme after seeing it run.
+     * Without `version` the version of the latest registered
+     * deployment is accepted; without `rc` its newest candidate
+     * round. Only the Theme's vendor can accept, and only a candidate
+     * in preview mode.
+     *
+     * @param {string} siteId - Site ID.
+     * @param {number} rc - Release round to accept. Defaults to the newest candidate round of the version.
+     * @param {string} version - Version to accept. Defaults to the version of the latest registered deployment.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    appsAcceptThemeRelease(siteId: string, rc?: number, version?: string): Promise<{}>;
+    appsAcceptThemeRelease(
+        paramsOrFirst: { siteId: string, rc?: number, version?: string } | string,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { siteId: string, rc?: number, version?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { siteId: string, rc?: number, version?: string };
+        } else {
+            params = {
+                siteId: paramsOrFirst as string,
+                rc: rest[0] as number,
+                version: rest[1] as string            
+            };
+        }
+        
+        const siteId = params.siteId;
+        const rc = params.rc;
+        const version = params.version;
+
+        if (typeof siteId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "siteId"');
+        }
+
+        const apiPath = '/v1/sites/{siteId}/releases/accept'.replace('{siteId}', siteId);
+        const apiPayload: Payload = {};
+        if (typeof rc !== 'undefined') {
+            apiPayload['rc'] = rc;
+        }
+        if (typeof version !== 'undefined') {
+            apiPayload['version'] = version;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload

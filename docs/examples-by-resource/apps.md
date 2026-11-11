@@ -29,7 +29,7 @@ console.log(result);
 Create app
 
 ```javascript
-import { Client, Apps, Runtime, Scopes } from "@revenexx/sdk";
+import { Client, Apps, Runtime, Scopes, VcsTriggerMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -57,7 +57,9 @@ const result = await apps.appsCreate({
     schedule: '0 3 * * *', // optional
     scopes: [Scopes.SessionsWrite], // optional
     specification: 's-1vcpu-512mb', // optional
-    timeout: 1 // optional
+    timeout: 1, // optional
+    vcsPreviewsEnabled: true, // optional
+    vcsTriggerMode: VcsTriggerMode.Push // optional
 });
 
 console.log(result);
@@ -105,6 +107,30 @@ const apps = new Apps(client);
 const result = await apps.appsInstallFromMarketplace({
     name: '',
     owner: ''
+});
+
+console.log(result);
+```
+
+## apps-rebuild-release
+
+Rebuild app release
+
+```javascript
+import { Client, Apps } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const apps = new Apps(client);
+
+const result = await apps.appsRebuildRelease({
+    name: '',
+    version: '',
+    commit: '' // optional
 });
 
 console.log(result);
@@ -269,7 +295,7 @@ console.log(result);
 Update app
 
 ```javascript
-import { Client, Apps, Runtime, Scopes } from "@revenexx/sdk";
+import { Client, Apps, Runtime, Scopes, VcsTriggerMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -297,7 +323,9 @@ const result = await apps.appsUpdate({
     schedule: '0 3 * * *', // optional
     scopes: [Scopes.SessionsWrite], // optional
     specification: 's-1vcpu-512mb', // optional
-    timeout: 1 // optional
+    timeout: 1, // optional
+    vcsPreviewsEnabled: true, // optional
+    vcsTriggerMode: VcsTriggerMode.Push // optional
 });
 
 console.log(result);
@@ -356,7 +384,7 @@ console.log(result);
 Create app deployment
 
 ```javascript
-import { Client, Apps } from "@revenexx/sdk";
+import { Client, Apps, ReleaseMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -371,7 +399,8 @@ const result = await apps.appsCreateDeployment({
     activate: true,
     code: document.getElementById('uploader').files[0],
     commands: '', // optional
-    entrypoint: '' // optional
+    entrypoint: '', // optional
+    releaseMode: ReleaseMode.Deploy // optional
 });
 
 console.log(result);
@@ -711,6 +740,52 @@ const result = await apps.appsPublish({
 console.log(result);
 ```
 
+## apps-list-releases
+
+List app releases
+
+```javascript
+import { Client, Apps } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const apps = new Apps(client);
+
+const result = await apps.appsListReleases({
+    functionId: ''
+});
+
+console.log(result);
+```
+
+## apps-accept-release
+
+Accept app release candidate
+
+```javascript
+import { Client, Apps } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const apps = new Apps(client);
+
+const result = await apps.appsAcceptRelease({
+    functionId: '',
+    rc: 1, // optional
+    version: '' // optional
+});
+
+console.log(result);
+```
+
 ## apps-get-usage
 
 Get app usage
@@ -848,6 +923,96 @@ const result = await apps.appsUpdateVariable({
     key: '',
     secret: true, // optional
     value: '' // optional
+});
+
+console.log(result);
+```
+
+## apps-unpublish-theme
+
+Unpublish theme from Marketplace
+
+```javascript
+import { Client, Apps } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const apps = new Apps(client);
+
+const result = await apps.appsUnpublishTheme({
+    siteId: ''
+});
+
+console.log(result);
+```
+
+## apps-publish-theme
+
+Publish theme to Marketplace
+
+```javascript
+import { Client, Apps } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const apps = new Apps(client);
+
+const result = await apps.appsPublishTheme({
+    siteId: ''
+});
+
+console.log(result);
+```
+
+## apps-list-theme-releases
+
+List theme releases
+
+```javascript
+import { Client, Apps } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const apps = new Apps(client);
+
+const result = await apps.appsListThemeReleases({
+    siteId: ''
+});
+
+console.log(result);
+```
+
+## apps-accept-theme-release
+
+Accept theme release candidate
+
+```javascript
+import { Client, Apps } from "@revenexx/sdk";
+
+const client = new Client()
+    .setEndpoint('https://api.revenexx.com') // Your API Endpoint
+    .setTenant('<TENANT_SLUG>') // Your tenant slug
+    .setApiKeyAuth('<API_KEY>') // A gateway-managed scoped API key (rvxk_…).
+;
+
+const apps = new Apps(client);
+
+const result = await apps.appsAcceptThemeRelease({
+    siteId: '',
+    rc: 1, // optional
+    version: '' // optional
 });
 
 console.log(result);

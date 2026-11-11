@@ -49703,6 +49703,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         billingJson: string;
         /**
+         * SHA-256 of the build artifact, formatted `sha256:<hex>`. Recorded on the registry version row alongside the commit hash so an approved artefact can be told apart from any other build of the same version. Empty for deployments built before provenance was recorded.
+         */
+        buildDigest: string;
+        /**
          * The current build time in seconds.
          */
         buildDuration: number;
@@ -49722,6 +49726,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * The entrypoint file to use to execute the deployment code.
          */
         entrypoint: string;
+        /**
+         * Raw JSON list of release-gate results for this deployment — phase `pre` runs before the build, phase `post` after activation. Each entry carries `id`, `phase`, `status` (passed/failed/warning/skipped), `title`, `detail`, `findings` and `ran_at`. Empty for deployments built before the gates existed, or for legacy Function/Site deployments that run none.
+         */
+        gateResultsJson: string;
         /**
          * Raw manifest.json bytes captured from the source archive at deploy time. Empty for legacy Function/Site deployments without a manifest.
          */
@@ -49766,6 +49774,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * The url of the vcs provider repository
          */
         providerRepositoryUrl: string;
+        /**
+         * Release mode the deployment was submitted in: `deploy` (released once approved) or `preview` (a candidate the vendor accepts after seeing it run). VCS deployments are always `deploy`.
+         */
+        releaseMode: string;
         /**
          * Resource ID.
          */
@@ -50210,6 +50222,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          */
         vars: Variable[];
         /**
+         * Whether pull request events create preview deployments and PR comments.
+         */
+        vcsPreviewsEnabled: boolean;
+        /**
+         * When a VCS deployment is triggered: "push" on every branch push, "tag" only on tag push or published release.
+         */
+        vcsTriggerMode: string;
+        /**
          * Version of Open Runtimes used for the function.
          */
         version: string;
@@ -50463,6 +50483,148 @@ Which attributes a record of this entity has comes from `attributes` rows with `
         indexes: Index[];
         /**
          * Total number of indexes that matched your query.
+         */
+        total: number;
+    }
+
+    /**
+     * Installation
+     */
+    export type Installation = {
+        /**
+         * Function creation date in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Function ID.
+         */
+        $id: string;
+        /**
+         * Function update date in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * VCS (Version Control System) organization name.
+         */
+        organization: string;
+        /**
+         * VCS (Version Control System) provider name.
+         */
+        provider: string;
+        /**
+         * VCS (Version Control System) installation ID.
+         */
+        providerInstallationId: string;
+    }
+
+    /**
+     * Integration
+     */
+    export type Integration = {
+        /**
+         * Integration creation date in ISO 8601 format.
+         */
+        $createdAt: string;
+        /**
+         * Integration ID.
+         */
+        $id: string;
+        /**
+         * Integration update date in ISO 8601 format.
+         */
+        $updatedAt: string;
+        /**
+         * The build command. Its last step publishes the package to the integrations API (e.g. "npm run build && npm run publish").
+         */
+        buildCommand: string;
+        /**
+         * Integration build runtime.
+         */
+        buildRuntime: string;
+        /**
+         * Active deployment creation date in ISO 8601 format.
+         */
+        deploymentCreatedAt: string;
+        /**
+         * Integration's active deployment ID.
+         */
+        deploymentId: string;
+        /**
+         * Integration enabled.
+         */
+        enabled: boolean;
+        /**
+         * The install command used to install the package dependencies.
+         */
+        installCommand: string;
+        /**
+         * Integration VCS (Version Control System) installation id.
+         */
+        installationId: string;
+        /**
+         * Latest deployment creation date in ISO 8601 format.
+         */
+        latestDeploymentCreatedAt: string;
+        /**
+         * Integration's latest deployment ID.
+         */
+        latestDeploymentId: string;
+        /**
+         * Status of latest deployment. Possible values are "waiting", "processing", "building", "ready", and "failed".
+         */
+        latestDeploymentStatus: string;
+        /**
+         * Is the integration built with the latest configuration? Set to false when commands or variables change and a rebuild is needed.
+         */
+        live: boolean;
+        /**
+         * When disabled, build logs and errors are excluded.
+         */
+        logging: boolean;
+        /**
+         * Integration name.
+         */
+        name: string;
+        /**
+         * VCS (Version Control System) branch name
+         */
+        providerBranch: string;
+        /**
+         * VCS (Version Control System) Repository ID
+         */
+        providerRepositoryId: string;
+        /**
+         * Path to package in VCS (Version Control System) repository
+         */
+        providerRootDirectory: string;
+        /**
+         * Is VCS (Version Control System) connection in silent mode? When in silent mode, no comments are posted on pull or merge requests.
+         */
+        providerSilentMode: boolean;
+        /**
+         * Integration variables.
+         */
+        vars: Variable[];
+        /**
+         * Whether pull request events create preview deployments and PR comments.
+         */
+        vcsPreviewsEnabled: boolean;
+        /**
+         * When a VCS deployment is triggered: "push" on every branch push, "tag" only on tag push or published release.
+         */
+        vcsTriggerMode: string;
+    }
+
+    /**
+     * Integrations List
+     */
+    export type IntegrationList = {
+        /**
+         * List of integrations.
+         */
+        integrations: Integration[];
+        /**
+         * Total number of integrations that matched your query.
          */
         total: number;
     }
@@ -50845,6 +51007,10 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * Token ID.
          */
         $id: string;
+        /**
+         * The code that answers this challenge. Returned only to a privileged caller — an API key, or an app acting for the tenant; anyone else receives an empty string.
+         */
+        code: string;
         /**
          * Token expiration date in ISO 8601 format.
          */
@@ -51361,6 +51527,14 @@ Which attributes a record of this entity has comes from `attributes` rows with `
          * Site variables.
          */
         vars: Variable[];
+        /**
+         * Whether pull request events create preview deployments and PR comments.
+         */
+        vcsPreviewsEnabled: boolean;
+        /**
+         * When a VCS deployment is triggered: "push" on every branch push, "tag" only on tag push or published release.
+         */
+        vcsTriggerMode: string;
     }
 
     /**

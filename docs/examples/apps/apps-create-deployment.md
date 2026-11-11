@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Apps } from "@revenexx/sdk";
+import { Client, Apps, ReleaseMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -14,7 +14,8 @@ const result = await apps.appsCreateDeployment({
     activate: true,
     code: document.getElementById('uploader').files[0],
     commands: '', // optional
-    entrypoint: '' // optional
+    entrypoint: '', // optional
+    releaseMode: ReleaseMode.Deploy // optional
 });
 
 console.log(result);

@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Cubes } from "@revenexx/sdk";
+import { Client, Cubes, ReleaseMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -12,7 +12,8 @@ const cubes = new Cubes(client);
 const result = await cubes.cubesCreateDeployment({
     cubeId: '',
     code: document.getElementById('uploader').files[0],
-    activate: true // optional
+    activate: true, // optional
+    releaseMode: ReleaseMode.Deploy // optional
 });
 
 console.log(result);

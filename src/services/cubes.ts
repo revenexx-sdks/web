@@ -3,6 +3,7 @@ import { RevenexxException, Client, type Payload, UploadProgress } from '../clie
 import type { Models } from '../models';
 
 import { VcsTriggerMode } from '../enums/vcs-trigger-mode';
+import { ReleaseMode } from '../enums/release-mode';
 import { CubesCreateVcsDeploymentType } from '../enums/cubes-create-vcs-deployment-type';
 
 export class Cubes {
@@ -500,43 +501,47 @@ export class Cubes {
      * @param {string} params.cubeId - Cube ID.
      * @param {File} params.code - The Cube directory packaged as a gzipped tar archive (`.tar.gz`) with `cube.json` at its root, sent as the file part of the multipart request.
      * @param {boolean} params.activate - Automatically activate the deployment when it is finished building.
+     * @param {ReleaseMode} params.releaseMode - Release mode: `deploy` releases the Cube once its round is approved; `preview` makes it a candidate the vendor accepts after checking it.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      */
-    cubesCreateDeployment(params: { cubeId: string, code: File, activate?: boolean, onProgress?: (progress: UploadProgress) => void }): Promise<Models.Deployment>;
+    cubesCreateDeployment(params: { cubeId: string, code: File, activate?: boolean, releaseMode?: ReleaseMode, onProgress?: (progress: UploadProgress) => void }): Promise<Models.Deployment>;
     /**
      * Create a new Cube deployment from a gzipped tar archive of the Cube directory. The build bundles the Cube and submits it as a release for review. The deployment ends `ready` once the release is submitted, or `failed` when it is rejected, with one line per problem in `buildLogs`. The review itself is not reported through this API.
      *
      * @param {string} cubeId - Cube ID.
      * @param {File} code - The Cube directory packaged as a gzipped tar archive (`.tar.gz`) with `cube.json` at its root, sent as the file part of the multipart request.
      * @param {boolean} activate - Automatically activate the deployment when it is finished building.
+     * @param {ReleaseMode} releaseMode - Release mode: `deploy` releases the Cube once its round is approved; `preview` makes it a candidate the vendor accepts after checking it.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    cubesCreateDeployment(cubeId: string, code: File, activate?: boolean, onProgress?: (progress: UploadProgress) => void): Promise<Models.Deployment>;
+    cubesCreateDeployment(cubeId: string, code: File, activate?: boolean, releaseMode?: ReleaseMode, onProgress?: (progress: UploadProgress) => void): Promise<Models.Deployment>;
     cubesCreateDeployment(
-        paramsOrFirst: { cubeId: string, code: File, activate?: boolean, onProgress?: (progress: UploadProgress) => void } | string,
-        ...rest: [(File)?, (boolean)?,((progress: UploadProgress) => void)?]    
+        paramsOrFirst: { cubeId: string, code: File, activate?: boolean, releaseMode?: ReleaseMode, onProgress?: (progress: UploadProgress) => void } | string,
+        ...rest: [(File)?, (boolean)?, (ReleaseMode)?,((progress: UploadProgress) => void)?]    
     ): Promise<Models.Deployment> {
-        let params: { cubeId: string, code: File, activate?: boolean };
+        let params: { cubeId: string, code: File, activate?: boolean, releaseMode?: ReleaseMode };
         let onProgress: ((progress: UploadProgress) => void);
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { cubeId: string, code: File, activate?: boolean };
+            params = (paramsOrFirst || {}) as { cubeId: string, code: File, activate?: boolean, releaseMode?: ReleaseMode };
             onProgress = (paramsOrFirst as { onProgress?: (progress: UploadProgress) => void }).onProgress as ((progress: UploadProgress) => void);
         } else {
             params = {
                 cubeId: paramsOrFirst as string,
                 code: rest[0] as File,
-                activate: rest[1] as boolean            
+                activate: rest[1] as boolean,
+                releaseMode: rest[2] as ReleaseMode            
             };
-            onProgress = rest[2] as ((progress: UploadProgress) => void);
+            onProgress = rest[3] as ((progress: UploadProgress) => void);
         }
         
         const cubeId = params.cubeId;
         const code = params.code;
         const activate = params.activate;
+        const releaseMode = params.releaseMode;
 
         if (typeof cubeId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "cubeId"');
@@ -552,6 +557,9 @@ export class Cubes {
         }
         if (typeof code !== 'undefined') {
             apiPayload['code'] = code;
+        }
+        if (typeof releaseMode !== 'undefined') {
+            apiPayload['releaseMode'] = releaseMode;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -705,6 +713,221 @@ export class Cubes {
 
         return this.client.call(
             'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * List the release rounds of this Cube as the registry holds
+     * them: version, round number, state (submitted, candidate,
+     * approved, rejected), release mode, gate results, decision
+     * deadline, rejection reason and the deployment that opened it.
+     *
+     * @param {string} params.cubeId - Cube ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    cubesListReleases(params: { cubeId: string }): Promise<{}>;
+    /**
+     * List the release rounds of this Cube as the registry holds
+     * them: version, round number, state (submitted, candidate,
+     * approved, rejected), release mode, gate results, decision
+     * deadline, rejection reason and the deployment that opened it.
+     *
+     * @param {string} cubeId - Cube ID.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    cubesListReleases(cubeId: string): Promise<{}>;
+    cubesListReleases(
+        paramsOrFirst: { cubeId: string } | string    
+    ): Promise<{}> {
+        let params: { cubeId: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { cubeId: string };
+        } else {
+            params = {
+                cubeId: paramsOrFirst as string            
+            };
+        }
+        
+        const cubeId = params.cubeId;
+
+        if (typeof cubeId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "cubeId"');
+        }
+
+        const apiPath = '/v1/cubes/{cubeId}/releases'.replace('{cubeId}', cubeId);
+        const apiPayload: Payload = {};
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+        }
+
+        return this.client.call(
+            'get',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Accept a preview candidate of this Cube after checking it.
+     * Without `version` the version of the latest released
+     * deployment is accepted; without `rc` its newest candidate
+     * round. Only the Cube's vendor can accept, and only a candidate
+     * in preview mode.
+     *
+     * @param {string} params.cubeId - Cube ID.
+     * @param {number} params.rc - Release round to accept. Defaults to the newest candidate round of the version.
+     * @param {string} params.version - Version to accept. Defaults to the version of the latest released deployment.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     */
+    cubesAcceptRelease(params: { cubeId: string, rc?: number, version?: string }): Promise<{}>;
+    /**
+     * Accept a preview candidate of this Cube after checking it.
+     * Without `version` the version of the latest released
+     * deployment is accepted; without `rc` its newest candidate
+     * round. Only the Cube's vendor can accept, and only a candidate
+     * in preview mode.
+     *
+     * @param {string} cubeId - Cube ID.
+     * @param {number} rc - Release round to accept. Defaults to the newest candidate round of the version.
+     * @param {string} version - Version to accept. Defaults to the version of the latest released deployment.
+     * @throws {RevenexxException}
+     * @returns {Promise<{}>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    cubesAcceptRelease(cubeId: string, rc?: number, version?: string): Promise<{}>;
+    cubesAcceptRelease(
+        paramsOrFirst: { cubeId: string, rc?: number, version?: string } | string,
+        ...rest: [(number)?, (string)?]    
+    ): Promise<{}> {
+        let params: { cubeId: string, rc?: number, version?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { cubeId: string, rc?: number, version?: string };
+        } else {
+            params = {
+                cubeId: paramsOrFirst as string,
+                rc: rest[0] as number,
+                version: rest[1] as string            
+            };
+        }
+        
+        const cubeId = params.cubeId;
+        const rc = params.rc;
+        const version = params.version;
+
+        if (typeof cubeId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "cubeId"');
+        }
+
+        const apiPath = '/v1/cubes/{cubeId}/releases/accept'.replace('{cubeId}', cubeId);
+        const apiPayload: Payload = {};
+        if (typeof rc !== 'undefined') {
+            apiPayload['rc'] = rc;
+        }
+        if (typeof version !== 'undefined') {
+            apiPayload['version'] = version;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
+            uri,
+            apiHeaders,
+            apiPayload
+        );
+    }
+
+    /**
+     * Release the source a version of this Cube was built from
+     * again, so it is linted and judged again in a new release
+     * round. Takes the round's deployment, or the newest deployment
+     * whose manifest names this version; `commit` narrows that.
+     *
+     * @param {string} params.cubeId - Cube ID.
+     * @param {string} params.version - Version to rebuild.
+     * @param {string} params.commit - Commit SHA the round recorded (7 to 64 hex characters). Optional.
+     * @param {string} params.deploymentId - Deployment the round was built as. Optional.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Deployment>}
+     */
+    cubesRebuildRelease(params: { cubeId: string, version: string, commit?: string, deploymentId?: string }): Promise<Models.Deployment>;
+    /**
+     * Release the source a version of this Cube was built from
+     * again, so it is linted and judged again in a new release
+     * round. Takes the round's deployment, or the newest deployment
+     * whose manifest names this version; `commit` narrows that.
+     *
+     * @param {string} cubeId - Cube ID.
+     * @param {string} version - Version to rebuild.
+     * @param {string} commit - Commit SHA the round recorded (7 to 64 hex characters). Optional.
+     * @param {string} deploymentId - Deployment the round was built as. Optional.
+     * @throws {RevenexxException}
+     * @returns {Promise<Models.Deployment>}
+     * @deprecated Use the object parameter style method for a better developer experience.
+     */
+    cubesRebuildRelease(cubeId: string, version: string, commit?: string, deploymentId?: string): Promise<Models.Deployment>;
+    cubesRebuildRelease(
+        paramsOrFirst: { cubeId: string, version: string, commit?: string, deploymentId?: string } | string,
+        ...rest: [(string)?, (string)?, (string)?]    
+    ): Promise<Models.Deployment> {
+        let params: { cubeId: string, version: string, commit?: string, deploymentId?: string };
+        
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { cubeId: string, version: string, commit?: string, deploymentId?: string };
+        } else {
+            params = {
+                cubeId: paramsOrFirst as string,
+                version: rest[0] as string,
+                commit: rest[1] as string,
+                deploymentId: rest[2] as string            
+            };
+        }
+        
+        const cubeId = params.cubeId;
+        const version = params.version;
+        const commit = params.commit;
+        const deploymentId = params.deploymentId;
+
+        if (typeof cubeId === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "cubeId"');
+        }
+        if (typeof version === 'undefined') {
+            throw new RevenexxException('Missing required parameter: "version"');
+        }
+
+        const apiPath = '/v1/cubes/{cubeId}/releases/rebuild'.replace('{cubeId}', cubeId);
+        const apiPayload: Payload = {};
+        if (typeof commit !== 'undefined') {
+            apiPayload['commit'] = commit;
+        }
+        if (typeof deploymentId !== 'undefined') {
+            apiPayload['deploymentId'] = deploymentId;
+        }
+        if (typeof version !== 'undefined') {
+            apiPayload['version'] = version;
+        }
+        const uri = new URL(this.client.config.endpoint + apiPath);
+
+        const apiHeaders: { [header: string]: string } = {
+            'content-type': 'application/json',
+        }
+
+        return this.client.call(
+            'post',
             uri,
             apiHeaders,
             apiPayload

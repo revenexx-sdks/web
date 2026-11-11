@@ -5,6 +5,8 @@ import type { Models } from '../models';
 import { BuildRuntime } from '../enums/build-runtime';
 import { Framework } from '../enums/framework';
 import { Adapter } from '../enums/adapter';
+import { VcsTriggerMode } from '../enums/vcs-trigger-mode';
+import { ReleaseMode } from '../enums/release-mode';
 import { CubesCreateVcsDeploymentType } from '../enums/cubes-create-vcs-deployment-type';
 import { AppsGetDeploymentDownloadType } from '../enums/apps-get-deployment-download-type';
 
@@ -102,10 +104,12 @@ export class Sites {
      * @param {boolean} params.providerSilentMode - Is the VCS (Version Control System) connection in silent mode for the repo linked to the site? In silent mode, comments will not be made on commits and pull requests.
      * @param {string} params.specification - Framework specification for the site and builds.
      * @param {number} params.timeout - Maximum request time in seconds.
+     * @param {boolean} params.vcsPreviewsEnabled - Whether pull request events create preview deployments and PR comments.
+     * @param {VcsTriggerMode} params.vcsTriggerMode - Controls when a VCS deployment is triggered. "push" deploys on every branch push, "tag" deploys only when a tag is pushed or a GitHub release is published.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Site>}
      */
-    sitesCreate(params: { buildRuntime: BuildRuntime, framework: Framework, name: string, siteId: string, adapter?: Adapter, buildCommand?: string, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number }): Promise<Models.Site>;
+    sitesCreate(params: { buildRuntime: BuildRuntime, framework: Framework, name: string, siteId: string, adapter?: Adapter, buildCommand?: string, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode }): Promise<Models.Site>;
     /**
      * Create a new site.
      *
@@ -127,19 +131,21 @@ export class Sites {
      * @param {boolean} providerSilentMode - Is the VCS (Version Control System) connection in silent mode for the repo linked to the site? In silent mode, comments will not be made on commits and pull requests.
      * @param {string} specification - Framework specification for the site and builds.
      * @param {number} timeout - Maximum request time in seconds.
+     * @param {boolean} vcsPreviewsEnabled - Whether pull request events create preview deployments and PR comments.
+     * @param {VcsTriggerMode} vcsTriggerMode - Controls when a VCS deployment is triggered. "push" deploys on every branch push, "tag" deploys only when a tag is pushed or a GitHub release is published.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Site>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    sitesCreate(buildRuntime: BuildRuntime, framework: Framework, name: string, siteId: string, adapter?: Adapter, buildCommand?: string, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number): Promise<Models.Site>;
+    sitesCreate(buildRuntime: BuildRuntime, framework: Framework, name: string, siteId: string, adapter?: Adapter, buildCommand?: string, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode): Promise<Models.Site>;
     sitesCreate(
-        paramsOrFirst: { buildRuntime: BuildRuntime, framework: Framework, name: string, siteId: string, adapter?: Adapter, buildCommand?: string, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number } | BuildRuntime,
-        ...rest: [(Framework)?, (string)?, (string)?, (Adapter)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (number)?]    
+        paramsOrFirst: { buildRuntime: BuildRuntime, framework: Framework, name: string, siteId: string, adapter?: Adapter, buildCommand?: string, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode } | BuildRuntime,
+        ...rest: [(Framework)?, (string)?, (string)?, (Adapter)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (number)?, (boolean)?, (VcsTriggerMode)?]    
     ): Promise<Models.Site> {
-        let params: { buildRuntime: BuildRuntime, framework: Framework, name: string, siteId: string, adapter?: Adapter, buildCommand?: string, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number };
+        let params: { buildRuntime: BuildRuntime, framework: Framework, name: string, siteId: string, adapter?: Adapter, buildCommand?: string, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode };
         
-        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('buildRuntime' in paramsOrFirst || 'framework' in paramsOrFirst || 'name' in paramsOrFirst || 'siteId' in paramsOrFirst || 'adapter' in paramsOrFirst || 'buildCommand' in paramsOrFirst || 'enabled' in paramsOrFirst || 'fallbackFile' in paramsOrFirst || 'installCommand' in paramsOrFirst || 'installationId' in paramsOrFirst || 'logging' in paramsOrFirst || 'outputDirectory' in paramsOrFirst || 'providerBranch' in paramsOrFirst || 'providerRepositoryId' in paramsOrFirst || 'providerRootDirectory' in paramsOrFirst || 'providerSilentMode' in paramsOrFirst || 'specification' in paramsOrFirst || 'timeout' in paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { buildRuntime: BuildRuntime, framework: Framework, name: string, siteId: string, adapter?: Adapter, buildCommand?: string, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number };
+        if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst) && ('buildRuntime' in paramsOrFirst || 'framework' in paramsOrFirst || 'name' in paramsOrFirst || 'siteId' in paramsOrFirst || 'adapter' in paramsOrFirst || 'buildCommand' in paramsOrFirst || 'enabled' in paramsOrFirst || 'fallbackFile' in paramsOrFirst || 'installCommand' in paramsOrFirst || 'installationId' in paramsOrFirst || 'logging' in paramsOrFirst || 'outputDirectory' in paramsOrFirst || 'providerBranch' in paramsOrFirst || 'providerRepositoryId' in paramsOrFirst || 'providerRootDirectory' in paramsOrFirst || 'providerSilentMode' in paramsOrFirst || 'specification' in paramsOrFirst || 'timeout' in paramsOrFirst || 'vcsPreviewsEnabled' in paramsOrFirst || 'vcsTriggerMode' in paramsOrFirst))) {
+            params = (paramsOrFirst || {}) as { buildRuntime: BuildRuntime, framework: Framework, name: string, siteId: string, adapter?: Adapter, buildCommand?: string, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode };
         } else {
             params = {
                 buildRuntime: paramsOrFirst as BuildRuntime,
@@ -159,7 +165,9 @@ export class Sites {
                 providerRootDirectory: rest[13] as string,
                 providerSilentMode: rest[14] as boolean,
                 specification: rest[15] as string,
-                timeout: rest[16] as number            
+                timeout: rest[16] as number,
+                vcsPreviewsEnabled: rest[17] as boolean,
+                vcsTriggerMode: rest[18] as VcsTriggerMode            
             };
         }
         
@@ -181,6 +189,8 @@ export class Sites {
         const providerSilentMode = params.providerSilentMode;
         const specification = params.specification;
         const timeout = params.timeout;
+        const vcsPreviewsEnabled = params.vcsPreviewsEnabled;
+        const vcsTriggerMode = params.vcsTriggerMode;
 
         if (typeof buildRuntime === 'undefined') {
             throw new RevenexxException('Missing required parameter: "buildRuntime"');
@@ -250,6 +260,12 @@ export class Sites {
         }
         if (typeof timeout !== 'undefined') {
             apiPayload['timeout'] = timeout;
+        }
+        if (typeof vcsPreviewsEnabled !== 'undefined') {
+            apiPayload['vcsPreviewsEnabled'] = vcsPreviewsEnabled;
+        }
+        if (typeof vcsTriggerMode !== 'undefined') {
+            apiPayload['vcsTriggerMode'] = vcsTriggerMode;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -434,10 +450,12 @@ export class Sites {
      * @param {boolean} params.providerSilentMode - Is the VCS (Version Control System) connection in silent mode for the repo linked to the site? In silent mode, comments will not be made on commits and pull requests.
      * @param {string} params.specification - Framework specification for the site and builds.
      * @param {number} params.timeout - Maximum request time in seconds.
+     * @param {boolean} params.vcsPreviewsEnabled - Whether pull request events create preview deployments and PR comments.
+     * @param {VcsTriggerMode} params.vcsTriggerMode - Controls when a VCS deployment is triggered. "push" deploys on every branch push, "tag" deploys only when a tag is pushed or a GitHub release is published.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Site>}
      */
-    sitesUpdate(params: { siteId: string, framework: Framework, name: string, adapter?: Adapter, buildCommand?: string, buildRuntime?: BuildRuntime, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number }): Promise<Models.Site>;
+    sitesUpdate(params: { siteId: string, framework: Framework, name: string, adapter?: Adapter, buildCommand?: string, buildRuntime?: BuildRuntime, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode }): Promise<Models.Site>;
     /**
      * Update site by its unique ID.
      *
@@ -459,19 +477,21 @@ export class Sites {
      * @param {boolean} providerSilentMode - Is the VCS (Version Control System) connection in silent mode for the repo linked to the site? In silent mode, comments will not be made on commits and pull requests.
      * @param {string} specification - Framework specification for the site and builds.
      * @param {number} timeout - Maximum request time in seconds.
+     * @param {boolean} vcsPreviewsEnabled - Whether pull request events create preview deployments and PR comments.
+     * @param {VcsTriggerMode} vcsTriggerMode - Controls when a VCS deployment is triggered. "push" deploys on every branch push, "tag" deploys only when a tag is pushed or a GitHub release is published.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Site>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    sitesUpdate(siteId: string, framework: Framework, name: string, adapter?: Adapter, buildCommand?: string, buildRuntime?: BuildRuntime, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number): Promise<Models.Site>;
+    sitesUpdate(siteId: string, framework: Framework, name: string, adapter?: Adapter, buildCommand?: string, buildRuntime?: BuildRuntime, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode): Promise<Models.Site>;
     sitesUpdate(
-        paramsOrFirst: { siteId: string, framework: Framework, name: string, adapter?: Adapter, buildCommand?: string, buildRuntime?: BuildRuntime, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number } | string,
-        ...rest: [(Framework)?, (string)?, (Adapter)?, (string)?, (BuildRuntime)?, (boolean)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (number)?]    
+        paramsOrFirst: { siteId: string, framework: Framework, name: string, adapter?: Adapter, buildCommand?: string, buildRuntime?: BuildRuntime, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode } | string,
+        ...rest: [(Framework)?, (string)?, (Adapter)?, (string)?, (BuildRuntime)?, (boolean)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (string)?, (string)?, (string)?, (boolean)?, (string)?, (number)?, (boolean)?, (VcsTriggerMode)?]    
     ): Promise<Models.Site> {
-        let params: { siteId: string, framework: Framework, name: string, adapter?: Adapter, buildCommand?: string, buildRuntime?: BuildRuntime, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number };
+        let params: { siteId: string, framework: Framework, name: string, adapter?: Adapter, buildCommand?: string, buildRuntime?: BuildRuntime, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode };
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { siteId: string, framework: Framework, name: string, adapter?: Adapter, buildCommand?: string, buildRuntime?: BuildRuntime, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number };
+            params = (paramsOrFirst || {}) as { siteId: string, framework: Framework, name: string, adapter?: Adapter, buildCommand?: string, buildRuntime?: BuildRuntime, enabled?: boolean, fallbackFile?: string, installCommand?: string, installationId?: string, logging?: boolean, outputDirectory?: string, providerBranch?: string, providerRepositoryId?: string, providerRootDirectory?: string, providerSilentMode?: boolean, specification?: string, timeout?: number, vcsPreviewsEnabled?: boolean, vcsTriggerMode?: VcsTriggerMode };
         } else {
             params = {
                 siteId: paramsOrFirst as string,
@@ -491,7 +511,9 @@ export class Sites {
                 providerRootDirectory: rest[13] as string,
                 providerSilentMode: rest[14] as boolean,
                 specification: rest[15] as string,
-                timeout: rest[16] as number            
+                timeout: rest[16] as number,
+                vcsPreviewsEnabled: rest[17] as boolean,
+                vcsTriggerMode: rest[18] as VcsTriggerMode            
             };
         }
         
@@ -513,6 +535,8 @@ export class Sites {
         const providerSilentMode = params.providerSilentMode;
         const specification = params.specification;
         const timeout = params.timeout;
+        const vcsPreviewsEnabled = params.vcsPreviewsEnabled;
+        const vcsTriggerMode = params.vcsTriggerMode;
 
         if (typeof siteId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "siteId"');
@@ -576,6 +600,12 @@ export class Sites {
         }
         if (typeof timeout !== 'undefined') {
             apiPayload['timeout'] = timeout;
+        }
+        if (typeof vcsPreviewsEnabled !== 'undefined') {
+            apiPayload['vcsPreviewsEnabled'] = vcsPreviewsEnabled;
+        }
+        if (typeof vcsTriggerMode !== 'undefined') {
+            apiPayload['vcsTriggerMode'] = vcsTriggerMode;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 
@@ -736,10 +766,11 @@ export class Sites {
      * @param {string} params.buildCommand - Build Commands.
      * @param {string} params.installCommand - Install Commands.
      * @param {string} params.outputDirectory - Output Directory.
+     * @param {ReleaseMode} params.releaseMode - Release mode: `deploy` releases the version once its round is approved; `preview` makes it a candidate the vendor accepts after seeing it run. Only meaningful for App and Theme deployments.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      */
-    sitesCreateDeployment(params: { siteId: string, activate: boolean, code: File, buildCommand?: string, installCommand?: string, outputDirectory?: string, onProgress?: (progress: UploadProgress) => void }): Promise<Models.Deployment>;
+    sitesCreateDeployment(params: { siteId: string, activate: boolean, code: File, buildCommand?: string, installCommand?: string, outputDirectory?: string, releaseMode?: ReleaseMode, onProgress?: (progress: UploadProgress) => void }): Promise<Models.Deployment>;
     /**
      * Create a new site code deployment. Use this endpoint to upload a new version of your site code. To activate your newly uploaded code, you'll need to update the site's deployment to use your new deployment ID.
      *
@@ -749,20 +780,21 @@ export class Sites {
      * @param {string} buildCommand - Build Commands.
      * @param {string} installCommand - Install Commands.
      * @param {string} outputDirectory - Output Directory.
+     * @param {ReleaseMode} releaseMode - Release mode: `deploy` releases the version once its round is approved; `preview` makes it a candidate the vendor accepts after seeing it run. Only meaningful for App and Theme deployments.
      * @throws {RevenexxException}
      * @returns {Promise<Models.Deployment>}
      * @deprecated Use the object parameter style method for a better developer experience.
      */
-    sitesCreateDeployment(siteId: string, activate: boolean, code: File, buildCommand?: string, installCommand?: string, outputDirectory?: string, onProgress?: (progress: UploadProgress) => void): Promise<Models.Deployment>;
+    sitesCreateDeployment(siteId: string, activate: boolean, code: File, buildCommand?: string, installCommand?: string, outputDirectory?: string, releaseMode?: ReleaseMode, onProgress?: (progress: UploadProgress) => void): Promise<Models.Deployment>;
     sitesCreateDeployment(
-        paramsOrFirst: { siteId: string, activate: boolean, code: File, buildCommand?: string, installCommand?: string, outputDirectory?: string, onProgress?: (progress: UploadProgress) => void } | string,
-        ...rest: [(boolean)?, (File)?, (string)?, (string)?, (string)?,((progress: UploadProgress) => void)?]    
+        paramsOrFirst: { siteId: string, activate: boolean, code: File, buildCommand?: string, installCommand?: string, outputDirectory?: string, releaseMode?: ReleaseMode, onProgress?: (progress: UploadProgress) => void } | string,
+        ...rest: [(boolean)?, (File)?, (string)?, (string)?, (string)?, (ReleaseMode)?,((progress: UploadProgress) => void)?]    
     ): Promise<Models.Deployment> {
-        let params: { siteId: string, activate: boolean, code: File, buildCommand?: string, installCommand?: string, outputDirectory?: string };
+        let params: { siteId: string, activate: boolean, code: File, buildCommand?: string, installCommand?: string, outputDirectory?: string, releaseMode?: ReleaseMode };
         let onProgress: ((progress: UploadProgress) => void);
         
         if ((paramsOrFirst && typeof paramsOrFirst === 'object' && !Array.isArray(paramsOrFirst))) {
-            params = (paramsOrFirst || {}) as { siteId: string, activate: boolean, code: File, buildCommand?: string, installCommand?: string, outputDirectory?: string };
+            params = (paramsOrFirst || {}) as { siteId: string, activate: boolean, code: File, buildCommand?: string, installCommand?: string, outputDirectory?: string, releaseMode?: ReleaseMode };
             onProgress = (paramsOrFirst as { onProgress?: (progress: UploadProgress) => void }).onProgress as ((progress: UploadProgress) => void);
         } else {
             params = {
@@ -771,9 +803,10 @@ export class Sites {
                 code: rest[1] as File,
                 buildCommand: rest[2] as string,
                 installCommand: rest[3] as string,
-                outputDirectory: rest[4] as string            
+                outputDirectory: rest[4] as string,
+                releaseMode: rest[5] as ReleaseMode            
             };
-            onProgress = rest[5] as ((progress: UploadProgress) => void);
+            onProgress = rest[6] as ((progress: UploadProgress) => void);
         }
         
         const siteId = params.siteId;
@@ -782,6 +815,7 @@ export class Sites {
         const buildCommand = params.buildCommand;
         const installCommand = params.installCommand;
         const outputDirectory = params.outputDirectory;
+        const releaseMode = params.releaseMode;
 
         if (typeof siteId === 'undefined') {
             throw new RevenexxException('Missing required parameter: "siteId"');
@@ -809,6 +843,9 @@ export class Sites {
         }
         if (typeof outputDirectory !== 'undefined') {
             apiPayload['outputDirectory'] = outputDirectory;
+        }
+        if (typeof releaseMode !== 'undefined') {
+            apiPayload['releaseMode'] = releaseMode;
         }
         const uri = new URL(this.client.config.endpoint + apiPath);
 

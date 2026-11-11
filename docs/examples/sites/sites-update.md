@@ -1,5 +1,5 @@
 ```javascript
-import { Client, Sites, Framework, Adapter, BuildRuntime } from "@revenexx/sdk";
+import { Client, Sites, Framework, Adapter, BuildRuntime, VcsTriggerMode } from "@revenexx/sdk";
 
 const client = new Client()
     .setEndpoint('https://api.revenexx.com') // Your API Endpoint
@@ -27,7 +27,9 @@ const result = await sites.sitesUpdate({
     providerRootDirectory: '', // optional
     providerSilentMode: true, // optional
     specification: 's-1vcpu-512mb', // optional
-    timeout: 1 // optional
+    timeout: 1, // optional
+    vcsPreviewsEnabled: true, // optional
+    vcsTriggerMode: VcsTriggerMode.Push // optional
 });
 
 console.log(result);

@@ -1,3 +1,15 @@
+## v0.9.0
+- Breaking: Apps.appsCreateDeployment, Cubes.cubesCreateDeployment, Sites.sitesCreateDeployment take a new releaseMode argument where onProgress was
+- Breaking: Models.Deployment has new required fields buildDigest, gateResultsJson, releaseMode
+- Breaking: Models.Function, Models.Site have new required fields vcsPreviewsEnabled, vcsTriggerMode
+- Breaking: Models.MfaChallenge has new required field code
+- Breaking: parameter params type changed on Apps.appsCreate, Apps.appsCreateDeployment, Apps.appsUpdate, Cubes.cubesCreateDeployment, Sites.sitesCreate, Sites.sitesCreateDeployment, Sites.sitesUpdate
+- New methods: Apps.appsAcceptRelease, Apps.appsAcceptThemeRelease, Apps.appsListReleases, Apps.appsListThemeReleases, Apps.appsPublishTheme, Apps.appsRebuildRelease, Apps.appsUnpublishTheme, Cubes.cubesAcceptRelease, Cubes.cubesListReleases, Cubes.cubesRebuildRelease
+- New options vcsPreviewsEnabled, vcsTriggerMode on Apps.appsCreate, Apps.appsUpdate, Sites.sitesCreate, Sites.sitesUpdate
+- New types: Integrations, Models.Installation, Models.Integration, Models.IntegrationList, ReleaseMode
+- New enum values: Scopes.CubesRead, Scopes.CubesWrite, Scopes.IntegrationsRead, Scopes.IntegrationsWrite
+- and 1 more addition
+
 ## v0.8.0
 - New: DELETE /v1/cubes/{cubeId}, GET /v1/cubes, GET /v1/cubes/{cubeId}, GET /v1/cubes/{cubeId}/deployments and 5 more. Regenerated from the latest API specification.
 
